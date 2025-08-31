@@ -28,7 +28,7 @@ export default function ProductGallery() {
   };
 
   useEffect(() => {
-    fetch("http://localhost:4000/api/products")
+      fetch("https://agexparts.onrender.com/api/products")
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch products");
         return res.json();
