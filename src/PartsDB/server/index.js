@@ -6,7 +6,7 @@ import cors from 'cors';
 const app = express();
 const PORT = 4000;
 // Allow only Netlify frontend
-app.use(cors({ origin: 'https://your-netlify-site.netlify.app' }));
+app.use(cors({ origin: 'https://agexparts.netlify.app' }));
 app.use(express.json());
 
 let db;
@@ -40,6 +40,6 @@ app.post('/api/products', async (req, res) => {
 
 initDb().then(() => {
   app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Server running on https://agexparts.netlify.app`);
   });
 });
