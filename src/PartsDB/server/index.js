@@ -5,7 +5,8 @@ import cors from 'cors';
 
 const app = express();
 const PORT = 4000;
-app.use(cors());
+// Allow only Netlify frontend
+app.use(cors({ origin: 'https://your-netlify-site.netlify.app' }));
 app.use(express.json());
 
 let db;
