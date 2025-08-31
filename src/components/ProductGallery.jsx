@@ -15,10 +15,12 @@ export default function ProductGallery() {
   const [error, setError] = useState(null);
   const { cart, dispatch } = useCart();
   const [showBanner, setShowBanner] = useState(false);
+
   // Filter state
   const [manufacturer, setManufacturer] = useState('');
   const [machineType, setMachineType] = useState('');
   const [model, setModel] = useState('');
+  const [sort, setSort] = useState('');
 
   // Helper to show banner for 3 seconds
   const handleAddToCart = (product) => {
@@ -88,15 +90,15 @@ export default function ProductGallery() {
           )}
         </div>
         {/* Filter boxes */}
-        <div style={{ display: 'flex', gap: 24, margin: '1.5rem 0 2.5rem 0', justifyContent: 'center', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: 16, margin: '1.2rem 0 2rem 0', justifyContent: 'center', flexWrap: 'wrap' }}>
           <select value={manufacturer} onChange={e => setManufacturer(e.target.value)}
             style={{
-              padding: '1.1rem 2.2rem',
-              borderRadius: 12,
+              padding: '0.7rem 1.2rem',
+              borderRadius: 10,
               border: '2px solid #28a745',
-              minWidth: 200,
-              fontSize: '1.25rem',
-              height: '3.2rem',
+              minWidth: 140,
+              fontSize: '1rem',
+              height: '2.2rem',
               fontWeight: 400,
               fontFamily: 'Arial, sans-serif',
               background: '#f8fff6',
@@ -110,12 +112,12 @@ export default function ProductGallery() {
           </select>
           <select value={machineType} onChange={e => setMachineType(e.target.value)}
             style={{
-              padding: '1.1rem 2.2rem',
-              borderRadius: 12,
+              padding: '0.7rem 1.2rem',
+              borderRadius: 10,
               border: '2px solid #28a745',
-              minWidth: 200,
-              fontSize: '1.25rem',
-              height: '3.2rem',
+              minWidth: 140,
+              fontSize: '1rem',
+              height: '2.2rem',
               fontWeight: 400,
               fontFamily: 'Arial, sans-serif',
               background: '#f8fff6',
@@ -129,12 +131,12 @@ export default function ProductGallery() {
           </select>
           <select value={model} onChange={e => setModel(e.target.value)}
             style={{
-              padding: '1.1rem 2.2rem',
-              borderRadius: 12,
+              padding: '0.7rem 1.2rem',
+              borderRadius: 10,
               border: '2px solid #28a745',
-              minWidth: 200,
-              fontSize: '1.25rem',
-              height: '3.2rem',
+              minWidth: 140,
+              fontSize: '1rem',
+              height: '2.2rem',
               fontWeight: 400,
               fontFamily: 'Arial, sans-serif',
               background: '#f8fff6',
@@ -145,6 +147,24 @@ export default function ProductGallery() {
             {[...new Set(products.map(p => p.model).filter(Boolean))].map(m => (
               <option key={m} value={m}>{m}</option>
             ))}
+          </select>
+          <select value={sort} onChange={e => setSort(e.target.value)}
+            style={{
+              padding: '0.7rem 1.2rem',
+              borderRadius: 10,
+              border: '2px solid #28a745',
+              minWidth: 140,
+              fontSize: '1rem',
+              height: '2.2rem',
+              fontWeight: 400,
+              fontFamily: 'Arial, sans-serif',
+              background: '#f8fff6',
+              color: '#222',
+              boxShadow: '0 2px 8px rgba(40,167,69,0.07)',
+            }}>
+            <option value="">Sort by</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
           </select>
         </div>
         {loading ? (
@@ -157,8 +177,8 @@ export default function ProductGallery() {
             style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(3, 1fr)',
-              gap: '2rem',
-              maxWidth: '1200px',
+              gap: '1.2rem',
+              maxWidth: '1000px',
               margin: '0 auto',
             }}
           >
@@ -166,6 +186,11 @@ export default function ProductGallery() {
               .filter(product => !manufacturer || product.manufacturer === manufacturer)
               .filter(product => !machineType || product.machine_type === machineType)
               .filter(product => !model || product.model === model)
+              .sort((a, b) => {
+                if (sort === 'price-asc') return (a.price || 0) - (b.price || 0);
+                if (sort === 'price-desc') return (b.price || 0) - (a.price || 0);
+                return 0;
+              })
               .map((product) => (
               <div
                 key={product.id}
@@ -174,43 +199,44 @@ export default function ProductGallery() {
                   display: 'flex',
                   flexDirection: 'column',
                   border: '1px solid #e0e0e0',
-                  borderRadius: '12px',
+                  borderRadius: '10px',
                   boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
                   overflow: 'hidden',
                   background: '#fff',
-                  minHeight: '350px',
+                  minHeight: '260px',
+                  fontSize: '0.97rem',
                 }}
               >
                 <img
                   src={product.image}
                   alt={product.name}
-                  style={{ width: '100%', height: '180px', objectFit: 'cover', background: '#f8f8f8' }}
+                  style={{ width: '100%', height: '120px', objectFit: 'cover', background: '#f8f8f8' }}
                 />
-                <div style={{ flex: 1, padding: '1rem' }}>
-                  <h3 style={{ margin: '0 0 0.5rem 0' }}>{product.name}</h3>
-                  <p style={{ color: '#666', fontSize: '0.95rem' }}>{product.description}</p>
-                  <div style={{ color: '#333', fontWeight: 600, marginTop: 8 }}>
+                <div style={{ flex: 1, padding: '0.6rem' }}>
+                  <h3 style={{ margin: '0 0 0.3rem 0', fontSize: '1rem' }}>{product.name}</h3>
+                  <p style={{ color: '#666', fontSize: '0.85rem' }}>{product.description}</p>
+                  <div style={{ color: '#333', fontWeight: 600, marginTop: 6, fontSize: '0.95rem' }}>
                     {product.price !== undefined && (
                       <>${product.price.toFixed(2)}{' '}</>
                     )}
                     {product.quantity !== undefined && (
                       <span style={{
-                        fontSize: '0.95em',
+                        fontSize: '0.9em',
                         color: product.quantity > 0 ? '#28a745' : '#d32f2f',
                         fontWeight: 600,
-                        marginLeft: 8
+                        marginLeft: 6
                       }}>
                         {product.quantity > 0 ? 'In Stock' : 'Out of Stock'}
                       </span>
                     )}
                   </div>
                   {product.category && (
-                    <div style={{ fontSize: '0.9em', color: '#888', marginTop: 4 }}>
+                    <div style={{ fontSize: '0.85em', color: '#888', marginTop: 2 }}>
                       Category: {product.category}
                     </div>
                   )}
                   {product.manufacturer && (
-                    <div style={{ fontSize: '0.9em', color: '#888' }}>
+                    <div style={{ fontSize: '0.85em', color: '#888' }}>
                       Manufacturer: {product.manufacturer}
                     </div>
                   )}
