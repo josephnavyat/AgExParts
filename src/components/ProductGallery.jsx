@@ -94,12 +94,12 @@ export default function ProductGallery() {
   <div style={{ display: 'flex', gap: 16, margin: '1.2rem 0 2rem 0', justifyContent: 'center', flexWrap: 'wrap' }}>
           <select value={manufacturer} onChange={e => setManufacturer(e.target.value)}
             style={{
-              padding: '1.1rem 1.2rem',
+              padding: '1.5rem 1.2rem',
               borderRadius: 10,
               border: '2px solid #28a745',
               minWidth: 140,
               fontSize: '1rem',
-              height: '3.2rem',
+              height: '4.2rem',
               fontWeight: 400,
               fontFamily: 'Arial, sans-serif',
               background: '#f8fff6',
@@ -113,12 +113,12 @@ export default function ProductGallery() {
           </select>
           <select value={machineType} onChange={e => setMachineType(e.target.value)}
             style={{
-              padding: '1.1rem 1.2rem',
+              padding: '1.5rem 1.2rem',
               borderRadius: 10,
               border: '2px solid #28a745',
               minWidth: 140,
               fontSize: '1rem',
-              height: '3.2rem',
+              height: '4.2rem',
               fontWeight: 400,
               fontFamily: 'Arial, sans-serif',
               background: '#f8fff6',
@@ -132,12 +132,12 @@ export default function ProductGallery() {
           </select>
           <select value={model} onChange={e => setModel(e.target.value)}
             style={{
-              padding: '1.1rem 1.2rem',
+              padding: '1.5rem 1.2rem',
               borderRadius: 10,
               border: '2px solid #28a745',
               minWidth: 140,
               fontSize: '1rem',
-              height: '3.2rem',
+              height: '4.2rem',
               fontWeight: 400,
               fontFamily: 'Arial, sans-serif',
               background: '#f8fff6',
@@ -151,12 +151,12 @@ export default function ProductGallery() {
           </select>
           <select value={sort} onChange={e => setSort(e.target.value)}
             style={{
-              padding: '1.1rem 1.2rem',
+              padding: '1.5rem 1.2rem',
               borderRadius: 10,
               border: '2px solid #28a745',
               minWidth: 140,
               fontSize: '1rem',
-              height: '3.2rem',
+              height: '4.2rem',
               fontWeight: 400,
               fontFamily: 'Arial, sans-serif',
               background: '#f8fff6',
