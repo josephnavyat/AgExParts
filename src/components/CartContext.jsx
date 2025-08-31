@@ -8,7 +8,7 @@ const initialState = {
 
 function cartReducer(state, action) {
   switch (action.type) {
-    case "ADD_TO_CART":
+    case "ADD_TO_CART": {
       const existing = state.items.find(i => i.product.id === action.product.id);
       if (existing) {
         return {
@@ -24,6 +24,26 @@ function cartReducer(state, action) {
         ...state,
         items: [...state.items, { product: action.product, quantity: action.quantity || 1 }],
       };
+    }
+    case "SUBTRACT_FROM_CART": {
+      const existing = state.items.find(i => i.product.id === action.product.id);
+      if (existing && existing.quantity > 1) {
+        return {
+          ...state,
+          items: state.items.map(i =>
+            i.product.id === action.product.id
+              ? { ...i, quantity: i.quantity - 1 }
+              : i
+          ),
+        };
+      } else {
+        // Remove item if quantity would go to 0
+        return {
+          ...state,
+          items: state.items.filter(i => i.product.id !== action.product.id),
+        };
+      }
+    }
     case "REMOVE_FROM_CART":
       return {
         ...state,
@@ -64,4 +84,11 @@ const CartProvider = ({ children }) => {
 export function useCart() {
   return useContext(CartContext);
 }
+
+// Helper to get quantity of a product in cart
+export function getProductQuantity(cart, productId) {
+  const item = cart.items.find(i => i.product.id === productId);
+  return item ? item.quantity : 0;
+}
+
 export { CartProvider, CartContext };

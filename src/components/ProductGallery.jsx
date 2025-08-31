@@ -1,5 +1,7 @@
 
 import React, { useEffect, useState } from "react";
+import { useCart } from "./CartContext.jsx";
+import { getProductQuantity } from "./CartContext.jsx";
 import { Link } from "react-router-dom";
 import Navbar from "./Navbar.jsx";
 import Footer from "./Footer.jsx";
@@ -7,8 +9,23 @@ import "../styles/site.css";
 
 export default function ProductGallery() {
   const [products, setProducts] = useState([]);
+  // If any product is out of stock, show a banner
+  const anyOutOfStock = products.some(p => p.quantity === 0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { cart, dispatch } = useCart();
+  const [showBanner, setShowBanner] = useState(false);
+  // Filter state
+  const [manufacturer, setManufacturer] = useState('');
+  const [machineType, setMachineType] = useState('');
+  const [model, setModel] = useState('');
+
+  // Helper to show banner for 3 seconds
+  const handleAddToCart = (product) => {
+    dispatch({ type: 'ADD_TO_CART', product });
+    setShowBanner(true);
+    setTimeout(() => setShowBanner(false), 3000);
+  };
 
   useEffect(() => {
     fetch("http://localhost:4000/api/products")
@@ -29,9 +46,106 @@ export default function ProductGallery() {
   return (
     <>
       <Navbar />
+      {showBanner && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          zIndex: 1000,
+          background: 'rgba(40,167,69,0.82)',
+          color: '#fff',
+          fontWeight: 600,
+          fontSize: '1rem',
+          textAlign: 'center',
+          padding: '0.45rem 0',
+          boxShadow: '0 2px 8px rgba(40,167,69,0.13)',
+          letterSpacing: 0.5,
+          backdropFilter: 'blur(2px)',
+        }}>
+          Item added to cart
+        </div>
+      )}
       <div className="product-gallery" style={{ padding: '2rem' }}>
         <div className="gallery-title-banner">
           <h2 className="distressed gallery-title">Product Catalog</h2>
+          {anyOutOfStock && (
+            <div style={{
+              background: '#fff3f3',
+              color: '#d32f2f',
+              fontWeight: 600,
+              fontSize: '1.1rem',
+              border: '1px solid #d32f2f',
+              borderRadius: 8,
+              padding: '0.7rem 1.5rem',
+              margin: '1rem auto 0 auto',
+              maxWidth: 400,
+              textAlign: 'center',
+              boxShadow: '0 2px 8px rgba(211,47,47,0.07)'
+            }}>
+              Some items are <b>Out of Stock</b>
+            </div>
+          )}
+        </div>
+        {/* Filter boxes */}
+        <div style={{ display: 'flex', gap: 24, margin: '1.5rem 0 2.5rem 0', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <select value={manufacturer} onChange={e => setManufacturer(e.target.value)}
+            style={{
+              padding: '1.1rem 2.2rem',
+              borderRadius: 12,
+              border: '2px solid #28a745',
+              minWidth: 200,
+              fontSize: '1.25rem',
+              height: '3.2rem',
+              fontWeight: 400,
+              fontFamily: 'Arial, sans-serif',
+              background: '#f8fff6',
+              color: '#222',
+              boxShadow: '0 2px 8px rgba(40,167,69,0.07)',
+            }}>
+            <option value="">All Manufacturers</option>
+            {[...new Set(products.map(p => p.manufacturer).filter(Boolean))].map(m => (
+              <option key={m} value={m}>{m}</option>
+            ))}
+          </select>
+          <select value={machineType} onChange={e => setMachineType(e.target.value)}
+            style={{
+              padding: '1.1rem 2.2rem',
+              borderRadius: 12,
+              border: '2px solid #28a745',
+              minWidth: 200,
+              fontSize: '1.25rem',
+              height: '3.2rem',
+              fontWeight: 400,
+              fontFamily: 'Arial, sans-serif',
+              background: '#f8fff6',
+              color: '#222',
+              boxShadow: '0 2px 8px rgba(40,167,69,0.07)',
+            }}>
+            <option value="">All Machine Types</option>
+            {[...new Set(products.map(p => p.machine_type).filter(Boolean))].map(m => (
+              <option key={m} value={m}>{m}</option>
+            ))}
+          </select>
+          <select value={model} onChange={e => setModel(e.target.value)}
+            style={{
+              padding: '1.1rem 2.2rem',
+              borderRadius: 12,
+              border: '2px solid #28a745',
+              minWidth: 200,
+              fontSize: '1.25rem',
+              height: '3.2rem',
+              fontWeight: 400,
+              fontFamily: 'Arial, sans-serif',
+              background: '#f8fff6',
+              color: '#222',
+              boxShadow: '0 2px 8px rgba(40,167,69,0.07)',
+            }}>
+            <option value="">All Models</option>
+            {[...new Set(products.map(p => p.model).filter(Boolean))].map(m => (
+              <option key={m} value={m}>{m}</option>
+            ))}
+          </select>
         </div>
         {loading ? (
           <div style={{ textAlign: 'center', color: '#888' }}>Loading products...</div>
@@ -48,7 +162,11 @@ export default function ProductGallery() {
               margin: '0 auto',
             }}
           >
-            {products.map((product) => (
+            {products
+              .filter(product => !manufacturer || product.manufacturer === manufacturer)
+              .filter(product => !machineType || product.machine_type === machineType)
+              .filter(product => !model || product.model === model)
+              .map((product) => (
               <div
                 key={product.id}
                 className="product-card"
@@ -76,8 +194,13 @@ export default function ProductGallery() {
                       <>${product.price.toFixed(2)}{' '}</>
                     )}
                     {product.quantity !== undefined && (
-                      <span style={{ fontSize: '0.95em', color: '#888' }}>
-                        ({product.quantity} in stock)
+                      <span style={{
+                        fontSize: '0.95em',
+                        color: product.quantity > 0 ? '#28a745' : '#d32f2f',
+                        fontWeight: 600,
+                        marginLeft: 8
+                      }}>
+                        {product.quantity > 0 ? 'In Stock' : 'Out of Stock'}
                       </span>
                     )}
                   </div>
@@ -124,30 +247,83 @@ export default function ProductGallery() {
                   >
                     View
                   </Link>
-                <button
-                  style={{
+                {getProductQuantity(cart, product.id) > 0 ? (
+                  <div style={{
                     flex: 1,
-                    padding: '0.75rem 0',
-                    border: 'none',
-                    background: '#28a745',
-                    color: '#fff',
-                    fontWeight: 600,
-                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: '#eafbe7',
                     borderBottomRightRadius: '12px',
-                    transition: 'background 0.2s, box-shadow 0.2s',
-                    boxShadow: '0 2px 8px rgba(40,167,69,0.18)',
-                  }}
-                  onMouseOver={e => {
-                    e.currentTarget.style.background = '#1e7e34';
-                    e.currentTarget.style.boxShadow = '0 4px 16px rgba(40,167,69,0.22)';
-                  }}
-                  onMouseOut={e => {
-                    e.currentTarget.style.background = '#28a745';
-                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(40,167,69,0.18)';
-                  }}
-                >
-                  Add to Cart
-                </button>
+                    borderLeft: '1px solid #e0e0e0',
+                    padding: '0.5rem 0',
+                    gap: 8,
+                  }}>
+                    <button
+                      style={{
+                        background: '#28a745',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: 6,
+                        width: 28,
+                        height: 28,
+                        fontWeight: 700,
+                        fontSize: '1.2rem',
+                        cursor: 'pointer',
+                        marginRight: 4,
+                      }}
+                      onClick={() => dispatch({ type: 'SUBTRACT_FROM_CART', product })}
+                      aria-label="Decrease quantity"
+                    >
+                      -
+                    </button>
+                    <span style={{ minWidth: 24, textAlign: 'center', fontWeight: 600, color: '#222' }}>{getProductQuantity(cart, product.id)}</span>
+                    <button
+                      style={{
+                        background: '#28a745',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: 6,
+                        width: 28,
+                        height: 28,
+                        fontWeight: 700,
+                        fontSize: '1.2rem',
+                        cursor: 'pointer',
+                        marginLeft: 4,
+                      }}
+                      onClick={() => dispatch({ type: 'ADD_TO_CART', product })}
+                      aria-label="Increase quantity"
+                    >
+                      +
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    style={{
+                      flex: 1,
+                      padding: '0.75rem 0',
+                      border: 'none',
+                      background: '#28a745',
+                      color: '#fff',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      borderBottomRightRadius: '12px',
+                      transition: 'background 0.2s, box-shadow 0.2s',
+                      boxShadow: '0 2px 8px rgba(40,167,69,0.18)',
+                    }}
+                    onMouseOver={e => {
+                      e.currentTarget.style.background = '#1e7e34';
+                      e.currentTarget.style.boxShadow = '0 4px 16px rgba(40,167,69,0.22)';
+                    }}
+                    onMouseOut={e => {
+                      e.currentTarget.style.background = '#28a745';
+                      e.currentTarget.style.boxShadow = '0 2px 8px rgba(40,167,69,0.18)';
+                    }}
+                    onClick={() => handleAddToCart(product)}
+                  >
+                    Add to Cart
+                  </button>
+                )}
               </div>
             </div>
           ))}

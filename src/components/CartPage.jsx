@@ -2,6 +2,7 @@ import React from "react";
 import Navbar from "./Navbar.jsx";
 import Footer from "./Footer.jsx";
 import { useCart } from "./CartContext.jsx";
+import { getProductQuantity } from "./CartContext.jsx";
 
 export default function CartPage() {
   const { cart, dispatch } = useCart();
@@ -40,15 +41,69 @@ export default function CartPage() {
                 {cart.items.map(({ product, quantity }) => (
                   <tr key={product.id} style={{ borderBottom: '1px solid #f0f0f0' }}>
                     <td style={{ padding: '0.5rem' }}>{product.name}</td>
-                    <td style={{ textAlign: 'center' }}>{quantity}</td>
+                    <td style={{ textAlign: 'center' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                        <button
+                          style={{
+                            background: '#28a745',
+                            color: '#fff',
+                            border: 'none',
+                            borderRadius: 6,
+                            width: 28,
+                            height: 28,
+                            fontWeight: 700,
+                            fontSize: '1.2rem',
+                            cursor: 'pointer',
+                          }}
+                          onClick={() => dispatch({ type: 'SUBTRACT_FROM_CART', product })}
+                          aria-label="Decrease quantity"
+                        >
+                          -
+                        </button>
+                        <span style={{ minWidth: 24, textAlign: 'center', fontWeight: 600, color: '#222' }}>{quantity}</span>
+                        <button
+                          style={{
+                            background: '#28a745',
+                            color: '#fff',
+                            border: 'none',
+                            borderRadius: 6,
+                            width: 28,
+                            height: 28,
+                            fontWeight: 700,
+                            fontSize: '1.2rem',
+                            cursor: 'pointer',
+                          }}
+                          onClick={() => dispatch({ type: 'ADD_TO_CART', product })}
+                          aria-label="Increase quantity"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </td>
                     <td style={{ textAlign: 'right' }}>${(product.price * quantity).toFixed(2)}</td>
                     <td>
                       <button
                         className="btn secondary"
-                        style={{ fontSize: '0.95rem', padding: '0.3rem 0.8rem', borderRadius: 6, marginLeft: 8 }}
+                        style={{
+                          fontSize: '1.2rem',
+                          padding: '0.3rem 0.8rem',
+                          borderRadius: 6,
+                          marginLeft: 8,
+                          background: 'none',
+                          color: '#d32f2f',
+                          border: 'none',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer',
+                        }}
+                        title="Remove from cart"
                         onClick={() => dispatch({ type: 'REMOVE_FROM_CART', id: product.id })}
                       >
-                        Remove
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#d32f2f" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                          <line x1="5" y1="5" x2="15" y2="15" />
+                          <line x1="15" y1="5" x2="5" y2="15" />
+                        </svg>
                       </button>
                     </td>
                   </tr>

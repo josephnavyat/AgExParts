@@ -24,7 +24,7 @@ export default function Navbar() {
         <div className="container nav-inner">
           <div className="brand">
             <img src="/logo.png" alt="AgEx Parts logo" style={{ height: '80px', width: 'auto' }} />
-            <h1 className="distressed">For your ideal field</h1>
+            <h1 className="distressed">For your ideal PART</h1>
           </div>
           <div className="nav-cta" style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
             <Link to="/" className="btn secondary distressed" style={{ textDecoration: 'none', fontWeight: 600, fontSize: '1.1rem' }}>

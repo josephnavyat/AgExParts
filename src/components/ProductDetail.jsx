@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import Navbar from "./Navbar.jsx";
 import Footer from "./Footer.jsx";
 import { useCart } from "./CartContext.jsx";
+import { getProductQuantity } from "./CartContext.jsx";
 import "../styles/site.css";
 
 export default function ProductDetail() {
@@ -11,7 +12,7 @@ export default function ProductDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const { dispatch } = useCart();
+  const { cart, dispatch } = useCart();
 
   useEffect(() => {
     fetch(`http://localhost:4000/api/products`)
@@ -56,8 +57,13 @@ export default function ProductDetail() {
             <div style={{ color: '#888', fontSize: '1.1rem', marginBottom: 16 }}>{product.part_number}</div>
             <div style={{ color: '#333', fontWeight: 600, fontSize: '1.3rem', marginBottom: 12 }}>
               ${product.price?.toFixed(2)}
-              <span style={{ fontSize: '1rem', color: '#888', marginLeft: 12 }}>
-                {product.quantity} in stock
+              <span style={{
+                fontSize: '1rem',
+                color: product.quantity > 0 ? '#28a745' : '#d32f2f',
+                fontWeight: 600,
+                marginLeft: 12
+              }}>
+                {product.quantity && product.quantity > 0 ? 'In Stock' : 'Out of Stock'}
               </span>
             </div>
             <div style={{ color: '#555', fontSize: '1.1rem', marginBottom: 18 }}>{product.description}</div>
@@ -88,29 +94,69 @@ export default function ProductDetail() {
               >
                 Back to Catalog
               </Link>
-              <button
-                className="btn secondary"
-                style={{
-                  padding: '0.9rem 2.2rem',
-                  fontWeight: 700,
-                  fontSize: '1.1rem',
-                  borderRadius: '10px',
-                  background: '#f0f0f0',
-                  color: '#222',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.10)',
-                  border: 'none',
-                  letterSpacing: '0.04em',
-                  textAlign: 'center',
-                  display: 'inline-block',
-                  cursor: 'pointer',
-                  transition: 'background 0.2s',
-                }}
-                onMouseOver={e => (e.currentTarget.style.background = '#e0e0e0')}
-                onMouseOut={e => (e.currentTarget.style.background = '#f0f0f0')}
-                onClick={() => dispatch({ type: 'ADD_TO_CART', product })}
-              >
-                Add to Cart
-              </button>
+              {getProductQuantity(cart, product.id) > 0 ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#eafbe7', borderRadius: 8, padding: '0.5rem 1.2rem' }}>
+                  <button
+                    style={{
+                      background: '#28a745',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: 6,
+                      width: 32,
+                      height: 32,
+                      fontWeight: 700,
+                      fontSize: '1.2rem',
+                      cursor: 'pointer',
+                    }}
+                    onClick={() => dispatch({ type: 'SUBTRACT_FROM_CART', product })}
+                    aria-label="Decrease quantity"
+                  >
+                    -
+                  </button>
+                  <span style={{ minWidth: 28, textAlign: 'center', fontWeight: 600, color: '#222', fontSize: '1.1rem' }}>{getProductQuantity(cart, product.id)}</span>
+                  <button
+                    style={{
+                      background: '#28a745',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: 6,
+                      width: 32,
+                      height: 32,
+                      fontWeight: 700,
+                      fontSize: '1.2rem',
+                      cursor: 'pointer',
+                    }}
+                    onClick={() => dispatch({ type: 'ADD_TO_CART', product })}
+                    aria-label="Increase quantity"
+                  >
+                    +
+                  </button>
+                </div>
+              ) : (
+                <button
+                  className="btn secondary"
+                  style={{
+                    padding: '0.9rem 2.2rem',
+                    fontWeight: 700,
+                    fontSize: '1.1rem',
+                    borderRadius: '10px',
+                    background: '#f0f0f0',
+                    color: '#222',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.10)',
+                    border: 'none',
+                    letterSpacing: '0.04em',
+                    textAlign: 'center',
+                    display: 'inline-block',
+                    cursor: 'pointer',
+                    transition: 'background 0.2s',
+                  }}
+                  onMouseOver={e => (e.currentTarget.style.background = '#e0e0e0')}
+                  onMouseOut={e => (e.currentTarget.style.background = '#f0f0f0')}
+                  onClick={() => dispatch({ type: 'ADD_TO_CART', product })}
+                >
+                  Add to Cart
+                </button>
+              )}
             </div>
           </div>
         )}
