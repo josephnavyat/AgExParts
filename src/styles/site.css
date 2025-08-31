@@ -1,3 +1,8 @@
+@media (max-width: 480px) {
+  .brand h1 {
+    display: none;
+  }
+}
 img {
   max-width: 100%;
   height: auto;
