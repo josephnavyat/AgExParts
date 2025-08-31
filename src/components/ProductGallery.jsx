@@ -69,8 +69,9 @@ export default function ProductGallery() {
         </div>
       )}
       <div className="product-gallery" style={{ padding: '2rem' }}>
-        <div className="gallery-title-banner">
-          <h2 className="distressed gallery-title">Product Catalog</h2>
+        <div style={{ height: 72 }} />
+        <div className="gallery-title-banner" style={{ textAlign: 'center', marginBottom: '1.2rem', marginTop: '0.5rem' }}>
+          <h2 className="distressed gallery-title" style={{ margin: 0, fontSize: '2rem', fontWeight: 700 }}>Product Catalog</h2>
           {anyOutOfStock && (
             <div style={{
               background: '#fff3f3',
@@ -90,15 +91,15 @@ export default function ProductGallery() {
           )}
         </div>
         {/* Filter boxes */}
-        <div style={{ display: 'flex', gap: 16, margin: '1.2rem 0 2rem 0', justifyContent: 'center', flexWrap: 'wrap' }}>
+  <div style={{ display: 'flex', gap: 16, margin: '1.2rem 0 2rem 0', justifyContent: 'center', flexWrap: 'wrap' }}>
           <select value={manufacturer} onChange={e => setManufacturer(e.target.value)}
             style={{
-              padding: '0.7rem 1.2rem',
+              padding: '1.1rem 1.2rem',
               borderRadius: 10,
               border: '2px solid #28a745',
               minWidth: 140,
               fontSize: '1rem',
-              height: '2.2rem',
+              height: '3.2rem',
               fontWeight: 400,
               fontFamily: 'Arial, sans-serif',
               background: '#f8fff6',
@@ -112,12 +113,12 @@ export default function ProductGallery() {
           </select>
           <select value={machineType} onChange={e => setMachineType(e.target.value)}
             style={{
-              padding: '0.7rem 1.2rem',
+              padding: '1.1rem 1.2rem',
               borderRadius: 10,
               border: '2px solid #28a745',
               minWidth: 140,
               fontSize: '1rem',
-              height: '2.2rem',
+              height: '3.2rem',
               fontWeight: 400,
               fontFamily: 'Arial, sans-serif',
               background: '#f8fff6',
@@ -131,12 +132,12 @@ export default function ProductGallery() {
           </select>
           <select value={model} onChange={e => setModel(e.target.value)}
             style={{
-              padding: '0.7rem 1.2rem',
+              padding: '1.1rem 1.2rem',
               borderRadius: 10,
               border: '2px solid #28a745',
               minWidth: 140,
               fontSize: '1rem',
-              height: '2.2rem',
+              height: '3.2rem',
               fontWeight: 400,
               fontFamily: 'Arial, sans-serif',
               background: '#f8fff6',
@@ -150,12 +151,12 @@ export default function ProductGallery() {
           </select>
           <select value={sort} onChange={e => setSort(e.target.value)}
             style={{
-              padding: '0.7rem 1.2rem',
+              padding: '1.1rem 1.2rem',
               borderRadius: 10,
               border: '2px solid #28a745',
               minWidth: 140,
               fontSize: '1rem',
-              height: '2.2rem',
+              height: '3.2rem',
               fontWeight: 400,
               fontFamily: 'Arial, sans-serif',
               background: '#f8fff6',
