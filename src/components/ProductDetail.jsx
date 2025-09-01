@@ -15,7 +15,7 @@ export default function ProductDetail() {
   const { cart, dispatch } = useCart();
 
   useEffect(() => {
-       fetch("https://agexparts.onrender.com/api/products")
+  fetch(`${import.meta.env.VITE_API_URL}/api/products`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch product");
         return res.json();
