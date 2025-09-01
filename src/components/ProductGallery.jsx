@@ -30,7 +30,7 @@ export default function ProductGallery() {
   };
 
   useEffect(() => {
-      fetch("https://agexparts.onrender.com/api/products")
+  fetch(`${import.meta.env.VITE_API_URL}/api/products`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch products");
         return res.json();
@@ -217,8 +217,10 @@ export default function ProductGallery() {
                   <h3 style={{ margin: '0 0 0.3rem 0', fontSize: '1rem' }}>{product.name}</h3>
                   <p style={{ color: '#666', fontSize: '0.85rem' }}>{product.description}</p>
                   <div style={{ color: '#333', fontWeight: 600, marginTop: 6, fontSize: '0.95rem' }}>
-                    {product.price !== undefined && (
+                    {typeof product.price === 'number' ? (
                       <>${product.price.toFixed(2)}{' '}</>
+                    ) : (
+                      <>Price N/A </>
                     )}
                     {product.quantity !== undefined && (
                       <span style={{
