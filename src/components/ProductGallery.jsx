@@ -29,22 +29,32 @@ export default function ProductGallery() {
     setTimeout(() => setShowBanner(false), 3000);
   };
 
-    useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const res = await fetch('/api/products');
-        const data = await res.json();
-        setProducts(data);
-      } catch (error) {
-        console.error('Failed to fetch products:', error);
-      } finally {
-  setLoading(false);
-      }
-    };
-    fetchProducts();
-  }, []);
+useEffect(() => {
+  const controller = new AbortController();
 
-/* 
+  const fetchProducts = async () => {
+    try {
+      const res = await fetch('/.netlify/functions/get_data', {
+        signal: controller.signal,
+      });
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+      const data = await res.json();
+      setProducts(data);
+    } catch (error) {
+      if (error.name !== 'AbortError') {
+        console.error('Failed to fetch products:', error);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchProducts();
+
+  return () => controller.abort();
+}, []);
+
+/*
   //this is for fetching products from the locally.
   useEffect(() => {
   fetch(`${import.meta.env.VITE_API_URL}/api/products`)
