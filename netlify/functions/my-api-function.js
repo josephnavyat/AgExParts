@@ -1,7 +1,7 @@
 import { Client } from '@neondatabase/serverless';
 
 export default async (req) => {
-  const client = new Client(process.env.NETLIFY_DATABASE_URL);
+  const client = new Client(process.env.DATABASE_URL);
   try {
     await client.connect();
     const { rows } = await client.query('SELECT * FROM your_table;');
