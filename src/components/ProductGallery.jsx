@@ -30,7 +30,7 @@ export default function ProductGallery() {
   };
 
   useEffect(() => {
-  fetch('/.netlify/functions/my-api-function')
+  fetch(`${import.meta.env.VITE_API_URL}/api/products`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch products");
         return res.json();
@@ -44,6 +44,7 @@ export default function ProductGallery() {
         setLoading(false);
       });
   }, []);
+  
 
   return (
     <>

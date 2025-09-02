@@ -15,18 +15,22 @@ export default function ProductDetail() {
   const { cart, dispatch } = useCart();
 
   useEffect(() => {
-  fetch('/.netlify/functions/my-api-function')
+  fetch(`${import.meta.env.VITE_API_URL}/api/products`)
       .then((res) => {
+        console.log('Fetch response:', res);
         if (!res.ok) throw new Error("Failed to fetch product");
         return res.json();
       })
       .then((data) => {
+        console.log('Fetched data:', data);
         const found = data.find((p) => String(p.id) === String(id));
+        console.log('Found product:', found);
         if (!found) throw new Error("Product not found");
         setProduct(found);
         setLoading(false);
       })
       .catch((err) => {
+        console.error('Fetch error:', err);
         setError(err.message);
         setLoading(false);
       });
