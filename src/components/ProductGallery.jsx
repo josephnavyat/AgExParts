@@ -29,6 +29,25 @@ export default function ProductGallery() {
     setTimeout(() => setShowBanner(false), 3000);
   };
 
+    useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch('/api/products');
+        const data = await res.json();
+        setProducts(data);
+      } catch (error) {
+        console.error('Failed to fetch products:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  if (isLoading) return <div>Loading...</div>;
+
+/* 
+  //this is for fetching products from the locally.
   useEffect(() => {
   fetch(`${import.meta.env.VITE_API_URL}/api/products`)
       .then((res) => {
@@ -43,7 +62,7 @@ export default function ProductGallery() {
         setError(err.message);
         setLoading(false);
       });
-  }, []);
+  }, []);*/
   
 
   return (
