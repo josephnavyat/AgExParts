@@ -15,7 +15,7 @@ const pool = new Pool({
 });
 
 app.use(cors({
-  origin: ['https://agexparts.netlify.app', 'http://localhost:5174']
+  origin: ['https://agexparts.netlify.app', 'http://localhost:5173', 'http://localhost:5174']
 }));
 app.use(express.json());
 
