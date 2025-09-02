@@ -15,7 +15,7 @@ export default function ProductDetail() {
   const { cart, dispatch } = useCart();
 
   useEffect(() => {
-  fetch(`${import.meta.env.VITE_API_URL}/api/products`)
+  fetch('/.netlify/functions/my-api-function')
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch product");
         return res.json();
