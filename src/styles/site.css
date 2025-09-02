@@ -2,7 +2,6 @@
   .brand h1 {
     display: none;
   }
-}
 img {
   max-width: 100%;
   height: auto;
@@ -15,7 +14,32 @@ img {
 
 @media (max-width: 480px) {
   .card-grid { grid-template-columns: 1fr; }
-  .gallery-grid { grid-template-columns: 1fr !important; }
+  .gallery-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 20px;
+  }
+  .gallery-grid img {
+    width: 100%;
+    height: 180px;
+    object-fit: contain;
+    background: #f8f8f8;
+    display: block;
+  }
+/* Desktop styles */
+}
+.gallery-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 32px;
+}
+.gallery-grid img {
+  width: 100%;
+  height: 220px;
+  object-fit: contain;
+  background: #f8f8f8;
+  display: block;
+}
   .product-detail-card { padding: 1rem !important; }
   .product-gallery { padding: 1rem !important; }
   .feature .panel { padding: 12px !important; }
