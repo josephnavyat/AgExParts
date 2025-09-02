@@ -38,13 +38,11 @@ export default function ProductGallery() {
       } catch (error) {
         console.error('Failed to fetch products:', error);
       } finally {
-        setIsLoading(false);
+  setLoading(false);
       }
     };
     fetchProducts();
   }, []);
-
-  if (isLoading) return <div>Loading...</div>;
 
 /* 
   //this is for fetching products from the locally.
