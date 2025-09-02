@@ -205,9 +205,9 @@ useEffect(() => {
             className="gallery-grid"
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
+              gridTemplateColumns: 'repeat(5, 1fr)',
               gap: '1.2rem',
-              maxWidth: '1000px',
+              maxWidth: '700px',
               margin: '0 auto',
             }}
           >
@@ -242,8 +242,7 @@ useEffect(() => {
                   style={{ width: '100%', height: '120px', objectFit: 'cover', background: '#f8f8f8' }}
                 />
                 <div style={{ flex: 1, padding: '0.6rem' }}>
-                  <h3 style={{ margin: '0 0 0.3rem 0', fontSize: '1rem' }}>{product.name}</h3>
-                  <p style={{ color: '#666', fontSize: '0.85rem' }}>{product.description}</p>
+                  <h3 style={{ margin: '0 0 0.3rem 0', color: '#333',fontSize: '1rem' }}>{product.name}</h3>
                   <div style={{ color: '#333', fontWeight: 600, marginTop: 6, fontSize: '0.95rem' }}>
                     {typeof product.price === 'number' ? (
                       <>${product.price.toFixed(2)}{' '}</>

@@ -15,7 +15,8 @@ export default function ProductDetail() {
   const { cart, dispatch } = useCart();
 
   useEffect(() => {
-  fetch(`${import.meta.env.VITE_API_URL}/api/products`)
+  //  fetch(`${import.meta.env.VITE_API_URL}/api/products`)
+  fetch('/.netlify/functions/get-data')
       .then((res) => {
         console.log('Fetch response:', res);
         if (!res.ok) throw new Error("Failed to fetch product");
@@ -34,7 +35,7 @@ export default function ProductDetail() {
         setError(err.message);
         setLoading(false);
       });
-  }, [id]);
+  }, [id]);*/
 
   return (
     <>
