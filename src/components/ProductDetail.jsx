@@ -15,26 +15,31 @@ export default function ProductDetail() {
   const { cart, dispatch } = useCart();
 
   useEffect(() => {
-  //  fetch(`${import.meta.env.VITE_API_URL}/api/products`)
-  fetch('/.netlify/functions/get-data')
-      .then((res) => {
-        console.log('Fetch response:', res);
-        if (!res.ok) throw new Error("Failed to fetch product");
-        return res.json();
-      })
-      .then((data) => {
-        console.log('Fetched data:', data);
+    const controller = new AbortController();
+
+    const fetchProduct = async () => {
+      try {
+        const res = await fetch('/.netlify/functions/get-data', {
+          signal: controller.signal,
+        });
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        const data = await res.json();
         const found = data.find((p) => String(p.id) === String(id));
-        console.log('Found product:', found);
         if (!found) throw new Error("Product not found");
         setProduct(found);
+      } catch (error) {
+        if (error.name !== 'AbortError') {
+          console.error('Failed to fetch product:', error);
+          setError(error.message);
+        }
+      } finally {
         setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Fetch error:', err);
-        setError(err.message);
-        setLoading(false);
-      });
+      }
+    };
+
+    fetchProduct();
+
+    return () => controller.abort();
   }, [id]);
 
   return (
