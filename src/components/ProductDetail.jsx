@@ -35,7 +35,7 @@ export default function ProductDetail() {
         setError(err.message);
         setLoading(false);
       });
-  }, [id]);*/
+  }, [id]);
 
   return (
     <>
