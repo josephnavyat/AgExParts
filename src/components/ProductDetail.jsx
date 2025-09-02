@@ -39,7 +39,7 @@ export default function ProductDetail() {
   
     return () => controller.abort();
   }, []);
-  
+  /*
   useEffect(() => {
   fetch(`${import.meta.env.VITE_API_URL}/api/products`)
       .then((res) => {
@@ -60,7 +60,7 @@ export default function ProductDetail() {
         setError(err.message);
         setLoading(false);
       });
-  }, [id]);
+  }, [id]);*/
 
   return (
     <>
