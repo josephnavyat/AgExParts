@@ -86,7 +86,7 @@ export default function ProductDetail() {
             <h2 className="distressed" style={{ fontSize: '2.2rem', marginBottom: 8 }}>{product.name}</h2>
             <div style={{ color: '#888', fontSize: '1.1rem', marginBottom: 16 }}>{product.part_number}</div>
             <div style={{ color: '#333', fontWeight: 600, fontSize: '1.3rem', marginBottom: 12 }}>
-              ${product.price?.toFixed(2)}
+              {typeof product.price === 'number' ? `$${product.price.toFixed(2)}` : 'Price N/A'}
               <span style={{
                 fontSize: '1rem',
                 color: product.quantity > 0 ? '#28a745' : '#d32f2f',
