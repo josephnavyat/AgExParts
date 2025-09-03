@@ -8,15 +8,6 @@ import Footer from "./Footer.jsx";
 import "../styles/site.css";
 
 export default function ProductGallery() {
-  const [columns, setColumns] = useState(window.innerWidth <= 480 ? 2 : 4);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setColumns(window.innerWidth <= 480 ? 2 : 4);
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
   const [products, setProducts] = useState([]);
   // If any product is out of stock, show a banner
   const anyOutOfStock = products.some(p => p.quantity === 0);
@@ -214,9 +205,7 @@ useEffect(() => {
             className="gallery-grid"
             style={{
               display: 'grid',
-              gridTemplateColumns: `repeat(${columns}, 1fr)`,
-              gap: columns === 2 ? '12px' : '1.2rem',
-              maxWidth: columns === 2 ? '100%' : '700px',
+              maxWidth: '700px',
               margin: '0 auto',
             }}
           >
