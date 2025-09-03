@@ -205,7 +205,7 @@ useEffect(() => {
             className="gallery-grid"
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(5, 1fr)',
+              //gridTemplateColumns: 'repeat(4, 1fr)',
               gap: '1.2rem',
               maxWidth: '700px',
               margin: '0 auto',
