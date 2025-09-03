@@ -15,11 +15,12 @@ img {
 @media (max-width: 480px) {
   .card-grid { grid-template-columns: 1fr; }
   .gallery-grid {
+    display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
-    gap: 16px;
+    gap: 12px !important;
   }
   .gallery-grid img {
-    height: 100px;
+    height: 100px !important;
   }
 /* Desktop styles */
 }
