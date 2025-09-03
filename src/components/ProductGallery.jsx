@@ -244,11 +244,7 @@ useEffect(() => {
                 <div style={{ flex: 1, padding: '0.6rem' }}>
                   <h3 style={{ margin: '0 0 0.3rem 0', color: '#333',fontSize: '1rem' }}>{product.name}</h3>
                   <div style={{ color: '#333', fontWeight: 600, marginTop: 6, fontSize: '0.95rem' }}>
-                    {typeof product.price === 'number' ? (
-                      <>${product.price.toFixed(2)}{' '}</>
-                    ) : (
-                      <>Price N/A </>
-                    )}
+                    {(!isNaN(Number(product.price)) && product.price !== null && product.price !== undefined) ? `$${Number(product.price).toFixed(2)}` : 'Price N/A'}
                     {product.quantity !== undefined && (
                       <span style={{
                         fontSize: '0.9em',
