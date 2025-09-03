@@ -205,9 +205,9 @@ useEffect(() => {
             className="gallery-grid"
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(4, 1fr)',
-              gap: '1.5rem',
-              maxWidth: '900px',
+              gridTemplateColumns: 'repeat(5, 1fr)',
+              gap: '1.2rem',
+              maxWidth: '700px',
               margin: '0 auto',
             }}
           >
@@ -232,14 +232,14 @@ useEffect(() => {
                   boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
                   overflow: 'hidden',
                   background: '#fff',
-                  minHeight: '180px',
+                  minHeight: '260px',
                   fontSize: '0.97rem',
                 }}
               >
                 <img
                   src={product.image}
                   alt={product.name}
-                  style={{ width: '100%', height: '140px', objectFit: 'contain', background: '#f8f8f8' }}
+                  style={{ width: '100%', height: '120px', objectFit: 'cover', background: '#f8f8f8' }}
                 />
                 <div style={{ flex: 1, padding: '0.6rem' }}>
                   <h3 style={{ margin: '0 0 0.3rem 0', color: '#333',fontSize: '1rem' }}>{product.name}</h3>
