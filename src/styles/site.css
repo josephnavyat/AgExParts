@@ -15,7 +15,6 @@ img {
 @media (max-width: 480px) {
   .card-grid { grid-template-columns: 1fr; }
   .gallery-grid {
-    display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 12px !important;
   }
@@ -26,7 +25,7 @@ img {
 }
 .gallery-grid {
   display: grid !important;
-  grid-template-columns: repeat(4, 1fr) !important;
+  grid-template-columns: repeat(4, 1fr);
   gap: 24px;
 }
 .gallery-grid img {
