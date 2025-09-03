@@ -205,9 +205,12 @@ useEffect(() => {
             className="gallery-grid"
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(4, 1fr)',
-              gap: '1.2rem',
-              maxWidth: '700px',
+              gridTemplateColumns:
+                window.innerWidth <= 480
+                  ? 'repeat(2, 1fr)'
+                  : 'repeat(4, 1fr)',
+              gap: window.innerWidth <= 480 ? '12px' : '1.2rem',
+              maxWidth: window.innerWidth <= 480 ? '100%' : '700px',
               margin: '0 auto',
             }}
           >
