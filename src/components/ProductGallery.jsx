@@ -205,6 +205,7 @@ useEffect(() => {
             className="gallery-grid"
             style={{
               display: 'grid',
+              width: '100%',
               margin: '0 auto',
             }}
           >
