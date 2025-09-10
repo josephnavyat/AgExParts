@@ -27,6 +27,7 @@ img {
   display: grid !important;
   grid-template-columns: repeat(4, 1fr);
   gap: 24px;
+  width: 100%;
 }
 .gallery-grid img {
   width: 100%;
