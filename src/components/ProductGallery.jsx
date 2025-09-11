@@ -7,9 +7,9 @@ import Navbar from "./Navbar.jsx";
 import Footer from "./Footer.jsx";
 import "../styles/site.css";
 
+
 export default function ProductGallery() {
   const [products, setProducts] = useState([]);
-  // If any product is out of stock, show a banner
   const anyOutOfStock = products.some(p => p.quantity === 0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -21,6 +21,10 @@ export default function ProductGallery() {
   const [machineType, setMachineType] = useState('');
   const [model, setModel] = useState('');
   const [sort, setSort] = useState('');
+
+  // Quick add state: track which product is in quick add mode and its quantity
+  const [quickAddMap, setQuickAddMap] = useState({}); // { [productId]: true/false }
+  const [qtyMap, setQtyMap] = useState({}); // { [productId]: number }
 
   // Helper to show banner for 3 seconds
   const handleAddToCart = (product) => {
@@ -217,9 +221,9 @@ useEffect(() => {
                 return 0;
               })
               .map((product) => {
-                const [quickAdd, setQuickAdd] = React.useState(false);
-                const [qty, setQty] = React.useState(getProductQuantity(cart, product.id) || 1);
                 const inStock = product.quantity > 0;
+                const quickAdd = !!quickAddMap[product.id];
+                const qty = qtyMap[product.id] ?? (getProductQuantity(cart, product.id) || 1);
                 return (
                   <div key={product.id} className="product-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: 320 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
@@ -256,7 +260,7 @@ useEffect(() => {
                         <button
                           className="btn primary"
                           style={{ flex: 1, textAlign: 'center', fontWeight: 600, borderRadius: 8, padding: '0.6rem 0', background: '#28a745', color: '#fff', border: 'none', cursor: 'pointer' }}
-                          onClick={() => setQuickAdd(true)}
+                          onClick={() => setQuickAddMap(q => ({ ...q, [product.id]: true }))}
                           disabled={!inStock}
                         >
                           Quick Add
@@ -266,7 +270,7 @@ useEffect(() => {
                           <button
                             style={{ background: '#28a745', color: '#fff', border: 'none', borderRadius: 6, width: 28, height: 28, fontWeight: 700, fontSize: '1.2rem', cursor: 'pointer' }}
                             onClick={() => {
-                              if (qty > 1) setQty(qty - 1);
+                              if (qty > 1) setQtyMap(qm => ({ ...qm, [product.id]: qty - 1 }));
                               dispatch({ type: 'SUBTRACT_FROM_CART', product });
                             }}
                             disabled={qty <= 1}
@@ -281,7 +285,7 @@ useEffect(() => {
                             value={qty}
                             onChange={e => {
                               let val = Math.max(1, Math.min(Number(e.target.value), product.quantity || 99));
-                              setQty(val);
+                              setQtyMap(qm => ({ ...qm, [product.id]: val }));
                               dispatch({ type: 'SET_QUANTITY', product, quantity: val });
                             }}
                             style={{ width: 38, textAlign: 'center', fontWeight: 600, border: '1px solid #ccc', borderRadius: 4, fontSize: '1rem', margin: '0 2px' }}
@@ -289,7 +293,7 @@ useEffect(() => {
                           <button
                             style={{ background: '#28a745', color: '#fff', border: 'none', borderRadius: 6, width: 28, height: 28, fontWeight: 700, fontSize: '1.2rem', cursor: 'pointer' }}
                             onClick={() => {
-                              setQty(qty + 1);
+                              setQtyMap(qm => ({ ...qm, [product.id]: qty + 1 }));
                               dispatch({ type: 'ADD_TO_CART', product });
                             }}
                             disabled={qty >= (product.quantity || 99)}
