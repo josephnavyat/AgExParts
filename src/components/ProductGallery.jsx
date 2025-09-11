@@ -247,7 +247,7 @@ useEffect(() => {
                         </span>
                       </div>
                     </div>
-                    <div style={{ display: 'flex', gap: '1.5rem', marginTop: 18 }}>
+                    <div style={{ display: 'flex', gap: '1.5rem', marginTop: 18, justifyContent: 'center', width: '100%' }}>
                       <Link
                         to={{ pathname: `/product/${product.id}` }}
                         state={{ product }}
