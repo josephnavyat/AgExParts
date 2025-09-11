@@ -217,159 +217,20 @@ useEffect(() => {
                 return 0;
               })
               .map((product) => (
-              <div
-                key={product.id}
-                className="product-card"
-                style={{
-                  border: '1px solid #e0e0e0',
-                  borderRadius: '10px',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-                  overflow: 'hidden',
-                  background: '#fff',
-                  minHeight: '260px',
-                  fontSize: '0.97rem',
-                }}
-              >
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  style={{ width: '100%', height: '120px', objectFit: 'cover', background: '#f8f8f8' }}
-                />
-                <div style={{ flex: 1, padding: '0.6rem' }}>
-                  <h3 style={{ margin: '0 0 0.3rem 0', color: '#333', fontSize: '1rem' }}>{product.name}</h3>
-                  <div style={{ color: '#333', fontWeight: 600, marginTop: 6, fontSize: '0.95rem' }}>
-                    {(!isNaN(Number(product.price)) && product.price !== null && product.price !== undefined) ? `$${Number(product.price).toFixed(2)}` : 'Price N/A'}
-                    {product.quantity !== undefined && (
-                      <span style={{
-                        fontSize: '0.9em',
-                        color: product.quantity > 0 ? '#28a745' : '#d32f2f',
-                        fontWeight: 600,
-                        marginLeft: 6
-                      }}>
-                        {product.quantity > 0 ? 'In Stock' : 'Out of Stock'}
-                      </span>
-                    )}
-                  </div>
-                  {product.category && (
-                    <div style={{ fontSize: '0.85em', color: '#888', marginTop: 2 }}>
-                      Category: {product.category}
-                    </div>
-                  )}
-                  {product.manufacturer && (
-                    <div style={{ fontSize: '0.85em', color: '#888' }}>
-                      Manufacturer: {product.manufacturer}
-                    </div>
-                  )}
+              <div key={product.id} className="product-card">
+                <div className="media">
+                  <img
+                    src={product.image_url /* or product.image */}
+                    alt={product.name}
+                    loading="lazy"
+                    sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 220px"
+                  />
                 </div>
-                <div style={{ display: 'flex', borderTop: '1px solid #eee' }}>
-                  <Link
-                    to={`/product/${product.id}`}
-                    className="btn secondary"
-                    style={{
-                      flex: 1,
-                      padding: '0.75rem 0',
-                      border: 'none',
-                      background: '#f0f0f0',
-                      color: '#333',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      borderBottomLeftRadius: '12px',
-                      transition: 'background 0.2s, box-shadow 0.2s',
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.10)',
-                      textAlign: 'center',
-                      textDecoration: 'none',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                    onMouseOver={e => {
-                      e.currentTarget.style.background = '#e0e0e0';
-                      e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.13)';
-                    }}
-                    onMouseOut={e => {
-                      e.currentTarget.style.background = '#f0f0f0';
-                      e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.10)';
-                    }}
-                  >
-                    View
-                  </Link>
-                  {getProductQuantity(cart, product.id) > 0 ? (
-                    <div style={{
-                      flex: 1,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      background: '#eafbe7',
-                      borderBottomRightRadius: '12px',
-                      borderLeft: '1px solid #e0e0e0',
-                      padding: '0.5rem 0',
-                      gap: 8,
-                    }}>
-                      <button
-                        style={{
-                          background: '#28a745',
-                          color: '#fff',
-                          border: 'none',
-                          borderRadius: 6,
-                          width: 28,
-                          height: 28,
-                          fontWeight: 700,
-                          fontSize: '1.2rem',
-                          cursor: 'pointer',
-                          marginRight: 4,
-                        }}
-                        onClick={() => dispatch({ type: 'SUBTRACT_FROM_CART', product })}
-                        aria-label="Decrease quantity"
-                      >
-                        -
-                      </button>
-                      <span style={{ minWidth: 24, textAlign: 'center', fontWeight: 600, color: '#222' }}>{getProductQuantity(cart, product.id)}</span>
-                      <button
-                        style={{
-                          background: '#28a745',
-                          color: '#fff',
-                          border: 'none',
-                          borderRadius: 6,
-                          width: 28,
-                          height: 28,
-                          fontWeight: 700,
-                          fontSize: '1.2rem',
-                          cursor: 'pointer',
-                          marginLeft: 4,
-                        }}
-                        onClick={() => dispatch({ type: 'ADD_TO_CART', product })}
-                        aria-label="Increase quantity"
-                      >
-                        +
-                      </button>
-                    </div>
-                  ) : (
-                    <button
-                      style={{
-                        flex: 1,
-                        padding: '0.75rem 0',
-                        border: 'none',
-                        background: '#28a745',
-                        color: '#fff',
-                        fontWeight: 600,
-                        cursor: 'pointer',
-                        borderBottomRightRadius: '12px',
-                        transition: 'background 0.2s, box-shadow 0.2s',
-                        boxShadow: '0 2px 8px rgba(40,167,69,0.18)',
-                      }}
-                      onMouseOver={e => {
-                        e.currentTarget.style.background = '#1e7e34';
-                        e.currentTarget.style.boxShadow = '0 4px 16px rgba(40,167,69,0.22)';
-                      }}
-                      onMouseOut={e => {
-                        e.currentTarget.style.background = '#28a745';
-                        e.currentTarget.style.boxShadow = '0 2px 8px rgba(40,167,69,0.18)';
-                      }}
-                      onClick={() => handleAddToCart(product)}
-                    >
-                      Add to Cart
-                    </button>
-                  )}
+
+                <div className="body">
+                  <h3 className="title">{product.name}</h3>
+                  {product.manufacturer && <p className="sub">{product.manufacturer}</p>}
+                  {/* price / buttons, etc. */}
                 </div>
               </div>
             ))}
