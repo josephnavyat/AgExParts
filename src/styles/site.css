@@ -1,3 +1,12 @@
+/* Hide on mobile utility */
+.hide-mobile {
+  display: block;
+}
+@media (max-width: 600px) {
+  .hide-mobile {
+    display: none !important;
+  }
+}
 
 /* GLOBAL RESET + VARIABLES */
 :root {
