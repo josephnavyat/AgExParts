@@ -81,53 +81,87 @@ footer { background: #0b0c0e; border-top: 1px solid #1c2026; padding: 50px 0; ma
 .footer-grid h4 { margin: 0 0 10px; font-size: 14px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
 .footer-grid p, .footer-grid a { color: #b7c0cc; font-size: 14px; }
 
-/* GALLERY */
+/* Grid: make cards narrower and auto-wrap nicely */
 .gallery-grid {
-  display: grid !important;
-  grid-template-columns: repeat(4, minmax(0,1fr)) !important; /* desktop 4-up, narrower */
-  gap: 20px !important;
-  width: 100%;
-}
-.gallery-grid > * { min-width: 0; }
-.gallery-grid img {
-  width: 100%;
-  height: 140px;
-  object-fit: contain;
-  background: #f8f8f8;
-  display: block;
-  max-width: 95%;
+  display: grid;
+  /* Try 180px for tight; bump to 200–220px if you want larger cards */
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 14px;
+  align-items: stretch;
+  max-width: 1200px;   /* optional: contain on wide screens */
   margin: 0 auto;
 }
-.product-card {
-  max-width: 260px;
-  margin: 0 auto;
-}
-.product-detail-card { padding: 1rem !important; }
-.product-gallery {
-  padding: 1rem !important;
-}
-.feature .panel { padding: 12px !important; }
 
-/* MEDIA QUERIES */
-@media (max-width: 1200px) {
-  .card-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
+/* Product card styling (move inline styles here to avoid conflicts) */
+.product-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  overflow: hidden;
+  /* remove minHeight inline to let the grid pack tighter */
 }
-@media (max-width: 900px) {
-  .feature { grid-template-columns: 1fr; }
-  .badges { grid-template-columns: 1fr; }
-  .footer-grid { grid-template-columns: 1fr; }
+
+/* Uniform image box so every card looks consistent */
+.product-card .media {
+  aspect-ratio: 4 / 3;         /* or 1/1 for square, 3/2 for wider */
+  position: relative;
+  background: #f7f7f7;         /* neutral backdrop for transparent PNGs */
 }
-@media (max-width: 680px) {
-  section { padding: 32px 0; }
-  .hero-content { padding: 12px; }
-  .card-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+
+/* Fallback for older browsers (optional) */
+@supports not (aspect-ratio: 4 / 3) {
+  .product-card .media { padding-top: 75%; }
+  .product-card .media img { position: absolute; inset: 0; }
 }
-@media (max-width: 480px) {
-  .brand h1 { display: none; }
-  .card-grid { grid-template-columns: 1fr; }
+
+/* Make images fill the box without distortion */
+.product-card .media img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;          /* switch to 'cover' for edge-to-edge (crops) */
+  display: block;
+}
+
+/* Content block */
+.product-card .body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px 12px;
+  font-size: 0.95rem;
+}
+
+/* Title: keep to 2 lines max so heights stay even */
+.product-card .title {
+  font-weight: 600;
+  line-height: 1.25;
+  margin: 0;
+  font-size: clamp(0.9rem, 1.2vw, 1rem);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;        /* limit to 2 lines */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.product-card .sub {
+  margin: 0;
+  color: #666;
+  font-size: 0.85rem;
+}
+
+/* Slightly roomier on larger screens */
+@media (min-width: 768px) {
   .gallery-grid {
-    grid-template-columns: repeat(2, 1fr) !important; /* mobile 2-up */
-    gap: 12px !important;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
   }
-  .gallery-grid img { height: 100px !important; }
+}
+@media (min-width: 1280px) {
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 18px;
+  }
 }
