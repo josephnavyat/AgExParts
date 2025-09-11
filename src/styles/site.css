@@ -1,3 +1,4 @@
+
 /* GLOBAL RESET + VARIABLES */
 :root {
   --bg: #0f1012;
@@ -144,6 +145,15 @@ footer { background: #0b0c0e; border-top: 1px solid #1c2026; padding: 50px 0; ma
   -webkit-line-clamp: 2;        /* limit to 2 lines */
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.product-card h3 {
+  color: #222 !important;
+}
+.product-card .product-description,
+.product-card .product-category,
+.product-card .product-manufacturer {
+  color: #444 !important;
 }
 
 .product-card .sub {
