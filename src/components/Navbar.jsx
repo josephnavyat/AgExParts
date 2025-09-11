@@ -23,8 +23,8 @@ export default function Navbar() {
       <nav id="nav" className={`nav ${scrolled ? 'scrolled' : ''}`}> 
         <div className="container nav-inner">
           <div className="brand">
-            <img src="/logo.png" alt="AgEx Parts logo" style={{ height: '80px', width: 'auto' }} />
-            <h1 className="distressed">For your ideal PART</h1>
+            <img src="/logo.png" alt="AgEx Parts logo" style={{ height: '200px', width: '200px' }} />
+            <h1 className="distressed hide-mobile">For your ideal PART</h1>
           </div>
           <div className="nav-cta" style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
             <Link to="/" className="btn secondary distressed" style={{ textDecoration: 'none', fontWeight: 600, fontSize: '1.1rem' }}>

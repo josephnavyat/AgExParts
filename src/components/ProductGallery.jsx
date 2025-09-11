@@ -226,12 +226,6 @@ useEffect(() => {
                 const qty = qtyMap[product.id] ?? (getProductQuantity(cart, product.id) || 1);
                 return (
                   <div key={product.id} className="product-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: 320 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                      <span title={inStock ? 'In Stock' : 'Out of Stock'} style={{ fontSize: 22 }}>
-                        {inStock ? '✅' : '❌'}
-                      </span>
-                      <h3 className="title" style={{ margin: 0, fontSize: '1.1rem', color: '#222' }}>{product.name}</h3>
-                    </div>
                     <div className="media">
                       <img
                         src={product.image}
@@ -241,34 +235,82 @@ useEffect(() => {
                       />
                     </div>
                     <div className="body" style={{ flex: 1 }}>
+                      <h3 className="title" style={{ margin: 0, fontSize: '1.1rem', color: '#222' }}>{product.name}</h3>
                       {product.manufacturer && <div className="product-manufacturer" style={{ color: '#444', fontSize: '0.95em' }}>{product.manufacturer}</div>}
                       {product.category && <div className="product-category" style={{ color: '#444', fontSize: '0.92em' }}>{product.category}</div>}
                       <div style={{ color: '#333', fontWeight: 600, margin: '8px 0 0 0', fontSize: '1rem' }}>
                         {(!isNaN(Number(product.price)) && product.price !== null && product.price !== undefined) ? `$${Number(product.price).toFixed(2)}` : 'Price N/A'}
                       </div>
+                      <div style={{ margin: '12px 0 0 0', display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <span title={inStock ? 'In Stock' : 'Out of Stock'} style={{ fontSize: 18, fontWeight: 600, color: inStock ? '#28a745' : '#d32f2f', letterSpacing: 0.5 }}>
+                          {inStock ? '✅ In Stock' : '❌ Out of Stock'}
+                        </span>
+                      </div>
                     </div>
-                    <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+                    <div style={{ display: 'flex', gap: '1.5rem', marginTop: 18 }}>
                       <Link
                         to={{ pathname: `/product/${product.id}` }}
                         state={{ product }}
-                        className="btn secondary"
-                        style={{ flex: 1, textAlign: 'center', fontWeight: 600, borderRadius: 8, padding: '0.6rem 0', background: '#f0f0f0', color: '#333', border: 'none', cursor: 'pointer', textDecoration: 'none' }}
+                        className="btn primary"
+                        style={{
+                          padding: '0.9rem 2.2rem',
+                          fontWeight: 700,
+                          fontSize: '1.1rem',
+                          borderRadius: '10px',
+                          background: '#19a974',
+                          color: '#fff',
+                          boxShadow: '0 2px 8px rgba(25,169,116,0.13)',
+                          textDecoration: 'none',
+                          letterSpacing: '0.04em',
+                          transition: 'background 0.2s',
+                          border: 'none',
+                          textAlign: 'center',
+                          display: 'inline-block',
+                        }}
+                        onMouseOver={e => (e.currentTarget.style.background = '#12895c')}
+                        onMouseOut={e => (e.currentTarget.style.background = '#19a974')}
                       >
                         View Details
                       </Link>
                       {!quickAdd ? (
                         <button
-                          className="btn primary"
-                          style={{ flex: 1, textAlign: 'center', fontWeight: 600, borderRadius: 8, padding: '0.6rem 0', background: '#28a745', color: '#fff', border: 'none', cursor: 'pointer' }}
+                          className="btn secondary"
+                          style={{
+                            padding: '0.9rem 2.2rem',
+                            fontWeight: 700,
+                            fontSize: '1.1rem',
+                            borderRadius: '10px',
+                            background: '#f0f0f0',
+                            color: '#222',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.10)',
+                            border: 'none',
+                            letterSpacing: '0.04em',
+                            textAlign: 'center',
+                            display: 'inline-block',
+                            cursor: 'pointer',
+                            transition: 'background 0.2s',
+                          }}
+                          onMouseOver={e => (e.currentTarget.style.background = '#e0e0e0')}
+                          onMouseOut={e => (e.currentTarget.style.background = '#f0f0f0')}
                           onClick={() => setQuickAddMap(q => ({ ...q, [product.id]: true }))}
                           disabled={!inStock}
                         >
                           Quick Add
                         </button>
                       ) : (
-                        <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'center' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#eafbe7', borderRadius: 8, padding: '0.5rem 1.2rem', flex: 1, justifyContent: 'center' }}>
                           <button
-                            style={{ background: '#28a745', color: '#fff', border: 'none', borderRadius: 6, width: 28, height: 28, fontWeight: 700, fontSize: '1.2rem', cursor: 'pointer' }}
+                            style={{
+                              background: '#28a745',
+                              color: '#fff',
+                              border: 'none',
+                              borderRadius: 6,
+                              width: 32,
+                              height: 32,
+                              fontWeight: 700,
+                              fontSize: '1.2rem',
+                              cursor: 'pointer',
+                            }}
                             onClick={() => {
                               if (qty > 1) setQtyMap(qm => ({ ...qm, [product.id]: qty - 1 }));
                               dispatch({ type: 'SUBTRACT_FROM_CART', product });
@@ -278,20 +320,19 @@ useEffect(() => {
                           >
                             -
                           </button>
-                          <input
-                            type="number"
-                            min={1}
-                            max={product.quantity || 99}
-                            value={qty}
-                            onChange={e => {
-                              let val = Math.max(1, Math.min(Number(e.target.value), product.quantity || 99));
-                              setQtyMap(qm => ({ ...qm, [product.id]: val }));
-                              dispatch({ type: 'SET_QUANTITY', product, quantity: val });
-                            }}
-                            style={{ width: 38, textAlign: 'center', fontWeight: 600, border: '1px solid #ccc', borderRadius: 4, fontSize: '1rem', margin: '0 2px' }}
-                          />
+                          <span style={{ minWidth: 28, textAlign: 'center', fontWeight: 600, color: '#222', fontSize: '1.1rem' }}>{qty}</span>
                           <button
-                            style={{ background: '#28a745', color: '#fff', border: 'none', borderRadius: 6, width: 28, height: 28, fontWeight: 700, fontSize: '1.2rem', cursor: 'pointer' }}
+                            style={{
+                              background: '#28a745',
+                              color: '#fff',
+                              border: 'none',
+                              borderRadius: 6,
+                              width: 32,
+                              height: 32,
+                              fontWeight: 700,
+                              fontSize: '1.2rem',
+                              cursor: 'pointer',
+                            }}
                             onClick={() => {
                               setQtyMap(qm => ({ ...qm, [product.id]: qty + 1 }));
                               dispatch({ type: 'ADD_TO_CART', product });
