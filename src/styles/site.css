@@ -40,7 +40,11 @@ img {
   display: block;
 }
   .product-detail-card { padding: 1rem !important; }
-  .product-gallery { padding: 1rem !important; }
+  .product-gallery {
+    padding: 1rem !important;
+    background: rgba(0,255,0,0.08) !important; /* DEBUG: green tint */
+    border: 2px dashed green !important; /* DEBUG: visible border */
+  }
   .feature .panel { padding: 12px !important; }
 }
 
