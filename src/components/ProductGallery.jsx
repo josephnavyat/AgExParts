@@ -230,7 +230,6 @@ useEffect(() => {
                   background: '#fff',
                   minHeight: '260px',
                   fontSize: '0.97rem',
-                  display: 'block',
                 }}
               >
                 <img

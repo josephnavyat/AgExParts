@@ -21,7 +21,6 @@ img {
   .gallery-grid img {
     height: 100px !important;
   }
-/* Desktop styles */
 }
 .gallery-grid {
   display: grid !important;
