@@ -220,7 +220,7 @@ useEffect(() => {
               <div key={product.id} className="product-card">
                 <div className="media">
                   <img
-                    src={product.image_url /* or product.image */}
+                    src={product.image /* or product.image */}
                     alt={product.name}
                     loading="lazy"
                     sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 220px"
