@@ -216,24 +216,93 @@ useEffect(() => {
                 if (sort === 'price-desc') return (b.price || 0) - (a.price || 0);
                 return 0;
               })
-              .map((product) => (
-              <div key={product.id} className="product-card">
-                <div className="media">
-                  <img
-                    src={product.image /* or product.image */}
-                    alt={product.name}
-                    loading="lazy"
-                    sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 220px"
-                  />
-                </div>
-
-                <div className="body">
-                  <h3 className="title">{product.name}</h3>
-                  {product.manufacturer && <p className="sub">{product.manufacturer}</p>}
-                  {/* price / buttons, etc. */}
-                </div>
-              </div>
-            ))}
+              .map((product) => {
+                const [quickAdd, setQuickAdd] = React.useState(false);
+                const [qty, setQty] = React.useState(getProductQuantity(cart, product.id) || 1);
+                const inStock = product.quantity > 0;
+                return (
+                  <div key={product.id} className="product-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: 320 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                      <span title={inStock ? 'In Stock' : 'Out of Stock'} style={{ fontSize: 22 }}>
+                        {inStock ? '✅' : '❌'}
+                      </span>
+                      <h3 className="title" style={{ margin: 0, fontSize: '1.1rem', color: '#222' }}>{product.name}</h3>
+                    </div>
+                    <div className="media">
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        loading="lazy"
+                        sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 220px"
+                      />
+                    </div>
+                    <div className="body" style={{ flex: 1 }}>
+                      {product.manufacturer && <div className="product-manufacturer" style={{ color: '#444', fontSize: '0.95em' }}>{product.manufacturer}</div>}
+                      {product.category && <div className="product-category" style={{ color: '#444', fontSize: '0.92em' }}>{product.category}</div>}
+                      <div style={{ color: '#333', fontWeight: 600, margin: '8px 0 0 0', fontSize: '1rem' }}>
+                        {(!isNaN(Number(product.price)) && product.price !== null && product.price !== undefined) ? `$${Number(product.price).toFixed(2)}` : 'Price N/A'}
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+                      <Link
+                        to={{ pathname: `/product/${product.id}` }}
+                        state={{ product }}
+                        className="btn secondary"
+                        style={{ flex: 1, textAlign: 'center', fontWeight: 600, borderRadius: 8, padding: '0.6rem 0', background: '#f0f0f0', color: '#333', border: 'none', cursor: 'pointer', textDecoration: 'none' }}
+                      >
+                        View Details
+                      </Link>
+                      {!quickAdd ? (
+                        <button
+                          className="btn primary"
+                          style={{ flex: 1, textAlign: 'center', fontWeight: 600, borderRadius: 8, padding: '0.6rem 0', background: '#28a745', color: '#fff', border: 'none', cursor: 'pointer' }}
+                          onClick={() => setQuickAdd(true)}
+                          disabled={!inStock}
+                        >
+                          Quick Add
+                        </button>
+                      ) : (
+                        <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'center' }}>
+                          <button
+                            style={{ background: '#28a745', color: '#fff', border: 'none', borderRadius: 6, width: 28, height: 28, fontWeight: 700, fontSize: '1.2rem', cursor: 'pointer' }}
+                            onClick={() => {
+                              if (qty > 1) setQty(qty - 1);
+                              dispatch({ type: 'SUBTRACT_FROM_CART', product });
+                            }}
+                            disabled={qty <= 1}
+                            aria-label="Decrease quantity"
+                          >
+                            -
+                          </button>
+                          <input
+                            type="number"
+                            min={1}
+                            max={product.quantity || 99}
+                            value={qty}
+                            onChange={e => {
+                              let val = Math.max(1, Math.min(Number(e.target.value), product.quantity || 99));
+                              setQty(val);
+                              dispatch({ type: 'SET_QUANTITY', product, quantity: val });
+                            }}
+                            style={{ width: 38, textAlign: 'center', fontWeight: 600, border: '1px solid #ccc', borderRadius: 4, fontSize: '1rem', margin: '0 2px' }}
+                          />
+                          <button
+                            style={{ background: '#28a745', color: '#fff', border: 'none', borderRadius: 6, width: 28, height: 28, fontWeight: 700, fontSize: '1.2rem', cursor: 'pointer' }}
+                            onClick={() => {
+                              setQty(qty + 1);
+                              dispatch({ type: 'ADD_TO_CART', product });
+                            }}
+                            disabled={qty >= (product.quantity || 99)}
+                            aria-label="Increase quantity"
+                          >
+                            +
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
           </div>
         )}
       </div>
