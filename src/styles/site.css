@@ -12,18 +12,7 @@ img {
   .hero-content { padding: 12px; }
 }
 
-@media (max-width: 480px) {
-  .card-grid { grid-template-columns: 1fr; }
-  .gallery-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 12px !important;
-    background: rgba(0,0,255,0.08) !important; /* DEBUG: blue tint on mobile */
-    border: 2px dashed blue !important;
-  }
-  .gallery-grid img {
-    height: 100px !important;
-  }
-}
+
 .gallery-grid {
   display: grid !important;
   grid-template-columns: repeat(3, 1fr) !important;
