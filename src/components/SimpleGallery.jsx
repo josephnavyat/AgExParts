@@ -27,14 +27,32 @@ export default function SimpleGallery() {
     return () => controller.abort();
   }, []);
 
+  const [filterOpen, setFilterOpen] = useState(true);
   return (
     <div className="simple-gallery-root">
-      <h2 className="simple-gallery-title">Simple Product Gallery</h2>
-      {loading ? (
-        <div style={{ textAlign: 'center', color: '#888' }}>Loading products...</div>
-      ) : error ? (
-        <div style={{ textAlign: 'center', color: 'red' }}>{error}</div>
-      ) : (
+      <h2 className="simple-gallery-title">Agex Parts</h2>
+      <div className="simple-gallery-layout">
+        <aside className="simple-gallery-filter-pane">
+          <div className="simple-gallery-filter-header" onClick={() => setFilterOpen((v) => !v)}>
+            Filters
+            <span>{filterOpen ? '▼' : '▶'}</span>
+          </div>
+          {filterOpen && (
+            <div className="simple-gallery-filter-content">
+              {/* Example filter content, replace with real filters as needed */}
+              <div>
+                <label>
+                  <input type="checkbox" /> In Stock
+                </label>
+              </div>
+              <div>
+                <label>
+                  <input type="checkbox" /> On Sale
+                </label>
+              </div>
+            </div>
+          )}
+        </aside>
         <div className="simple-gallery-grid">
           {products.map((product) => (
             <div key={product.id} className="simple-gallery-card">
@@ -58,7 +76,7 @@ export default function SimpleGallery() {
             </div>
           ))}
         </div>
-      )}
+      </div>
     </div>
   );
 }

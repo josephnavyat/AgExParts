@@ -1,17 +1,50 @@
+
 :root {
-  --gallery-bg: #f8f8f8;
-  --gallery-card-bg: #fff;
+  --gallery-bg: #181c24;
+  --gallery-card-bg: #23283a;
   --gallery-card-radius: 14px;
-  --gallery-card-shadow: 0 2px 8px rgba(0,0,0,0.07);
-  --gallery-title: #222;
-  --gallery-text: #555;
+  --gallery-card-shadow: 0 2px 12px rgba(0,0,0,0.18);
+  --gallery-title: #f3f3f3;
+  --gallery-text: #c3c3c3;
   --gallery-accent: #19a974;
   --gallery-btn-bg: #19a974;
   --gallery-btn-text: #fff;
-  --gallery-btn-secondary-bg: #f0f0f0;
-  --gallery-btn-secondary-text: #222;
+  --gallery-btn-secondary-bg: #23283a;
+  --gallery-btn-secondary-text: #f3f3f3;
 }
 
+.simple-gallery-layout {
+  display: flex;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 80vh;
+}
+
+.simple-gallery-filter-pane {
+  background: #23283a;
+  color: #f3f3f3;
+  min-width: 260px;
+  max-width: 320px;
+  padding: 2rem 1.2rem 2rem 2rem;
+  border-radius: 18px;
+  margin-right: 2rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+  height: fit-content;
+}
+
+.simple-gallery-filter-header {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.simple-gallery-filter-content {
+  margin-top: 0.5rem;
+}
 .simple-gallery-root {
   background: var(--gallery-bg);
   min-height: 100vh;
@@ -26,14 +59,23 @@
   font-size: 2rem;
 }
 
+
 .simple-gallery-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 28px;
-  max-width: 1200px;
-  margin: 0 auto;
+  width: 100%;
 }
 @media (max-width: 700px) {
+  .simple-gallery-layout {
+    flex-direction: column;
+  }
+  .simple-gallery-filter-pane {
+    margin-right: 0;
+    margin-bottom: 1.5rem;
+    width: 100%;
+    max-width: none;
+  }
   .simple-gallery-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 18px;
@@ -52,12 +94,16 @@
   max-width: 320px;
   min-width: 0;
   margin: 0 auto;
+  color: var(--gallery-text);
 }
+
 
 .simple-gallery-card img {
   width: 100%;
   height: 140px;
   object-fit: cover;
+  background: #181c24;
+  border-radius: 8px;
   background: #e9ecef;
   border-radius: 10px;
   margin-bottom: 16px;
