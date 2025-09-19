@@ -7,7 +7,10 @@ import ProductGallery from './components/ProductGallery.jsx';
 import ProductDetail from './components/ProductDetail.jsx';
 import { CartProvider } from './components/CartContext.jsx';
 import CartPage from './components/CartPage.jsx';
+import CartPageWrapper from './components/CartPage.jsx';
 import SimpleGallery from './components/SimpleGallery.jsx';
+import SuccessPage from './components/SuccessPage.jsx';
+import FailurePage from './components/FailurePage.jsx';
 import './styles/site.css';
 
 createRoot(document.getElementById('root')).render(
@@ -18,8 +21,10 @@ createRoot(document.getElementById('root')).render(
           <Route path="/" element={<App />} />
           <Route path="/catalog" element={<SimpleGallery />} />
           <Route path="/product/:id" element={<ProductDetail />} />
-          <Route path="/cart" element={<CartPage />} />
+          <Route path="/cart" element={<CartPageWrapper />} />
           <Route path="/simple-gallery" element={<SimpleGallery />} />
+          <Route path="/success" element={<SuccessPage />} />
+          <Route path="/cancel" element={<FailurePage />} />
         </Routes>
       </BrowserRouter>
     </CartProvider>

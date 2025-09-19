@@ -3,6 +3,10 @@ import Navbar from "./Navbar.jsx";
 import Footer from "./Footer.jsx";
 import { useCart } from "./CartContext.jsx";
 import { getProductQuantity } from "./CartContext.jsx";
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+
+const stripePromise = loadStripe('pk_test_51S4XMHBpsFVjn5cM6uD1BRgbmhvLSnfeLPMZcp4EJNQYAQrQea122tUoOAF2exUh0Qu83i8uQj5Yp5zZXlCgj0Fc00LA6gZqpZ');
 
 export default function CartPage() {
   const { cart, dispatch } = useCart();
