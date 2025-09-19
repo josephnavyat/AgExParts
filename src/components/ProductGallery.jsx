@@ -258,7 +258,7 @@ useEffect(() => {
                     </div>
                   )}
                 </div>
-                <div style={{ borderTop: '1px solid #eee' }}>
+                <div style={{ display: 'flex', borderTop: '1px solid #eee', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
                   <Link
                     to={`/product/${product.id}`}
                     className="btn secondary"
