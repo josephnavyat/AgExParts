@@ -95,8 +95,8 @@
   min-width: 0;
   margin: 0 auto;
   color: var(--gallery-text);
-  min-height: 320px;
-  height: 320px;
+  min-height: 360px;
+  height: 360px;
 }
 
 
@@ -115,6 +115,15 @@
   font-size: 1.15rem;
   margin-bottom: 8px;
   text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  min-height: 3.6em;
+  height: 3.6em;
+  padding-bottom: 0.5em;
 }
 
 .simple-gallery-card-desc {
@@ -122,6 +131,7 @@
   font-size: 0.97rem;
   margin-bottom: 18px;
   text-align: center;
+  cursor: pointer;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
