@@ -6,7 +6,7 @@ import App from './App.jsx';
 import ProductGallery from './components/ProductGallery.jsx';
 import ProductDetail from './components/ProductDetail.jsx';
 import { CartProvider } from './components/CartContext.jsx';
-import CartPage from './components/CartPage.jsx';
+// import CartPage from './components/CartPage.jsx';
 import './styles/site.css';
 import SimpleGallery from './components/SimpleGallery.jsx';
 import SuccessPage from './components/SuccessPage.jsx';
