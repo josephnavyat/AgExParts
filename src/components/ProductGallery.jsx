@@ -203,10 +203,6 @@ useEffect(() => {
         ) : (
           <div
             className="gallery-grid"
-            style={{
-              display: 'grid',
-              margin: '0 auto',
-            }}
           >
             {products
               .filter(product => !manufacturer || product.manufacturer === manufacturer)
