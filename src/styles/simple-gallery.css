@@ -100,7 +100,7 @@
   color: var(--gallery-btn-text);
 }
 .simple-gallery-btn.primary:hover {
-  background: #12895c;
+  background: #4f5e59;
 }
 .simple-gallery-btn.secondary {
   background: var(--gallery-btn-secondary-bg);
