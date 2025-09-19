@@ -21,8 +21,8 @@ img {
   .gallery-grid img {
     height: 100px !important;
   }
-/* Desktop styles */
 }
+/* Desktop styles */
 .gallery-grid {
   display: grid !important;
   grid-template-columns: repeat(4, 1fr);
