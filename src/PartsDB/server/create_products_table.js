@@ -13,6 +13,7 @@ async function createTable() {
     image TEXT,
     description TEXT,
     price REAL,
+    priceUSD REAL,
     quantity INTEGER,
     category TEXT,
     manufacturer TEXT
