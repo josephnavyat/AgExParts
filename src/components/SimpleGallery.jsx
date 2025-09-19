@@ -60,7 +60,11 @@ export default function SimpleGallery() {
             <div key={product.id} className="simple-gallery-card">
               <img src={product.image} alt={product.name} />
               <h3 className="simple-gallery-card-title">{product.name}</h3>
-              <div className="simple-gallery-card-desc">{product.description}</div>
+              <div className="simple-gallery-card-desc">
+                {product.description.length > 60
+                  ? product.description.slice(0, 57) + '...'
+                  : product.description}
+              </div>
               <div className="simple-gallery-card-actions">
                 <Link
                   to={`/product/${product.id}`}
