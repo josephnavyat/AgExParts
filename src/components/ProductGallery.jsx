@@ -232,7 +232,7 @@ useEffect(() => {
                   alt={product.name}
                   style={{ width: '100%', height: '120px', objectFit: 'cover', background: '#f8f8f8' }}
                 />
-                <div style={{ flex: 1, padding: '0.6rem' }}>
+                <div style={{ padding: '0.6rem' }}>
                   <h3 style={{ margin: '0 0 0.3rem 0', color: '#333',fontSize: '1rem' }}>{product.name}</h3>
                   <div style={{ color: '#333', fontWeight: 600, marginTop: 6, fontSize: '0.95rem' }}>
                     {(!isNaN(Number(product.price)) && product.price !== null && product.price !== undefined) ? `$${Number(product.price).toFixed(2)}` : 'Price N/A'}
@@ -258,12 +258,11 @@ useEffect(() => {
                     </div>
                   )}
                 </div>
-                <div style={{ display: 'flex', borderTop: '1px solid #eee' }}>
+                <div style={{ borderTop: '1px solid #eee' }}>
                   <Link
                     to={`/product/${product.id}`}
                     className="btn secondary"
                     style={{
-                      flex: 1,
                       padding: '0.75rem 0',
                       border: 'none',
                       background: '#f0f0f0',
@@ -275,9 +274,6 @@ useEffect(() => {
                       boxShadow: '0 2px 8px rgba(0,0,0,0.10)',
                       textAlign: 'center',
                       textDecoration: 'none',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
                     }}
                     onMouseOver={e => {
                       e.currentTarget.style.background = '#e0e0e0';
@@ -292,10 +288,6 @@ useEffect(() => {
                   </Link>
                 {getProductQuantity(cart, product.id) > 0 ? (
                   <div style={{
-                    flex: 1,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
                     background: '#eafbe7',
                     borderBottomRightRadius: '12px',
                     borderLeft: '1px solid #e0e0e0',
@@ -343,7 +335,6 @@ useEffect(() => {
                 ) : (
                   <button
                     style={{
-                      flex: 1,
                       padding: '0.75rem 0',
                       border: 'none',
                       background: '#28a745',
