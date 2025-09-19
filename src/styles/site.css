@@ -1,4 +1,4 @@
-@media (max-width: 480px) {
+/*@media (max-width: 480px) {
   .brand h1 {
     display: none;
   }
@@ -21,7 +21,7 @@ img {
   .gallery-grid img {
     height: 100px !important;
   }
-}
+}*/
 /* Desktop styles */
 .gallery-grid {
   display: grid !important;
