@@ -218,8 +218,6 @@ useEffect(() => {
                 key={product.id}
                 className="product-card"
                 style={{
-                  display: 'flex',
-                  flexDirection: 'column',
                   border: '1px solid #e0e0e0',
                   borderRadius: '10px',
                   boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
