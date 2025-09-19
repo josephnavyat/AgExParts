@@ -113,7 +113,7 @@
   color: var(--gallery-title);
   font-weight: 700;
   font-size: 1.15rem;
-  margin-bottom: 8px;
+  margin-bottom: 2px;
   text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -139,8 +139,8 @@
   line-clamp: 3;
   -webkit-box-orient: vertical;
   max-width: 210px;
-  min-height: 3.6em;
-  height: 3.6em;
+  min-height: 340px;
+  height: 340px;
 }
 
 .simple-gallery-card-actions {
