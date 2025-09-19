@@ -1,0 +1,111 @@
+:root {
+  --gallery-bg: #f8f8f8;
+  --gallery-card-bg: #fff;
+  --gallery-card-radius: 14px;
+  --gallery-card-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  --gallery-title: #222;
+  --gallery-text: #555;
+  --gallery-accent: #19a974;
+  --gallery-btn-bg: #19a974;
+  --gallery-btn-text: #fff;
+  --gallery-btn-secondary-bg: #f0f0f0;
+  --gallery-btn-secondary-text: #222;
+}
+
+.simple-gallery-root {
+  background: var(--gallery-bg);
+  min-height: 100vh;
+  padding: 2rem 0;
+}
+
+.simple-gallery-title {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: var(--gallery-title);
+  font-weight: 700;
+  font-size: 2rem;
+}
+
+.simple-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 28px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+@media (max-width: 700px) {
+  .simple-gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+}
+
+.simple-gallery-card {
+  background: var(--gallery-card-bg);
+  border-radius: var(--gallery-card-radius);
+  box-shadow: var(--gallery-card-shadow);
+  padding: 22px 18px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 320px;
+  min-width: 0;
+  margin: 0 auto;
+}
+
+.simple-gallery-card img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  background: #e9ecef;
+  border-radius: 10px;
+  margin-bottom: 16px;
+}
+
+.simple-gallery-card-title {
+  color: var(--gallery-title);
+  font-weight: 700;
+  font-size: 1.15rem;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.simple-gallery-card-desc {
+  color: var(--gallery-text);
+  font-size: 0.97rem;
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+.simple-gallery-card-actions {
+  display: flex;
+  gap: 14px;
+  width: 100%;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.simple-gallery-btn {
+  padding: 0.7rem 1.2rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.2s;
+}
+.simple-gallery-btn.primary {
+  background: var(--gallery-btn-bg);
+  color: var(--gallery-btn-text);
+}
+.simple-gallery-btn.primary:hover {
+  background: #12895c;
+}
+.simple-gallery-btn.secondary {
+  background: var(--gallery-btn-secondary-bg);
+  color: var(--gallery-btn-secondary-text);
+}
+.simple-gallery-btn.secondary:hover {
+  background: #e0e0e0;
+}
