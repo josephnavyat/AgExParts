@@ -86,17 +86,17 @@
   background: var(--gallery-card-bg);
   border-radius: var(--gallery-card-radius);
   box-shadow: var(--gallery-card-shadow);
-  padding: 12px 10px 10px 10px;
+  padding: 18px 14px 16px 14px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  max-width: 220px;
+  max-width: 260px;
   min-width: 0;
   margin: 0 auto;
   color: var(--gallery-text);
-  min-height: 220px;
-  height: 220px;
+  min-height: 320px;
+  height: 320px;
 }
 
 
@@ -119,14 +119,18 @@
 
 .simple-gallery-card-desc {
   color: var(--gallery-text);
-  font-size: 0.93rem;
-  margin-bottom: 10px;
+  font-size: 0.97rem;
+  margin-bottom: 18px;
   text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 180px;
-  min-height: 1.2em;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  max-width: 210px;
+  min-height: 3.6em;
+  height: 3.6em;
 }
 
 .simple-gallery-card-actions {
