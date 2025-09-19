@@ -45,10 +45,6 @@ img {
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.07);
   padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
   transition: box-shadow 0.2s;
   width: auto;
   max-width: 280px;
