@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import Navbar from "./Navbar.jsx";
 import "../styles/simple-gallery.css";
 
 export default function SimpleGallery() {
@@ -30,6 +31,7 @@ export default function SimpleGallery() {
   const [filterOpen, setFilterOpen] = useState(true);
   return (
     <div className="simple-gallery-root">
+      <Navbar />
       <h2 className="simple-gallery-title">Agex Parts</h2>
       <div className="simple-gallery-layout">
         <aside className="simple-gallery-filter-pane">
