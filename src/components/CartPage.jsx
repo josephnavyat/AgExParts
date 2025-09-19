@@ -3,10 +3,31 @@ import Navbar from "./Navbar.jsx";
 import Footer from "./Footer.jsx";
 import { useCart } from "./CartContext.jsx";
 import { getProductQuantity } from "./CartContext.jsx";
-import { Elements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
 
-const stripePromise = loadStripe('pk_test_51S4XMHBpsFVjn5cM6uD1BRgbmhvLSnfeLPMZcp4EJNQYAQrQea122tUoOAF2exUh0Qu83i8uQj5Yp5zZXlCgj0Fc00LA6gZqpZ');
+import { useStripe } from '@stripe/react-stripe-js';
+function StripeCheckoutButton({ cart }) {
+  const stripe = useStripe();
+
+  const handleCheckout = async () => {
+    const res = await fetch('/.netlify/functions/create-checkout-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cart }),
+    });
+    const { url } = await res.json();
+    window.location = url;
+  };
+
+  return (
+    <button
+      className="btn primary"
+      style={{ fontWeight: 700, fontSize: '1.1rem', borderRadius: 8, padding: '0.7rem 2rem', marginLeft: '1rem' }}
+      onClick={handleCheckout}
+    >
+      Checkout with Stripe
+    </button>
+  );
+}
 
 export default function CartPage() {
   const { cart, dispatch } = useCart();
@@ -125,6 +146,7 @@ export default function CartPage() {
               >
                 Clear Cart
               </button>
+              <StripeCheckoutButton cart={cart.items} />
             </div>
           </div>
         )}
