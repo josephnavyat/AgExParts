@@ -49,7 +49,7 @@ img {
   align-items: center;
   justify-content: space-between;
   transition: box-shadow 0.2s;
-  width: 100%;
+  width: auto;
   max-width: 280px;
   min-width: 0;
 }
