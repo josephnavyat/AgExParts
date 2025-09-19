@@ -30,6 +30,9 @@ export default function Navbar() {
             <Link to="/" className="btn secondary distressed" style={{ textDecoration: 'none', fontWeight: 600, fontSize: '1.1rem' }}>
               Home
             </Link>
+            <Link to="/simple-gallery" className="btn secondary distressed" style={{ textDecoration: 'none', fontWeight: 600, fontSize: '1.1rem' }}>
+              See Products
+            </Link>
             <button
               className="btn secondary distressed"
               style={{ textDecoration: 'none', fontWeight: 600, fontSize: '1.1rem' }}

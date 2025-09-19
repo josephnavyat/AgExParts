@@ -7,6 +7,7 @@ import ProductGallery from './components/ProductGallery.jsx';
 import ProductDetail from './components/ProductDetail.jsx';
 import { CartProvider } from './components/CartContext.jsx';
 import CartPage from './components/CartPage.jsx';
+import SimpleGallery from './components/SimpleGallery.jsx';
 import './styles/site.css';
 
 createRoot(document.getElementById('root')).render(
@@ -18,6 +19,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="/catalog" element={<ProductGallery />} />
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/cart" element={<CartPage />} />
+          <Route path="/simple-gallery" element={<SimpleGallery />} />
         </Routes>
       </BrowserRouter>
     </CartProvider>
