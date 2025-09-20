@@ -21,7 +21,7 @@ app.use(express.json());
 
 app.get('/api/products', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM parts');
+    const result = await pool.query('SELECT * FROM products');
     // Convert price to number if present
     const products = result.rows.map(product => ({
       ...product,
