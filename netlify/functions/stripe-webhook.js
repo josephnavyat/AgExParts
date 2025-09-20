@@ -95,16 +95,16 @@ exports.handler = async (event) => {
       for (const item of items) {
         await client.query(itemQuery, [
           orderRow.id,
-          item.part_id,
-          item.qty,
-          item.unit_price,
-          item.tax_code,
-          item.tax_amount,
-          item.line_total,
-          item.fulfillment_method,
-          item.supplier_id,
-          item.location_id,
-          item.name
+          item.part_id || null,
+          item.qty || 1,
+          item.unit_price || 0,
+          item.tax_code || '',
+          item.tax_amount || 0,
+          item.line_total || 0,
+          item.fulfillment_method || '',
+          item.supplier_id || '',
+          item.location_id || '',
+          item.name || ''
         ]);
       }
     } catch (err) {
