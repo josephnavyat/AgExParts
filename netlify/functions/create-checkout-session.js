@@ -4,12 +4,13 @@ exports.handler = async (event) => {
   const { cart, customer_name, customer_email } = JSON.parse(event.body);
 
   // Map cart items to Stripe line_items
+  const getImageUrl = (img) => img && img.startsWith('http') ? img : (img ? `https://agexparts.netlify.app${img}` : '');
   const line_items = cart.map(({ product, quantity }) => ({
     price_data: {
       currency: 'usd',
       product_data: {
         name: product.name,
-        images: product.image ? [product.image] : [],
+        images: product.image ? [getImageUrl(product.image)] : [],
       },
       unit_amount: Math.round(product.price * 100), // price in cents
     },

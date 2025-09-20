@@ -29,6 +29,8 @@ function StripeCheckoutButton({ cart }) {
   );
 }
 
+const getImageUrl = (img) => img && img.startsWith('http') ? img : (img ? `https://agexparts.netlify.app${img}` : '');
+
 export default function CartPage() {
   const { cart, dispatch } = useCart();
   const total = cart.items.reduce((sum, i) => sum + (i.product.price || 0) * i.quantity, 0);
@@ -67,7 +69,7 @@ export default function CartPage() {
                   <tr key={product.id} style={{ borderBottom: '1px solid #f0f0f0' }}>
                     <td style={{ padding: '0.5rem', display: 'flex', alignItems: 'center', gap: 12 }}>
                       {product.image && (
-                        <img src={product.image} alt={product.name} style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 8, boxShadow: '0 1px 4px #ccc' }} />
+                        <img src={getImageUrl(product.image)} alt={product.name} style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 8, boxShadow: '0 1px 4px #ccc' }} />
                       )}
                       <span>{product.name}</span>
                     </td>
