@@ -17,8 +17,8 @@ exports.handler = async (event) => {
     const order = {
       order_no: session.id,
       status: 'paid',
-      customer_name: session.customer_details?.name,
-      customer_email: session.customer_details?.email,
+      customer_name: session.metadata?.customer_name || session.customer_details?.name,
+      customer_email: session.metadata?.customer_email || session.customer_details?.email,
       ship_address1: session.customer_details?.address?.line1,
       ship_address2: session.customer_details?.address?.line2,
       ship_city: session.customer_details?.address?.city,
@@ -80,7 +80,7 @@ exports.handler = async (event) => {
       items = [];
     }
 
-    // Insert each item into order_items table
+    // Insert each item into order_items table with logging and error handling
     const itemQuery = `
       INSERT INTO order_items (
         order_id, part_id, qty, unit_price, tax_code, tax_amount, line_total, fulfillment_method, supplier_id, location_id
@@ -88,19 +88,24 @@ exports.handler = async (event) => {
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10
       )
     `;
-    for (const item of items) {
-      await client.query(itemQuery, [
-        orderRow.id,
-        item.part_id,
-        item.qty,
-        item.unit_price,
-        item.tax_code,
-        item.tax_amount,
-        item.line_total,
-        item.fulfillment_method,
-        item.supplier_id,
-        item.location_id
-      ]);
+    console.log('Order items to insert:', items);
+    try {
+      for (const item of items) {
+        await client.query(itemQuery, [
+          orderRow.id,
+          item.part_id,
+          item.qty,
+          item.unit_price,
+          item.tax_code,
+          item.tax_amount,
+          item.line_total,
+          item.fulfillment_method,
+          item.supplier_id,
+          item.location_id
+        ]);
+      }
+    } catch (err) {
+      console.error('Error inserting order items:', err);
     }
     await client.end();
   }
