@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -14,6 +13,7 @@ import FailurePage from './components/FailurePage.jsx';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import CartPage from './components/CartPage.jsx';
+import OrderSuccess from './components/OrderSuccess.jsx';
 
 const stripePromise = loadStripe('pk_test_51S4XMHBpsFVjn5cM6uD1BRgbmhvLSnfeLPMZcp4EJNQYAQrQea122tUoOAF2exUh0Qu83i8uQj5Yp5zZXlCgj0Fc00LA6gZqpZ');
 
@@ -32,11 +32,11 @@ createRoot(document.getElementById('root')).render(
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<App />} />
-          <Route path="/catalog" element={<SimpleGallery />} />
+          <Route path="/catalog" element={<ProductGallery />} />
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/cart" element={<CartPageWrapper />} />
           <Route path="/simple-gallery" element={<SimpleGallery />} />
-          <Route path="/success" element={<SuccessPage />} />
+          <Route path="/success" element={<OrderSuccess />} />
           <Route path="/cancel" element={<FailurePage />} />
         </Routes>
       </BrowserRouter>
