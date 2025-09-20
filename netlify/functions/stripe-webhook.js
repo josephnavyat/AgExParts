@@ -105,9 +105,9 @@ exports.handler = async (event) => {
             item.tax_code || '',
             item.tax_amount || 0,
             item.line_total || 0,
-            item.fulfillment_method || '',
-            item.supplier_id || '',
-            item.location_id || '',
+            item.fulfillment_method || null,
+            item.supplier_id || null,
+            item.location_id || null,
             item.name || ''
           ]);
         } catch (itemErr) {
