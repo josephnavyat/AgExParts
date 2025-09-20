@@ -14,17 +14,19 @@ exports.handler = async (event) => {
   if (stripeEvent.type === 'checkout.session.completed') {
     const session = stripeEvent.data.object;
     // Example: extract info from session
+    // Prefer shipping_details from collected_information if present
+    const shipping = session.collected_information?.shipping_details || session.customer_details;
     const order = {
       order_no: session.id,
       status: 'paid',
-      customer_name: session.metadata?.customer_name || session.customer_details?.name,
-      customer_email: session.metadata?.customer_email || session.customer_details?.email,
-      ship_address1: session.customer_details?.address?.line1,
-      ship_address2: session.customer_details?.address?.line2,
-      ship_city: session.customer_details?.address?.city,
-      ship_state: session.customer_details?.address?.state,
-      ship_postal_code: session.customer_details?.address?.postal_code,
-      ship_country: session.customer_details?.address?.country,
+      customer_name: shipping?.name,
+      customer_email: session.customer_details?.email,
+      ship_address1: shipping?.address?.line1,
+      ship_address2: shipping?.address?.line2,
+      ship_city: shipping?.address?.city,
+      ship_state: shipping?.address?.state,
+      ship_postal_code: shipping?.address?.postal_code,
+      ship_country: shipping?.address?.country,
       subtotal: session.amount_subtotal / 100,
       discount_total: 0,
       shipping_total: session.total_details?.amount_shipping ? session.total_details.amount_shipping / 100 : 0,
@@ -76,9 +78,7 @@ exports.handler = async (event) => {
     let items = [];
     try {
       items = JSON.parse(session.metadata?.items || '[]');
-      console.log('Parsed items from metadata:', items);
     } catch (e) {
-      console.error('Error parsing items from metadata:', e);
       items = [];
     }
 
@@ -91,9 +91,8 @@ exports.handler = async (event) => {
       )
     `;
     console.log('Order items to insert:', items);
-    for (const item of items) {
-      try {
-        console.log('Inserting order item:', item);
+    try {
+      for (const item of items) {
         await client.query(itemQuery, [
           orderRow.id,
           item.part_id,
@@ -106,9 +105,9 @@ exports.handler = async (event) => {
           item.supplier_id,
           item.location_id
         ]);
-      } catch (err) {
-        console.error('Error inserting order item:', item, err);
       }
+    } catch (err) {
+      console.error('Error inserting order items:', err);
     }
     await client.end();
   }
