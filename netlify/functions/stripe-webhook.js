@@ -14,19 +14,19 @@ exports.handler = async (event) => {
   if (stripeEvent.type === 'checkout.session.completed') {
     const session = stripeEvent.data.object;
     // Example: extract info from session
-    // Prefer shipping_details from collected_information if present
-    const shipping = session.collected_information?.shipping_details || session.customer_details;
+    // Always use shipping_details from collected_information if present
+    const shipping = session.collected_information?.shipping_details;
     const order = {
       order_no: session.id,
       status: 'paid',
-      customer_name: shipping?.name,
+      customer_name: shipping?.name || session.customer_details?.name,
       customer_email: session.customer_details?.email,
-      ship_address1: shipping?.address?.line1,
-      ship_address2: shipping?.address?.line2,
-      ship_city: shipping?.address?.city,
-      ship_state: shipping?.address?.state,
-      ship_postal_code: shipping?.address?.postal_code,
-      ship_country: shipping?.address?.country,
+      ship_address1: shipping?.address?.line1 || session.customer_details?.address?.line1,
+      ship_address2: shipping?.address?.line2 || session.customer_details?.address?.line2,
+      ship_city: shipping?.address?.city || session.customer_details?.address?.city,
+      ship_state: shipping?.address?.state || session.customer_details?.address?.state,
+      ship_postal_code: shipping?.address?.postal_code || session.customer_details?.address?.postal_code,
+      ship_country: shipping?.address?.country || session.customer_details?.address?.country,
       subtotal: session.amount_subtotal / 100,
       discount_total: 0,
       shipping_total: session.total_details?.amount_shipping ? session.total_details.amount_shipping / 100 : 0,
@@ -85,9 +85,9 @@ exports.handler = async (event) => {
     // Insert each item into order_items table with logging and error handling
     const itemQuery = `
       INSERT INTO order_items (
-        order_id, part_id, qty, unit_price, tax_code, tax_amount, line_total, fulfillment_method, supplier_id, location_id
+        order_id, part_id, qty, unit_price, tax_code, tax_amount, line_total, fulfillment_method, supplier_id, location_id, name
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
       )
     `;
     console.log('Order items to insert:', items);
@@ -103,7 +103,8 @@ exports.handler = async (event) => {
           item.line_total,
           item.fulfillment_method,
           item.supplier_id,
-          item.location_id
+          item.location_id,
+          item.name
         ]);
       }
     } catch (err) {
