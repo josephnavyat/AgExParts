@@ -68,7 +68,40 @@ exports.handler = async (event) => {
       order.currency,
       order.payment_ref,
     ];
-    await client.query(query, values);
+    // Insert order and get the inserted row (with id)
+    const orderResult = await client.query(query, values);
+    const orderRow = orderResult.rows[0];
+
+    // Example: get items from session metadata (must be set in checkout session creation)
+    let items = [];
+    try {
+      items = JSON.parse(session.metadata?.items || '[]');
+    } catch (e) {
+      items = [];
+    }
+
+    // Insert each item into order_items table
+    const itemQuery = `
+      INSERT INTO order_items (
+        order_id, part_id, qty, unit_price, tax_code, tax_amount, line_total, fulfillment_method, supplier_id, location_id
+      ) VALUES (
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10
+      )
+    `;
+    for (const item of items) {
+      await client.query(itemQuery, [
+        orderRow.id,
+        item.part_id,
+        item.qty,
+        item.unit_price,
+        item.tax_code,
+        item.tax_amount,
+        item.line_total,
+        item.fulfillment_method,
+        item.supplier_id,
+        item.location_id
+      ]);
+    }
     await client.end();
   }
 

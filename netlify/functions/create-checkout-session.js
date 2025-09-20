@@ -21,6 +21,9 @@ exports.handler = async (event) => {
     mode: 'payment',
     success_url: 'https://agexparts.netlify.app/success',
     cancel_url: 'https://agexparts.netlify.app/cancel',
+    shipping_address_collection: {
+      allowed_countries: ['US', 'CA', 'GB', 'AU'] // Add more countries as needed
+    },
   });
 
   return {
