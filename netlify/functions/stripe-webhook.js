@@ -91,21 +91,28 @@ exports.handler = async (event) => {
       )
     `;
     console.log('Order items to insert:', items);
+    if (!Array.isArray(items) || items.length === 0) {
+      console.error('No order items found in metadata:', session.metadata?.items);
+    }
     try {
       for (const item of items) {
-        await client.query(itemQuery, [
-          orderRow.id,
-          item.part_id || null,
-          item.qty || 1,
-          item.unit_price || 0,
-          item.tax_code || '',
-          item.tax_amount || 0,
-          item.line_total || 0,
-          item.fulfillment_method || '',
-          item.supplier_id || '',
-          item.location_id || '',
-          item.name || ''
-        ]);
+        try {
+          await client.query(itemQuery, [
+            orderRow.id,
+            item.part_id || null,
+            item.qty || 1,
+            item.unit_price || 0,
+            item.tax_code || '',
+            item.tax_amount || 0,
+            item.line_total || 0,
+            item.fulfillment_method || '',
+            item.supplier_id || '',
+            item.location_id || '',
+            item.name || ''
+          ]);
+        } catch (itemErr) {
+          console.error('Error inserting single order item:', item, itemErr);
+        }
       }
     } catch (err) {
       console.error('Error inserting order items:', err);
