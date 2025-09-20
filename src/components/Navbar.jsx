@@ -31,7 +31,7 @@ export default function Navbar() {
               Home
             </Link>
             <Link to="/simple-gallery" className="btn secondary distressed" style={{ textDecoration: 'none', fontWeight: 600, fontSize: '1.1rem' }}>
-              See Products
+              CANT SEE Products
             </Link>
             <button
               className="btn secondary distressed"
