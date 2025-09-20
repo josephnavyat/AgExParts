@@ -76,7 +76,9 @@ exports.handler = async (event) => {
     let items = [];
     try {
       items = JSON.parse(session.metadata?.items || '[]');
+      console.log('Parsed items from metadata:', items);
     } catch (e) {
+      console.error('Error parsing items from metadata:', e);
       items = [];
     }
 
@@ -89,8 +91,9 @@ exports.handler = async (event) => {
       )
     `;
     console.log('Order items to insert:', items);
-    try {
-      for (const item of items) {
+    for (const item of items) {
+      try {
+        console.log('Inserting order item:', item);
         await client.query(itemQuery, [
           orderRow.id,
           item.part_id,
@@ -103,9 +106,9 @@ exports.handler = async (event) => {
           item.supplier_id,
           item.location_id
         ]);
+      } catch (err) {
+        console.error('Error inserting order item:', item, err);
       }
-    } catch (err) {
-      console.error('Error inserting order items:', err);
     }
     await client.end();
   }

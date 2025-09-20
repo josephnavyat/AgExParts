@@ -65,7 +65,12 @@ export default function CartPage() {
               <tbody>
                 {cart.items.map(({ product, quantity }) => (
                   <tr key={product.id} style={{ borderBottom: '1px solid #f0f0f0' }}>
-                    <td style={{ padding: '0.5rem' }}>{product.name}</td>
+                    <td style={{ padding: '0.5rem', display: 'flex', alignItems: 'center', gap: 12 }}>
+                      {product.image && (
+                        <img src={product.image} alt={product.name} style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 8, boxShadow: '0 1px 4px #ccc' }} />
+                      )}
+                      <span>{product.name}</span>
+                    </td>
                     <td style={{ textAlign: 'center' }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
                         <button

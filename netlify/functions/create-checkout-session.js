@@ -9,6 +9,7 @@ exports.handler = async (event) => {
       currency: 'usd',
       product_data: {
         name: product.name,
+        images: product.image ? [product.image] : [],
       },
       unit_amount: Math.round(product.price * 100), // price in cents
     },
