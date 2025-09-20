@@ -25,8 +25,6 @@ exports.handler = async (event) => {
       allowed_countries: ['US', 'CA', 'GB', 'AU'] // Add more countries as needed
     },
     metadata: {
-      customer_name: customer_name || '',
-      customer_email: customer_email || '',
       items: JSON.stringify(cart.map(({ product, quantity }) => ({
         part_id: product.id,
         qty: quantity,
