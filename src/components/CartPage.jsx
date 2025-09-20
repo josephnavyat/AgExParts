@@ -1,18 +1,18 @@
-import React, { useState } from "react";
+import React from "react";
 import Navbar from "./Navbar.jsx";
 import Footer from "./Footer.jsx";
 import { useCart } from "./CartContext.jsx";
 import { getProductQuantity } from "./CartContext.jsx";
-
 import { useStripe } from '@stripe/react-stripe-js';
-function StripeCheckoutButton({ cart, customerName, customerEmail }) {
+
+function StripeCheckoutButton({ cart }) {
   const stripe = useStripe();
 
   const handleCheckout = async () => {
     const res = await fetch('/.netlify/functions/create-checkout-session', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ cart, customer_name: customerName, customer_email: customerEmail }),
+      body: JSON.stringify({ cart }),
     });
     const { url } = await res.json();
     window.location = url;
@@ -32,8 +32,6 @@ function StripeCheckoutButton({ cart, customerName, customerEmail }) {
 export default function CartPage() {
   const { cart, dispatch } = useCart();
   const total = cart.items.reduce((sum, i) => sum + (i.product.price || 0) * i.quantity, 0);
-  const [customerName, setCustomerName] = useState("");
-  const [customerEmail, setCustomerEmail] = useState("");
 
   return (
     <>
@@ -44,8 +42,8 @@ export default function CartPage() {
           style={{
             textAlign: 'center',
             marginBottom: '2rem',
-            marginTop: '4.5rem', // push header down below navbar
-            color: '#222', // much darker for readability
+            marginTop: '4.5rem',
+            color: '#222',
             textShadow: '0 1px 4px #fff, 0 0px 1px #bbb',
           }}
         >
@@ -148,29 +146,7 @@ export default function CartPage() {
               >
                 Clear Cart
               </button>
-              <div style={{ marginTop: '2rem', marginBottom: '1rem', textAlign: 'left' }}>
-                <label style={{ fontWeight: 600, marginRight: 8 }}>
-                  Name:
-                  <input
-                    type="text"
-                    value={customerName}
-                    onChange={e => setCustomerName(e.target.value)}
-                    style={{ marginLeft: 8, padding: '0.4rem', borderRadius: 4, border: '1px solid #ccc' }}
-                    placeholder="Full Name"
-                  />
-                </label>
-                <label style={{ fontWeight: 600, marginLeft: 24 }}>
-                  Email:
-                  <input
-                    type="email"
-                    value={customerEmail}
-                    onChange={e => setCustomerEmail(e.target.value)}
-                    style={{ marginLeft: 8, padding: '0.4rem', borderRadius: 4, border: '1px solid #ccc' }}
-                    placeholder="Email Address"
-                  />
-                </label>
-              </div>
-              <StripeCheckoutButton cart={cart.items} customerName={customerName} customerEmail={customerEmail} />
+              <StripeCheckoutButton cart={cart.items} />
             </div>
           </div>
         )}
