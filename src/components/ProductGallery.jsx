@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useCart } from "./CartContext.jsx";
 import { getProductQuantity } from "./CartContext.jsx";
 import { Link } from "react-router-dom";
+import { CartContext } from './CartContext';
 import Navbar from "./Navbar.jsx";
 import Footer from "./Footer.jsx";
 import "../styles/site.css";
@@ -11,6 +12,9 @@ export default function ProductGallery() {
   const [products, setProducts] = useState([]);
   // If any product is out of stock, show a banner
   const anyOutOfStock = products.some(p => p.quantity === 0);
+  const [inStockOnly, setInStockOnly] = useState(false);
+  const [searchText, setSearchText] = useState('');
+  const [searchActive, setSearchActive] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { cart, dispatch } = useCart();
@@ -69,6 +73,41 @@ useEffect(() => {
       .catch((err) => {
         setError(err.message);
         setLoading(false);
+        <div className="filters">
+          <h3>Filters</h3>
+          <div>
+            <input
+              type="checkbox"
+              id="inStock"
+              checked={inStockOnly}
+              onChange={e => setInStockOnly(e.target.checked)}
+            />
+            <label htmlFor="inStock">In Stock</label>
+          </div>
+          <div style={{ marginTop: '1em' }}>
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchText}
+              onChange={e => setSearchText(e.target.value)}
+              style={{ width: '80%' }}
+            />
+            <button
+              style={{ marginLeft: '0.5em' }}
+              onClick={() => setSearchActive(true)}
+            >
+              Search
+            </button>
+            {searchActive && (
+              <button
+                style={{ marginLeft: '0.5em' }}
+                onClick={() => { setSearchText(''); setSearchActive(false); }}
+              >
+                Clear
+              </button>
+            )}
+          </div>
+        </div>
       });
   }, []);*/
   
@@ -118,7 +157,41 @@ useEffect(() => {
             </div>
           )}
         </div>
-        {/* Filter boxes */}
+        {/* Custom Filters */}
+        <div className="filters" style={{ marginBottom: '1.5rem', display: 'flex', gap: '2rem', alignItems: 'center', justifyContent: 'center' }}>
+          <div>
+            <input
+              type="checkbox"
+              id="inStock"
+              checked={inStockOnly}
+              onChange={e => setInStockOnly(e.target.checked)}
+            />
+            <label htmlFor="inStock" style={{ marginLeft: 6 }}>In Stock</label>
+          </div>
+          <div>
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchText}
+              onChange={e => setSearchText(e.target.value)}
+              style={{ width: '180px', padding: '0.4em' }}
+            />
+            <button
+              style={{ marginLeft: '0.5em', padding: '0.4em 1em' }}
+              onClick={() => setSearchActive(true)}
+            >
+              Search
+            </button>
+            {searchActive && (
+              <button
+                style={{ marginLeft: '0.5em', padding: '0.4em 1em' }}
+                onClick={() => { setSearchText(''); setSearchActive(false); }}
+              >
+                Clear
+              </button>
+            )}
+          </div>
+        </div>
   <div style={{ display: 'flex', gap: 16, margin: '1.2rem 0 2rem 0', justifyContent: 'center', flexWrap: 'wrap' }}>
           <select value={manufacturer} onChange={e => setManufacturer(e.target.value)}
             style={{
@@ -208,6 +281,14 @@ useEffect(() => {
               .filter(product => !manufacturer || product.manufacturer === manufacturer)
               .filter(product => !machineType || product.machine_type === machineType)
               .filter(product => !model || product.model === model)
+              .filter(product => !inStockOnly || product.quantity > 0)
+              .filter(product => {
+                if (!searchActive || !searchText.trim()) return true;
+                const lower = searchText.toLowerCase();
+                return Object.values(product).some(val =>
+                  typeof val === 'string' && val.toLowerCase().includes(lower)
+                );
+              })
               .sort((a, b) => {
                 if (sort === 'price-asc') return (a.price || 0) - (b.price || 0);
                 if (sort === 'price-desc') return (b.price || 0) - (a.price || 0);
