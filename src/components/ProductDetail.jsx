@@ -82,6 +82,7 @@ export default function ProductDetail() {
             flexDirection: 'column',
             alignItems: 'center',
           }}>
+            {/* Main Product Info */}
             <img src={product.image} alt={product.name} style={{ width: 320, height: 200, objectFit: 'cover', borderRadius: 12, marginBottom: 24, background: '#f8f8f8' }} />
             <h2 className="distressed" style={{ fontSize: '2.2rem', marginBottom: 8 }}>{product.name}</h2>
             <div style={{ color: '#888', fontSize: '1.1rem', marginBottom: 16 }}>{product.part_number}</div>
@@ -96,31 +97,57 @@ export default function ProductDetail() {
                 {product.quantity && product.quantity > 0 ? 'In Stock' : 'Out of Stock'}
               </span>
             </div>
-            <div style={{ color: '#555', fontSize: '1.1rem', marginBottom: 18 }}>{product.description}</div>
-            <div style={{ color: '#888', fontSize: '1rem', marginBottom: 8 }}>
+            {/* Product Specifications Section */}
+            <div style={{ width: '100%', margin: '18px 0 10px 0' }}>
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: 8, color: '#222' }}>Product Specifications</h3>
+              <table style={{ width: '100%', background: '#f8f8f8', borderRadius: 8, fontSize: '1rem', borderCollapse: 'collapse', color: '#222' }}>
+                <tbody>
+                  <tr><td style={{ padding: '8px', fontWeight: 600 }}>Size</td><td style={{ padding: '8px' }}>{product.size || '20"'}</td></tr>
+                  <tr><td style={{ padding: '8px', fontWeight: 600 }}>Thickness</td><td style={{ padding: '8px' }}>{product.thickness || '6.5mm (.256)'}</td></tr>
+                  <tr><td style={{ padding: '8px', fontWeight: 600 }}>Bolt Pattern</td><td style={{ padding: '8px' }}>{product.bolt_pattern || '4-bolt'}</td></tr>
+                  <tr><td style={{ padding: '8px', fontWeight: 600 }}>Category</td><td style={{ padding: '8px' }}>{product.category}</td></tr>
+                  <tr><td style={{ padding: '8px', fontWeight: 600 }}>Manufacturer</td><td style={{ padding: '8px' }}>{product.manufacturer}</td></tr>
+                </tbody>
+              </table>
+            </div>
+            {/* OEM Parts Section */}
+            <div style={{ width: '100%', margin: '18px 0 10px 0' }}>
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: 8, color: '#222' }}>OEM Parts</h3>
+              <table style={{ width: '100%', background: '#f8f8f8', borderRadius: 8, fontSize: '1rem', borderCollapse: 'collapse', color: '#222' }}>
+                <tbody>
+                  <tr><td style={{ padding: '8px', fontWeight: 600 }}>OEM Part Number</td><td style={{ padding: '8px' }}>{product.oem_part_number || 'SH143557'}</td></tr>
+                  <tr><td style={{ padding: '8px', fontWeight: 600 }}>Replaces</td><td style={{ padding: '8px' }}>{product.replaces || 'Degelman No 143557'}</td></tr>
+                </tbody>
+              </table>
+            </div>
+            {/* Description Section */}
+            <div style={{ color: '#555', fontSize: '1.1rem', marginBottom: 18, width: '100%' }}>{product.description}</div>
+            <div style={{ color: '#888', fontSize: '1rem', marginBottom: 8, width: '100%' }}>
               Category: {product.category} | Manufacturer: {product.manufacturer}
             </div>
+            {/* Actions */}
             <div style={{ display: 'flex', gap: '1.5rem', marginTop: 32 }}>
               <Link
                 to="/catalog"
-                className="btn primary"
+                className="btn secondary"
                 style={{
                   padding: '0.9rem 2.2rem',
                   fontWeight: 700,
                   fontSize: '1.1rem',
                   borderRadius: '10px',
-                  background: '#19a974',
-                  color: '#fff',
-                  boxShadow: '0 2px 8px rgba(25,169,116,0.13)',
+                  background: '#f0f0f0',
+                  color: '#222',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.10)',
                   textDecoration: 'none',
                   letterSpacing: '0.04em',
                   transition: 'background 0.2s',
                   border: 'none',
                   textAlign: 'center',
                   display: 'inline-block',
+                  cursor: 'pointer',
                 }}
-                onMouseOver={e => (e.currentTarget.style.background = '#12895c')}
-                onMouseOut={e => (e.currentTarget.style.background = '#19a974')}
+                onMouseOver={e => (e.currentTarget.style.background = '#e0e0e0')}
+                onMouseOut={e => (e.currentTarget.style.background = '#f0f0f0')}
               >
                 Back to Catalog
               </Link>
@@ -164,15 +191,15 @@ export default function ProductDetail() {
                 </div>
               ) : (
                 <button
-                  className="btn secondary"
+                  className="btn primary"
                   style={{
                     padding: '0.9rem 2.2rem',
                     fontWeight: 700,
                     fontSize: '1.1rem',
                     borderRadius: '10px',
-                    background: '#f0f0f0',
-                    color: '#222',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.10)',
+                    background: '#19a974',
+                    color: '#fff',
+                    boxShadow: '0 2px 8px rgba(25,169,116,0.13)',
                     border: 'none',
                     letterSpacing: '0.04em',
                     textAlign: 'center',
@@ -180,8 +207,8 @@ export default function ProductDetail() {
                     cursor: 'pointer',
                     transition: 'background 0.2s',
                   }}
-                  onMouseOver={e => (e.currentTarget.style.background = '#e0e0e0')}
-                  onMouseOut={e => (e.currentTarget.style.background = '#f0f0f0')}
+                  onMouseOver={e => (e.currentTarget.style.background = '#12895c')}
+                  onMouseOut={e => (e.currentTarget.style.background = '#19a974')}
                   onClick={() => dispatch({ type: 'ADD_TO_CART', product })}
                 >
                   Add to Cart
