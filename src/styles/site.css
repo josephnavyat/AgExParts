@@ -1,3 +1,8 @@
+/* Hide nav when scrolling down */
+.nav.nav-hidden {
+  transform: translateY(-100%);
+  transition: transform 0.35s cubic-bezier(.4,0,.2,1), background .25s, box-shadow .25s;
+}
 @media (max-width: 480px) {
   .brand h1 {
     display: none;

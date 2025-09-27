@@ -211,8 +211,9 @@
     max-width: none;
   }
   .simple-gallery-grid {
-    grid-template-columns: 1fr;
-    gap: 18px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 0 6px;
   }
   .simple-gallery-card {
     max-width: 100%;
@@ -220,6 +221,8 @@
     width: 100%;
     margin: 0;
     box-sizing: border-box;
+    padding-left: 6px;
+    padding-right: 6px;
   }
 }
 
