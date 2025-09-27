@@ -65,7 +65,7 @@ export default function ProductDetail() {
   return (
     <>
       <Navbar />
-      <div className="product-detail-page" style={{ minHeight: '80vh', padding: '2rem', background: 'var(--bg)' }}>
+              <h2 className="distressed" style={{ fontSize: '2.2rem', marginBottom: 8, color: '#444a58' }}>{product.name}</h2>
         {loading ? (
           <div style={{ textAlign: 'center', color: '#888' }}>Loading product...</div>
         ) : error ? (
@@ -101,24 +101,24 @@ export default function ProductDetail() {
                 alt={product.name}
                 style={{
                   width: '100%',
-                  height: '100%',
-                  objectFit: 'contain',
-                  display: 'block',
-                  background: 'none',
-                  borderRadius: 0
-                }}
-              />
-            </div>
-            <h2 className="distressed" style={{ fontSize: '2.2rem', marginBottom: 8, color: '#23272f' }}>{product.name}</h2>
-            <div style={{ color: '#888', fontSize: '1.1rem', marginBottom: 16 }}>{product.part_number}</div>
-            <div style={{ color: '#333', fontWeight: 600, fontSize: '1.3rem', marginBottom: 12 }}>
-              {(!isNaN(Number(product.price)) && product.price !== null && product.price !== undefined) ? `$${Number(product.price).toFixed(2)}` : 'Price N/A'}
+                  <h3 style={{
+                    fontSize: '1.25rem',
+                    fontWeight: 700,
+                    color: '#444a58',
+                    letterSpacing: '0.01em',
+                    textAlign: 'left',
+                    textTransform: 'none',
+                    margin: 0,
+                    paddingRight: 16,
+                    whiteSpace: 'nowrap',
+                    textShadow: '0 1px 4px rgba(0,0,0,0.04)'
+                  }}>Product Specifications</h3>
               <span style={{
                 fontSize: '1rem',
                 color: product.quantity > 0 ? '#28a745' : '#d32f2f',
-                fontWeight: 600,
+                    background: '#444a58',
                 marginLeft: 12
-              }}>
+                    boxShadow: 'none'
                 {product.quantity && product.quantity > 0 ? 'In Stock' : 'Out of Stock'}
               </span>
             </div>
@@ -143,24 +143,24 @@ export default function ProductDetail() {
               boxShadow: 'none',
               padding: 0,
               marginBottom: 18
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', margin: '24px 0 14px 0' }}>
-                <h3 style={{
-                  fontSize: '1.25rem',
-                  fontWeight: 700,
-                  color: '#23272f',
-                  letterSpacing: '0.01em',
-                  textAlign: 'left',
-                  textTransform: 'none',
-                  margin: 0,
-                  paddingRight: 16,
-                  whiteSpace: 'nowrap',
+                  <h3 style={{
+                    fontSize: '1.25rem',
+                    fontWeight: 700,
+                    color: '#444a58',
+                    letterSpacing: '0.01em',
+                    textAlign: 'left',
+                    textTransform: 'none',
+                    margin: 0,
+                    paddingRight: 16,
+                    whiteSpace: 'nowrap',
+                    textShadow: '0 1px 4px rgba(0,0,0,0.04)'
+                  }}>OEM Parts</h3>
                   textShadow: '0 1px 4px rgba(0,0,0,0.07)'
                 }}>Product Specifications</h3>
                 <div style={{
-                  flex: 1,
+                    background: '#444a58',
                   height: 6,
-                  background: '#23272f',
+                    boxShadow: 'none'
                   borderRadius: 3,
                   boxShadow: '0 2px 8px 0 rgba(0,0,0,0.07)'
                 }} />
