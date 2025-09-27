@@ -75,12 +75,12 @@ export default function SimpleGallery() {
           className="simple-gallery-filter-pane"
           style={{
             position: 'absolute',
-            left: filterOpen ? 0 : -320,
+            left: filterOpen ? 0 : -340,
             top: 100,
             transition: 'left 0.3s',
             zIndex: 9,
             minWidth: 260,
-            maxWidth: 320,
+            maxWidth: 340,
             height: 'fit-content',
           }}
         >
@@ -90,16 +90,58 @@ export default function SimpleGallery() {
           </div>
           {filterOpen && (
             <div className="simple-gallery-filter-content">
-              {/* Example filter content, replace with real filters as needed */}
-              <div>
-                <label>
-                  <input type="checkbox" /> In Stock
-                </label>
+              <div style={{ marginBottom: '1.2rem' }}>
+                <input
+                  type="checkbox"
+                  id="inStock"
+                  checked={inStockOnly}
+                  onChange={e => setInStockOnly(e.target.checked)}
+                />
+                <label htmlFor="inStock" style={{ marginLeft: 6 }}>In Stock</label>
               </div>
-              <div>
-                <label>
-                  <input type="checkbox" /> On Sale
-                </label>
+              <div style={{ marginBottom: '1.2rem' }}>
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  value={searchText}
+                  onChange={e => setSearchText(e.target.value)}
+                  style={{ width: '90%', padding: '0.4em' }}
+                />
+              </div>
+              <div style={{ marginBottom: '1.2rem' }}>
+                <label>Manufacturer:</label>
+                <select value={manufacturer} onChange={e => setManufacturer(e.target.value)} style={{ width: '100%', marginTop: 4 }}>
+                  <option value="">All Manufacturers</option>
+                  {[...new Set(products.map(p => p.manufacturer).filter(Boolean))].map(m => (
+                    <option key={m} value={m}>{m}</option>
+                  ))}
+                </select>
+              </div>
+              <div style={{ marginBottom: '1.2rem' }}>
+                <label>Machine Type:</label>
+                <select value={machineType} onChange={e => setMachineType(e.target.value)} style={{ width: '100%', marginTop: 4 }}>
+                  <option value="">All Machine Types</option>
+                  {[...new Set(products.map(p => p.machine_type).filter(Boolean))].map(m => (
+                    <option key={m} value={m}>{m}</option>
+                  ))}
+                </select>
+              </div>
+              <div style={{ marginBottom: '1.2rem' }}>
+                <label>Model:</label>
+                <select value={model} onChange={e => setModel(e.target.value)} style={{ width: '100%', marginTop: 4 }}>
+                  <option value="">All Models</option>
+                  {[...new Set(products.map(p => p.model).filter(Boolean))].map(m => (
+                    <option key={m} value={m}>{m}</option>
+                  ))}
+                </select>
+              </div>
+              <div style={{ marginBottom: '1.2rem' }}>
+                <label>Sort by:</label>
+                <select value={sort} onChange={e => setSort(e.target.value)} style={{ width: '100%', marginTop: 4 }}>
+                  <option value="">None</option>
+                  <option value="price-asc">Price: Low to High</option>
+                  <option value="price-desc">Price: High to Low</option>
+                </select>
               </div>
             </div>
           )}
