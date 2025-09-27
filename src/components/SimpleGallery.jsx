@@ -22,12 +22,9 @@ export default function SimpleGallery() {
     const controller = new AbortController();
     const fetchProducts = async () => {
       try {
-        if( HOST_ENVIRONMENT !== 'development' ) {
+
           const res = await fetch('/.netlify/functions/get-data', { signal: controller.signal });
-        }
-        else {
-          const res = await fetch(`${import.meta.env.VITE_API_URL}/api/products`, { signal: controller.signal });
-        }
+
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         const data = await res.json();
         setProducts(data);
@@ -119,12 +116,6 @@ export default function SimpleGallery() {
             <div key={product.id} className="simple-gallery-card">
               <img src={product.image} alt={product.name} />
               <h3 className="simple-gallery-card-title">{product.name}</h3>
-              <div
-                className="simple-gallery-card-desc"
-                title={product.description}
-              >
-                {product.description}
-              </div>
               <div className="simple-gallery-card-actions">
                 <Link
                   to={`/product/${product.id}`}
