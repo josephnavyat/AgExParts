@@ -97,10 +97,29 @@ export default function ProductDetail() {
                 {product.quantity && product.quantity > 0 ? 'In Stock' : 'Out of Stock'}
               </span>
             </div>
+            {/* Description Section */}
+            <div style={{
+              color: '#222',
+              fontSize: '1.13rem',
+              marginBottom: 24,
+              width: '100%',
+              background: 'linear-gradient(90deg, #f8fafc 60%, #f1f5f9 100%)',
+              borderRadius: 12,
+              padding: '1.2rem 1.5rem',
+              boxShadow: '0 1px 6px rgba(0,0,0,0.04)'
+            }}>{product.description}</div>
             {/* Product Specifications Section */}
-            <div style={{ width: '100%', margin: '18px 0 10px 0' }}>
-              <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: 8, color: '#222' }}>Product Specifications</h3>
-              <table style={{ width: '100%', background: '#f8f8f8', borderRadius: 8, fontSize: '1rem', borderCollapse: 'collapse', color: '#222' }}>
+            <section style={{
+              width: '100%',
+              margin: '0 0 18px 0',
+              background: 'linear-gradient(90deg, #e3f9f1 60%, #eaf6f3 100%)',
+              borderRadius: 12,
+              boxShadow: '0 1px 8px rgba(25,169,116,0.07)',
+              padding: '1.2rem 1.5rem',
+              marginBottom: 18
+            }}>
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: 8, color: '#19a974', letterSpacing: '0.01em' }}>Product Specifications</h3>
+              <table style={{ width: '100%', background: 'transparent', fontSize: '1rem', borderCollapse: 'collapse', color: '#222' }}>
                 <tbody>
                   <tr><td style={{ padding: '8px', fontWeight: 600 }}>Size</td><td style={{ padding: '8px' }}>{product.size || '20"'}</td></tr>
                   <tr><td style={{ padding: '8px', fontWeight: 600 }}>Thickness</td><td style={{ padding: '8px' }}>{product.thickness || '6.5mm (.256)'}</td></tr>
@@ -109,19 +128,25 @@ export default function ProductDetail() {
                   <tr><td style={{ padding: '8px', fontWeight: 600 }}>Manufacturer</td><td style={{ padding: '8px' }}>{product.manufacturer}</td></tr>
                 </tbody>
               </table>
-            </div>
+            </section>
             {/* OEM Parts Section */}
-            <div style={{ width: '100%', margin: '18px 0 10px 0' }}>
-              <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: 8, color: '#222' }}>OEM Parts</h3>
-              <table style={{ width: '100%', background: '#f8f8f8', borderRadius: 8, fontSize: '1rem', borderCollapse: 'collapse', color: '#222' }}>
+            <section style={{
+              width: '100%',
+              margin: '0 0 18px 0',
+              background: 'linear-gradient(90deg, #f7f7fa 60%, #f1f5f9 100%)',
+              borderRadius: 12,
+              boxShadow: '0 1px 8px rgba(0,0,0,0.06)',
+              padding: '1.2rem 1.5rem',
+              marginBottom: 18
+            }}>
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: 8, color: '#3b3b4f', letterSpacing: '0.01em' }}>OEM Parts</h3>
+              <table style={{ width: '100%', background: 'transparent', fontSize: '1rem', borderCollapse: 'collapse', color: '#222' }}>
                 <tbody>
                   <tr><td style={{ padding: '8px', fontWeight: 600 }}>OEM Part Number</td><td style={{ padding: '8px' }}>{product.oem_part_number || 'SH143557'}</td></tr>
                   <tr><td style={{ padding: '8px', fontWeight: 600 }}>Replaces</td><td style={{ padding: '8px' }}>{product.replaces || 'Degelman No 143557'}</td></tr>
                 </tbody>
               </table>
-            </div>
-            {/* Description Section */}
-            <div style={{ color: '#555', fontSize: '1.1rem', marginBottom: 18, width: '100%' }}>{product.description}</div>
+            </section>
             <div style={{ color: '#888', fontSize: '1rem', marginBottom: 8, width: '100%' }}>
               Category: {product.category} | Manufacturer: {product.manufacturer}
             </div>
