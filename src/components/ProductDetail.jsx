@@ -112,21 +112,20 @@ export default function ProductDetail() {
             <section style={{
               width: '100%',
               margin: '0 0 18px 0',
-              background: '#f7f7f9',
-              borderRadius: 12,
-              boxShadow: '0 1px 8px rgba(0,0,0,0.06)',
-              padding: '1.2rem 1.5rem',
-              marginBottom: 18,
-              border: '1px solid #e0e0e0'
+              background: 'none',
+              borderRadius: 0,
+              boxShadow: 'none',
+              padding: 0,
+              marginBottom: 18
             }}>
-              <h3 style={{ fontSize: '1.13rem', fontWeight: 700, marginBottom: 8, color: '#222', letterSpacing: '0.01em', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Product Specifications</h3>
-              <table style={{ width: '100%', background: 'transparent', fontSize: '1rem', borderCollapse: 'collapse', color: '#222', border: '1px solid #e0e0e0' }}>
+              <h3 style={{ fontSize: '1.13rem', fontWeight: 700, marginBottom: 8, color: '#222', letterSpacing: '0.01em', textAlign: 'left', textTransform: 'none' }}>Product Specifications</h3>
+              <table style={{ width: '100%', background: 'none', fontSize: '1rem', borderCollapse: 'collapse', color: '#222' }}>
                 <tbody>
-                  <tr style={{ borderBottom: '1px solid #e0e0e0' }}><td style={{ padding: '8px', fontWeight: 600, width: '40%', background: '#f2f2f4' }}>Size</td><td style={{ padding: '8px', background: '#fff' }}>{product.size || '20"'}</td></tr>
-                  <tr style={{ borderBottom: '1px solid #e0e0e0' }}><td style={{ padding: '8px', fontWeight: 600, background: '#f2f2f4' }}>Thickness</td><td style={{ padding: '8px', background: '#fff' }}>{product.thickness || '6.5mm (.256)'}</td></tr>
-                  <tr style={{ borderBottom: '1px solid #e0e0e0' }}><td style={{ padding: '8px', fontWeight: 600, background: '#f2f2f4' }}>Bolt Pattern</td><td style={{ padding: '8px', background: '#fff' }}>{product.bolt_pattern || '4-bolt'}</td></tr>
-                  <tr style={{ borderBottom: '1px solid #e0e0e0' }}><td style={{ padding: '8px', fontWeight: 600, background: '#f2f2f4' }}>Category</td><td style={{ padding: '8px', background: '#fff' }}>{product.category}</td></tr>
-                  <tr><td style={{ padding: '8px', fontWeight: 600, background: '#f2f2f4' }}>Manufacturer</td><td style={{ padding: '8px', background: '#fff' }}>{product.manufacturer}</td></tr>
+                  <tr style={{ borderBottom: '1px solid #ececec' }}><td style={{ padding: '8px 0', fontWeight: 600, width: '40%' }}>Size</td><td style={{ padding: '8px 0' }}>{product.size || '20"'}</td></tr>
+                  <tr style={{ borderBottom: '1px solid #ececec', background: '#fafbfc' }}><td style={{ padding: '8px 0', fontWeight: 600 }}>Thickness</td><td style={{ padding: '8px 0' }}>{product.thickness || '6.5mm (.256)'}</td></tr>
+                  <tr style={{ borderBottom: '1px solid #ececec' }}><td style={{ padding: '8px 0', fontWeight: 600 }}>Bolt Pattern</td><td style={{ padding: '8px 0' }}>{product.bolt_pattern || '4-bolt'}</td></tr>
+                  <tr style={{ borderBottom: '1px solid #ececec', background: '#fafbfc' }}><td style={{ padding: '8px 0', fontWeight: 600 }}>Category</td><td style={{ padding: '8px 0' }}>{product.category}</td></tr>
+                  <tr><td style={{ padding: '8px 0', fontWeight: 600 }}>Manufacturer</td><td style={{ padding: '8px 0' }}>{product.manufacturer}</td></tr>
                 </tbody>
               </table>
             </section>
@@ -134,18 +133,17 @@ export default function ProductDetail() {
             <section style={{
               width: '100%',
               margin: '0 0 18px 0',
-              background: '#f7f7f9',
-              borderRadius: 12,
-              boxShadow: '0 1px 8px rgba(0,0,0,0.06)',
-              padding: '1.2rem 1.5rem',
-              marginBottom: 18,
-              border: '1px solid #e0e0e0'
+              background: 'none',
+              borderRadius: 0,
+              boxShadow: 'none',
+              padding: 0,
+              marginBottom: 18
             }}>
-              <h3 style={{ fontSize: '1.13rem', fontWeight: 700, marginBottom: 8, color: '#222', letterSpacing: '0.01em', textTransform: 'uppercase', letterSpacing: '0.04em' }}>OEM Parts</h3>
-              <table style={{ width: '100%', background: 'transparent', fontSize: '1rem', borderCollapse: 'collapse', color: '#222', border: '1px solid #e0e0e0' }}>
+              <h3 style={{ fontSize: '1.13rem', fontWeight: 700, marginBottom: 8, color: '#222', letterSpacing: '0.01em', textAlign: 'left', textTransform: 'none' }}>OEM Parts</h3>
+              <table style={{ width: '100%', background: 'none', fontSize: '1rem', borderCollapse: 'collapse', color: '#222' }}>
                 <tbody>
-                  <tr style={{ borderBottom: '1px solid #e0e0e0' }}><td style={{ padding: '8px', fontWeight: 600, width: '40%', background: '#f2f2f4' }}>OEM Part Number</td><td style={{ padding: '8px', background: '#fff' }}>{product.oem_part_number || 'SH143557'}</td></tr>
-                  <tr><td style={{ padding: '8px', fontWeight: 600, background: '#f2f2f4' }}>Replaces</td><td style={{ padding: '8px', background: '#fff' }}>{product.replaces || 'Degelman No 143557'}</td></tr>
+                  <tr style={{ borderBottom: '1px solid #ececec' }}><td style={{ padding: '8px 0', fontWeight: 600, width: '40%' }}>OEM Part Number</td><td style={{ padding: '8px 0' }}>{product.oem_part_number || 'SH143557'}</td></tr>
+                  <tr style={{ background: '#fafbfc' }}><td style={{ padding: '8px 0', fontWeight: 600 }}>Replaces</td><td style={{ padding: '8px 0' }}>{product.replaces || 'Degelman No 143557'}</td></tr>
                 </tbody>
               </table>
             </section>
