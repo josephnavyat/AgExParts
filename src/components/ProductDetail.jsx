@@ -144,7 +144,7 @@ export default function ProductDetail() {
               padding: 0,
               marginBottom: 18
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
+              <div style={{ display: 'flex', alignItems: 'center', margin: '24px 0 14px 0' }}>
                 <h3 style={{
                   fontSize: '1.25rem',
                   fontWeight: 700,
@@ -160,7 +160,7 @@ export default function ProductDetail() {
                 <div style={{
                   flex: 1,
                   height: 6,
-                  background: '#e0e0e0',
+                  background: '#23272f',
                   borderRadius: 3,
                   boxShadow: '0 2px 8px 0 rgba(0,0,0,0.07)'
                 }} />
@@ -186,9 +186,9 @@ export default function ProductDetail() {
               padding: 0,
               marginBottom: 18
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
+              <div style={{ display: 'flex', alignItems: 'center', margin: '24px 0 14px 0' }}>
                 <h3 style={{
-                  fontSize: '1.13rem',
+                  fontSize: '1.25rem',
                   fontWeight: 700,
                   color: '#23272f',
                   letterSpacing: '0.01em',
@@ -202,7 +202,7 @@ export default function ProductDetail() {
                 <div style={{
                   flex: 1,
                   height: 6,
-                  background: '#e0e0e0',
+                  background: '#23272f',
                   borderRadius: 3,
                   boxShadow: '0 2px 8px 0 rgba(0,0,0,0.07)'
                 }} />
