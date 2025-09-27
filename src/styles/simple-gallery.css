@@ -284,12 +284,13 @@
 .simple-gallery-card-actions {
   display: flex;
   gap: 14px;
-  width: 100%;
+  width: calc(100% - 32px);
   justify-content: center;
   margin-top: auto;
   position: absolute;
-  left: 0;
+  left: 16px;
   bottom: 16px;
+  box-sizing: border-box;
 }
 
 .simple-gallery-btn {
