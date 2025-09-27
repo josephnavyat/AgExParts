@@ -144,7 +144,27 @@ export default function ProductDetail() {
               padding: 0,
               marginBottom: 18
             }}>
-              <h3 style={{ fontSize: '1.13rem', fontWeight: 700, marginBottom: 8, color: '#222', letterSpacing: '0.01em', textAlign: 'left', textTransform: 'none' }}>Product Specifications</h3>
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
+                <h3 style={{
+                  fontSize: '1.13rem',
+                  fontWeight: 700,
+                  color: '#23272f',
+                  letterSpacing: '0.01em',
+                  textAlign: 'left',
+                  textTransform: 'none',
+                  margin: 0,
+                  paddingRight: 16,
+                  whiteSpace: 'nowrap',
+                  textShadow: '0 1px 4px rgba(0,0,0,0.07)'
+                }}>Product Specifications</h3>
+                <div style={{
+                  flex: 1,
+                  height: 6,
+                  background: '#e0e0e0',
+                  borderRadius: 3,
+                  boxShadow: '0 2px 8px 0 rgba(0,0,0,0.07)'
+                }} />
+              </div>
               <table style={{ width: '100%', background: 'none', fontSize: '1rem', borderCollapse: 'collapse', color: '#222' }}>
                 <tbody>
                   <tr style={{ borderBottom: '1px solid #ececec' }}><td style={{ padding: '8px 0', fontWeight: 600, width: '40%' }}>Size</td><td style={{ padding: '8px 0' }}>{product.size || '20"'}</td></tr>
@@ -166,7 +186,27 @@ export default function ProductDetail() {
               padding: 0,
               marginBottom: 18
             }}>
-              <h3 style={{ fontSize: '1.13rem', fontWeight: 700, marginBottom: 8, color: '#222', letterSpacing: '0.01em', textAlign: 'left', textTransform: 'none' }}>OEM Parts</h3>
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
+                <h3 style={{
+                  fontSize: '1.13rem',
+                  fontWeight: 700,
+                  color: '#23272f',
+                  letterSpacing: '0.01em',
+                  textAlign: 'left',
+                  textTransform: 'none',
+                  margin: 0,
+                  paddingRight: 16,
+                  whiteSpace: 'nowrap',
+                  textShadow: '0 1px 4px rgba(0,0,0,0.07)'
+                }}>OEM Parts</h3>
+                <div style={{
+                  flex: 1,
+                  height: 6,
+                  background: '#e0e0e0',
+                  borderRadius: 3,
+                  boxShadow: '0 2px 8px 0 rgba(0,0,0,0.07)'
+                }} />
+              </div>
               <table style={{ width: '100%', background: 'none', fontSize: '1rem', borderCollapse: 'collapse', color: '#222' }}>
                 <tbody>
                   <tr style={{ borderBottom: '1px solid #ececec' }}><td style={{ padding: '8px 0', fontWeight: 600, width: '40%' }}>OEM Part Number</td><td style={{ padding: '8px 0' }}>{product.oem_part_number || 'SH143557'}</td></tr>
