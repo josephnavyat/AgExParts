@@ -109,7 +109,7 @@ export default function ProductDetail() {
                 }}
               />
             </div>
-            <h2 className="distressed" style={{ fontSize: '2.2rem', marginBottom: 8 }}>{product.name}</h2>
+            <h2 className="distressed" style={{ fontSize: '2.2rem', marginBottom: 8, color: '#23272f' }}>{product.name}</h2>
             <div style={{ color: '#888', fontSize: '1.1rem', marginBottom: 16 }}>{product.part_number}</div>
             <div style={{ color: '#333', fontWeight: 600, fontSize: '1.3rem', marginBottom: 12 }}>
               {(!isNaN(Number(product.price)) && product.price !== null && product.price !== undefined) ? `$${Number(product.price).toFixed(2)}` : 'Price N/A'}
@@ -146,7 +146,7 @@ export default function ProductDetail() {
             }}>
               <div style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
                 <h3 style={{
-                  fontSize: '1.13rem',
+                  fontSize: '1.25rem',
                   fontWeight: 700,
                   color: '#23272f',
                   letterSpacing: '0.01em',
