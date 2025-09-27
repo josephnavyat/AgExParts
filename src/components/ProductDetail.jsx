@@ -120,21 +120,21 @@ export default function ProductDetail() {
               <h3 style={{
                 fontSize: '1.25rem',
                 fontWeight: 700,
-                color: '#444a58',
+                color: '#7a8599',
                 letterSpacing: '0.01em',
                 textAlign: 'left',
                 textTransform: 'none',
                 margin: 0,
                 paddingRight: 16,
                 whiteSpace: 'nowrap',
-                textShadow: '0 2px 8px 0 rgba(68,74,88,0.18)'
+                textShadow: '0 2px 8px 0 rgba(122,133,153,0.18)'
               }}>Product Specifications</h3>
               <div style={{
                 flex: 1,
                 height: 6,
-                background: '#444a58',
+                background: '#7a8599',
                 borderRadius: 3,
-                boxShadow: '0 4px 16px 0 rgba(68,74,88,0.18)'
+                boxShadow: '0 4px 16px 0 rgba(122,133,153,0.18)'
               }} />
             </div>
             <table style={{ width: '100%', background: 'none', fontSize: '1rem', borderCollapse: 'collapse', color: '#444a58' }}>
