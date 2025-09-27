@@ -211,8 +211,15 @@
     max-width: none;
   }
   .simple-gallery-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
     gap: 18px;
+  }
+  .simple-gallery-card {
+    max-width: 100%;
+    min-width: 0;
+    width: 100%;
+    margin: 0;
+    box-sizing: border-box;
   }
 }
 
@@ -250,14 +257,14 @@
 .simple-gallery-card-title {
   color: var(--gallery-title);
   font-weight: 700;
-  font-size: 1.15rem;
+  font-size: 0.98rem;
   margin-bottom: 8px;
   text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
   -webkit-box-orient: vertical;
   min-height: 2.4em;
   height: 2.4em;
