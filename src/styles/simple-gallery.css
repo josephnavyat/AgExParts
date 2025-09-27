@@ -193,9 +193,10 @@
 
 
 /* 3 columns for desktop */
+/* 4 columns for desktop */
 .simple-gallery-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 28px;
   width: 100%;
 }
@@ -224,13 +225,15 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  max-width: 320px;
-  min-width: 0;
+  width: 100%;
+  max-width: 270px;
+  min-width: 220px;
   margin: 0 auto;
   color: var(--gallery-text);
   min-height: 390px;
   height: 390px;
   position: relative;
+  box-sizing: border-box;
 }
 
 
