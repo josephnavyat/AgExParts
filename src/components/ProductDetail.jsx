@@ -83,7 +83,32 @@ export default function ProductDetail() {
             alignItems: 'center',
           }}>
             {/* Main Product Info */}
-            <img src={product.image} alt={product.name} style={{ width: 320, height: 200, objectFit: 'cover', borderRadius: 12, marginBottom: 24, background: '#f8f8f8' }} />
+            <div style={{
+              width: '100%',
+              maxWidth: 420,
+              aspectRatio: '4/3',
+              background: '#f8f8f8',
+              borderRadius: 16,
+              overflow: 'hidden',
+              marginBottom: 28,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 1px 8px rgba(0,0,0,0.06)'
+            }}>
+              <img
+                src={product.image}
+                alt={product.name}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  display: 'block',
+                  background: 'none',
+                  borderRadius: 0
+                }}
+              />
+            </div>
             <h2 className="distressed" style={{ fontSize: '2.2rem', marginBottom: 8 }}>{product.name}</h2>
             <div style={{ color: '#888', fontSize: '1.1rem', marginBottom: 16 }}>{product.part_number}</div>
             <div style={{ color: '#333', fontWeight: 600, fontSize: '1.3rem', marginBottom: 12 }}>
