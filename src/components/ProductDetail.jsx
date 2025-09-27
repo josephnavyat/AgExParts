@@ -120,7 +120,7 @@ export default function ProductDetail() {
               <h3 style={{
                 fontSize: '1.25rem',
                 fontWeight: 700,
-                color: '#7a8599',
+                color: '#3b3b3bff',
                 letterSpacing: '0.01em',
                 textAlign: 'left',
                 textTransform: 'none',
@@ -132,7 +132,7 @@ export default function ProductDetail() {
               <div style={{
                 flex: 1,
                 height: 6,
-                background: '#7a8599',
+                background: '#3b3b3bff',
                 borderRadius: 3,
                 boxShadow: '0 4px 16px 0 rgba(122,133,153,0.18)'
               }} />
@@ -161,7 +161,7 @@ export default function ProductDetail() {
               <h3 style={{
                 fontSize: '1.25rem',
                 fontWeight: 700,
-                color: '#444a58',
+                color: '#3b3b3bff',
                 letterSpacing: '0.01em',
                 textAlign: 'left',
                 textTransform: 'none',
@@ -173,7 +173,7 @@ export default function ProductDetail() {
               <div style={{
                 flex: 1,
                 height: 6,
-                background: '#444a58',
+                background: '#3b3b3bff',
                 borderRadius: 3,
                 boxShadow: '0 4px 16px 0 rgba(68,74,88,0.18)'
               }} />
