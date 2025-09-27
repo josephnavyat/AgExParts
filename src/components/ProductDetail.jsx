@@ -108,6 +108,7 @@ export default function ProductDetail() {
               padding: '1.2rem 1.5rem',
               boxShadow: '0 1px 6px rgba(0,0,0,0.04)'
             }}>{product.description}</div>
+            <hr style={{ width: '100%', border: 0, borderTop: '1.5px solid #e0e0e0', margin: '18px 0 18px 0' }} />
             {/* Product Specifications Section */}
             <section style={{
               width: '100%',
@@ -129,6 +130,7 @@ export default function ProductDetail() {
                 </tbody>
               </table>
             </section>
+            <hr style={{ width: '100%', border: 0, borderTop: '1.5px solid #e0e0e0', margin: '18px 0 18px 0' }} />
             {/* OEM Parts Section */}
             <section style={{
               width: '100%',
