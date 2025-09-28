@@ -65,7 +65,7 @@ export default function SimpleGallery() {
             ))}
           </select>
         </div>
-        {/* Expand/collapse button, fixed to left edge */}
+        {/* Expand/collapse button only on mobile */}
         <button
           className="simple-gallery-filter-toggle"
           aria-label={filterOpen ? 'Hide Filters' : 'Show Filters'}
@@ -85,22 +85,21 @@ export default function SimpleGallery() {
             boxShadow: '0 2px 8px rgba(0,0,0,0.13)',
             cursor: 'pointer',
             transition: 'left 0.3s',
+            display: 'none',
           }}
         >
           {filterOpen ? '←' : '→'}
         </button>
         {/* Slide-in filter pane */}
         <aside
-          className={`simple-gallery-filter-pane${filterOpen ? '' : ' simple-gallery-filter-pane--closed'}`}
+          className="simple-gallery-filter-pane"
           style={{
-            position: 'absolute',
-            left: filterOpen ? 0 : -340,
-            top: 100,
-            transition: 'left 0.3s',
-            zIndex: 9,
+            position: 'static',
             minWidth: 260,
             maxWidth: 340,
             height: 'fit-content',
+            alignSelf: 'flex-start',
+            marginTop: 0,
           }}
         >
           <div className="simple-gallery-filter-header" onClick={() => setFilterOpen((v) => !v)}>
@@ -234,7 +233,7 @@ export default function SimpleGallery() {
             ));
           })()}
         {/* Pagination controls */}
-        <div style={{ display: 'flex', justifyContent: 'center', margin: '2rem 0 0 0', gap: 12 }}>
+  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '2rem auto 0 auto', gap: 12, width: '100%' }}>
           {page > 1 && (
             <button className="simple-gallery-btn secondary" onClick={() => setPage(page - 1)}>&lt; Prev</button>
           )}
