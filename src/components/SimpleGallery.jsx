@@ -59,9 +59,9 @@ export default function SimpleGallery() {
     <div className="simple-gallery-root">
       <Navbar />
       <h2 className="simple-gallery-title">Agex Parts</h2>
-      <div className="simple-gallery-layout" style={{ position: 'relative' }}>
-        {/* Per page dropdown */}
-        <div style={{ position: 'absolute', top: 0, right: 0, zIndex: 20, display: 'flex', alignItems: 'center', gap: 8 }}>
+      <div className="simple-gallery-layout">
+        {/* Per page dropdown above grid */}
+        <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 12, marginBottom: '1.2rem' }}>
           <label className="filter-label" htmlFor="perPageSelect" style={{ marginRight: 6, marginTop: 0 }}>Show:</label>
           <select
             id="perPageSelect"
@@ -70,10 +70,13 @@ export default function SimpleGallery() {
             onChange={e => { setPerPage(Number(e.target.value)); setPage(1); }}
             style={{ minWidth: 90 }}
           >
-            {[50, 100, 150, 200, 250].map(n => (
+            {[48, 96, 144, 192, 240].map(n => (
               <option key={n} value={n}>{n} per page</option>
             ))}
           </select>
+          <span style={{ color: '#c3c3c3', fontWeight: 500, fontSize: '1.05rem', marginLeft: 10 }}>
+            Page {page}
+          </span>
         </div>
         {/* Expand/collapse button, fixed to left edge */}
         <button
@@ -114,8 +117,7 @@ export default function SimpleGallery() {
           }}
         >
           <div className="simple-gallery-filter-header" onClick={() => setFilterOpen((v) => !v)}>
-            Filters
-            <span>{filterOpen ? '▼' : '▶'}</span>
+            Filters {filterOpen ? '▼' : '▶'}
           </div>
           {filterOpen && (
             <div className="simple-gallery-filter-content">
