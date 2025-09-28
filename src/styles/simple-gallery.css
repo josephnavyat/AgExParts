@@ -1,3 +1,44 @@
+.simple-gallery-filter-toggle {
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .simple-gallery-filter-toggle {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 120px;
+    z-index: 10;
+    background: #3a3939;
+    color: #f3f3f3;
+    border: none;
+    border-radius: 0 8px 8px 0;
+    padding: 0.7rem 0.9rem;
+    font-weight: 700;
+    font-size: 1.1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.13);
+    cursor: pointer;
+    transition: left 0.3s;
+  }
+  .simple-gallery-filter-pane {
+    position: absolute !important;
+    left: 0;
+    top: 100px;
+    transition: left 0.3s;
+    z-index: 9;
+    min-width: 260px;
+    max-width: 340px;
+    height: fit-content;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 1.5rem;
+    width: 100%;
+    max-width: none;
+  }
+  .simple-gallery-filter-pane.simple-gallery-filter-pane--closed {
+    left: -340px;
+  }
+}
 
 :root {
   --gallery-bg: #181c24;

@@ -65,34 +65,17 @@ export default function SimpleGallery() {
             ))}
           </select>
         </div>
-        {/* Expand/collapse button only on mobile */}
+        {/* Expand/collapse button only on mobile, handled by CSS */}
         <button
           className="simple-gallery-filter-toggle"
           aria-label={filterOpen ? 'Hide Filters' : 'Show Filters'}
           onClick={() => setFilterOpen((v) => !v)}
-          style={{
-            position: 'absolute',
-            left: filterOpen ? 270 : 0,
-            top: 120,
-            zIndex: 10,
-            background: '#3a3939',
-            color: '#f3f3f3',
-            border: 'none',
-            borderRadius: '0 8px 8px 0',
-            padding: '0.7rem 0.9rem',
-            fontWeight: 700,
-            fontSize: '1.1rem',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.13)',
-            cursor: 'pointer',
-            transition: 'left 0.3s',
-            display: 'none',
-          }}
         >
           {filterOpen ? '←' : '→'}
         </button>
         {/* Slide-in filter pane */}
         <aside
-          className="simple-gallery-filter-pane"
+          className={`simple-gallery-filter-pane${filterOpen ? '' : ' simple-gallery-filter-pane--closed'}`}
           style={{
             position: 'static',
             minWidth: 260,
