@@ -7,18 +7,8 @@ export default function SimpleGallery() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  // Filter pane open by default on desktop, closed on mobile
-  const [filterOpen, setFilterOpen] = useState(() => window.innerWidth > 700);
-
-  // Responsive: auto-hide filter pane on mobile resize
-  React.useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth <= 700 && filterOpen) setFilterOpen(false);
-      if (window.innerWidth > 700 && !filterOpen) setFilterOpen(true);
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [filterOpen]);
+  // Filter pane is hidden by default
+  const [filterOpen, setFilterOpen] = useState(false);
   
   // Filter states
   const [inStockOnly, setInStockOnly] = useState(false);
@@ -61,8 +51,7 @@ export default function SimpleGallery() {
       <h2 className="simple-gallery-title">Agex Parts</h2>
       <div className="simple-gallery-layout" style={{ position: 'relative' }}>
         {/* Per page dropdown */}
-        {/* Per page dropdown above gallery */}
-        <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 8, marginBottom: '1.2rem' }}>
+        <div style={{ position: 'absolute', top: 0, right: 0, zIndex: 20, display: 'flex', alignItems: 'center', gap: 8 }}>
           <label className="filter-label" htmlFor="perPageSelect" style={{ marginRight: 6, marginTop: 0 }}>Show:</label>
           <select
             id="perPageSelect"
@@ -71,7 +60,7 @@ export default function SimpleGallery() {
             onChange={e => { setPerPage(Number(e.target.value)); setPage(1); }}
             style={{ minWidth: 90 }}
           >
-            {[48, 96, 144, 192, 240].map(n => (
+            {[50, 100, 150, 200, 250].map(n => (
               <option key={n} value={n}>{n} per page</option>
             ))}
           </select>
@@ -194,31 +183,6 @@ export default function SimpleGallery() {
             </div>
           )}
         </aside>
-        {/* Pagination controls (moved above grid) */}
-          {/* Pagination controls at bottom */}
-          <div style={{ display: 'flex', justifyContent: 'center', margin: '2rem 0 0 0', gap: 12 }}>
-            {page > 1 && (
-              <button className="simple-gallery-btn secondary" onClick={() => setPage(page - 1)}>&lt; Prev</button>
-            )}
-            <span style={{ color: '#c3c3c3', fontWeight: 500, fontSize: '1.05rem', margin: '0 1rem' }}>
-              Page {page}
-            </span>
-            {products.filter(product => !category || product.category === category)
-              .filter(product => !subCategory || product.subcategory === subCategory)
-              .filter(product => !manufacturer || product.manufacturer === manufacturer)
-              .filter(product => !machineType || product.machine_type === machineType)
-              .filter(product => !model || product.model === model)
-              .filter(product => !inStockOnly || product.quantity > 0)
-              .filter(product => {
-                if (!searchText.trim()) return true;
-                const lower = searchText.toLowerCase();
-                return Object.values(product).some(val =>
-                  typeof val === 'string' && val.toLowerCase().includes(lower)
-                );
-              }).length > page * perPage && (
-              <button className="simple-gallery-btn secondary" onClick={() => setPage(page + 1)}>Next &gt;</button>
-            )}
-          </div>
         {/* Main grid, with left margin for filter pane if open */}
         <div
           className="simple-gallery-grid"
@@ -250,26 +214,50 @@ export default function SimpleGallery() {
             const start = (page - 1) * perPage;
             const end = start + perPage;
             return filtered.slice(start, end).map((product) => (
-              <div key={product.id} className="simple-gallery-card">
-                <img src={product.image} alt={product.name} />
-                <h3 className="simple-gallery-card-title">{product.name}</h3>
-                <div className="simple-gallery-card-actions">
-                  <Link
-                    to={`/product/${product.id}`}
-                    className="simple-gallery-btn secondary"
-                  >
-                    View Details
-                  </Link>
-                  <button
-                    className="simple-gallery-btn primary"
-                    onClick={() => alert(`Added ${product.name} to cart!`)}
-                  >
-                    Add to Cart
-                  </button>
-                </div>
+            <div key={product.id} className="simple-gallery-card">
+              <img src={product.image} alt={product.name} />
+              <h3 className="simple-gallery-card-title">{product.name}</h3>
+              <div className="simple-gallery-card-actions">
+                <Link
+                  to={`/product/${product.id}`}
+                  className="simple-gallery-btn secondary"
+                >
+                  View Details
+                </Link>
+                <button
+                  className="simple-gallery-btn primary"
+                  onClick={() => alert(`Added ${product.name} to cart!`)}
+                >
+                  Add to Cart
+                </button>
               </div>
+            </div>
             ));
           })()}
+        {/* Pagination controls */}
+        <div style={{ display: 'flex', justifyContent: 'center', margin: '2rem 0 0 0', gap: 12 }}>
+          {page > 1 && (
+            <button className="simple-gallery-btn secondary" onClick={() => setPage(page - 1)}>&lt; Prev</button>
+          )}
+          <span style={{ color: '#c3c3c3', fontWeight: 500, fontSize: '1.05rem', margin: '0 1rem' }}>
+            Page {page}
+          </span>
+          {products.filter(product => !category || product.category === category)
+            .filter(product => !subCategory || product.subcategory === subCategory)
+            .filter(product => !manufacturer || product.manufacturer === manufacturer)
+            .filter(product => !machineType || product.machine_type === machineType)
+            .filter(product => !model || product.model === model)
+            .filter(product => !inStockOnly || product.quantity > 0)
+            .filter(product => {
+              if (!searchText.trim()) return true;
+              const lower = searchText.toLowerCase();
+              return Object.values(product).some(val =>
+                typeof val === 'string' && val.toLowerCase().includes(lower)
+              );
+            }).length > page * perPage && (
+            <button className="simple-gallery-btn secondary" onClick={() => setPage(page + 1)}>Next &gt;</button>
+          )}
+        </div>
         </div>
       </div>
     </div>
