@@ -60,7 +60,7 @@ export default function SimpleGallery() {
             onChange={e => { setPerPage(Number(e.target.value)); setPage(1); }}
             style={{ minWidth: 90 }}
           >
-            {[50, 100, 150, 200, 250].map(n => (
+            {[48, 96, 144, 192, 240].map(n => (
               <option key={n} value={n}>{n} per page</option>
             ))}
           </select>
@@ -104,8 +104,7 @@ export default function SimpleGallery() {
           }}
         >
           <div className="simple-gallery-filter-header" onClick={() => setFilterOpen((v) => !v)}>
-            Filters
-            <span>{filterOpen ? '▼' : '▶'}</span>
+            Filters {filterOpen ? '▼' : '▶'}
           </div>
           {filterOpen && (
             <div className="simple-gallery-filter-content">
