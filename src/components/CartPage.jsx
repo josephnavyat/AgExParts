@@ -4,6 +4,7 @@ import Footer from "./Footer.jsx";
 import { useCart } from "./CartContext.jsx";
 import { getProductQuantity } from "./CartContext.jsx";
 import { useStripe } from '@stripe/react-stripe-js';
+import ShippingRatesButton from './ShippingRatesButton.jsx';
 
 function StripeCheckoutButton({ cart }) {
   const stripe = useStripe();
@@ -155,6 +156,19 @@ export default function CartPage() {
               </button>
               <StripeCheckoutButton cart={cart.items} />
             </div>
+            <ShippingRatesButton
+              cart={cart}
+              fromAddress={{
+                name: 'AgEx Parts',
+                street1: '123 Main St',
+                city: 'Fargo',
+                state: 'ND',
+                zip: '58102',
+                country: 'US',
+                phone: '555-555-5555',
+                email: 'info@agexparts.com'
+              }}
+            />
           </div>
         )}
       </div>

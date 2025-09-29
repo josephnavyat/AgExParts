@@ -168,8 +168,8 @@ export default function SimpleGallery() {
         <div
           className="simple-gallery-grid"
           style={{
-            marginLeft: (typeof window !== 'undefined' && window.innerWidth <= 700) ? 0 : 320,
-            transition: 'margin-left 0.3s',
+            marginLeft: '',
+            transition: 'none',
           }}
         >
           {(() => {
