@@ -32,6 +32,7 @@ function StripeCheckoutButton({ cart }) {
 
 const getImageUrl = (img) => img && img.startsWith('http') ? img : (img ? `https://agexparts.netlify.app${img}` : '');
 
+export default function CartPage() {
   const { cart, dispatch } = useCart();
   const total = cart.items.reduce((sum, i) => sum + (i.product.price || 0) * i.quantity, 0);
   const [shippingAddress, setShippingAddress] = useState({
