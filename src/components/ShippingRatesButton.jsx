@@ -24,9 +24,9 @@ export default function ShippingRatesButton({ cart, fromAddress }) {
       // Example: use first cart item for dimensions, sum weight
       const first = cart.items[0]?.product;
       const parcel = {
-        length: first?.length || 10,
-        width: first?.width || 8,
-        height: first?.height || 4,
+        length: first?.length_mm || 10,
+        width: first?.width_mm || 8,
+        height: first?.height_mm || 4,
         distance_unit: "in",
         weight: getTotalWeightOz(),
         mass_unit: "oz"

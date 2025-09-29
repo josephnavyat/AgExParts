@@ -166,12 +166,30 @@ const getImageUrl = (img) => img && img.startsWith('http') ? img : (img ? `https
             <div style={{ margin: '2rem 0 1rem 0', padding: '1.5rem', background: '#f8f8f8', borderRadius: 12 }}>
               <h3 style={{ marginBottom: 12 }}>Shipping Address</h3>
               <form style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }} onSubmit={e => e.preventDefault()}>
-                <input required placeholder="Name" style={{ flex: '1 1 100%' }} value={shippingAddress.name} onChange={e => setShippingAddress(a => ({ ...a, name: e.target.value }))} />
-                <input required placeholder="Street Address" style={{ flex: '1 1 100%' }} value={shippingAddress.street1} onChange={e => setShippingAddress(a => ({ ...a, street1: e.target.value }))} />
-                <input required placeholder="City" style={{ flex: '1 1 40%' }} value={shippingAddress.city} onChange={e => setShippingAddress(a => ({ ...a, city: e.target.value }))} />
-                <input required placeholder="State" style={{ flex: '1 1 20%' }} value={shippingAddress.state} onChange={e => setShippingAddress(a => ({ ...a, state: e.target.value }))} />
-                <input required placeholder="ZIP" style={{ flex: '1 1 20%' }} value={shippingAddress.zip} onChange={e => setShippingAddress(a => ({ ...a, zip: e.target.value }))} />
-                <input required placeholder="Country" style={{ flex: '1 1 15%' }} value={shippingAddress.country} onChange={e => setShippingAddress(a => ({ ...a, country: e.target.value }))} />
+                <div style={{ flex: '1 1 100%', display: 'flex', flexDirection: 'column', marginBottom: 8 }}>
+                  <label style={{ fontWeight: 500, marginBottom: 4 }}>Name</label>
+                  <input required placeholder="Full Name" style={{ padding: 8, borderRadius: 6, border: '1px solid #ccc' }} value={shippingAddress.name} onChange={e => setShippingAddress(a => ({ ...a, name: e.target.value }))} />
+                </div>
+                <div style={{ flex: '1 1 100%', display: 'flex', flexDirection: 'column', marginBottom: 8 }}>
+                  <label style={{ fontWeight: 500, marginBottom: 4 }}>Street Address</label>
+                  <input required placeholder="Street Address" style={{ padding: 8, borderRadius: 6, border: '1px solid #ccc' }} value={shippingAddress.street1} onChange={e => setShippingAddress(a => ({ ...a, street1: e.target.value }))} />
+                </div>
+                <div style={{ flex: '1 1 40%', display: 'flex', flexDirection: 'column', marginBottom: 8 }}>
+                  <label style={{ fontWeight: 500, marginBottom: 4 }}>City</label>
+                  <input required placeholder="City" style={{ padding: 8, borderRadius: 6, border: '1px solid #ccc' }} value={shippingAddress.city} onChange={e => setShippingAddress(a => ({ ...a, city: e.target.value }))} />
+                </div>
+                <div style={{ flex: '1 1 20%', display: 'flex', flexDirection: 'column', marginBottom: 8 }}>
+                  <label style={{ fontWeight: 500, marginBottom: 4 }}>State</label>
+                  <input required placeholder="State" style={{ padding: 8, borderRadius: 6, border: '1px solid #ccc' }} value={shippingAddress.state} onChange={e => setShippingAddress(a => ({ ...a, state: e.target.value }))} />
+                </div>
+                <div style={{ flex: '1 1 20%', display: 'flex', flexDirection: 'column', marginBottom: 8 }}>
+                  <label style={{ fontWeight: 500, marginBottom: 4 }}>ZIP</label>
+                  <input required placeholder="ZIP" style={{ padding: 8, borderRadius: 6, border: '1px solid #ccc' }} value={shippingAddress.zip} onChange={e => setShippingAddress(a => ({ ...a, zip: e.target.value }))} />
+                </div>
+                <div style={{ flex: '1 1 15%', display: 'flex', flexDirection: 'column', marginBottom: 8 }}>
+                  <label style={{ fontWeight: 500, marginBottom: 4 }}>Country</label>
+                  <input required placeholder="Country" style={{ padding: 8, borderRadius: 6, border: '1px solid #ccc' }} value={shippingAddress.country} onChange={e => setShippingAddress(a => ({ ...a, country: e.target.value }))} />
+                </div>
               </form>
             </div>
             <ShippingRatesButton
