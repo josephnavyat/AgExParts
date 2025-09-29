@@ -1,32 +1,15 @@
 
 import { Link } from 'react-router-dom';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useCart } from './CartContext.jsx';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [searchValue, setSearchValue] = useState("");
-  const [navVisible, setNavVisible] = useState(true);
-  const lastScrollY = useRef(window.scrollY);
 
   useEffect(() => {
-    let ticking = false;
-    const onScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          setScrolled(window.scrollY > 10);
-          if (window.scrollY > lastScrollY.current && window.scrollY > 60) {
-            setNavVisible(false); // scrolling down
-          } else {
-            setNavVisible(true); // scrolling up
-          }
-          lastScrollY.current = window.scrollY;
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
+    const onScroll = () => setScrolled(window.scrollY > 10);
     document.addEventListener('scroll', onScroll);
     onScroll();
     return () => document.removeEventListener('scroll', onScroll);
@@ -37,7 +20,7 @@ export default function Navbar() {
 
   return (
     <>
-  <nav id="nav" className={`nav ${scrolled ? 'scrolled' : ''} ${navVisible ? '' : 'nav-hidden'}`}> 
+      <nav id="nav" className={`nav ${scrolled ? 'scrolled' : ''}`}> 
         <div className="container nav-inner">
           <div className="brand">
             <img src="/logo.png" alt="AgEx Parts logo" style={{ height: '80px', width: 'auto' }} />

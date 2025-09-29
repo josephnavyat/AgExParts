@@ -6,12 +6,11 @@ async function seed() {
     filename: './products.db',
     driver: sqlite3.Database
   });
-  const BASE_URL = "https://agex-parts-react-styled.netlify.app"; // Replace with your Netlify site URL
   const products = [
     {
       part_number: 'PG-0001',
       name: 'Product 1',
-      image: `${BASE_URL}/logo.png`,
+      image: '/logo.png',
       description: 'Description for product 1',
       price: 10.99,
       quantity: 25,
@@ -21,7 +20,7 @@ async function seed() {
     {
       part_number: 'PG-0002',
       name: 'Product 2',
-      image: `${BASE_URL}/hero-16x9.png`,
+      image: '/hero-16x9.png',
       description: 'Description for product 2',
       price: 12.99,
       quantity: 30,
@@ -31,7 +30,7 @@ async function seed() {
     {
       part_number: 'PG-0003',
       name: 'Product 3',
-      image: `${BASE_URL}/logo.png`,
+      image: '/logo.png',
       description: 'Description for product 3',
       price: 8.99,
       quantity: 40,
@@ -41,7 +40,7 @@ async function seed() {
     {
       part_number: 'PG-0004',
       name: 'Product 4',
-      image: `${BASE_URL}/hero-16x9.png`,
+      image: '/hero-16x9.png',
       description: 'Description for product 4',
       price: 15.99,
       quantity: 20,
@@ -51,7 +50,7 @@ async function seed() {
     {
       part_number: 'PG-0005',
       name: 'Product 5',
-      image: `${BASE_URL}/logo.png`,
+      image: '/logo.png',
       description: 'Description for product 5',
       price: 9.99,
       quantity: 50,
@@ -61,7 +60,7 @@ async function seed() {
     {
       part_number: 'PG-0006',
       name: 'Product 6',
-      image: `${BASE_URL}/hero-16x9.png`,
+      image: '/hero-16x9.png',
       description: 'Description for product 6',
       price: 11.99,
       quantity: 35,

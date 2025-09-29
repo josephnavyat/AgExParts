@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Navbar from "./Navbar.jsx";
 import Footer from "./Footer.jsx";
 import { useCart } from "./CartContext.jsx";
@@ -32,9 +32,16 @@ function StripeCheckoutButton({ cart }) {
 
 const getImageUrl = (img) => img && img.startsWith('http') ? img : (img ? `https://agexparts.netlify.app${img}` : '');
 
-export default function CartPage() {
   const { cart, dispatch } = useCart();
   const total = cart.items.reduce((sum, i) => sum + (i.product.price || 0) * i.quantity, 0);
+  const [shippingAddress, setShippingAddress] = useState({
+    name: '',
+    street1: '',
+    city: '',
+    state: '',
+    zip: '',
+    country: 'US',
+  });
 
   return (
     <>
@@ -156,8 +163,19 @@ export default function CartPage() {
               </button>
               <StripeCheckoutButton cart={cart.items} />
             </div>
+            <div style={{ margin: '2rem 0 1rem 0', padding: '1.5rem', background: '#f8f8f8', borderRadius: 12 }}>
+              <h3 style={{ marginBottom: 12 }}>Shipping Address</h3>
+              <form style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }} onSubmit={e => e.preventDefault()}>
+                <input required placeholder="Name" style={{ flex: '1 1 100%' }} value={shippingAddress.name} onChange={e => setShippingAddress(a => ({ ...a, name: e.target.value }))} />
+                <input required placeholder="Street Address" style={{ flex: '1 1 100%' }} value={shippingAddress.street1} onChange={e => setShippingAddress(a => ({ ...a, street1: e.target.value }))} />
+                <input required placeholder="City" style={{ flex: '1 1 40%' }} value={shippingAddress.city} onChange={e => setShippingAddress(a => ({ ...a, city: e.target.value }))} />
+                <input required placeholder="State" style={{ flex: '1 1 20%' }} value={shippingAddress.state} onChange={e => setShippingAddress(a => ({ ...a, state: e.target.value }))} />
+                <input required placeholder="ZIP" style={{ flex: '1 1 20%' }} value={shippingAddress.zip} onChange={e => setShippingAddress(a => ({ ...a, zip: e.target.value }))} />
+                <input required placeholder="Country" style={{ flex: '1 1 15%' }} value={shippingAddress.country} onChange={e => setShippingAddress(a => ({ ...a, country: e.target.value }))} />
+              </form>
+            </div>
             <ShippingRatesButton
-              cart={cart}
+              cart={{ ...cart, shippingAddress }}
               fromAddress={{
                 name: 'AgEx Parts',
                 street1: '123 Main St',

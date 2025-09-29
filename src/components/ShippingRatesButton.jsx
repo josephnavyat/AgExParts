@@ -69,7 +69,7 @@ export default function ShippingRatesButton({ cart, fromAddress }) {
         {loading ? "Getting Shipping Rates..." : "Calculate Shipping"}
       </button>
       {error && <div style={{ color: "#d32f2f", marginTop: 8 }}>{error}</div>}
-      {rates && (
+      {rates && rates.length > 0 && (
         <div style={{ marginTop: 12 }}>
           <b>Shipping Rates:</b>
           <ul style={{ margin: 0, padding: 0, listStyle: "none" }}>

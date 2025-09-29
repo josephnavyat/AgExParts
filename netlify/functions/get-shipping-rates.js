@@ -24,6 +24,12 @@ exports.handler = async function(event, context) {
       parcels: [parcel],
       async: false
     });
+    if (!shipment.rates || shipment.rates.length === 0) {
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ error: 'No shipping rates found for the provided addresses and parcel. Please check the address and try again.' })
+      };
+    }
     return {
       statusCode: 200,
       body: JSON.stringify({ rates: shipment.rates })
