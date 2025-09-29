@@ -23,22 +23,27 @@ export default function ShippingRatesButton({ cart, fromAddress }) {
     try {
       // Example: use first cart item for dimensions, sum weight
       const first = cart.items[0]?.product;
+      // Convert mm to inches for Shippo (1 inch = 25.4 mm)
+      const mmToIn = mm => mm ? (mm / 25.4) : undefined;
       const parcel = {
-        length: first?.length_mm || 10,
-        width: first?.width_mm || 8,
-        height: first?.height_mm || 4,
+        length: mmToIn(first?.length_mm) || 10,
+        width: mmToIn(first?.width_mm) || 8,
+        height: mmToIn(first?.height_mm) || 4,
         distance_unit: "in",
         weight: getTotalWeightOz(),
         mass_unit: "oz"
       };
       const to_address = cart.shippingAddress || {
         name: "Customer",
-        street1: "",
-        city: "",
-        state: "",
-        zip: "",
+        street1: "1438 8th St",
+        city: "Santa Monica",
+        state: "CA",
+        zip: "90405",
         country: "US"
       };
+      // Debug log
+      console.log('Shipping to:', to_address);
+      console.log('Parcel:', parcel);
       const res = await fetch("/.netlify/functions/get-shipping-rates", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
