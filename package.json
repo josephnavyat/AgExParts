@@ -2,7 +2,7 @@
   "name": "agex-parts-react",
   "private": true,
   "version": "0.0.2",
-  "type": "module",
+  
   "scripts": {
     "dev": "vite",
     "build": "vite build",
