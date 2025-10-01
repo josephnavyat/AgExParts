@@ -1,3 +1,6 @@
+
 [functions]
 directory = "netlify/functions"
-node_bundler = "esbuild"
+
+[functions.get-shipping-rates]
+node_bundler = "node-cjs"
