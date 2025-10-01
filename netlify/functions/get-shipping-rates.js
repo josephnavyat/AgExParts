@@ -1,7 +1,6 @@
 // get-shipping-rates.js
 // Netlify function to calculate shipping rates using Shippo
-import Shippo from 'shippo';
-const shippo = Shippo(process.env.SHIPPO_API_KEY);
+const shippo = require('shippo')(process.env.SHIPPO_API_KEY);
 
 exports.handler = async function(event, context) {
   if (!process.env.SHIPPO_API_KEY) {
