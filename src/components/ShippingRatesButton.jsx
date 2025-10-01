@@ -44,7 +44,7 @@ export default function ShippingRatesButton({ cart, fromAddress }) {
       // Debug log
       console.log('Shipping to:', to_address);
       console.log('Parcel:', parcel);
-  const res = await fetch("/.netlify/functions/get-shipping-rates.cjs", {
+  const res = await fetch("/.netlify/functions/get-shipping-rates", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
