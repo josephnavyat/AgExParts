@@ -47,56 +47,97 @@ exports.handler = async function(event, context) {
 // get-shipping-rates.js (Netlify function - CommonJS)
 'use strict';
 
-// Construct Shippo client in a way that works with multiple shippo package exports
-let shippoClient;
-try {
-  // require the package
-  const shippoPkg = require('shippo');
+const https = require('https');
 
-  // shippoPkg might be:
-  // 1) a factory function: require('shippo')(APIKEY)
-  // 2) a class constructor: new (require('shippo'))(APIKEY)
-  // 3) an object with a Shippo property/class: new shippoPkg.Shippo(APIKEY)
-  const apiKey = process.env.SHIPPO_API_KEY || '';
+const SHIPPO_API_KEY = process.env.SHIPPO_API_KEY || '';
 
-  if (!apiKey) {
-    // We'll still export the handler but it will early-return if key not set
-    shippoClient = null;
-  } else if (typeof shippoPkg === 'function') {
-    // factory function style
-    shippoClient = shippoPkg(apiKey);
-  } else if (typeof shippoPkg === 'object' && typeof shippoPkg.Shippo === 'function') {
-    // has Shippo class: new shippoPkg.Shippo(apiKey)
-    shippoClient = new shippoPkg.Shippo(apiKey);
-  } else {
-    // fallback: try new on default export (rare)
-    try {
-      shippoClient = new shippoPkg(apiKey);
-    } catch (e) {
-      // leave null and handler will error out later with helpful message
-      shippoClient = null;
-      console.error('Unable to initialize Shippo client automatically:', e);
-    }
-  }
-} catch (requireErr) {
-  console.error('Error requiring shippo package:', requireErr);
-  shippoClient = null;
+/**
+ * Fallback: create shipment by calling Shippo REST API directly.
+ * Uses Basic auth with API token as username and empty password (Shippo style).
+ */
+function createShipmentViaRest(apiKey, bodyPayload) {
+  return new Promise((resolve, reject) => {
+    const postData = JSON.stringify(bodyPayload);
+
+    const auth = Buffer.from(`${apiKey}:`).toString('base64');
+    const options = {
+      hostname: 'api.goshippo.com',
+      port: 443,
+      path: '/shipments/',
+      method: 'POST',
+      headers: {
+        'Authorization': `Basic ${auth}`,
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(postData),
+        'Accept': 'application/json'
+      }
+    };
+
+    const req = https.request(options, (res) => {
+      let data = '';
+      res.on('data', (chunk) => { data += chunk; });
+      res.on('end', () => {
+        try {
+          const parsed = JSON.parse(data);
+          if (res.statusCode && res.statusCode >= 400) {
+            return reject({ statusCode: res.statusCode, body: parsed });
+          }
+          resolve(parsed);
+        } catch (err) {
+          reject({ error: 'Invalid JSON from Shippo', raw: data, err });
+        }
+      });
+    });
+
+    req.on('error', (e) => reject({ error: 'request error', details: e }));
+    req.write(postData);
+    req.end();
+  });
 }
 
-module.exports.handler = async function(event, context) {
-  if (!process.env.SHIPPO_API_KEY) {
-    console.error('SHIPPO_API_KEY not set in environment');
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'SHIPPO_API_KEY not set' })
-    };
-  }
+/**
+ * Safely initialize the Shippo SDK if the package is present.
+ * This tries multiple shapes of exports (factory function, class, object with Shippo).
+ */
+function initShippoClient() {
+  try {
+    const shippoPkg = require('shippo'); // might throw if package not installed
+    if (!SHIPPO_API_KEY) return null;
 
-  if (!shippoClient) {
-    console.error('Shippo client not initialized correctly. Check installed shippo package version.');
+    if (typeof shippoPkg === 'function') {
+      // Common case: require('shippo')(APIKEY)
+      return shippoPkg(SHIPPO_API_KEY);
+    }
+
+    if (typeof shippoPkg === 'object') {
+      if (typeof shippoPkg.Shippo === 'function') {
+        // require('shippo').Shippo
+        return new shippoPkg.Shippo(SHIPPO_API_KEY);
+      }
+      // fallback: try constructing directly if it's a class-like export
+      try {
+        return new shippoPkg(SHIPPO_API_KEY);
+      } catch (e) {
+        // not constructible
+        return shippoPkg; // return raw object so we can introspect its methods
+      }
+    }
+
+    return null;
+  } catch (err) {
+    // package missing or require failed
+    console.error('Shippo require failed:', err && err.message ? err.message : err);
+    return null;
+  }
+}
+
+const shippoClient = initShippoClient();
+
+module.exports.handler = async function(event, context) {
+  if (!SHIPPO_API_KEY) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Shippo client not initialized. See server logs for details.' })
+      body: JSON.stringify({ error: 'SHIPPO_API_KEY not set in environment' })
     };
   }
 
@@ -104,96 +145,86 @@ module.exports.handler = async function(event, context) {
   let payload;
   try {
     payload = JSON.parse(event.body || '{}');
-  } catch (err) {
-    console.error('Invalid JSON body', err);
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ error: 'Invalid JSON body' })
-    };
+  } catch (e) {
+    return { statusCode: 400, body: JSON.stringify({ error: 'Invalid JSON body' }) };
   }
 
   const { to_address, from_address, parcel } = payload;
-
-  // Basic validation — Shippo expects specific fields; adjust as needed
   if (!to_address || !from_address || !parcel) {
     return {
       statusCode: 400,
       body: JSON.stringify({
-        error: 'Missing required fields. Expecting JSON with keys: to_address, from_address, parcel.',
-        example: {
-          to_address: { name: 'Receiver', street1: '123 Main St', city: 'City', state: 'ST', zip: '12345', country: 'US' },
-          from_address: { name: 'Sender', street1: '1 Warehouse Rd', city: 'Town', state: 'ST', zip: '54321', country: 'US' },
-          parcel: { length: '10', width: '5', height: '5', distance_unit: 'in', weight: '2', mass_unit: 'lb' }
-        }
+        error: 'Missing required fields. Send JSON with to_address, from_address, parcel.'
       })
     };
   }
 
+  // Build the shipment payload Shippo expects
+  const shipmentBody = {
+    address_from: from_address,
+    address_to: to_address,
+    parcels: [parcel],
+    async: false
+  };
+
   try {
-    console.log('Creating shipment with Shippo', {
-      to: to_address.city || to_address.zip,
-      from: from_address.city || from_address.zip,
-      parcel
-    });
+    // If we have a shippoClient, check for known method shapes
+    if (shippoClient) {
+      // Log keys available (helpful for Netlify logs when debugging)
+      try {
+        const keys = Object.keys(shippoClient).slice(0, 50);
+        console.log('Shippo client keys (sample):', keys);
+      } catch (e) {
+        console.log('Could not list shippo client keys:', e && e.message);
+      }
 
-    // Different shippo clients may expect slightly different method access,
-    // but most support shippo.shipment.create(...)
-    const createFn = shippoClient.shipment && shippoClient.shipment.create
-      ? shippoClient.shipment.create.bind(shippoClient.shipment)
-      : shippoClient.createShipment || shippoClient.create_shipment || null;
+      // Common SDK call shape: shippo.shipment.create(...)
+      if (shippoClient.shipment && typeof shippoClient.shipment.create === 'function') {
+        console.log('Using shippoClient.shipment.create');
+        const shipment = await shippoClient.shipment.create(shipmentBody);
+        if (!shipment || !shipment.rates) {
+          return { statusCode: 200, body: JSON.stringify({ error: 'No rates returned', details: shipment }) };
+        }
+        return { statusCode: 200, body: JSON.stringify({ rates: shipment.rates }) };
+      }
 
-    if (!createFn) {
-      console.error('No shipment creation method found on Shippo client');
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ error: 'Shippo client does not expose a shipment.create method. Check package version.' })
-      };
+      // Alternate names some packages may expose
+      if (typeof shippoClient.create_shipment === 'function') {
+        console.log('Using shippoClient.create_shipment');
+        const shipment = await shippoClient.create_shipment(shipmentBody);
+        if (!shipment || !shipment.rates) return { statusCode: 200, body: JSON.stringify({ error: 'No rates returned', details: shipment }) };
+        return { statusCode: 200, body: JSON.stringify({ rates: shipment.rates }) };
+      }
+
+      if (typeof shippoClient.createShipment === 'function') {
+        console.log('Using shippoClient.createShipment');
+        const shipment = await shippoClient.createShipment(shipmentBody);
+        if (!shipment || !shipment.rates) return { statusCode: 200, body: JSON.stringify({ error: 'No rates returned', details: shipment }) };
+        return { statusCode: 200, body: JSON.stringify({ rates: shipment.rates }) };
+      }
+
+      // If the shippo client is actually an object without helpers, fall back to REST.
+      console.log('Shippo client did not expose a shipment.create-like method — using REST fallback.');
+    } else {
+      console.log('No shippo SDK client initialized — using REST fallback.');
     }
 
-    const shipment = await createFn({
-      address_from: from_address,
-      address_to: to_address,
-      parcels: [parcel],
-      async: false
-    });
+    // Fallback: call Shippo REST API directly
+    const restResp = await createShipmentViaRest(SHIPPO_API_KEY, shipmentBody);
 
-    // If Shippo responds with an error structure, bubble it up
-    if (!shipment) {
-      console.error('Shippo returned empty shipment response');
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ error: 'Empty response from Shippo' })
-      };
+    // Shippo REST returns shipment JSON including .rates
+    if (!restResp || !restResp.rates || restResp.rates.length === 0) {
+      return { statusCode: 200, body: JSON.stringify({ error: 'No shipping rates found', details: restResp }) };
     }
 
-    // If Shippo indicates errors
-    if (shipment.object_state === 'ERROR' || shipment.status === 'ERROR') {
-      console.error('Shippo returned an error payload', shipment);
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ error: 'Shippo error', details: shipment })
-      };
-    }
-
-    // If no rates found
-    if (!shipment.rates || shipment.rates.length === 0) {
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ error: 'No shipping rates found for the provided addresses and parcel. Please check the address and try again.' })
-      };
-    }
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ rates: shipment.rates })
-    };
+    return { statusCode: 200, body: JSON.stringify({ rates: restResp.rates }) };
 
   } catch (err) {
-    console.error('Shippo API call failed', err);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: err.message || 'Unknown error from Shippo' })
-    };
+    console.error('Error creating shipment:', err);
+    // Try to return any useful structure if present
+    if (err && err.body) {
+      return { statusCode: 500, body: JSON.stringify({ error: 'Shippo API error', details: err.body }) };
+    }
+    return { statusCode: 500, body: JSON.stringify({ error: err && err.message ? err.message : String(err) }) };
   }
 };
-
