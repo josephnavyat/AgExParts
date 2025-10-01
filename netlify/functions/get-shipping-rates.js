@@ -178,33 +178,35 @@ module.exports.handler = async function(event, context) {
         console.log('Could not list shippo client keys:', e && e.message);
       }
 
-      // Common SDK call shape: shippo.shipment.create(...)
-      if (shippoClient.shipment && typeof shippoClient.shipment.create === 'function') {
-        console.log('Using shippoClient.shipment.create');
-        const shipment = await shippoClient.shipment.create(shipmentBody);
-        if (!shipment || !shipment.rates) {
-          return { statusCode: 200, body: JSON.stringify({ error: 'No rates returned', details: shipment }) };
-        }
-        return { statusCode: 200, body: JSON.stringify({ rates: shipment.rates }) };
-      }
+      console.log('Available Shippo client methods:', Object.keys(shippoClient));
 
-      // Alternate names some packages may expose
-      if (typeof shippoClient.create_shipment === 'function') {
-        console.log('Using shippoClient.create_shipment');
-        const shipment = await shippoClient.create_shipment(shipmentBody);
-        if (!shipment || !shipment.rates) return { statusCode: 200, body: JSON.stringify({ error: 'No rates returned', details: shipment }) };
-        return { statusCode: 200, body: JSON.stringify({ rates: shipment.rates }) };
-      }
-
+      // Try createShipment first, fallback to create_shipment
+      let shipment;
       if (typeof shippoClient.createShipment === 'function') {
-        console.log('Using shippoClient.createShipment');
-        const shipment = await shippoClient.createShipment(shipmentBody);
-        if (!shipment || !shipment.rates) return { statusCode: 200, body: JSON.stringify({ error: 'No rates returned', details: shipment }) };
-        return { statusCode: 200, body: JSON.stringify({ rates: shipment.rates }) };
+        shipment = await shippoClient.createShipment({
+          address_from: from_address,
+          address_to: to_address,
+          parcels: [parcel],
+          async: false
+        });
+      } else if (typeof shippoClient.create_shipment === 'function') {
+        shipment = await shippoClient.create_shipment({
+          address_from: from_address,
+          address_to: to_address,
+          parcels: [parcel],
+          async: false
+        });
+      } else {
+        return {
+          statusCode: 500,
+          body: JSON.stringify({ error: 'No shipment creation method found on Shippo client. Check package version and documentation.' })
+        };
       }
 
-      // If the shippo client is actually an object without helpers, fall back to REST.
-      console.log('Shippo client did not expose a shipment.create-like method — using REST fallback.');
+      if (!shipment || !shipment.rates) {
+        return { statusCode: 200, body: JSON.stringify({ error: 'No rates returned', details: shipment }) };
+      }
+      return { statusCode: 200, body: JSON.stringify({ rates: shipment.rates }) };
     } else {
       console.log('No shippo SDK client initialized — using REST fallback.');
     }
