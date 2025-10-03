@@ -48,10 +48,9 @@ export default function SimpleGallery() {
   return (
     <div className="simple-gallery-root">
       <Navbar />
-      <h2 className="simple-gallery-title">Agex Parts</h2>
-      <div className="simple-gallery-layout" style={{ position: 'relative' }}>
-        {/* Per page dropdown */}
-        <div style={{ position: 'absolute', top: 0, right: 0, zIndex: 20, display: 'flex', alignItems: 'center', gap: 8 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 32, marginBottom: 16 }}>
+        <h2 className="simple-gallery-title" style={{ flex: 1, textAlign: 'center', margin: 0 }}>Agex Parts</h2>
+        <div style={{ minWidth: 180, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 8 }}>
           <label className="filter-label" htmlFor="perPageSelect" style={{ marginRight: 6, marginTop: 0 }}>Show:</label>
           <select
             id="perPageSelect"
@@ -60,11 +59,14 @@ export default function SimpleGallery() {
             onChange={e => { setPerPage(Number(e.target.value)); setPage(1); }}
             style={{ minWidth: 90 }}
           >
-            {[48, 96, 144, 192, 240].map(n => (
+            {[24, 48, 72, 96].map(n => (
               <option key={n} value={n}>{n} per page</option>
             ))}
           </select>
         </div>
+      </div>
+      <hr style={{ margin: '0 0 24px 0', border: 'none', borderTop: '1px solid #e0e0e0' }} />
+      <div className="simple-gallery-layout" style={{ position: 'relative' }}>
         {/* Expand/collapse button only on mobile, handled by CSS */}
         <button
           className="simple-gallery-filter-toggle"
