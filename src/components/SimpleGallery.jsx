@@ -65,7 +65,7 @@ export default function SimpleGallery() {
           </select>
         </div>
       </div>
-      <hr style={{ margin: '0 0 24px 0', border: 'none', borderTop: '1px solid #e0e0e0' }} />
+      <hr className="simple-gallery-divider" />
       <div className="simple-gallery-layout" style={{ position: 'relative' }}>
         {/* Expand/collapse button only on mobile, handled by CSS */}
         <button
