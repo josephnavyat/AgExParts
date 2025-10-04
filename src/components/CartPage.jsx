@@ -11,7 +11,7 @@ function StripeCheckoutButton({ cart }) {
 
   // Map cart items to use discounted price if sale is active
   const getStripeCart = () => {
-    return cart.map(({ product, quantity }) => {
+    return cart.items.map(({ product, quantity }) => {
       const price = Number(product.price);
       const discountPerc = Number(product.discount_perc) || 0;
       const endDate = product.discount_end_date ? new Date(product.discount_end_date) : null;
@@ -19,9 +19,9 @@ function StripeCheckoutButton({ cart }) {
       const saleActive = discountPerc > 0 && (!endDate || now <= endDate);
       const finalPrice = saleActive && !isNaN(price) ? Number((price * (1 - discountPerc)).toFixed(2)) : price;
       return {
-        ...product,
-        price: finalPrice,
-        quantity
+        product,
+        quantity,
+        price: finalPrice
       };
     });
   };
