@@ -200,6 +200,32 @@ export default function SimpleGallery() {
             <div key={product.id} className="simple-gallery-card">
               <img src={product.image} alt={product.name} />
               <h3 className="simple-gallery-card-title">{product.name}</h3>
+              <div className="simple-gallery-card-price" style={{ margin: '8px 0 0 0', fontSize: '1.15rem', fontWeight: 700 }}>
+                {(() => {
+                  const price = Number(product.price);
+                  const discountPerc = Number(product.discount_perc) || 0;
+                  const endDate = product.discount_end_date ? new Date(product.discount_end_date) : null;
+                  const now = new Date();
+                  const saleActive = discountPerc > 0 && (!endDate || now <= endDate);
+                  if (saleActive && !isNaN(price)) {
+                    const salePrice = (price * (1 - discountPerc)).toFixed(2);
+                    return (
+                      <>
+                        <span style={{ textDecoration: 'line-through', color: '#fff', marginRight: 8, background: '#888', borderRadius: 4, padding: '2px 8px' }}>
+                          ${price.toFixed(2)}
+                        </span>
+                        <span style={{ color: '#d32f2f', fontWeight: 700, background: '#fff', borderRadius: 4, padding: '2px 8px' }}>
+                          ${salePrice}
+                        </span>
+                      </>
+                    );
+                  } else if (!isNaN(price)) {
+                    return <span style={{ color: '#fff', background: '#444a58', borderRadius: 4, padding: '2px 8px' }}>${price.toFixed(2)}</span>;
+                  } else {
+                    return <span style={{ color: '#fff', background: '#444a58', borderRadius: 4, padding: '2px 8px' }}>Price N/A</span>;
+                  }
+                })()}
+              </div>
               <div className="simple-gallery-card-actions">
                 <Link
                   to={`/product/${product.id}`}
