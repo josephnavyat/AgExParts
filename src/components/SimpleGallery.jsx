@@ -176,6 +176,7 @@ export default function SimpleGallery() {
         >
           {(() => {
             const filtered = products
+              .filter(product => product.website_visible === true)
               .filter(product => !category || product.category === category)
               .filter(product => !subCategory || product.subcategory === subCategory)
               .filter(product => !manufacturer || product.manufacturer === manufacturer)
