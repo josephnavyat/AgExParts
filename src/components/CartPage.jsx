@@ -9,11 +9,28 @@ import ShippingRatesButton from './ShippingRatesButton.jsx';
 function StripeCheckoutButton({ cart }) {
   const stripe = useStripe();
 
+  // Map cart items to use discounted price if sale is active
+  const getStripeCart = () => {
+    return cart.map(({ product, quantity }) => {
+      const price = Number(product.price);
+      const discountPerc = Number(product.discount_perc) || 0;
+      const endDate = product.discount_end_date ? new Date(product.discount_end_date) : null;
+      const now = new Date();
+      const saleActive = discountPerc > 0 && (!endDate || now <= endDate);
+      const finalPrice = saleActive && !isNaN(price) ? price * (1 - discountPerc) : price;
+      return {
+        ...product,
+        price: finalPrice,
+        quantity
+      };
+    });
+  };
+
   const handleCheckout = async () => {
     const res = await fetch('/.netlify/functions/create-checkout-session', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ cart }),
+      body: JSON.stringify({ cart: getStripeCart() }),
     });
     const { url } = await res.json();
     window.location = url;
@@ -34,7 +51,16 @@ const getImageUrl = (img) => img && img.startsWith('http') ? img : (img ? `https
 
 export default function CartPage() {
   const { cart, dispatch } = useCart();
-  const total = cart.items.reduce((sum, i) => sum + (i.product.price || 0) * i.quantity, 0);
+  // Calculate total using discounted price if sale is active
+  const total = cart.items.reduce((sum, i) => {
+    const price = Number(i.product.price);
+    const discountPerc = Number(i.product.discount_perc) || 0;
+    const endDate = i.product.discount_end_date ? new Date(i.product.discount_end_date) : null;
+    const now = new Date();
+    const saleActive = discountPerc > 0 && (!endDate || now <= endDate);
+    const finalPrice = saleActive && !isNaN(price) ? price * (1 - discountPerc) : price;
+    return sum + finalPrice * i.quantity;
+  }, 0);
   const [shippingAddress, setShippingAddress] = useState({
     name: '',
     street1: '',
@@ -121,7 +147,32 @@ export default function CartPage() {
                         </button>
                       </div>
                     </td>
-                    <td style={{ textAlign: 'right' }}>${(product.price * quantity).toFixed(2)}</td>
+                    <td style={{ textAlign: 'right' }}>
+                      {(() => {
+                        const price = Number(product.price);
+                        const discountPerc = Number(product.discount_perc) || 0;
+                        const endDate = product.discount_end_date ? new Date(product.discount_end_date) : null;
+                        const now = new Date();
+                        const saleActive = discountPerc > 0 && (!endDate || now <= endDate);
+                        if (saleActive && !isNaN(price)) {
+                          const salePrice = (price * (1 - discountPerc)).toFixed(2);
+                          return (
+                            <>
+                              <span style={{ textDecoration: 'line-through', color: '#888', marginRight: 8 }}>
+                                ${price.toFixed(2)}
+                              </span>
+                              <span style={{ color: '#d32f2f', fontWeight: 700 }}>
+                                ${salePrice}
+                              </span>
+                            </>
+                          );
+                        } else if (!isNaN(price)) {
+                          return `$${price.toFixed(2)}`;
+                        } else {
+                          return 'Price N/A';
+                        }
+                      })()}
+                    </td>
                     <td>
                       <button
                         className="btn secondary"
