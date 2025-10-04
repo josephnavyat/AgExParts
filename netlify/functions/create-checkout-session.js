@@ -27,13 +27,8 @@ exports.handler = async (event) => {
       allowed_countries: ['US', 'CA', 'GB', 'AU'] // Add more countries as needed
     },
     metadata: {
-      items: JSON.stringify(cart.map(({ product, quantity }) => ({
-        part_id: product.id,
-        qty: quantity,
-        unit_price: product.price,
-        line_total: product.price * quantity,
-        name: product.name
-      })))
+      // Only send a short summary to avoid exceeding Stripe's 500 character limit
+      cart_summary: cart.map(({ product, quantity }) => `${product.name.slice(0, 30)} x${quantity}`).join(', ')
     }
   });
 
