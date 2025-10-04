@@ -265,17 +265,3 @@ export default function CartPage() {
     </>
   );
 }
-
-@media (max-width: 600px) {
-  .gallery-title {
-    font-size: 1.3rem !important;
-  }
-  table {
-    font-size: 0.95rem !important;
-  }
-  .btn.primary {
-    padding: 0.6rem 1.2rem !important;
-    min-width: 90px !important;
-    font-size: 1rem !important;
-  }
-}
