@@ -236,4 +236,18 @@ footer { background: #0b0c0e; border-top: 1px solid #1c2026; padding: 50px 0; ma
     margin: 0.5rem 0 !important;
     border-radius: 8px !important;
   }
+  /* Product description below name */
+  .cart-product-name {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .cart-product-desc {
+    display: block;
+    font-size: 0.92rem;
+    color: #666;
+    margin-bottom: 4px;
+    margin-top: 2px;
+    word-break: break-word;
+  }
 }
