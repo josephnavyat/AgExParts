@@ -46,6 +46,7 @@ export default function SimpleGallery() {
   // Pagination state
   const [perPage, setPerPage] = useState(50);
   const [page, setPage] = useState(1);
+  const { dispatch } = useCart();
   return (
     <div className="simple-gallery-root">
       <Navbar />
@@ -237,7 +238,7 @@ export default function SimpleGallery() {
                 </Link>
                 <button
                   className="simple-gallery-btn primary"
-                  onClick={() => alert(`Added ${product.name} to cart!`)}
+                  onClick={() => dispatch({ type: "ADD_TO_CART", product })}
                   title="Add to Cart"
                   style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
                 >
