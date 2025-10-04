@@ -128,7 +128,30 @@ export default function ProductDetail() {
           <h2 className="distressed" style={{ fontSize: '2.2rem', marginBottom: 8, color: '#444a58' }}>{product.name}</h2>
           <div style={{ color: '#888', fontSize: '1.1rem', marginBottom: 16 }}>{product.part_number}</div>
           <div style={{ color: '#444a58', fontWeight: 600, fontSize: '1.3rem', marginBottom: 12 }}>
-            {(!isNaN(Number(product.price)) && product.price !== null && product.price !== undefined) ? `$${Number(product.price).toFixed(2)}` : 'Price N/A'}
+            {(() => {
+              const price = Number(product.price);
+              const discountPerc = Number(product.discount_perc) || 0;
+              const endDate = product.discount_end_date ? new Date(product.discount_end_date) : null;
+              const now = new Date();
+              const saleActive = discountPerc > 0 && (!endDate || now <= endDate);
+              if (saleActive && !isNaN(price)) {
+                const salePrice = (price * (1 - discountPerc)).toFixed(2);
+                return (
+                  <>
+                    <span style={{ textDecoration: 'line-through', color: '#888', marginRight: 10 }}>
+                      ${price.toFixed(2)}
+                    </span>
+                    <span style={{ color: '#d32f2f', fontWeight: 700, fontSize: '1.3rem' }}>
+                      ${salePrice}
+                    </span>
+                  </>
+                );
+              } else if (!isNaN(price)) {
+                return `$${price.toFixed(2)}`;
+              } else {
+                return 'Price N/A';
+              }
+            })()}
             <span style={{
               fontSize: '1rem',
               color: product.quantity > 0 ? '#28a745' : '#d32f2f',
