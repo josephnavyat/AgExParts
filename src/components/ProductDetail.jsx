@@ -13,6 +13,10 @@ export default function ProductDetail() {
   const [error, setError] = useState(null);
   const { cart, dispatch } = useCart();
 
+  // Image carousel logic
+  const [imgIndex, setImgIndex] = useState(0);
+  const [images, setImages] = useState([]);
+
   useEffect(() => {
     const controller = new AbortController();
     const fetchProducts = async () => {
@@ -35,6 +39,30 @@ export default function ProductDetail() {
     fetchProducts();
     return () => controller.abort();
   }, [id]);
+
+  useEffect(() => {
+    if (!product) return;
+    // Build image list: main image, then _2, _3, _4, _5
+    const base = product.image;
+    if (!base) return setImages([]);
+    const extIdx = base.lastIndexOf('.');
+    const baseName = extIdx !== -1 ? base.slice(0, extIdx) : base;
+    const ext = extIdx !== -1 ? base.slice(extIdx) : '';
+    const imgList = [base];
+    for (let i = 2; i <= 5; i++) {
+      imgList.push(`${baseName}_${i}${ext}`);
+    }
+    // Check which images exist by attempting to load them
+    Promise.all(imgList.map(src =>
+      new Promise(resolve => {
+        const img = new window.Image();
+        img.src = src;
+        img.onload = () => resolve(src);
+        img.onerror = () => resolve(null);
+      })
+    )).then(arr => setImages(arr.filter(Boolean)));
+    setImgIndex(0);
+  }, [product]);
 
   return (
     <>
@@ -69,18 +97,33 @@ export default function ProductDetail() {
             justifyContent: 'center',
             boxShadow: '0 1px 8px rgba(0,0,0,0.06)'
           }}>
-            <img
-              src={product.image}
-              alt={product.name}
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'contain',
-                display: 'block',
-                background: 'none',
-                borderRadius: 0
-              }}
-            />
+            {/* Image carousel */}
+            {images.length > 0 && (
+              <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+                <img
+                  src={images[imgIndex]}
+                  alt={product.name}
+                  style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block', background: 'none', borderRadius: 0 }}
+                />
+                {imgIndex > 0 && (
+                  <button
+                    style={{ position: 'absolute', left: 8, top: '50%', transform: 'translateY(-50%)', background: '#fff', border: 'none', borderRadius: '50%', width: 36, height: 36, boxShadow: '0 2px 8px rgba(0,0,0,0.10)', cursor: 'pointer', fontSize: 22, fontWeight: 700 }}
+                    onClick={() => setImgIndex(imgIndex - 1)}
+                    aria-label="Previous image"
+                  >&lt;</button>
+                )}
+                {imgIndex < images.length - 1 && (
+                  <button
+                    style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', background: '#fff', border: 'none', borderRadius: '50%', width: 36, height: 36, boxShadow: '0 2px 8px rgba(0,0,0,0.10)', cursor: 'pointer', fontSize: 22, fontWeight: 700 }}
+                    onClick={() => setImgIndex(imgIndex + 1)}
+                    aria-label="Next image"
+                  >&gt;</button>
+                )}
+                <div style={{ position: 'absolute', bottom: 8, left: '50%', transform: 'translateX(-50%)', background: 'rgba(255,255,255,0.85)', borderRadius: 8, padding: '2px 12px', fontSize: 14, color: '#444', fontWeight: 600 }}>
+                  {imgIndex + 1} / {images.length}
+                </div>
+              </div>
+            )}
           </div>
           <h2 className="distressed" style={{ fontSize: '2.2rem', marginBottom: 8, color: '#444a58' }}>{product.name}</h2>
           <div style={{ color: '#888', fontSize: '1.1rem', marginBottom: 16 }}>{product.part_number}</div>
