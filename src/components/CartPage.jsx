@@ -19,9 +19,8 @@ function StripeCheckoutButton({ cart }) {
       const saleActive = discountPerc > 0 && (!endDate || now <= endDate);
       const finalPrice = saleActive && !isNaN(price) ? Number((price * (1 - discountPerc)).toFixed(2)) : price;
       return {
-        product,
-        quantity,
-        price: finalPrice
+        product: { ...product, price: finalPrice },
+        quantity
       };
     });
   };
