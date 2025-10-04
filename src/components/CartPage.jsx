@@ -17,7 +17,7 @@ function StripeCheckoutButton({ cart }) {
       const endDate = product.discount_end_date ? new Date(product.discount_end_date) : null;
       const now = new Date();
       const saleActive = discountPerc > 0 && (!endDate || now <= endDate);
-      const finalPrice = saleActive && !isNaN(price) ? price * (1 - discountPerc) : price;
+      const finalPrice = saleActive && !isNaN(price) ? Number((price * (1 - discountPerc)).toFixed(2)) : price;
       return {
         ...product,
         price: finalPrice,
