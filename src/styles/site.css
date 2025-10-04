@@ -157,3 +157,25 @@ footer { background: #0b0c0e; border-top: 1px solid #1c2026; padding: 50px 0; ma
 .footer-grid h4 { margin: 0 0 10px; font-size: 14px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
 .footer-grid p, .footer-grid a { color: #b7c0cc; font-size: 14px; }
 @media (max-width: 900px) { .footer-grid { grid-template-columns: 1fr; } }
+
+/* --- Responsive mobile styles for checkout/cart page --- */
+@media (max-width: 600px) {
+  .gallery-title {
+    font-size: 1.3rem !important;
+  }
+  table {
+    font-size: 0.95rem !important;
+    word-break: break-word;
+  }
+  .btn.primary {
+    padding: 0.6rem 1.2rem !important;
+    min-width: 90px !important;
+    font-size: 1rem !important;
+  }
+  .simple-gallery-card,
+  .cart-page-content {
+    width: 100% !important;
+    box-sizing: border-box;
+    padding: 1rem !important;
+  }
+}

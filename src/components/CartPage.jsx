@@ -72,7 +72,7 @@ export default function CartPage() {
   return (
     <>
       <Navbar />
-      <div style={{ minHeight: '80vh', padding: '2rem', background: 'var(--bg)' }}>
+      <div style={{ minHeight: '80vh', padding: '2rem', background: 'var(--bg)', boxSizing: 'border-box' }}>
         <h2
           className="distressed gallery-title"
           style={{
@@ -81,6 +81,8 @@ export default function CartPage() {
             marginTop: '4.5rem',
             color: '#222',
             textShadow: '0 1px 4px #fff, 0 0px 1px #bbb',
+            fontSize: '2rem',
+            wordBreak: 'break-word',
           }}
         >
           Shopping Cart
@@ -88,8 +90,8 @@ export default function CartPage() {
         {cart.items.length === 0 ? (
           <div style={{ textAlign: 'center', color: '#444', fontSize: '1.2rem', fontWeight: 500 }}>Your cart is empty.</div>
         ) : (
-          <div style={{ maxWidth: 800, margin: '0 auto', background: '#fff', borderRadius: 16, boxShadow: '0 2px 12px rgba(0,0,0,0.10)', padding: '2rem', color: '#222' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <div style={{ maxWidth: 800, margin: '0 auto', background: '#fff', borderRadius: 16, boxShadow: '0 2px 12px rgba(0,0,0,0.10)', padding: '2rem', color: '#222', boxSizing: 'border-box', width: '100%' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '1rem', wordBreak: 'break-word' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #eee' }}>
                   <th style={{ textAlign: 'left', padding: '0.5rem' }}>Product</th>
@@ -201,21 +203,21 @@ export default function CartPage() {
                 ))}
               </tbody>
             </table>
-            <div style={{ textAlign: 'right', marginTop: '1.5rem', fontWeight: 700, fontSize: '1.2rem' }}>
+            <div style={{ textAlign: 'right', marginTop: '1.5rem', fontWeight: 700, fontSize: '1.2rem', wordBreak: 'break-word' }}>
               Total: ${total.toFixed(2)}
             </div>
-            <div style={{ textAlign: 'right', marginTop: '1.5rem' }}>
+            <div style={{ textAlign: 'right', marginTop: '1.5rem', display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'flex-end' }}>
               <button
                 className="btn primary"
-                style={{ fontWeight: 700, fontSize: '1.1rem', borderRadius: 8, padding: '0.7rem 2rem' }}
+                style={{ fontWeight: 700, fontSize: '1.1rem', borderRadius: 8, padding: '0.7rem 2rem', minWidth: 120 }}
                 onClick={() => dispatch({ type: 'CLEAR_CART' })}
               >
                 Clear Cart
               </button>
               <StripeCheckoutButton cart={cart.items} />
             </div>
-            <div style={{ margin: '2rem 0 1rem 0', padding: '1.5rem', background: '#f8f8f8', borderRadius: 12 }}>
-              <h3 style={{ marginBottom: 12 }}>Shipping Address</h3>
+            <div style={{ margin: '2rem 0 1rem 0', padding: '1.5rem', background: '#f8f8f8', borderRadius: 12, boxSizing: 'border-box', width: '100%' }}>
+              <h3 style={{ marginBottom: 12, fontSize: '1.1rem', wordBreak: 'break-word' }}>Shipping Address</h3>
               <form style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }} onSubmit={e => e.preventDefault()}>
                 <div style={{ flex: '1 1 100%', display: 'flex', flexDirection: 'column', marginBottom: 8 }}>
                   <label style={{ fontWeight: 500, marginBottom: 4 }}>Name</label>
@@ -262,4 +264,18 @@ export default function CartPage() {
       <Footer />
     </>
   );
+}
+
+@media (max-width: 600px) {
+  .gallery-title {
+    font-size: 1.3rem !important;
+  }
+  table {
+    font-size: 0.95rem !important;
+  }
+  .btn.primary {
+    padding: 0.6rem 1.2rem !important;
+    min-width: 90px !important;
+    font-size: 1rem !important;
+  }
 }
