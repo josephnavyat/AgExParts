@@ -142,6 +142,9 @@ export default function CartPage() {
                       {product.description && (
                         <span className="cart-product-desc" style={{ fontSize: '0.95rem', color: '#666', display: 'block', marginBottom: 2 }}>{product.description}</span>
                       )}
+                      <span className="cart-product-weight" style={{ fontSize: '0.95rem', color: '#388e3c', display: 'block', marginTop: 2 }}>
+                        Weight: {product.weight ? product.weight + ' lbs' : 'N/A'}
+                      </span>
                     </div>
                     <div style={{ textAlign: 'right', minWidth: 90, fontWeight: 700, fontSize: '1.05rem' }}>
                       {(() => {
