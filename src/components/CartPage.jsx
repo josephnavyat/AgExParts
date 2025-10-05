@@ -139,8 +139,8 @@ export default function CartPage() {
                       <span className="cart-product-name" style={{ fontWeight: 700, fontSize: '1.05rem', display: 'block', marginBottom: 2 }}>
                         {product.name.length > 100 ? product.name.slice(0, 100) + '…' : product.name}
                       </span>
-                      {product.description && (
-                        <span className="cart-product-desc" style={{ fontSize: '0.95rem', color: '#666', display: 'block', marginBottom: 2 }}>{product.description}</span>
+                      {product.sku && (
+                        <span className="cart-product-sku" style={{ fontSize: '0.95rem', color: '#666', display: 'block', marginBottom: 2 }}>SKU: {product.sku}</span>
                       )}
                       <span className="cart-product-weight" style={{ fontSize: '0.95rem', color: '#388e3c', display: 'block', marginTop: 2 }}>
                         Weight: {product.weight ? product.weight + ' lbs' : 'N/A'}
