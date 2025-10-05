@@ -103,7 +103,10 @@ export default function CartPage() {
     zip: '',
     country: 'US',
   });
-  const [shipping, setShipping] = useState(null);
+  const [shipping, setShipping] = useState(() => calculateShipping(cart.items));
+  React.useEffect(() => {
+    setShipping(calculateShipping(cart.items));
+  }, [cart.items]);
   const totalWeight = cart.items.reduce((sum, i) => sum + ((i.product.weight || 0) * i.quantity), 0);
 
   return (
@@ -200,16 +203,9 @@ export default function CartPage() {
               Total Weight: {totalWeight.toFixed(2)} lbs
             </div>
             <div style={{ textAlign: 'right', marginTop: '1rem' }}>
-              <button
-                className="btn secondary"
-                style={{ fontWeight: 600, fontSize: '1rem', borderRadius: 8, padding: '0.5rem 1.5rem', minWidth: 120, marginRight: 8 }}
-                onClick={() => setShipping(calculateShipping(cart.items))}
-              >
-                Calculate Shipping
-              </button>
               {shipping && (
-                <span style={{ fontWeight: 600, fontSize: '1.05rem', color: '#1976d2', marginLeft: 12 }}>
-                  Shipping: {shipping.type === 'freight' ? 'Freight' : 'Ground'} - ${shipping.cost}
+                <span style={{ fontWeight: 500, fontSize: '1.05rem', color: '#555', marginLeft: 12 }}>
+                  Shipping: {shipping.type === 'freight' ? 'Freight' : 'Ground'}: ${shipping.cost}
                 </span>
               )}
             </div>
@@ -231,30 +227,30 @@ export default function CartPage() {
               >
                 Clear Cart
               </button>
-              {totalWeight > 100 ? (
-                <>
-                  <button
-                    className="btn freight"
-                    style={{
-                      fontWeight: 700,
-                      fontSize: '1.1rem',
-                      borderRadius: 8,
-                      padding: '0.7rem 2rem',
-                      minWidth: 180,
-                      background: '#8bc34a', // light green
-                      color: '#fff',
-                      border: 'none',
-                      boxShadow: '0 2px 8px rgba(139,195,74,0.10)',
-                    }}
-                    onClick={() => navigate('/freight-inquiry', { state: { cart } })}
-                  >
-                    Get Freight Quote
-                  </button>
-                  <StripeCheckoutButton cart={cart.items} disabled={true} />
-                </>
-              ) : (
-                <StripeCheckoutButton cart={cart.items} />
-              )}
+              <>
+                <button
+                  className="btn freight"
+                  style={{
+                    fontWeight: 700,
+                    fontSize: '1.1rem',
+                    borderRadius: 8,
+                    padding: '0.7rem 2rem',
+                    minWidth: 180,
+                    background: totalWeight > 100 ? '#8bc34a' : '#eee',
+                    color: totalWeight > 100 ? '#fff' : '#aaa',
+                    border: 'none',
+                    boxShadow: totalWeight > 100 ? '0 2px 8px rgba(139,195,74,0.10)' : 'none',
+                    cursor: totalWeight > 100 ? 'pointer' : 'not-allowed',
+                  }}
+                  onClick={() => {
+                    if (totalWeight > 100) navigate('/freight-inquiry', { state: { cart } });
+                  }}
+                  disabled={totalWeight <= 100}
+                >
+                  Get Freight Quote
+                </button>
+                <StripeCheckoutButton cart={cart.items} disabled={totalWeight > 100} />
+              </>
             </div>
             <ShippingRatesButton
               cart={{ ...cart, shippingAddress }}

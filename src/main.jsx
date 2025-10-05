@@ -15,6 +15,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import CartPage from './components/CartPage.jsx';
 import OrderSuccess from './components/OrderSuccess.jsx';
 import SearchResults from './components/SearchResults.jsx';
+import FreightInquiryPage from './components/FreightInquiryPage.jsx';
 
 const stripePromise = loadStripe('pk_test_51S4XMHBpsFVjn5cM6uD1BRgbmhvLSnfeLPMZcp4EJNQYAQrQea122tUoOAF2exUh0Qu83i8uQj5Yp5zZXlCgj0Fc00LA6gZqpZ');
 
@@ -40,6 +41,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="/success" element={<OrderSuccess />} />
           <Route path="/cancel" element={<FailurePage />} />
           <Route path="/search-results" element={<SearchResults />} />
+          <Route path="/freight-inquiry" element={<FreightInquiryPage />} />
         </Routes>
       </BrowserRouter>
     </CartProvider>
