@@ -48,6 +48,28 @@ function StripeCheckoutButton({ cart }) {
 
 const getImageUrl = (img) => img && img.startsWith('http') ? img : (img ? `https://agexparts.netlify.app${img}` : '');
 
+function calculateShipping(cartItems) {
+  const totalWeight = cartItems.reduce((sum, i) => sum + (i.product.weight || 0), 0);
+  const maxLength = Math.max(...cartItems.map(i => Math.max(i.product.length_mm || 0, i.product.width_mm || 0, i.product.height_mm || 0)));
+  const orderTotal = cartItems.reduce((sum, i) => sum + (Number(i.product.price) * i.quantity), 0);
+
+  let cost = 0;
+
+  if (totalWeight <= 2) cost = 10;
+  else if (totalWeight <= 10) cost = 20;
+  else if (totalWeight <= 25) cost = 35;
+  else if (totalWeight <= 50) cost = 60;
+  else cost = 150; // freight
+
+  if (maxLength > 48) return { type: 'freight', cost: 150 };
+  if (maxLength > 36) cost += 25;
+  else if (maxLength > 24) cost += 10;
+
+  if (orderTotal > 1000 && cost > 50) cost = 50; // optional cap
+
+  return { type: 'ground', cost };
+}
+
 export default function CartPage() {
   const { cart, dispatch } = useCart();
   // Calculate total using discounted price if sale is active
@@ -68,6 +90,7 @@ export default function CartPage() {
     zip: '',
     country: 'US',
   });
+  const [shipping, setShipping] = useState(null);
 
   return (
     <>
@@ -90,65 +113,23 @@ export default function CartPage() {
         {cart.items.length === 0 ? (
           <div style={{ textAlign: 'center', color: '#444', fontSize: '1.2rem', fontWeight: 500 }}>Your cart is empty.</div>
         ) : (
-          <div style={{ maxWidth: 800, margin: '0 auto', background: '#fff', borderRadius: 16, boxShadow: '0 2px 12px rgba(0,0,0,0.10)', padding: '2rem', color: '#222', boxSizing: 'border-box', width: '100%' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '1rem', wordBreak: 'break-word' }}>
-              <thead>
-                <tr style={{ borderBottom: '1px solid #eee' }}>
-                  <th style={{ textAlign: 'left', padding: '0.5rem' }}>Product</th>
-                  <th style={{ textAlign: 'center', padding: '0.5rem' }}>Qty</th>
-                  <th style={{ textAlign: 'right', padding: '0.5rem', minWidth: 110 }}>Price</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {cart.items.map(({ product, quantity }) => (
-                  <tr key={product.id} style={{ borderBottom: '1px solid #f0f0f0' }}>
-                    <td style={{ padding: '0.5rem', display: 'flex', alignItems: 'center', gap: 12, flexDirection: 'column', textAlign: 'left' }}>
-                      {product.image && (
-                        <img src={getImageUrl(product.image)} alt={product.name} style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 8, boxShadow: '0 1px 4px #ccc' }} />
+          <div className="cart-page-content" style={{ maxWidth: 800, margin: '0 auto', background: '#fff', borderRadius: 16, boxShadow: '0 2px 12px rgba(0,0,0,0.10)', padding: '2rem', color: '#222', boxSizing: 'border-box', width: '100%' }}>
+            <div className="cart-cards" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              {cart.items.map(({ product, quantity }) => (
+                <div key={product.id} className="cart-card" style={{ display: 'flex', flexDirection: 'column', background: '#f8f8f8', borderRadius: 12, padding: '1rem', boxShadow: '0 1px 4px #eee', width: '100%' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    {product.image && (
+                      <img src={getImageUrl(product.image)} alt={product.name} style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 8, boxShadow: '0 1px 4px #ccc' }} />
+                    )}
+                    <div style={{ flex: 1 }}>
+                      <span className="cart-product-name" style={{ fontWeight: 700, fontSize: '1.05rem', display: 'block', marginBottom: 2 }}>
+                        {product.name.length > 100 ? product.name.slice(0, 100) + '…' : product.name}
+                      </span>
+                      {product.description && (
+                        <span className="cart-product-desc" style={{ fontSize: '0.95rem', color: '#666', display: 'block', marginBottom: 2 }}>{product.description}</span>
                       )}
-                      <span className="cart-product-name">{product.name.length > 100 ? product.name.slice(0, 100) + '…' : product.name}</span>
-                    </td>
-                    <td style={{ textAlign: 'center' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-                        <button
-                          style={{
-                            background: '#28a745',
-                            color: '#fff',
-                            border: 'none',
-                            borderRadius: 6,
-                            width: 28,
-                            height: 28,
-                            fontWeight: 700,
-                            fontSize: '1.2rem',
-                            cursor: 'pointer',
-                          }}
-                          onClick={() => dispatch({ type: 'SUBTRACT_FROM_CART', product })}
-                          aria-label="Decrease quantity"
-                        >
-                          -
-                        </button>
-                        <span style={{ minWidth: 24, textAlign: 'center', fontWeight: 600, color: '#222' }}>{quantity}</span>
-                        <button
-                          style={{
-                            background: '#28a745',
-                            color: '#fff',
-                            border: 'none',
-                            borderRadius: 6,
-                            width: 28,
-                            height: 28,
-                            fontWeight: 700,
-                            fontSize: '1.2rem',
-                            cursor: 'pointer',
-                          }}
-                          onClick={() => dispatch({ type: 'ADD_TO_CART', product })}
-                          aria-label="Increase quantity"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </td>
-                    <td style={{ textAlign: 'right', minWidth: 110 }}>
+                    </div>
+                    <div style={{ textAlign: 'right', minWidth: 90, fontWeight: 700, fontSize: '1.05rem' }}>
                       {(() => {
                         const price = Number(product.price);
                         const discountPerc = Number(product.discount_perc) || 0;
@@ -173,38 +154,44 @@ export default function CartPage() {
                           return 'Price N/A';
                         }
                       })()}
-                    </td>
-                    <td>
-                      <button
-                        className="btn secondary"
-                        style={{
-                          fontSize: '1.2rem',
-                          padding: '0.3rem 0.8rem',
-                          borderRadius: 6,
-                          marginLeft: 8,
-                          background: 'none',
-                          color: '#d32f2f',
-                          border: 'none',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          cursor: 'pointer',
-                        }}
-                        title="Remove from cart"
-                        onClick={() => dispatch({ type: 'REMOVE_FROM_CART', id: product.id })}
-                      >
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#d32f2f" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                          <line x1="5" y1="5" x2="15" y2="15" />
-                          <line x1="15" y1="5" x2="5" y2="15" />
-                        </svg>
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <div style={{ textAlign: 'right', marginTop: '1.5rem', fontWeight: 700, fontSize: '1.2rem', wordBreak: 'break-word' }}>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: 12, marginTop: 8 }}>
+                    <button
+                      style={{ background: '#28a745', color: '#fff', border: 'none', borderRadius: 6, width: 32, height: 32, fontWeight: 700, fontSize: '1.2rem', cursor: 'pointer' }}
+                      onClick={() => dispatch({ type: 'SUBTRACT_FROM_CART', product })}
+                      aria-label="Decrease quantity"
+                    >
+                      -
+                    </button>
+                    <span style={{ minWidth: 28, textAlign: 'center', fontWeight: 600, color: '#222', fontSize: '1.1rem' }}>{quantity}</span>
+                    <button
+                      style={{ background: '#28a745', color: '#fff', border: 'none', borderRadius: 6, width: 32, height: 32, fontWeight: 700, fontSize: '1.2rem', cursor: 'pointer' }}
+                      onClick={() => dispatch({ type: 'ADD_TO_CART', product })}
+                      aria-label="Increase quantity"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div style={{ textAlign: 'right', marginTop: '2rem', fontWeight: 700, fontSize: '1.2rem', wordBreak: 'break-word' }}>
               Total: ${total.toFixed(2)}
+            </div>
+            <div style={{ textAlign: 'right', marginTop: '1rem' }}>
+              <button
+                className="btn secondary"
+                style={{ fontWeight: 600, fontSize: '1rem', borderRadius: 8, padding: '0.5rem 1.5rem', minWidth: 120, marginRight: 8 }}
+                onClick={() => setShipping(calculateShipping(cart.items))}
+              >
+                Calculate Shipping
+              </button>
+              {shipping && (
+                <span style={{ fontWeight: 600, fontSize: '1.05rem', color: '#1976d2', marginLeft: 12 }}>
+                  Shipping: {shipping.type === 'freight' ? 'Freight' : 'Ground'} - ${shipping.cost}
+                </span>
+              )}
             </div>
             <div style={{ textAlign: 'right', marginTop: '1.5rem', display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'flex-end' }}>
               <button
