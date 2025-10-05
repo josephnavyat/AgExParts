@@ -5,6 +5,8 @@ import { useCart } from "./CartContext.jsx";
 import { getProductQuantity } from "./CartContext.jsx";
 import { useStripe } from '@stripe/react-stripe-js';
 import ShippingRatesButton from './ShippingRatesButton.jsx';
+import { useNavigate } from 'react-router-dom';
+import FreightInquiryPage from './FreightInquiryPage';
 
 function StripeCheckoutButton({ cart }) {
   const stripe = useStripe();
@@ -72,6 +74,7 @@ function calculateShipping(cartItems) {
 
 export default function CartPage() {
   const { cart, dispatch } = useCart();
+  const navigate = useNavigate();
   // Calculate total using discounted price if sale is active
   const total = cart.items.reduce((sum, i) => {
     const price = Number(i.product.price);
@@ -91,6 +94,7 @@ export default function CartPage() {
     country: 'US',
   });
   const [shipping, setShipping] = useState(null);
+  const totalWeight = cart.items.reduce((sum, i) => sum + (i.product.weight || 0), 0);
 
   return (
     <>
@@ -201,7 +205,17 @@ export default function CartPage() {
               >
                 Clear Cart
               </button>
-              <StripeCheckoutButton cart={cart.items} />
+              {totalWeight > 150 ? (
+                <button
+                  className="btn secondary"
+                  style={{ fontWeight: 700, fontSize: '1.1rem', borderRadius: 8, padding: '0.7rem 2rem', minWidth: 180, background: '#1976d2', color: '#fff' }}
+                  onClick={() => navigate('/freight-inquiry', { state: { cart } })}
+                >
+                  Quote for Freight
+                </button>
+              ) : (
+                <StripeCheckoutButton cart={cart.items} />
+              )}
             </div>
             <div style={{ margin: '2rem 0 1rem 0', padding: '1.5rem', background: '#f8f8f8', borderRadius: 12, boxSizing: 'border-box', width: '100%' }}>
               <h3 style={{ marginBottom: 12, fontSize: '1.1rem', wordBreak: 'break-word' }}>Shipping Address</h3>
