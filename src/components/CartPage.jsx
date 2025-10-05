@@ -96,7 +96,7 @@ export default function CartPage() {
                 <tr style={{ borderBottom: '1px solid #eee' }}>
                   <th style={{ textAlign: 'left', padding: '0.5rem' }}>Product</th>
                   <th style={{ textAlign: 'center', padding: '0.5rem' }}>Qty</th>
-                  <th style={{ textAlign: 'right', padding: '0.5rem' }}>Price</th>
+                  <th style={{ textAlign: 'right', padding: '0.5rem', minWidth: 110 }}>Price</th>
                   <th></th>
                 </tr>
               </thead>
@@ -107,10 +107,7 @@ export default function CartPage() {
                       {product.image && (
                         <img src={getImageUrl(product.image)} alt={product.name} style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 8, boxShadow: '0 1px 4px #ccc' }} />
                       )}
-                      <span className="cart-product-name">{product.name}</span>
-                      {product.description && (
-                        <span className="cart-product-desc">{product.description}</span>
-                      )}
+                      <span className="cart-product-name">{product.name.length > 100 ? product.name.slice(0, 100) + '…' : product.name}</span>
                     </td>
                     <td style={{ textAlign: 'center' }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
@@ -151,7 +148,7 @@ export default function CartPage() {
                         </button>
                       </div>
                     </td>
-                    <td style={{ textAlign: 'right' }}>
+                    <td style={{ textAlign: 'right', minWidth: 110 }}>
                       {(() => {
                         const price = Number(product.price);
                         const discountPerc = Number(product.discount_perc) || 0;
