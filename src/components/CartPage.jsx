@@ -53,7 +53,7 @@ function StripeCheckoutButton({ cart, disabled }) {
       onClick={handleCheckout}
       disabled={disabled}
     >
-      Checkout with Stripe
+      Checkout
     </button>
   );
 }
@@ -205,7 +205,7 @@ export default function CartPage() {
             <div style={{ textAlign: 'right', marginTop: '1rem' }}>
               {shipping && (
                 <span style={{ fontWeight: 500, fontSize: '1.05rem', color: '#555', marginLeft: 12 }}>
-                  Shipping: {shipping.type === 'freight' ? 'Freight' : 'Ground'}: ${shipping.cost}
+                  Shipping: {shipping.type === 'freight' ? 'Freight' : 'Ground'}: {totalWeight > 100 ? 'Need to Quote' : `$${shipping.cost}`}
                 </span>
               )}
             </div>

@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
-export default function FreightInquiryPage({ cart }) {
+export default function FreightInquiryPage() {
+  const location = useLocation();
+  const cart = location.state?.cart || { items: [] };
   const [form, setForm] = useState({
     name: '',
     email: '',
