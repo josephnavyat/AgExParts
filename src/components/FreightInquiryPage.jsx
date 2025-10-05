@@ -20,23 +20,51 @@ export default function FreightInquiryPage() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    // TODO: send inquiry to backend or email
+    if (!form.name || !form.email || !form.phone || !form.address || !form.city || !form.state || !form.zip) return;
+    const res = await fetch('/.netlify/functions/create-freight-order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ form, cart }),
+    });
+    const result = await res.json();
     setSubmitted(true);
   };
 
   return (
     <div style={{ maxWidth: 700, margin: '2rem auto', background: '#fff', borderRadius: 16, boxShadow: '0 2px 12px rgba(0,0,0,0.10)', padding: '2rem', color: '#222' }}>
       <h2 style={{ marginBottom: '1.5rem', fontWeight: 700 }}>Freight Inquiry</h2>
+      <div style={{ marginBottom: '2rem', fontWeight: 500, fontSize: '1.1rem', color: '#1976d2', textAlign: 'center' }}>
+        We will get back to you with a shipping quote within 24-48 hours. Please see your email.
+      </div>
       <h3 style={{ marginBottom: '1rem', fontWeight: 600 }}>Cart Summary</h3>
-      <ul style={{ marginBottom: '2rem', paddingLeft: 0 }}>
+      <div className="cart-cards" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2rem' }}>
         {cart.items.map(({ product, quantity }) => (
-          <li key={product.id} style={{ marginBottom: 8, listStyle: 'none', borderBottom: '1px solid #eee', paddingBottom: 8 }}>
-            <strong>{product.name}</strong> x {quantity} &mdash; ${Number(product.price).toFixed(2)} each
-          </li>
+          <div key={product.id} className="cart-card" style={{ display: 'flex', alignItems: 'center', background: '#f8f8f8', borderRadius: 12, padding: '1rem', boxShadow: '0 1px 4px #eee', width: '100%' }}>
+            {product.image && (
+              <img src={product.image.startsWith('http') ? product.image : `https://agexparts.netlify.app${product.image}`} alt={product.name} style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 8, boxShadow: '0 1px 4px #ccc', marginRight: 16 }} />
+            )}
+            <div style={{ flex: 1 }}>
+              <span className="cart-product-name" style={{ fontWeight: 700, fontSize: '1.05rem', display: 'block', marginBottom: 2 }}>
+                {product.name.length > 100 ? product.name.slice(0, 100) + '…' : product.name}
+              </span>
+              {product.sku && (
+                <span className="cart-product-sku" style={{ fontSize: '0.95rem', color: '#666', display: 'block', marginBottom: 2 }}>SKU: {product.sku}</span>
+              )}
+              <span className="cart-product-weight" style={{ fontSize: '0.95rem', color: '#388e3c', display: 'block', marginTop: 2 }}>
+                Weight: {product.weight ? product.weight + ' lbs' : 'N/A'}
+              </span>
+              <span style={{ fontSize: '0.95rem', color: '#222', display: 'block', marginTop: 2 }}>
+                Qty: {quantity}
+              </span>
+              <span style={{ fontSize: '0.95rem', color: '#222', display: 'block', marginTop: 2 }}>
+                Price: ${Number(product.price).toFixed(2)}
+              </span>
+            </div>
+          </div>
         ))}
-      </ul>
+      </div>
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <input name="name" value={form.name} onChange={handleChange} placeholder="Full Name" required style={{ padding: '0.7rem', borderRadius: 8, border: '1px solid #ccc' }} />
         <input name="email" value={form.email} onChange={handleChange} placeholder="Email" required type="email" style={{ padding: '0.7rem', borderRadius: 8, border: '1px solid #ccc' }} />

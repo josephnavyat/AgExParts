@@ -236,7 +236,7 @@ export default function CartPage() {
                     borderRadius: 8,
                     padding: '0.7rem 2rem',
                     minWidth: 180,
-                    background: totalWeight > 100 ? '#8bc34a' : '#eee',
+                    background: totalWeight > 100 ? '#557a2cff' : '#eee',
                     color: totalWeight > 100 ? '#fff' : '#aaa',
                     border: 'none',
                     boxShadow: totalWeight > 100 ? '0 2px 8px rgba(139,195,74,0.10)' : 'none',
