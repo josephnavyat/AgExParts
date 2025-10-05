@@ -212,8 +212,18 @@ export default function CartPage() {
             </div>
             <div style={{ textAlign: 'right', marginTop: '1.5rem', display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'flex-end' }}>
               <button
-                className="btn primary"
-                style={{ fontWeight: 700, fontSize: '1.1rem', borderRadius: 8, padding: '0.7rem 2rem', minWidth: 120 }}
+                className="btn danger"
+                style={{
+                  fontWeight: 700,
+                  fontSize: '1.1rem',
+                  borderRadius: 8,
+                  padding: '0.7rem 2rem',
+                  minWidth: 120,
+                  background: '#d32f2f',
+                  color: '#fff',
+                  border: 'none',
+                  boxShadow: '0 2px 8px rgba(211,47,47,0.10)',
+                }}
                 onClick={() => { dispatch({ type: 'CLEAR_CART' }); }}
               >
                 Clear Cart
@@ -221,8 +231,18 @@ export default function CartPage() {
               {totalWeight > 100 ? (
                 <>
                   <button
-                    className="btn secondary"
-                    style={{ fontWeight: 700, fontSize: '1.1rem', borderRadius: 8, padding: '0.7rem 2rem', minWidth: 180, background: '#1976d2', color: '#fff' }}
+                    className="btn freight"
+                    style={{
+                      fontWeight: 700,
+                      fontSize: '1.1rem',
+                      borderRadius: 8,
+                      padding: '0.7rem 2rem',
+                      minWidth: 180,
+                      background: '#8bc34a', // light green
+                      color: '#fff',
+                      border: 'none',
+                      boxShadow: '0 2px 8px rgba(139,195,74,0.10)',
+                    }}
                     onClick={() => navigate('/freight-inquiry', { state: { cart } })}
                   >
                     Get Freight Quote
