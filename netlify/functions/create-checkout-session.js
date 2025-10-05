@@ -1,7 +1,7 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 exports.handler = async (event) => {
-  const { cart, customer_name, customer_email } = JSON.parse(event.body);
+  const { cart, customer_name, customer_email, shippingCost } = JSON.parse(event.body);
 
   // Map cart items to Stripe line_items
   const getImageUrl = (img) => img && img.startsWith('http') ? img : (img ? `https://agexparts.netlify.app${img}` : '');
@@ -16,6 +16,18 @@ exports.handler = async (event) => {
     },
     quantity,
   }));
+  if (shippingCost && shippingCost > 0) {
+    line_items.push({
+      price_data: {
+        currency: 'usd',
+        product_data: {
+          name: 'Shipping',
+        },
+        unit_amount: Math.round(shippingCost * 100),
+      },
+      quantity: 1,
+    });
+  }
 
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],

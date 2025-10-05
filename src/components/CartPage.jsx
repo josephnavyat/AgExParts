@@ -28,6 +28,7 @@ function StripeCheckoutButton({ cart, disabled }) {
   };
 
   const totalWeight = cart.reduce((sum, i) => sum + ((i.product.weight || 0) * i.quantity), 0);
+  const shipping = calculateShipping(cart);
   const handleCheckout = async () => {
     if (totalWeight > 100) {
       if (window.confirm('Heavy Items. Freight quote will be needed. Proceeding to page.')) {
@@ -39,7 +40,7 @@ function StripeCheckoutButton({ cart, disabled }) {
     const res = await fetch('/.netlify/functions/create-checkout-session', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ cart: getStripeCart() }),
+      body: JSON.stringify({ cart: getStripeCart(), shippingCost: shipping.cost }),
     });
     const { url } = await res.json();
     window.location = url;
@@ -192,6 +193,9 @@ export default function CartPage() {
             <div style={{ textAlign: 'right', marginTop: '2rem', fontWeight: 700, fontSize: '1.2rem', wordBreak: 'break-word' }}>
               Total: ${total.toFixed(2)}
             </div>
+            <div style={{ textAlign: 'right', marginTop: '0.5rem', fontWeight: 500, fontSize: '1.05rem', color: '#555' }}>
+              Total Weight: {totalWeight.toFixed(2)} lbs
+            </div>
             <div style={{ textAlign: 'right', marginTop: '1rem' }}>
               <button
                 className="btn secondary"
@@ -228,35 +232,6 @@ export default function CartPage() {
               ) : (
                 <StripeCheckoutButton cart={cart.items} />
               )}
-            </div>
-            <div style={{ margin: '2rem 0 1rem 0', padding: '1.5rem', background: '#f8f8f8', borderRadius: 12, boxSizing: 'border-box', width: '100%' }}>
-              <h3 style={{ marginBottom: 12, fontSize: '1.1rem', wordBreak: 'break-word' }}>Shipping Address</h3>
-              <form style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }} onSubmit={e => e.preventDefault()}>
-                <div style={{ flex: '1 1 100%', display: 'flex', flexDirection: 'column', marginBottom: 8 }}>
-                  <label style={{ fontWeight: 500, marginBottom: 4 }}>Name</label>
-                  <input required placeholder="Full Name" style={{ padding: 8, borderRadius: 6, border: '1px solid #ccc' }} value={shippingAddress.name} onChange={e => setShippingAddress(a => ({ ...a, name: e.target.value }))} />
-                </div>
-                <div style={{ flex: '1 1 100%', display: 'flex', flexDirection: 'column', marginBottom: 8 }}>
-                  <label style={{ fontWeight: 500, marginBottom: 4 }}>Street Address</label>
-                  <input required placeholder="Street Address" style={{ padding: 8, borderRadius: 6, border: '1px solid #ccc' }} value={shippingAddress.street1} onChange={e => setShippingAddress(a => ({ ...a, street1: e.target.value }))} />
-                </div>
-                <div style={{ flex: '1 1 40%', display: 'flex', flexDirection: 'column', marginBottom: 8 }}>
-                  <label style={{ fontWeight: 500, marginBottom: 4 }}>City</label>
-                  <input required placeholder="City" style={{ padding: 8, borderRadius: 6, border: '1px solid #ccc' }} value={shippingAddress.city} onChange={e => setShippingAddress(a => ({ ...a, city: e.target.value }))} />
-                </div>
-                <div style={{ flex: '1 1 20%', display: 'flex', flexDirection: 'column', marginBottom: 8 }}>
-                  <label style={{ fontWeight: 500, marginBottom: 4 }}>State</label>
-                  <input required placeholder="State" style={{ padding: 8, borderRadius: 6, border: '1px solid #ccc' }} value={shippingAddress.state} onChange={e => setShippingAddress(a => ({ ...a, state: e.target.value }))} />
-                </div>
-                <div style={{ flex: '1 1 20%', display: 'flex', flexDirection: 'column', marginBottom: 8 }}>
-                  <label style={{ fontWeight: 500, marginBottom: 4 }}>ZIP</label>
-                  <input required placeholder="ZIP" style={{ padding: 8, borderRadius: 6, border: '1px solid #ccc' }} value={shippingAddress.zip} onChange={e => setShippingAddress(a => ({ ...a, zip: e.target.value }))} />
-                </div>
-                <div style={{ flex: '1 1 15%', display: 'flex', flexDirection: 'column', marginBottom: 8 }}>
-                  <label style={{ fontWeight: 500, marginBottom: 4 }}>Country</label>
-                  <input required placeholder="Country" style={{ padding: 8, borderRadius: 6, border: '1px solid #ccc' }} value={shippingAddress.country} onChange={e => setShippingAddress(a => ({ ...a, country: e.target.value }))} />
-                </div>
-              </form>
             </div>
             <ShippingRatesButton
               cart={{ ...cart, shippingAddress }}
