@@ -8,9 +8,9 @@ import ShippingRatesButton from './ShippingRatesButton.jsx';
 import { useNavigate } from 'react-router-dom';
 import FreightInquiryPage from './FreightInquiryPage';
 
-function StripeCheckoutButton({ cart }) {
+function StripeCheckoutButton({ cart, disabled }) {
   const stripe = useStripe();
-
+  const navigate = useNavigate();
   // Map cart items to use discounted price if sale is active
   const getStripeCart = () => {
     return cart.map(({ product, quantity }) => {
@@ -27,7 +27,15 @@ function StripeCheckoutButton({ cart }) {
     });
   };
 
+  const totalWeight = cart.reduce((sum, i) => sum + ((i.product.weight || 0) * i.quantity), 0);
   const handleCheckout = async () => {
+    if (totalWeight > 100) {
+      if (window.confirm('Heavy Items. Freight quote will be needed. Proceeding to page.')) {
+        navigate('/freight-inquiry', { state: { cart } });
+      }
+      return;
+    }
+    if (disabled) return;
     const res = await fetch('/.netlify/functions/create-checkout-session', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -40,8 +48,9 @@ function StripeCheckoutButton({ cart }) {
   return (
     <button
       className="btn primary"
-      style={{ fontWeight: 700, fontSize: '1.1rem', borderRadius: 8, padding: '0.7rem 2rem', marginLeft: '1rem' }}
+      style={{ fontWeight: 700, fontSize: '1.1rem', borderRadius: 8, padding: '0.7rem 2rem', marginLeft: '1rem', opacity: disabled ? 0.5 : 1, pointerEvents: disabled ? 'none' : 'auto' }}
       onClick={handleCheckout}
+      disabled={disabled}
     >
       Checkout with Stripe
     </button>
@@ -51,7 +60,7 @@ function StripeCheckoutButton({ cart }) {
 const getImageUrl = (img) => img && img.startsWith('http') ? img : (img ? `https://agexparts.netlify.app${img}` : '');
 
 function calculateShipping(cartItems) {
-  const totalWeight = cartItems.reduce((sum, i) => sum + (i.product.weight || 0), 0);
+  const totalWeight = cartItems.reduce((sum, i) => sum + ((i.product.weight || 0) * i.quantity), 0);
   const maxLength = Math.max(...cartItems.map(i => Math.max(i.product.length_mm || 0, i.product.width_mm || 0, i.product.height_mm || 0)));
   const orderTotal = cartItems.reduce((sum, i) => sum + (Number(i.product.price) * i.quantity), 0);
 
@@ -67,7 +76,7 @@ function calculateShipping(cartItems) {
   if (maxLength > 36) cost += 25;
   else if (maxLength > 24) cost += 10;
 
-  if (orderTotal > 1000 && cost > 50) cost = 50; // optional cap
+  if (orderTotal > 2000) cost = 0; // optional cap
 
   return { type: 'ground', cost };
 }
@@ -94,7 +103,7 @@ export default function CartPage() {
     country: 'US',
   });
   const [shipping, setShipping] = useState(null);
-  const totalWeight = cart.items.reduce((sum, i) => sum + (i.product.weight || 0), 0);
+  const totalWeight = cart.items.reduce((sum, i) => sum + ((i.product.weight || 0) * i.quantity), 0);
 
   return (
     <>
@@ -163,7 +172,7 @@ export default function CartPage() {
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: 12, marginTop: 8 }}>
                     <button
                       style={{ background: '#28a745', color: '#fff', border: 'none', borderRadius: 6, width: 32, height: 32, fontWeight: 700, fontSize: '1.2rem', cursor: 'pointer' }}
-                      onClick={() => dispatch({ type: 'SUBTRACT_FROM_CART', product })}
+                      onClick={() => { dispatch({ type: 'SUBTRACT_FROM_CART', product }); }}
                       aria-label="Decrease quantity"
                     >
                       -
@@ -171,7 +180,7 @@ export default function CartPage() {
                     <span style={{ minWidth: 28, textAlign: 'center', fontWeight: 600, color: '#222', fontSize: '1.1rem' }}>{quantity}</span>
                     <button
                       style={{ background: '#28a745', color: '#fff', border: 'none', borderRadius: 6, width: 32, height: 32, fontWeight: 700, fontSize: '1.2rem', cursor: 'pointer' }}
-                      onClick={() => dispatch({ type: 'ADD_TO_CART', product })}
+                      onClick={() => { dispatch({ type: 'ADD_TO_CART', product }); }}
                       aria-label="Increase quantity"
                     >
                       +
@@ -201,18 +210,21 @@ export default function CartPage() {
               <button
                 className="btn primary"
                 style={{ fontWeight: 700, fontSize: '1.1rem', borderRadius: 8, padding: '0.7rem 2rem', minWidth: 120 }}
-                onClick={() => dispatch({ type: 'CLEAR_CART' })}
+                onClick={() => { dispatch({ type: 'CLEAR_CART' }); }}
               >
                 Clear Cart
               </button>
-              {totalWeight > 150 ? (
-                <button
-                  className="btn secondary"
-                  style={{ fontWeight: 700, fontSize: '1.1rem', borderRadius: 8, padding: '0.7rem 2rem', minWidth: 180, background: '#1976d2', color: '#fff' }}
-                  onClick={() => navigate('/freight-inquiry', { state: { cart } })}
-                >
-                  Quote for Freight
-                </button>
+              {totalWeight > 100 ? (
+                <>
+                  <button
+                    className="btn secondary"
+                    style={{ fontWeight: 700, fontSize: '1.1rem', borderRadius: 8, padding: '0.7rem 2rem', minWidth: 180, background: '#1976d2', color: '#fff' }}
+                    onClick={() => navigate('/freight-inquiry', { state: { cart } })}
+                  >
+                    Get Freight Quote
+                  </button>
+                  <StripeCheckoutButton cart={cart.items} disabled={true} />
+                </>
               ) : (
                 <StripeCheckoutButton cart={cart.items} />
               )}
