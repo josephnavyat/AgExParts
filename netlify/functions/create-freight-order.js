@@ -21,7 +21,7 @@ exports.handler = async (event) => {
     // Insert order
     const orderQuery = `
       INSERT INTO orders (
-        order_no, status, customer_name, customer_email, customer_phone,
+        order_no, status, customer_name, customer_email, customer_phone_num,
         ship_address1, ship_city, ship_state, ship_postal_code, ship_country,
         notes, subtotal, discount_total, shipping_total, tax_total, grand_total, currency, created_at
       ) VALUES (
