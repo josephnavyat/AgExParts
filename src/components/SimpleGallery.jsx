@@ -229,6 +229,22 @@ export default function SimpleGallery() {
                   }
                 })()}
               </div>
+              <div style={{ margin: '8px 0', fontWeight: 600, fontSize: '1rem' }}>
+                {Number(product.inventory ?? product.quantity ?? 0) === 0 ? (
+                  <span style={{ color: '#d32f2f', display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" style={{ verticalAlign: 'middle' }}><circle cx="12" cy="12" r="10" stroke="#d32f2f" strokeWidth="2" fill="#fff"/><line x1="8" y1="8" x2="16" y2="16" stroke="#d32f2f" strokeWidth="2"/><line x1="16" y1="8" x2="8" y2="16" stroke="#d32f2f" strokeWidth="2"/></svg>
+                    Out of Stock
+                  </span>
+                ) : Number(product.inventory ?? product.quantity ?? 0) < 20 ? (
+                  <span style={{ color: 'orange', fontWeight: 700 }}>
+                    Low Stock: {Number(product.inventory ?? product.quantity ?? 0)}
+                  </span>
+                ) : (
+                  <span style={{ color: '#28a745', fontWeight: 700 }}>
+                    In Stock
+                  </span>
+                )}
+              </div>
               <div className="simple-gallery-card-actions">
                 <Link
                   to={`/product/${product.id}`}
@@ -240,7 +256,8 @@ export default function SimpleGallery() {
                   className="simple-gallery-btn primary"
                   onClick={() => dispatch({ type: "ADD_TO_CART", product })}
                   title="Add to Cart"
-                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: Number(product.inventory ?? product.quantity ?? 0) === 0 ? 0.5 : 1, pointerEvents: Number(product.inventory ?? product.quantity ?? 0) === 0 ? 'none' : 'auto' }}
+                  disabled={Number(product.inventory ?? product.quantity ?? 0) === 0}
                 >
                   {/* Shopping cart icon SVG only */}
                   <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-shopping-cart"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61l1.38-7.39H6"></path></svg>
