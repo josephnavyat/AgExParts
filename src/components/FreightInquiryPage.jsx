@@ -35,9 +35,6 @@ export default function FreightInquiryPage() {
   return (
     <div style={{ maxWidth: 700, margin: '2rem auto', background: '#fff', borderRadius: 16, boxShadow: '0 2px 12px rgba(0,0,0,0.10)', padding: '2rem', color: '#222' }}>
       <h2 style={{ marginBottom: '1.5rem', fontWeight: 700 }}>Freight Inquiry</h2>
-      <div style={{ marginBottom: '2rem', fontWeight: 500, fontSize: '1.1rem', color: '#557a2cff', textAlign: 'center' }}>
-        We will get back to you with a shipping quote within 24-48 hours. Please see your email.
-      </div>
       <h3 style={{ marginBottom: '1rem', fontWeight: 600 }}>Cart Summary</h3>
       <div className="cart-cards" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2rem' }}>
         {cart.items.map(({ product, quantity }) => (
@@ -94,7 +91,7 @@ export default function FreightInquiryPage() {
       </form>
       {submitted && (
         <div style={{ marginTop: '2rem', color: '#28a745', fontWeight: 600, fontSize: '1.1rem' }}>
-          Thank you! Your freight inquiry has been submitted.
+          Thank you! Your freight inquiry has been submitted. We will get back to you with a shipping quote within 24-48 hours. Please see your email.
         </div>
       )}
     </div>
