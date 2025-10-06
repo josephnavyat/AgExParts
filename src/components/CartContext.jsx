@@ -8,23 +8,7 @@ const initialState = {
 
 function cartReducer(state, action) {
   switch (action.type) {
-    case "ADD_TO_CART": {
-      const existing = state.items.find(i => i.product.id === action.product.id);
-      if (existing) {
-        return {
-          ...state,
-          items: state.items.map(i =>
-            i.product.id === action.product.id
-              ? { ...i, quantity: i.quantity + (action.quantity || 1) }
-              : i
-          ),
-        };
-      }
-      return {
-        ...state,
-        items: [...state.items, { product: action.product, quantity: action.quantity || 1 }],
-      };
-    }
+  // ...existing code...
       case "ADD_TO_CART": {
         const existing = state.items.find(i => i.product.id === action.product.id);
         const available = Number(action.product.inventory ?? 0);
