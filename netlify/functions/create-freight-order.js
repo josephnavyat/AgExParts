@@ -50,7 +50,17 @@ exports.handler = async (event) => {
       currency,
       new Date().toISOString()
     ];
-    const orderResult = await client.query(orderQuery, orderValues);
+    let orderResult;
+    try {
+      orderResult = await client.query(orderQuery, orderValues);
+    } catch (orderErr) {
+      console.error('Order insert error:', orderErr, orderValues);
+      await client.end();
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: 'Order insert error', details: orderErr.message }),
+      };
+    }
     const orderRow = orderResult.rows[0];
     // Insert order items
     const itemQuery = `
@@ -61,21 +71,25 @@ exports.handler = async (event) => {
       )
     `;
     for (const { product, quantity } of cart.items) {
-      await client.query(itemQuery, [
-        orderRow.id,
-        product.id || null,
-        quantity || 1,
-        Number(product.price) || 0,
-        '', // tax_code
-        0, // tax_amount
-        Number(product.price) * Number(quantity), // line_total
-        null, // fulfillment_method
-        null, // supplier_id
-        null, // location_id
-        product.name || '',
-        product.sku || '',
-        product.weight || 0
-      ]);
+      try {
+        await client.query(itemQuery, [
+          orderRow.id,
+          product.id || null,
+          quantity || 1,
+          Number(product.price) || 0,
+          '', // tax_code
+          0, // tax_amount
+          Number(product.price) * Number(quantity), // line_total
+          null, // fulfillment_method
+          null, // supplier_id
+          null, // location_id
+          product.name || '',
+          product.sku || '',
+          product.weight || 0
+        ]);
+      } catch (itemErr) {
+        console.error('Order item insert error:', itemErr, product);
+      }
     }
     await client.end();
     return {
@@ -83,6 +97,7 @@ exports.handler = async (event) => {
       body: JSON.stringify({ success: true, order_no }),
     };
   } catch (err) {
+    console.error('General error:', err);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: err.message }),

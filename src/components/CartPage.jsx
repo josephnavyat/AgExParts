@@ -252,19 +252,6 @@ export default function CartPage() {
                 <StripeCheckoutButton cart={cart.items} disabled={totalWeight > 100} />
               </>
             </div>
-            <ShippingRatesButton
-              cart={{ ...cart, shippingAddress }}
-              fromAddress={{
-                name: 'AgEx Parts',
-                street1: '123 Main St',
-                city: 'Fargo',
-                state: 'ND',
-                zip: '58102',
-                country: 'US',
-                phone: '555-555-5555',
-                email: 'info@agexparts.com'
-              }}
-            />
           </div>
         )}
       </div>
