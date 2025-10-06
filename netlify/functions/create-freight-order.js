@@ -65,7 +65,7 @@ exports.handler = async (event) => {
     // Insert order items
     const itemQuery = `
       INSERT INTO order_items (
-        order_id, part_id, qty, unit_price, tax_code, tax_amount, line_total, fulfillment_method, supplier_id, location_id, name, sku, weight
+        order_id, part_id, qty, unit_price, tax_code, tax_amount, line_total, fulfillment_method, supplier_id, location_id, name,
       ) VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13
       )
@@ -83,9 +83,7 @@ exports.handler = async (event) => {
           null, // fulfillment_method
           null, // supplier_id
           null, // location_id
-          product.name || '',
-          product.sku || '',
-          product.weight || 0
+          product.name || ''
         ]);
       } catch (itemErr) {
         console.error('Order item insert error:', itemErr, product);
