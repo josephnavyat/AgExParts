@@ -1,6 +1,5 @@
 const { v4: uuidv4 } = require('uuid');
-const fs = require('fs');
-const path = require('path');
+const { Client } = require('pg');
 
 exports.handler = async (event) => {
   try {
@@ -8,44 +7,23 @@ exports.handler = async (event) => {
     const { form, cart } = data;
     // Create order object
     const orderId = uuidv4();
-    const order = {
-      id: orderId,
-      name: form.name,
-      email: form.email,
-      phone: form.phone,
-      address: form.address,
-      city: form.city,
-      state: form.state,
-      zip: form.zip,
-      notes: form.notes,
-      status: 'Awaiting Freight Quote',
-      created_at: new Date().toISOString(),
-    };
-    // Create order items
-    const orderItems = cart.items.map(({ product, quantity }) => ({
-      order_id: orderId,
-      product_id: product.id,
-      name: product.name,
-      sku: product.sku,
-      price: product.price,
-      quantity,
-      weight: product.weight,
-    }));
-    // Save to file (for demo; replace with DB in production)
-    const ordersPath = path.join(__dirname, 'orders.json');
-    const itemsPath = path.join(__dirname, 'order_items.json');
-    let orders = [];
-    let items = [];
-    if (fs.existsSync(ordersPath)) {
-      orders = JSON.parse(fs.readFileSync(ordersPath));
+    const client = new Client({ connectionString: process.env.DATABASE_URL });
+    await client.connect();
+    // Insert order
+    const orderInsert = await client.query(
+      `INSERT INTO orders (id, customer_name, customer_email, customer_phone, ship_address1, ship_city, ship_state, ship_postal_code, ship_country, notes, status, created_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING *`,
+      [orderId, form.name, form.email, form.phone, form.address, form.city, form.state, form.zip, 'US', form.notes, 'Awaiting Freight Quote', new Date().toISOString()]
+    );
+    // Insert order items
+    for (const { product, quantity } of cart.items) {
+      await client.query(
+        `INSERT INTO order_items (order_id, product_id, name, sku, price, quantity, weight)
+         VALUES ($1,$2,$3,$4,$5,$6,$7)`,
+        [orderId, product.id, product.name, product.sku, product.price, quantity, product.weight]
+      );
     }
-    if (fs.existsSync(itemsPath)) {
-      items = JSON.parse(fs.readFileSync(itemsPath));
-    }
-    orders.push(order);
-    items.push(...orderItems);
-    fs.writeFileSync(ordersPath, JSON.stringify(orders, null, 2));
-    fs.writeFileSync(itemsPath, JSON.stringify(items, null, 2));
+    await client.end();
     return {
       statusCode: 200,
       body: JSON.stringify({ success: true, orderId }),

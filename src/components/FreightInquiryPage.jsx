@@ -35,7 +35,7 @@ export default function FreightInquiryPage() {
   return (
     <div style={{ maxWidth: 700, margin: '2rem auto', background: '#fff', borderRadius: 16, boxShadow: '0 2px 12px rgba(0,0,0,0.10)', padding: '2rem', color: '#222' }}>
       <h2 style={{ marginBottom: '1.5rem', fontWeight: 700 }}>Freight Inquiry</h2>
-      <div style={{ marginBottom: '2rem', fontWeight: 500, fontSize: '1.1rem', color: '#1976d2', textAlign: 'center' }}>
+      <div style={{ marginBottom: '2rem', fontWeight: 500, fontSize: '1.1rem', color: '#557a2cff', textAlign: 'center' }}>
         We will get back to you with a shipping quote within 24-48 hours. Please see your email.
       </div>
       <h3 style={{ marginBottom: '1rem', fontWeight: 600 }}>Cart Summary</h3>
@@ -74,7 +74,21 @@ export default function FreightInquiryPage() {
         <input name="state" value={form.state} onChange={handleChange} placeholder="State" required style={{ padding: '0.7rem', borderRadius: 8, border: '1px solid #ccc' }} />
         <input name="zip" value={form.zip} onChange={handleChange} placeholder="ZIP Code" required style={{ padding: '0.7rem', borderRadius: 8, border: '1px solid #ccc' }} />
         <textarea name="notes" value={form.notes} onChange={handleChange} placeholder="Additional Notes (optional)" rows={3} style={{ padding: '0.7rem', borderRadius: 8, border: '1px solid #ccc' }} />
-        <button type="submit" style={{ background: '#1976d2', color: '#fff', fontWeight: 700, fontSize: '1.1rem', borderRadius: 8, padding: '0.7rem 2rem', border: 'none', marginTop: 8 }}>
+        <button type="submit"
+          style={{
+            background: submitted ? '#eee' : '#557a2cff',
+            color: submitted ? '#aaa' : '#fff',
+            fontWeight: 700,
+            fontSize: '1.1rem',
+            borderRadius: 8,
+            padding: '0.7rem 2rem',
+            border: 'none',
+            marginTop: 8,
+            cursor: submitted ? 'not-allowed' : 'pointer',
+            opacity: submitted ? 0.7 : 1
+          }}
+          disabled={submitted}
+        >
           Submit Inquiry
         </button>
       </form>
