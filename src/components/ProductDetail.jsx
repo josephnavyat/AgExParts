@@ -7,6 +7,8 @@ import { getProductQuantity } from "./CartContext.jsx";
 import "../styles/site.css";
 
 export default function ProductDetail() {
+  // Helper for available inventory
+  const availableStock = product && Number(product.inventory ?? 0);
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -152,14 +154,15 @@ export default function ProductDetail() {
                 return 'Price N/A';
               }
             })()}
-            <span style={{
-              fontSize: '1rem',
-              color: product.quantity > 0 ? '#28a745' : '#d32f2f',
-              fontWeight: 600,
-              marginLeft: 12
-            }}>
-              {product.quantity && product.quantity > 0 ? 'In Stock' : 'Out of Stock'}
-            </span>
+            {availableStock < 20 && availableStock > 0 ? (
+              <span style={{ fontSize: '1rem', color: '#d32f2f', fontWeight: 600, marginLeft: 12 }}>
+                Low Stock: {availableStock} Available
+              </span>
+            ) : (
+              <span style={{ fontSize: '1rem', color: availableStock > 0 ? '#28a745' : '#d32f2f', fontWeight: 600, marginLeft: 12 }}>
+                {availableStock > 0 ? 'In Stock' : 'Out of Stock'}
+              </span>
+            )}
           </div>
           {/* Description Section */}
           <div style={{
@@ -314,6 +317,7 @@ export default function ProductDetail() {
                   }}
                   onClick={() => dispatch({ type: 'ADD_TO_CART', product })}
                   aria-label="Increase quantity"
+                  disabled={getProductQuantity(cart, product.id) >= availableStock}
                 >
                   +
                 </button>
@@ -339,6 +343,7 @@ export default function ProductDetail() {
                 onMouseOver={e => (e.currentTarget.style.background = '#12895c')}
                 onMouseOut={e => (e.currentTarget.style.background = '#19a974')}
                 onClick={() => dispatch({ type: 'ADD_TO_CART', product })}
+                disabled={availableStock <= 0}
               >
                 Add to Cart
               </button>

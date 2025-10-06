@@ -110,8 +110,13 @@ exports.handler = async (event) => {
             item.location_id || null,
             item.name || ''
           ]);
+          // Decrement inventory for the purchased item
+          await client.query(
+            'UPDATE products SET inventory = GREATEST(inventory - $1, 0) WHERE id = $2',
+            [item.qty || 1, item.part_id]
+          );
         } catch (itemErr) {
-          console.error('Error inserting single order item:', item, itemErr);
+          console.error('Error inserting single order item or updating inventory:', item, itemErr);
         }
       }
     } catch (err) {

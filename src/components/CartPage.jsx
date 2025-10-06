@@ -99,6 +99,9 @@ export default function CartPage() {
     name: '',
     street1: '',
     city: '',
+      // Check for low stock and insufficient stock
+      const insufficientStock = cart.items.some(i => i.quantity > Number(i.product.inventory ?? 0));
+      const lowStockItems = cart.items.filter(i => Number(i.product.inventory ?? 0) > 0 && i.quantity >= Number(i.product.inventory ?? 0));
     state: '',
     zip: '',
     country: 'US',

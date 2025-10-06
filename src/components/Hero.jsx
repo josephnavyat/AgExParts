@@ -10,7 +10,7 @@ export default function Hero() {
         <p>OEM & aftermarket parts, fast shipping, and expert support. From tillage to hydraulics — we’ve got the parts that keep you running.</p>
         <div className="cta-row">
           <Link className="btn primary" to="/catalog">Browse Catalog</Link>
-          <a className="btn secondary" href="#contact">Talk to Parts Expert</a>
+          <Link className="btn secondary" to="/contact-parts-specialist">Talk to Parts Expert</Link>
         </div>
         <div className="badges" style={{ marginTop: 24 }}>
           <div className="badge">Same‑day shipping</div>
