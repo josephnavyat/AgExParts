@@ -65,9 +65,9 @@ exports.handler = async (event) => {
     // Insert order items
     const itemQuery = `
       INSERT INTO order_items (
-        order_id, part_id, qty, unit_price, tax_code, tax_amount, line_total, fulfillment_method, supplier_id, location_id, name,
+        order_id, part_id, qty, unit_price, tax_code, tax_amount, line_total, fulfillment_method, supplier_id, location_id, name
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
       )
     `;
     for (const { product, quantity } of cart.items) {
