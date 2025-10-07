@@ -1,6 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import ProfilePage from './components/ProfilePage.jsx';
 import App from './App.jsx';
 // import ProductGallery from './components/ProductGallery.jsx';
 import ProductDetail from './components/ProductDetail.jsx';
@@ -44,6 +45,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="/search-results" element={<SearchResults />} />
           <Route path="/freight-inquiry" element={<FreightInquiryPage />} />
           <Route path="/contact-parts-specialist" element={<ContactPartsSpecialist />} />
+          <Route path="/profile" element={<ProfilePage />} />
         </Routes>
       </BrowserRouter>
     </CartProvider>
