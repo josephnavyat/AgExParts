@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Navbar from './Navbar.jsx';
 
 export default function ProfilePage() {
   const [mode, setMode] = useState('login'); // 'login' or 'register'
@@ -88,11 +89,11 @@ export default function ProfilePage() {
       {loggedInUser ? (
         <div>
           <h2 style={{ textAlign: 'center', marginBottom: 24 }}>Welcome, {loggedInUser.first_name} {loggedInUser.last_name}!</h2>
-          <div style={{ marginBottom: 18, textAlign: 'left', background: '#f8f8f8', borderRadius: 8, padding: 16 }}>
-            <strong>Username:</strong> {loggedInUser.username}<br />
-            <strong>Email:</strong> {loggedInUser.email || '—'}<br />
-            <strong>Address:</strong> {loggedInUser.address || '—'}<br />
-            <strong>Phone:</strong> {loggedInUser.phone || '—'}<br />
+          <div style={{ marginBottom: 18, textAlign: 'left', background: '#f8f8f8', borderRadius: 8, padding: 16, color: '#222' }}>
+            <strong style={{ color: '#333' }}>Username:</strong> {loggedInUser.username}<br />
+            <strong style={{ color: '#333' }}>Email:</strong> {loggedInUser.email || '—'}<br />
+            <strong style={{ color: '#333' }}>Address:</strong> {loggedInUser.address || '—'}<br />
+            <strong style={{ color: '#333' }}>Phone:</strong> {loggedInUser.phone || '—'}<br />
           </div>
           {!editMode ? (
             <button onClick={() => setEditMode(true)} style={{ background: '#19a974', color: '#fff', border: 'none', borderRadius: 8, padding: '0.75rem 1.5rem', fontSize: '1.1rem', fontWeight: 600, cursor: 'pointer', width: '100%', marginBottom: 12 }}>
@@ -161,7 +162,7 @@ export default function ProfilePage() {
         </div>
       ) : (
         <div>
-          <h2 style={{ textAlign: 'center', marginBottom: 24 }}>{mode === 'login' ? 'Login' : 'Create Account'}</h2>
+          <h2 style={{ textAlign: 'center', marginBottom: 24, color: '#333' }}>{mode === 'login' ? 'Login' : 'Create Account'}</h2>
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <input
               type="text"
