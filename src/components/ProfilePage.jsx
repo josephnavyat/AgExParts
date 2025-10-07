@@ -9,6 +9,22 @@ import TextField from '@mui/material/TextField';
 
 function ProfilePage() {
   // ...existing code...
+  const darkTheme = createTheme({
+    palette: {
+      mode: 'dark',
+      primary: {
+        main: '#19a974',
+      },
+      background: {
+        default: '#181818',
+        paper: '#232323',
+      },
+      text: {
+        primary: '#fff',
+        secondary: '#ccc',
+      },
+    },
+  });
   return (
     <ThemeProvider theme={darkTheme}>
       <Container maxWidth="sm">
