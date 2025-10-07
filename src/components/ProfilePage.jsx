@@ -8,6 +8,51 @@ import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 
 function ProfilePage() {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage('');
+    try {
+      const endpoint = mode === 'login' ? '/.netlify/functions/login-user' : '/.netlify/functions/register-user';
+      const body = mode === 'login'
+        ? { username, password }
+        : {
+            username,
+            password,
+            first_name: firstName,
+            last_name: lastName,
+            email,
+            address,
+            phone
+          };
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      const data = await res.json();
+      if (res.ok) {
+        if (mode === 'login') {
+          setMessage('Login successful!');
+          localStorage.setItem('jwt', data.token);
+          try {
+            const payload = JSON.parse(atob(data.token.split('.')[1]));
+            setLoggedInUser(payload);
+          } catch {
+            setLoggedInUser({ username });
+          }
+        } else {
+          setMessage('Registration successful! You can now log in.');
+          setMode('login');
+        }
+      } else {
+        setMessage(data.error || 'Error occurred');
+      }
+    } catch (err) {
+      setMessage('Network error');
+    }
+    setLoading(false);
+  };
   const handleLogout = () => {
     localStorage.removeItem('jwt');
     setLoggedInUser(null);
@@ -16,11 +61,11 @@ function ProfilePage() {
   };
   const [message, setMessage] = useState('');
   const [editFields, setEditFields] = useState({
-    first_name: '',
-    last_name: '',
-    email: '',
-    address: '',
-    phone: ''
+    first_name: loggedInUser?.first_name || '',
+    last_name: loggedInUser?.last_name || '',
+    email: loggedInUser?.email || '',
+    address: loggedInUser?.address || '',
+    phone: loggedInUser?.phone || ''
   });
   const [mode, setMode] = useState('login');
   const [username, setUsername] = useState('');
