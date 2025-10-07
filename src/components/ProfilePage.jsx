@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 // ...existing code...
+
+export default ProfilePage;
     <ThemeProvider theme={darkTheme}>
       <Container maxWidth="sm">
         <Box sx={{ mt: 6 }}>
