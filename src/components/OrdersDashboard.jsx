@@ -15,8 +15,17 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 const columns = [
   { field: "id", headerName: "Order ID", width: 100 },
   { field: "customer_name", headerName: "Customer", width: 180 },
+  { field: "status", headerName: "Status", width: 120 },
   { field: "created_at", headerName: "Date", width: 160 },
-  { field: "grand_total", headerName: "Total", width: 120, valueFormatter: ({ value }) => `$${value}` },
+  {
+    field: "grand_total",
+    headerName: "Total",
+    width: 120,
+    valueFormatter: ({ value }) => {
+      const num = typeof value === "number" ? value : parseFloat(value);
+      return `$${!isNaN(num) ? num.toFixed(2) : "0.00"}`;
+    },
+  },
 ];
 
 function OrderItemsAccordion({ items }) {
