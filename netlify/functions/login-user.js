@@ -19,7 +19,7 @@ exports.handler = async function(event) {
   }
 
   const client = new Client({
-    connectionString: process.env.PG_CONNECTION_STRING
+  connectionString: process.env.DATABASE_URL
   });
   await client.connect();
 
