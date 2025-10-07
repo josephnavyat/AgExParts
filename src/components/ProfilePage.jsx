@@ -8,6 +8,34 @@ import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 
 function ProfilePage() {
+  const [loggedInUser, setLoggedInUser] = useState(() => {
+    const jwt = localStorage.getItem('jwt');
+    if (!jwt) return null;
+    try {
+      const payload = JSON.parse(atob(jwt.split('.')[1]));
+      return payload;
+    } catch {
+      return null;
+    }
+  });
+  const [message, setMessage] = useState('');
+  const [editFields, setEditFields] = useState({
+    first_name: loggedInUser?.first_name || '',
+    last_name: loggedInUser?.last_name || '',
+    email: loggedInUser?.email || '',
+    address: loggedInUser?.address || '',
+    phone: loggedInUser?.phone || ''
+  });
+  const [mode, setMode] = useState('login');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [address, setAddress] = useState('');
+  const [phone, setPhone] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [editMode, setEditMode] = useState(false);
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -59,35 +87,6 @@ function ProfilePage() {
     setMessage('Logged out successfully.');
     setEditMode(false);
   };
-  const [message, setMessage] = useState('');
-  const [editFields, setEditFields] = useState({
-    first_name: loggedInUser?.first_name || '',
-    last_name: loggedInUser?.last_name || '',
-    email: loggedInUser?.email || '',
-    address: loggedInUser?.address || '',
-    phone: loggedInUser?.phone || ''
-  });
-  const [mode, setMode] = useState('login');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [address, setAddress] = useState('');
-  const [phone, setPhone] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [editMode, setEditMode] = useState(false);
-  // ...existing code...
-  const [loggedInUser, setLoggedInUser] = useState(() => {
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) return null;
-    try {
-      const payload = JSON.parse(atob(jwt.split('.')[1]));
-      return payload;
-    } catch {
-      return null;
-    }
-  });
   const darkTheme = createTheme({
     palette: {
       mode: 'dark',
