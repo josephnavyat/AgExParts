@@ -8,6 +8,24 @@ import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 
 function ProfilePage() {
+  const [message, setMessage] = useState('');
+  const [editFields, setEditFields] = useState({
+    first_name: '',
+    last_name: '',
+    email: '',
+    address: '',
+    phone: ''
+  });
+  const [mode, setMode] = useState('login');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [address, setAddress] = useState('');
+  const [phone, setPhone] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [editMode, setEditMode] = useState(false);
   // ...existing code...
   const [loggedInUser, setLoggedInUser] = useState(() => {
     const jwt = localStorage.getItem('jwt');
