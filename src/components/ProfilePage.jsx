@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
 // ...existing code...
 
-export default ProfilePage;
+function ProfilePage() {
+  // ...existing code...
+  return (
     <ThemeProvider theme={darkTheme}>
       <Container maxWidth="sm">
         <Box sx={{ mt: 6 }}>
@@ -183,3 +184,7 @@ export default ProfilePage;
         </Box>
       </Container>
     </ThemeProvider>
+  );
+}
+
+export default ProfilePage;
