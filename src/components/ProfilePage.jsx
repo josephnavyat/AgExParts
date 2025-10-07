@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Navbar from './Navbar.jsx';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
@@ -105,6 +106,7 @@ function ProfilePage() {
   });
   return (
     <ThemeProvider theme={darkTheme}>
+      <Navbar />
       <Container maxWidth="sm">
         <Box sx={{ mt: 6 }}>
           <Paper elevation={6} sx={{ p: 4, borderRadius: 3, bgcolor: 'background.paper' }}>
