@@ -88,7 +88,7 @@ export default function ProfilePage() {
     <div className="profile-page" style={{ maxWidth: 400, margin: '40px auto', padding: 24, background: '#fff', borderRadius: 12, boxShadow: '0 2px 12px rgba(0,0,0,0.08)' }}>
       {loggedInUser ? (
         <div>
-          <h2 style={{ textAlign: 'center', marginBottom: 24 }}>Welcome, {loggedInUser.first_name} {loggedInUser.last_name}!</h2>
+          <h2 style={{ textAlign: 'center', marginBottom: 24, color: '#333' }}>Welcome, {loggedInUser.first_name} {loggedInUser.last_name}!</h2>
           <div style={{ marginBottom: 18, textAlign: 'left', background: '#f8f8f8', borderRadius: 8, padding: 16, color: '#222' }}>
             <strong style={{ color: '#333' }}>Username:</strong> {loggedInUser.username}<br />
             <strong style={{ color: '#333' }}>Email:</strong> {loggedInUser.email || '—'}<br />
@@ -101,12 +101,29 @@ export default function ProfilePage() {
             </button>
           ) : (
             <form
-              onSubmit={e => {
+              onSubmit={async e => {
                 e.preventDefault();
-                // Here you would send a request to update the user info in the backend
-                setLoggedInUser({ ...loggedInUser, ...editFields });
-                setEditMode(false);
-                setMessage('Profile updated (local only, backend update not implemented).');
+                setMessage('');
+                try {
+                  const res = await fetch('/.netlify/functions/update-user', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      Authorization: `Bearer ${localStorage.getItem('jwt')}`
+                    },
+                    body: JSON.stringify(editFields)
+                  });
+                  const data = await res.json();
+                  if (res.ok) {
+                    setLoggedInUser({ ...loggedInUser, ...editFields });
+                    setEditMode(false);
+                    setMessage('Profile updated successfully.');
+                  } else {
+                    setMessage(data.error || 'Error updating profile.');
+                  }
+                } catch (err) {
+                  setMessage('Network error updating profile.');
+                }
               }}
               style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 12 }}
             >
