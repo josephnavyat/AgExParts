@@ -9,6 +9,16 @@ import TextField from '@mui/material/TextField';
 
 function ProfilePage() {
   // ...existing code...
+  const [loggedInUser, setLoggedInUser] = useState(() => {
+    const jwt = localStorage.getItem('jwt');
+    if (!jwt) return null;
+    try {
+      const payload = JSON.parse(atob(jwt.split('.')[1]));
+      return payload;
+    } catch {
+      return null;
+    }
+  });
   const darkTheme = createTheme({
     palette: {
       mode: 'dark',
