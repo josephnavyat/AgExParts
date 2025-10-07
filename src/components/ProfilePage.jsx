@@ -8,6 +8,12 @@ import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 
 function ProfilePage() {
+  const handleLogout = () => {
+    localStorage.removeItem('jwt');
+    setLoggedInUser(null);
+    setMessage('Logged out successfully.');
+    setEditMode(false);
+  };
   const [message, setMessage] = useState('');
   const [editFields, setEditFields] = useState({
     first_name: '',
