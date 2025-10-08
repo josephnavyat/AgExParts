@@ -40,7 +40,8 @@ exports.handler = async (event) => {
     },
     metadata: {
       // Only send a short summary to avoid exceeding Stripe's 500 character limit
-      cart_summary: cart.map(({ product, quantity }) => `${product.name.slice(0, 30)} x${quantity}`).join(', ')
+      cart_summary: cart.map(({ product, quantity }) => `${product.name.slice(0, 30)} x${quantity}`).join(', '),
+      shipping_cost: shippingCost || 0
     }
   });
 

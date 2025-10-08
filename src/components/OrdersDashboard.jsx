@@ -139,9 +139,80 @@ export default function OrdersDashboard() {
       </Paper>
       {filteredOrders.map((order) =>
         expandedOrder === order.id ? (
-          <OrderItemsAccordion key={order.id} items={order.items || []} expanded={true} />
+          <Box key={order.id} sx={{ mt: 2 }}>
+            <OrderItemsAccordion items={order.items || []} expanded={true} />
+            <Paper sx={{ p: 2, mt: 2 }}>
+              <Typography variant="h6" gutterBottom>Edit Shipping & Status</Typography>
+              <OrderEditForm order={order} onUpdate={async (update) => {
+                try {
+                  const res = await fetch('/.netlify/functions/update-order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(update),
+                  });
+                  if (!res.ok) throw new Error('Update failed');
+                  setOrders((prev) => prev.map(o => o.id === order.id ? { ...o, ...update } : o));
+                  alert('Order updated!');
+                } catch (err) {
+                  alert('Error: ' + err.message);
+                }
+              }} />
+            </Paper>
+          </Box>
         ) : null
       )}
+
+// Editable form for shipping cost and status
+function OrderEditForm({ order, onUpdate }) {
+  const [shipping, setShipping] = useState(order.shipping_total ?? '');
+  const [status, setStatus] = useState(order.status ?? '');
+  const [email, setEmail] = useState(order.customer_email ?? '');
+  const [emailSubject, setEmailSubject] = useState('Order Update');
+  const [emailText, setEmailText] = useState('');
+  React.useEffect(() => {
+    setShipping(order.shipping_total ?? '');
+    setStatus(order.status ?? '');
+    setEmail(order.customer_email ?? '');
+  }, [order]);
+  return (
+    <form
+      onSubmit={e => {
+        e.preventDefault();
+        onUpdate({
+          orderId: order.id,
+          shipping_total: shipping,
+          status,
+          email,
+          emailSubject,
+          emailText,
+        });
+      }}
+      style={{ display: 'flex', flexDirection: 'column', gap: 12 }}
+    >
+      <label>
+        Shipping Cost ($):
+        <input type="number" step="0.01" value={shipping} onChange={e => setShipping(e.target.value)} style={{ marginLeft: 8 }} />
+      </label>
+      <label>
+        Status:
+        <input type="text" value={status} onChange={e => setStatus(e.target.value)} style={{ marginLeft: 8 }} />
+      </label>
+      <label>
+        Email (optional):
+        <input type="email" value={email} onChange={e => setEmail(e.target.value)} style={{ marginLeft: 8 }} />
+      </label>
+      <label>
+        Email Subject:
+        <input type="text" value={emailSubject} onChange={e => setEmailSubject(e.target.value)} style={{ marginLeft: 8 }} />
+      </label>
+      <label>
+        Email Text:
+        <textarea value={emailText} onChange={e => setEmailText(e.target.value)} style={{ marginLeft: 8, minHeight: 60 }} />
+      </label>
+      <button type="submit" style={{ marginTop: 12, fontWeight: 700, borderRadius: 6, padding: '0.5rem 1.5rem', background: '#1976d2', color: '#fff', border: 'none' }}>Update & Send Email</button>
+    </form>
+  );
+}
     </Box>
   );
 }

@@ -29,7 +29,7 @@ exports.handler = async (event) => {
       ship_country: shipping?.address?.country || session.customer_details?.address?.country,
       subtotal: session.amount_subtotal / 100,
       discount_total: 0,
-      shipping_total: session.total_details?.amount_shipping ? session.total_details.amount_shipping / 100 : 0,
+  shipping_total: session.metadata?.shipping_cost ? Number(session.metadata.shipping_cost) : (session.total_details?.amount_shipping ? session.total_details.amount_shipping / 100 : 0),
       tax_total: session.total_details?.amount_tax ? session.total_details.amount_tax / 100 : 0,
       grand_total: session.amount_total / 100,
       currency: session.currency,
