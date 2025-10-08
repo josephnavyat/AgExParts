@@ -1,84 +1,62 @@
 import React, { useEffect, useState } from "react";
 import { PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer } from 'recharts';
 import { DataGrid } from "@mui/x-data-grid";
-import {
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Typography,
-  Box,
-  Paper,
-} from "@mui/material";
+import { Accordion, AccordionSummary, AccordionDetails, Typography, Box, Paper } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-// Orders will be fetched from backend
-
-const columns = [
-  { field: "id", headerName: "Order ID", width: 100 },
-  { field: "customer_name", headerName: "Customer", width: 180 },
-  { field: "status", headerName: "Status", width: 120 },
-  { field: "created_at", headerName: "Date", width: 160 },
-  {
-    field: "grand_total",
-    headerName: "Total",
-    width: 120,
-    valueFormatter: ({ value }) => {
-      const num = typeof value === "number" ? value : parseFloat(value);
-      return `$${!isNaN(num) ? num.toFixed(2) : "0.00"}`;
-    },
-  },
-];
-
-function OrderItemsAccordion({ items, expanded = true }) {
+// Editable form for shipping cost and status
+function OrderEditForm({ order, onUpdate }) {
+  const [shipping, setShipping] = React.useState(order.shipping_total ?? '');
+  const [status, setStatus] = React.useState(order.status ?? '');
+  const [email, setEmail] = React.useState(order.customer_email ?? '');
+  const [emailSubject, setEmailSubject] = React.useState('Order Update');
+  const [emailText, setEmailText] = React.useState('');
+  React.useEffect(() => {
+    setShipping(order.shipping_total ?? '');
+    setStatus(order.status ?? '');
+    setEmail(order.customer_email ?? '');
+  }, [order]);
   return (
-    <Accordion expanded={expanded}>
-      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography>Order Items</Typography>
-      </AccordionSummary>
-      <AccordionDetails>
-        {items.map((item, idx) => (
-          <Box key={idx} sx={{ mb: 1 }}>
-            <Typography variant="body2">
-              {item.qty} x {item.name} @ {item.price}
-            </Typography>
-          </Box>
-        ))}
-      </AccordionDetails>
-    </Accordion>
+    <form
+      onSubmit={e => {
+        e.preventDefault();
+        onUpdate({
+          orderId: order.id,
+          shipping_total: shipping,
+          status,
+          email,
+          emailSubject,
+          emailText,
+        });
+      }}
+      style={{ display: 'flex', flexDirection: 'column', gap: 12 }}
+    >
+      <label>
+        Shipping Cost ($):
+        <input type="number" step="0.01" value={shipping} onChange={e => setShipping(e.target.value)} style={{ marginLeft: 8 }} />
+      </label>
+      <label>
+        Status:
+        <input type="text" value={status} onChange={e => setStatus(e.target.value)} style={{ marginLeft: 8 }} />
+      </label>
+      <label>
+        Email (optional):
+        <input type="email" value={email} onChange={e => setEmail(e.target.value)} style={{ marginLeft: 8 }} />
+      </label>
+      <label>
+        Email Subject:
+        <input type="text" value={emailSubject} onChange={e => setEmailSubject(e.target.value)} style={{ marginLeft: 8 }} />
+      </label>
+      <label>
+        Email Text:
+        <textarea value={emailText} onChange={e => setEmailText(e.target.value)} style={{ marginLeft: 8, minHeight: 60 }} />
+      </label>
+      <button type="submit" style={{ marginTop: 12, fontWeight: 700, borderRadius: 6, padding: '0.5rem 1.5rem', background: '#1976d2', color: '#fff', border: 'none' }}>Update & Send Email</button>
+    </form>
   );
 }
 
-const STATUS_COLORS = ["#1976d2", "#388e3c", "#fbc02d", "#d32f2f", "#7b1fa2", "#0288d1"];
-
-export default function OrdersDashboard() {
-  const [orders, setOrders] = useState([]);
-  const [expandedOrder, setExpandedOrder] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [statusFilter, setStatusFilter] = useState(null);
-
-  useEffect(() => {
-    async function fetchOrders() {
-      setLoading(true);
-      try {
-        const res = await fetch("/.netlify/functions/get-orders");
-        if (!res.ok) throw new Error("Failed to fetch orders");
-        const data = await res.json();
-        setOrders(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchOrders();
-  }, []);
-
-  // Prepare chart data
-  const statusCounts = orders.reduce((acc, order) => {
-    acc[order.status] = (acc[order.status] || 0) + 1;
-    return acc;
-  }, {});
+function OrdersDashboard({ orders, setOrders, error, statusCounts, statusFilter, setStatusFilter, columns, loading, expandedOrder, setExpandedOrder }) {
   const chartData = Object.entries(statusCounts).map(([status, count], idx) => ({
     name: status || "Unknown",
     value: count,
@@ -161,58 +139,9 @@ export default function OrdersDashboard() {
           </Box>
         ) : null
       )}
-
-// Editable form for shipping cost and status
-function OrderEditForm({ order, onUpdate }) {
-  const [shipping, setShipping] = useState(order.shipping_total ?? '');
-  const [status, setStatus] = useState(order.status ?? '');
-  const [email, setEmail] = useState(order.customer_email ?? '');
-  const [emailSubject, setEmailSubject] = useState('Order Update');
-  const [emailText, setEmailText] = useState('');
-  React.useEffect(() => {
-    setShipping(order.shipping_total ?? '');
-    setStatus(order.status ?? '');
-    setEmail(order.customer_email ?? '');
-  }, [order]);
-  return (
-    <form
-      onSubmit={e => {
-        e.preventDefault();
-        onUpdate({
-          orderId: order.id,
-          shipping_total: shipping,
-          status,
-          email,
-          emailSubject,
-          emailText,
-        });
-      }}
-      style={{ display: 'flex', flexDirection: 'column', gap: 12 }}
-    >
-      <label>
-        Shipping Cost ($):
-        <input type="number" step="0.01" value={shipping} onChange={e => setShipping(e.target.value)} style={{ marginLeft: 8 }} />
-      </label>
-      <label>
-        Status:
-        <input type="text" value={status} onChange={e => setStatus(e.target.value)} style={{ marginLeft: 8 }} />
-      </label>
-      <label>
-        Email (optional):
-        <input type="email" value={email} onChange={e => setEmail(e.target.value)} style={{ marginLeft: 8 }} />
-      </label>
-      <label>
-        Email Subject:
-        <input type="text" value={emailSubject} onChange={e => setEmailSubject(e.target.value)} style={{ marginLeft: 8 }} />
-      </label>
-      <label>
-        Email Text:
-        <textarea value={emailText} onChange={e => setEmailText(e.target.value)} style={{ marginLeft: 8, minHeight: 60 }} />
-      </label>
-      <button type="submit" style={{ marginTop: 12, fontWeight: 700, borderRadius: 6, padding: '0.5rem 1.5rem', background: '#1976d2', color: '#fff', border: 'none' }}>Update & Send Email</button>
-    </form>
-  );
-}
     </Box>
   );
 }
+
+export default OrdersDashboard;
+
