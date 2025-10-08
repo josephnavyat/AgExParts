@@ -51,9 +51,9 @@ export default function Navbar() {
               <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
               <span style={{ display: 'none' }}>Search</span>
             </button>
-            <Link to="/cart" style={{ marginLeft: 10, position: 'relative', display: 'flex', alignItems: 'center' }}>
+            <Link to="/cart" style={{ marginLeft: 0, position: 'relative', display: 'flex', alignItems: 'center', height: 40 }}>
               <span style={{ display: 'flex', alignItems: 'center', marginRight: 2, lineHeight: 1 }}>
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'block' }}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'block' }}>
                   <circle cx="9" cy="21" r="1.5" fill="#fff" stroke="#111" />
                   <circle cx="19" cy="21" r="1.5" fill="#fff" stroke="#111" />
                   <path d="M1 1h2l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" fill="none" stroke="#111" />
@@ -62,15 +62,15 @@ export default function Navbar() {
               {cartCount > 0 && (
                 <span style={{
                   position: 'absolute',
-                  top: '-6px',
-                  right: '-8px',
+                  top: '-4px',
+                  right: '-6px',
                   background: '#19a974',
                   color: '#fff',
                   borderRadius: '50%',
-                  fontSize: '0.85rem',
+                  fontSize: '0.75rem',
                   fontWeight: 700,
-                  padding: '2px 7px',
-                  minWidth: 22,
+                  padding: '1px 5px',
+                  minWidth: 16,
                   textAlign: 'center',
                   boxShadow: '0 1px 4px rgba(0,0,0,0.13)',
                 }}>{cartCount}</span>
