@@ -121,7 +121,7 @@ function OrdersDashboard({ orders, setOrders, error, statusCounts, statusFilter,
       {filteredOrders.map((order) =>
         expandedOrder === order.id ? (
           <Box key={order.id} sx={{ mt: 2 }}>
-            <OrderItemsAccordion items={order.items || []} expanded={true} />
+            <OrderItemsAccordion items={order.items && Array.isArray(order.items) ? order.items : []} expanded={true} />
             <Paper sx={{ p: 2, mt: 2 }}>
               <Typography variant="h6" gutterBottom>Edit Shipping & Status</Typography>
               <OrderEditForm order={order} onUpdate={async (update) => {
