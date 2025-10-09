@@ -59,14 +59,15 @@ function OrderEditForm({ order, onUpdate }) {
 function OrdersDashboard({ orders, setOrders, error, statusCounts, statusFilter, setStatusFilter, columns, loading, expandedOrder, setExpandedOrder }) {
   // Ensure statusCounts is always an object
   const safeStatusCounts = statusCounts || {};
-  const chartData = Object.entries(safeStatusCounts).map(([status, count], idx) => ({
+  // Ensure chartData is always an array
+  const chartData = Array.isArray(Object.entries(safeStatusCounts)) ? Object.entries(safeStatusCounts).map(([status, count], idx) => ({
     name: status || "Unknown",
     value: count,
     color: STATUS_COLORS[idx % STATUS_COLORS.length]
-  }));
+  })) : [];
 
-  // Filtered orders for table
-  const filteredOrders = statusFilter ? orders.filter(o => o.status === statusFilter) : orders;
+  // Ensure filteredOrders is always an array
+  const filteredOrders = Array.isArray(orders) ? (statusFilter ? orders.filter(o => o.status === statusFilter) : orders) : [];
 
   return (
     <Box sx={{ p: 3 }}>
