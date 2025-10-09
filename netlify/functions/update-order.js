@@ -32,19 +32,7 @@ exports.handler = async (event) => {
   }
   await client.end();
 
-  // Send email if requested
-  if (email && emailSubject && emailText) {
-    try {
-      await sgMail.send({
-        to: email,
-        from: process.env.SENDGRID_FROM_EMAIL,
-        subject: emailSubject,
-        text: emailText,
-      });
-    } catch (err) {
-      return { statusCode: 500, body: 'Email send failed: ' + err.message };
-    }
-  }
+  // Email logic removed
 
   return { statusCode: 200, body: 'Order updated and email sent (if requested)' };
 };
