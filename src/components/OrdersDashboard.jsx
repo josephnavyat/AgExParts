@@ -57,7 +57,9 @@ function OrderEditForm({ order, onUpdate }) {
 }
 
 function OrdersDashboard({ orders, setOrders, error, statusCounts, statusFilter, setStatusFilter, columns, loading, expandedOrder, setExpandedOrder }) {
-  const chartData = Object.entries(statusCounts).map(([status, count], idx) => ({
+  // Ensure statusCounts is always an object
+  const safeStatusCounts = statusCounts || {};
+  const chartData = Object.entries(safeStatusCounts).map(([status, count], idx) => ({
     name: status || "Unknown",
     value: count,
     color: STATUS_COLORS[idx % STATUS_COLORS.length]
