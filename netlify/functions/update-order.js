@@ -1,6 +1,4 @@
 const { Client } = require('pg');
-const sgMail = require('@sendgrid/mail');
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
