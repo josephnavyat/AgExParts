@@ -11,7 +11,7 @@ function cartReducer(state, action) {
   // ...existing code...
       case "ADD_TO_CART": {
         const existing = state.items.find(i => i.product.id === action.product.id);
-        const available = Number(action.product.inventory ?? 0);
+        const available = Number(action.product.inventory ?? action.product.quantity ?? 0);
         const addQty = action.quantity || 1;
         if (existing) {
           const newQty = existing.quantity + addQty;
