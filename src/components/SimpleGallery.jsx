@@ -251,7 +251,7 @@ export default function SimpleGallery() {
                 <Link
                   to={`/product/${product.id}`}
                   className="simple-gallery-btn secondary"
-                  style={{ flex: 1, marginRight: 6, minWidth: 0 }}
+                  style={{ flex: 1, marginRight: 6, minWidth: 0, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 >
                   View Details
                 </Link>
@@ -259,7 +259,7 @@ export default function SimpleGallery() {
                   className="simple-gallery-btn primary"
                   onClick={() => dispatch({ type: "ADD_TO_CART", product })}
                   title="Add to Cart"
-                  style={{ flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: Number(product.inventory ?? product.quantity ?? 0) === 0 ? 0.5 : 1, pointerEvents: Number(product.inventory ?? product.quantity ?? 0) === 0 ? 'none' : 'auto' }}
+                  style={{ flex: 1, minWidth: 0, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: Number(product.inventory ?? product.quantity ?? 0) === 0 ? 0.5 : 1, pointerEvents: Number(product.inventory ?? product.quantity ?? 0) === 0 ? 'none' : 'auto' }}
                   disabled={Number(product.inventory ?? product.quantity ?? 0) === 0}
                 >
                   {/* Shopping cart icon SVG only */}
