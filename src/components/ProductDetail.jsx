@@ -138,6 +138,11 @@ export default function ProductDetail() {
               </div>
             )}
           </div>
+          {product.sku && (
+            <div style={{ textAlign: 'center', color: '#444a58', fontWeight: 400, fontSize: '1.15rem', margin: '10px 0 2px 0' }}>
+              {product.sku}
+            </div>
+          )}
           <h2 className="distressed" style={{ fontSize: '2.2rem', marginBottom: 8, color: '#444a58' }}>{product.name}</h2>
           <div style={{ color: '#888', fontSize: '1.1rem', marginBottom: 16 }}>{product.part_number}</div>
           <div style={{ color: '#444a58', fontWeight: 600, fontSize: '1.3rem', marginBottom: 12 }}>
