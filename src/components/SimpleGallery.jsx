@@ -203,7 +203,7 @@ export default function SimpleGallery() {
             <div key={product.id} className="simple-gallery-card">
               <img src={product.image} alt={product.name} />
               {product.sku && (
-                <div style={{ textAlign: 'center', fontWeight: 400, fontSize: '1.05rem', color: '#dededeff', margin: '6px 0 2px 0' }}>
+                <div style={{ textAlign: 'center', fontWeight: 400, fontSize: '1.05rem', color: '#dededeff', margin: '2px 0 0 0' }}>
                   {product.sku}
                 </div>
               )}

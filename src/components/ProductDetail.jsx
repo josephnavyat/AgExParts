@@ -230,7 +230,8 @@ export default function ProductDetail() {
               </tbody>
             </table>
           </section>
-          {/* OEM Parts Section */}
+          {/*
+          OEM Parts Section
           <section style={{
             width: '100%',
             margin: '0 0 18px 0',
@@ -268,6 +269,7 @@ export default function ProductDetail() {
               </tbody>
             </table>
           </section>
+          */}
           <div style={{ color: '#888', fontSize: '1rem', marginBottom: 8, width: '100%' }}>
             Category: {product.category} | Manufacturer: {product.manufacturer}
           </div>
