@@ -12,7 +12,10 @@ exports.handler = async (event) => {
   await client.connect();
   try {
     const result = await client.query(
-      'SELECT attribute_name, value_text, value_number, value_bool FROM part_attribute_values WHERE part_sku = $1',
+      `SELECT pav.attribute_name, pav.value_text, pav.value_number, pav.value_bool, a.unit
+       FROM part_attribute_values pav
+       JOIN attributes a ON pav.attribute_name = a.name
+       WHERE pav.part_sku = $1`,
       [sku]
     );
     return {

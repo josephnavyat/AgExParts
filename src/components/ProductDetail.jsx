@@ -208,7 +208,7 @@ export default function ProductDetail() {
                 paddingRight: 16,
                 whiteSpace: 'nowrap',
                 textShadow: '0 2px 8px 0 rgba(122,133,153,0.18)'
-              }}>Product Specifications</h3>
+              }}>Part Attributes</h3>
               <div style={{
                 flex: 1,
                 height: 6,
@@ -219,11 +219,14 @@ export default function ProductDetail() {
             </div>
             <table style={{ width: '100%', background: 'none', fontSize: '1rem', borderCollapse: 'collapse', color: '#444a58' }}>
               <tbody>
-                <tr style={{ borderBottom: '1px solid #ececec' }}><td style={{ padding: '8px 0', fontWeight: 600, width: '40%' }}>Size</td><td style={{ padding: '8px 0' }}>{product.size || '20"'}</td></tr>
-                <tr style={{ borderBottom: '1px solid #ececec', background: '#fafbfc' }}><td style={{ padding: '8px 0', fontWeight: 600 }}>Thickness</td><td style={{ padding: '8px 0' }}>{product.thickness || '6.5mm (.256)'}</td></tr>
-                <tr style={{ borderBottom: '1px solid #ececec' }}><td style={{ padding: '8px 0', fontWeight: 600 }}>Bolt Pattern</td><td style={{ padding: '8px 0' }}>{product.bolt_pattern || '4-bolt'}</td></tr>
-                <tr style={{ borderBottom: '1px solid #ececec', background: '#fafbfc' }}><td style={{ padding: '8px 0', fontWeight: 600 }}>Category</td><td style={{ padding: '8px 0' }}>{product.category}</td></tr>
-                <tr><td style={{ padding: '8px 0', fontWeight: 600 }}>Manufacturer</td><td style={{ padding: '8px 0' }}>{product.manufacturer}</td></tr>
+                {attributes.length > 0 ? attributes.map((attr, idx) => (
+                  <tr key={attr.attribute_name} style={{ borderBottom: idx < attributes.length - 1 ? '1px solid #ececec' : 'none', background: idx % 2 === 1 ? '#fafbfc' : 'none' }}>
+                    <td style={{ padding: '8px 0', fontWeight: 600, width: '40%' }}>{attr.attribute_name}</td>
+                    <td style={{ padding: '8px 0' }}>{attr.value_text || attr.value_number || (attr.value_bool === true ? 'Yes' : attr.value_bool === false ? 'No' : '')}{attr.unit ? ` ${attr.unit}` : ''}</td>
+                  </tr>
+                )) : (
+                  <tr><td colSpan={2} style={{ padding: '8px 0', color: '#888' }}>No attributes available.</td></tr>
+                )}
               </tbody>
             </table>
           </section>
@@ -273,6 +276,7 @@ export default function ProductDetail() {
                 {attributes.map(attr => (
                   <li key={attr.attribute_name} style={{ marginBottom: 6 }}>
                     <strong>{attr.attribute_name}:</strong> {attr.value_text || attr.value_number || (attr.value_bool === true ? 'Yes' : attr.value_bool === false ? 'No' : '')}
+                    {attr.unit ? ` ${attr.unit}` : ''}
                   </li>
                 ))}
               </ul>
