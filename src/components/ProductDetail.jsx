@@ -19,6 +19,9 @@ export default function ProductDetail() {
   const [imgIndex, setImgIndex] = useState(0);
   const [images, setImages] = useState([]);
 
+  // Product attributes state
+  const [attributes, setAttributes] = useState([]);
+
   useEffect(() => {
     const controller = new AbortController();
     const fetchProducts = async () => {
@@ -64,6 +67,14 @@ export default function ProductDetail() {
       })
     )).then(arr => setImages(arr.filter(Boolean)));
     setImgIndex(0);
+  }, [product]);
+
+  useEffect(() => {
+    if (!product || !product.sku) return;
+    fetch(`/.netlify/functions/get-product-attributes?sku=${encodeURIComponent(product.sku)}`)
+      .then(res => res.json())
+      .then(data => setAttributes(data))
+      .catch(() => setAttributes([]));
   }, [product]);
 
   return (
@@ -254,6 +265,19 @@ export default function ProductDetail() {
               </tbody>
             </table>
           </section>
+          {/* Product Attributes */}
+          {attributes.length > 0 && (
+            <div style={{ width: '100%', marginTop: 24 }}>
+              <h3 style={{ fontSize: 20, marginBottom: 12 }}>Attributes</h3>
+              <ul style={{ paddingLeft: 18 }}>
+                {attributes.map(attr => (
+                  <li key={attr.attribute_name} style={{ marginBottom: 6 }}>
+                    <strong>{attr.attribute_name}:</strong> {attr.value_text || attr.value_number || (attr.value_bool === true ? 'Yes' : attr.value_bool === false ? 'No' : '')}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           <div style={{ color: '#888', fontSize: '1rem', marginBottom: 8, width: '100%' }}>
             Category: {product.category} | Manufacturer: {product.manufacturer}
           </div>
