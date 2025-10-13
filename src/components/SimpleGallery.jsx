@@ -248,22 +248,25 @@ export default function SimpleGallery() {
                 })()}
               </div>
               <div className="simple-gallery-card-actions">
-                <Link
-                  to={`/product/${product.id}`}
-                  className="simple-gallery-btn secondary"
-                >
-                  View Details
-                </Link>
-                <button
-                  className="simple-gallery-btn primary"
-                  onClick={() => dispatch({ type: "ADD_TO_CART", product })}
-                  title="Add to Cart"
-                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: Number(product.inventory ?? product.quantity ?? 0) === 0 ? 0.5 : 1, pointerEvents: Number(product.inventory ?? product.quantity ?? 0) === 0 ? 'none' : 'auto' }}
-                  disabled={Number(product.inventory ?? product.quantity ?? 0) === 0}
-                >
-                  {/* Shopping cart icon SVG only */}
-                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-shopping-cart"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61l1.38-7.39H6"></path></svg>
-                </button>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, width: '100%' }}>
+                  <Link
+                    to={`/product/${product.id}`}
+                    className="simple-gallery-btn secondary"
+                    style={{ width: '180px', textAlign: 'center', margin: '0 auto' }}
+                  >
+                    View Details
+                  </Link>
+                  <button
+                    className="simple-gallery-btn primary"
+                    onClick={() => dispatch({ type: "ADD_TO_CART", product })}
+                    title="Add to Cart"
+                    style={{ width: '180px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: Number(product.inventory ?? product.quantity ?? 0) === 0 ? 0.5 : 1, pointerEvents: Number(product.inventory ?? product.quantity ?? 0) === 0 ? 'none' : 'auto', margin: '0 auto' }}
+                    disabled={Number(product.inventory ?? product.quantity ?? 0) === 0}
+                  >
+                    {/* Shopping cart icon SVG only */}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-shopping-cart"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61l1.38-7.39H6"></path></svg>
+                  </button>
+                </div>
               </div>
             </div>
             ));
