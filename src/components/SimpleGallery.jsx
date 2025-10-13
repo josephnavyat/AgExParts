@@ -202,6 +202,11 @@ export default function SimpleGallery() {
             return filtered.slice(start, end).map((product) => (
             <div key={product.id} className="simple-gallery-card">
               <img src={product.image} alt={product.name} />
+              {product.sku && (
+                <div style={{ textAlign: 'center', fontWeight: 400, fontSize: '1.05rem', color: '#555', margin: '6px 0 2px 0' }}>
+                  {product.sku}
+                </div>
+              )}
               <h3 className="simple-gallery-card-title">{product.name}</h3>
               <div className="simple-gallery-card-price" style={{ margin: '8px 0 0 0', fontSize: '1.15rem', fontWeight: 700 }}>
                 {(() => {
