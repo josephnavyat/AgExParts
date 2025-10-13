@@ -182,11 +182,14 @@ export default function ProductDetail() {
                     <path d="M8 12l2 2 4-4" stroke="#28a745" strokeWidth="2" fill="none"/>
                   </svg>
                 ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#d32f2f" strokeWidth="2" style={{ verticalAlign: 'middle' }}>
-                    <circle cx="12" cy="12" r="10" stroke="#d32f2f" strokeWidth="2" fill="#fff"/>
-                    <line x1="8" y1="8" x2="16" y2="16" stroke="#d32f2f" strokeWidth="2"/>
-                    <line x1="16" y1="8" x2="8" y2="16" stroke="#d32f2f" strokeWidth="2"/>
-                  </svg>
+                  <>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#d32f2f" strokeWidth="2" style={{ verticalAlign: 'middle' }}>
+                      <circle cx="12" cy="12" r="10" stroke="#d32f2f" strokeWidth="2" fill="#fff"/>
+                      <line x1="8" y1="8" x2="16" y2="16" stroke="#d32f2f" strokeWidth="2"/>
+                      <line x1="16" y1="8" x2="8" y2="16" stroke="#d32f2f" strokeWidth="2"/>
+                    </svg>
+                    <span style={{ color: '#d32f2f', marginLeft: 6 }}>Out of Stock</span>
+                  </>
                 )}
               </span>
             )}
