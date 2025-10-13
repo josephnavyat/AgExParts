@@ -13,7 +13,7 @@ export default function ProductDetail() {
   const [error, setError] = useState(null);
   const { cart, dispatch } = useCart();
   // Helper for available inventory
-  const availableStock = product && Number(product.inventory ?? 0);
+  const availableStock = product && Number(product.inventory ?? product.quantity ?? 0);
 
   // Image carousel logic
   const [imgIndex, setImgIndex] = useState(0);
