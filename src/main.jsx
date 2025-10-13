@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import ProfilePage from './components/ProfilePage.jsx';
 import OrdersDashboard from './components/OrdersDashboard.jsx';
 import App from './App.jsx';
+import Layout from './components/Layout.jsx';
 // import ProductGallery from './components/ProductGallery.jsx';
 import ProductDetail from './components/ProductDetail.jsx';
 import { CartProvider } from './components/CartContext.jsx';
@@ -35,20 +36,22 @@ createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <CartProvider>
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<App />} />
-          <Route path="/catalog" element={<SimpleGallery />} />
-          <Route path="/product/:id" element={<ProductDetail />} />
-          <Route path="/cart" element={<CartPageWrapper />} />
-          <Route path="/simple-gallery" element={<SimpleGallery />} />
-          <Route path="/success" element={<OrderSuccess />} />
-          <Route path="/cancel" element={<FailurePage />} />
-          <Route path="/search-results" element={<SearchResults />} />
-          <Route path="/freight-inquiry" element={<FreightInquiryPage />} />
-          <Route path="/contact-parts-specialist" element={<ContactPartsSpecialist />} />
-          <Route path="/profile" element={<ProfilePage />} />
+        <Layout>
+          <Routes>
+            <Route path="/" element={<App />} />
+            <Route path="/catalog" element={<SimpleGallery />} />
+            <Route path="/product/:id" element={<ProductDetail />} />
+            <Route path="/cart" element={<CartPageWrapper />} />
+            <Route path="/simple-gallery" element={<SimpleGallery />} />
+            <Route path="/success" element={<OrderSuccess />} />
+            <Route path="/cancel" element={<FailurePage />} />
+            <Route path="/search-results" element={<SearchResults />} />
+            <Route path="/freight-inquiry" element={<FreightInquiryPage />} />
+            <Route path="/contact-parts-specialist" element={<ContactPartsSpecialist />} />
+            <Route path="/profile" element={<ProfilePage />} />
             <Route path="/orders" element={<OrdersDashboard />} />
-        </Routes>
+          </Routes>
+        </Layout>
       </BrowserRouter>
     </CartProvider>
   </React.StrictMode>
