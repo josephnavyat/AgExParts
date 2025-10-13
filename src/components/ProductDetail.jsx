@@ -171,12 +171,23 @@ export default function ProductDetail() {
               }
             })()}
             {availableStock < 20 && availableStock > 0 ? (
-              <span style={{ fontSize: '1rem', color: '#d32f2f', fontWeight: 600, marginLeft: 12 }}>
+              <span style={{ fontSize: '1rem', color: 'orange', fontWeight: 600, marginLeft: 12, display: 'inline-flex', alignItems: 'center', gap: 6 }}>
                 Low Stock: {availableStock} Available
               </span>
             ) : (
-              <span style={{ fontSize: '1rem', color: availableStock > 0 ? '#28a745' : '#d32f2f', fontWeight: 600, marginLeft: 12 }}>
-                {availableStock > 0 ? 'In Stock' : 'Out of Stock'}
+              <span style={{ fontSize: '1rem', color: availableStock > 0 ? '#28a745' : '#d32f2f', fontWeight: 600, marginLeft: 12, display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                {availableStock > 0 ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#28a745" strokeWidth="2" style={{ verticalAlign: 'middle' }}>
+                    <circle cx="12" cy="12" r="10" stroke="#28a745" strokeWidth="2" fill="#fff"/>
+                    <path d="M8 12l2 2 4-4" stroke="#28a745" strokeWidth="2" fill="none"/>
+                  </svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#d32f2f" strokeWidth="2" style={{ verticalAlign: 'middle' }}>
+                    <circle cx="12" cy="12" r="10" stroke="#d32f2f" strokeWidth="2" fill="#fff"/>
+                    <line x1="8" y1="8" x2="16" y2="16" stroke="#d32f2f" strokeWidth="2"/>
+                    <line x1="16" y1="8" x2="8" y2="16" stroke="#d32f2f" strokeWidth="2"/>
+                  </svg>
+                )}
               </span>
             )}
           </div>
