@@ -203,8 +203,20 @@ export default function SimpleGallery() {
             <div key={product.id} className="simple-gallery-card">
               <img src={product.image} alt={product.name} />
               {product.sku && (
-                <div style={{ textAlign: 'center', fontWeight: 400, fontSize: '1.05rem', color: '#dededeff', margin: '2px 0 0 0' }}>
-                  {product.sku}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, fontWeight: 400, fontSize: '1.15rem', color: '#dededeff', margin: '2px 0 0 0' }}>
+                  <span>{product.sku}</span>
+                  {Number(product.inventory ?? product.quantity ?? 0) > 0 ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="#28a745" strokeWidth="2" style={{ verticalAlign: 'middle' }}>
+                      <circle cx="12" cy="12" r="10" stroke="#28a745" strokeWidth="2" fill="#fff"/>
+                      <path d="M8 12l2 2 4-4" stroke="#28a745" strokeWidth="2" fill="none"/>
+                    </svg>
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="#d32f2f" strokeWidth="2" style={{ verticalAlign: 'middle' }}>
+                      <circle cx="12" cy="12" r="10" stroke="#d32f2f" strokeWidth="2" fill="#fff"/>
+                      <line x1="8" y1="8" x2="16" y2="16" stroke="#d32f2f" strokeWidth="2"/>
+                      <line x1="16" y1="8" x2="8" y2="16" stroke="#d32f2f" strokeWidth="2"/>
+                    </svg>
+                  )}
                 </div>
               )}
               <h3 className="simple-gallery-card-title">{product.name}</h3>
