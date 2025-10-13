@@ -248,11 +248,11 @@ export default function SimpleGallery() {
                 })()}
               </div>
               <div className="simple-gallery-card-actions">
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, width: '100%' }}>
+                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12, width: '100%' }}>
                   <Link
                     to={`/product/${product.id}`}
                     className="simple-gallery-btn secondary"
-                    style={{ width: '180px', textAlign: 'center', margin: '0 auto' }}
+                    style={{ minWidth: '140px', maxWidth: '220px', flex: 1, textAlign: 'center' }}
                   >
                     View Details
                   </Link>
@@ -260,7 +260,7 @@ export default function SimpleGallery() {
                     className="simple-gallery-btn primary"
                     onClick={() => dispatch({ type: "ADD_TO_CART", product })}
                     title="Add to Cart"
-                    style={{ width: '180px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: Number(product.inventory ?? product.quantity ?? 0) === 0 ? 0.5 : 1, pointerEvents: Number(product.inventory ?? product.quantity ?? 0) === 0 ? 'none' : 'auto', margin: '0 auto' }}
+                    style={{ minWidth: '140px', maxWidth: '220px', flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: Number(product.inventory ?? product.quantity ?? 0) === 0 ? 0.5 : 1, pointerEvents: Number(product.inventory ?? product.quantity ?? 0) === 0 ? 'none' : 'auto' }}
                     disabled={Number(product.inventory ?? product.quantity ?? 0) === 0}
                   >
                     {/* Shopping cart icon SVG only */}
