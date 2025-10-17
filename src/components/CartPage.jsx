@@ -121,7 +121,7 @@ export default function CartPage() {
           style={{
             textAlign: 'center',
             marginBottom: '2rem',
-            marginTop: '4.5rem',
+            marginTop: '7rem', // Increased to ensure visibility below navbar
             color: '#222',
             textShadow: '0 1px 4px #fff, 0 0px 1px #bbb',
             fontSize: '2rem',
@@ -133,7 +133,7 @@ export default function CartPage() {
         {cart.items.length === 0 ? (
           <div style={{ textAlign: 'center', color: '#444', fontSize: '1.2rem', fontWeight: 500 }}>Your cart is empty.</div>
         ) : (
-          <div className="cart-page-content" style={{ width: '100vw', maxWidth: '100vw', margin: 0, background: '#fff', borderRadius: 16, boxShadow: '0 2px 12px rgba(0,0,0,0.10)', padding: '2rem', color: '#222', boxSizing: 'border-box', overflowX: 'hidden' }}>
+          <div className="cart-page-content" style={{ maxWidth: 800, margin: '0 auto', background: '#fff', borderRadius: 16, boxShadow: '0 2px 12px rgba(0,0,0,0.10)', padding: '2rem', color: '#222', boxSizing: 'border-box', width: '100%' }}>
             <div className="cart-cards" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {cart.items.map(({ product, quantity }) => (
                 <div key={product.id} className="cart-card" style={{ display: 'flex', flexDirection: 'column', background: '#f8f8f8', borderRadius: 12, padding: '1rem', boxShadow: '0 1px 4px #eee', width: '100%' }}>
