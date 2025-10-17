@@ -20,6 +20,7 @@ import OrderSuccess from './components/OrderSuccess.jsx';
 import SearchResults from './components/SearchResults.jsx';
 import FreightInquiryPage from './components/FreightInquiryPage.jsx';
 import ContactPartsSpecialist from './components/ContactPartsSpecialist.jsx';
+import RecoverPassword from './components/RecoverPassword.jsx';
 
 const stripePromise = loadStripe('pk_test_51S4XMHBpsFVjn5cM6uD1BRgbmhvLSnfeLPMZcp4EJNQYAQrQea122tUoOAF2exUh0Qu83i8uQj5Yp5zZXlCgj0Fc00LA6gZqpZ');
 
@@ -50,7 +51,7 @@ createRoot(document.getElementById('root')).render(
             <Route path="/contact-parts-specialist" element={<ContactPartsSpecialist />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/orders" element={<OrdersDashboard />} />
-            <Route path="/recover-password" element={React.createElement(require('./components/RecoverPassword.jsx').default)} />
+            <Route path="/recover-password" element={<RecoverPassword />} />
           </Routes>
         </Layout>
       </BrowserRouter>
