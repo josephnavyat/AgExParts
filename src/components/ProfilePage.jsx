@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Navbar from './Navbar.jsx';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Container from '@mui/material/Container';
@@ -280,7 +281,7 @@ function ProfilePage() {
                     {mode === 'login' ? 'Create an account' : 'Already have an account? Login'}
                   </Button>
                   {mode === 'login' && (
-                    <Button variant="text" color="secondary" sx={{ fontWeight: 600 }} component={require('react-router-dom').Link} to="/recover-password">
+                    <Button variant="text" color="secondary" sx={{ fontWeight: 600 }} component={Link} to="/recover-password">
                       Forgot Password?
                     </Button>
                   )}
