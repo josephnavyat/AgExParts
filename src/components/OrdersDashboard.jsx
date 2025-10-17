@@ -52,7 +52,8 @@ export default function OrdersDashboard() {
               <TableCell>Order ID</TableCell>
               <TableCell>Customer</TableCell>
               <TableCell>Status</TableCell>
-              <TableCell>Total</TableCell>
+              <TableCell>Subtotal</TableCell>
+              <TableCell>Shipping</TableCell>
               <TableCell>Created</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
@@ -62,20 +63,31 @@ export default function OrdersDashboard() {
               <TableRow key={order.id} selected={order.id === selectedOrderId}>
                 <TableCell>{order.id}</TableCell>
                 <TableCell>{order.customer_name || order.customer_email}</TableCell>
+                <TableCell>{order.status || ''}</TableCell>
+                <TableCell>${order.subtotal}</TableCell>
                 <TableCell>
-                  <Select
-                    value={order.status || ""}
-                    onChange={e => handleStatusChange(order.id, e.target.value)}
-                    size="small"
-                  >
-                    <MenuItem value="pending">Pending</MenuItem>
-                    <MenuItem value="processing">Processing</MenuItem>
-                    <MenuItem value="shipped">Shipped</MenuItem>
-                    <MenuItem value="completed">Completed</MenuItem>
-                    <MenuItem value="cancelled">Cancelled</MenuItem>
-                  </Select>
+                  <input
+                    type="number"
+                    value={order.shipping_total ?? ''}
+                    min="0"
+                    step="0.01"
+                    style={{ width: 80 }}
+                    onChange={e => {
+                      const newShipping = e.target.value;
+                      setOrders(orders => orders.map(o => o.id === order.id ? { ...o, shipping_total: newShipping } : o));
+                    }}
+                    onBlur={async e => {
+                      const newShipping = e.target.value;
+                      try {
+                        await fetch("/.netlify/functions/update-order-shipping", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ orderId: order.id, shipping_total: newShipping })
+                        });
+                      } catch {}
+                    }}
+                  />
                 </TableCell>
-                <TableCell>${order.total}</TableCell>
                 <TableCell>{order.created_at}</TableCell>
                 <TableCell>
                   <Button variant="outlined" size="small" onClick={() => setSelectedOrderId(order.id)}>View Items</Button>
