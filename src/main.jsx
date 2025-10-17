@@ -1,3 +1,4 @@
+import FreightOrderConfirmation from './components/FreightOrderConfirmation.jsx';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -52,6 +53,7 @@ createRoot(document.getElementById('root')).render(
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/orders" element={<OrdersDashboard />} />
             <Route path="/recover-password" element={<RecoverPassword />} />
+            <Route path="/freight-order-confirmation" element={<FreightOrderConfirmation />} />
           </Routes>
         </Layout>
       </BrowserRouter>
