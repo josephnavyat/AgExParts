@@ -24,7 +24,7 @@ exports.handler = async function(event) {
   await client.connect();
 
   // Get user
-  const userRes = await client.query('SELECT id, username, first_name, last_name, email, address, phone, password_hash FROM users WHERE username = $1', [username]);
+  const userRes = await client.query('SELECT id, username, first_name, last_name, email, address, phone, user_type, password_hash FROM users WHERE username = $1', [username]);
   await client.end();
   if (userRes.rows.length === 0) {
     return {
@@ -50,7 +50,8 @@ exports.handler = async function(event) {
     last_name: user.last_name,
     email: user.email,
     address: user.address,
-    phone: user.phone
+    phone: user.phone,
+    user_type: user.user_type
   }, process.env.JWT_SECRET, { expiresIn: '7d' });
   return {
     statusCode: 200,
