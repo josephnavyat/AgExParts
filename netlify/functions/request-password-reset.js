@@ -1,10 +1,10 @@
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
-const { Pool } = require('pg');
+const { Client } = require('pg');
 
-const pool = new Pool({
-  connectionString: process.env.POSTGRES_URL,
-  ssl: { rejectUnauthorized: false }
+// Connect to DB
+const client = new Client({
+  connectionString: process.env.DATABASE_URL
 });
 
 exports.handler = async function(event) {
@@ -18,8 +18,10 @@ exports.handler = async function(event) {
   }
 
   // Check if user exists
-  const userRes = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
-  if (userRes.rowCount === 0) {
+  await client.connect();
+  const userRes = await client.query('SELECT id FROM users WHERE email = $1', [email]);
+  if (userRes.rows.length === 0) {
+    await client.end();
     return { statusCode: 404, body: JSON.stringify({ error: 'No user found with that email' }) };
   }
 
@@ -28,7 +30,7 @@ exports.handler = async function(event) {
   const expires = new Date(Date.now() + 1000 * 60 * 60); // 1 hour
 
   // Store token in DB
-  await pool.query(
+  await client.query(
     'INSERT INTO password_resets (user_id, token, expires_at) VALUES ($1, $2, $3)',
     [userRes.rows[0].id, token, expires]
   );
@@ -51,6 +53,7 @@ exports.handler = async function(event) {
     html: `<p>You requested a password reset. <a href="${resetUrl}">Click here to reset your password</a>. This link expires in 1 hour.</p>`
   });
 
+  await client.end();
   return {
     statusCode: 200,
     body: JSON.stringify({ success: true })
