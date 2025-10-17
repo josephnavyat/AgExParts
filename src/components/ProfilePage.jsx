@@ -275,10 +275,15 @@ function ProfilePage() {
                     {loading ? 'Please wait...' : mode === 'login' ? 'Login' : 'Register'}
                   </Button>
                 </Box>
-                <Box sx={{ mt: 2, textAlign: 'center' }}>
+                <Box sx={{ mt: 2, textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 1 }}>
                   <Button variant="text" color="primary" onClick={() => setMode(mode === 'login' ? 'register' : 'login')} sx={{ fontWeight: 600 }}>
                     {mode === 'login' ? 'Create an account' : 'Already have an account? Login'}
                   </Button>
+                  {mode === 'login' && (
+                    <Button variant="text" color="secondary" sx={{ fontWeight: 600 }} component={require('react-router-dom').Link} to="/recover-password">
+                      Forgot Password?
+                    </Button>
+                  )}
                 </Box>
                 {message && <Typography sx={{ mt: 2 }} align="center" color={message.includes('success') ? 'primary' : 'error'} fontWeight={600}>{message}</Typography>}
               </Box>

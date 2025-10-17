@@ -50,6 +50,7 @@ createRoot(document.getElementById('root')).render(
             <Route path="/contact-parts-specialist" element={<ContactPartsSpecialist />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/orders" element={<OrdersDashboard />} />
+            <Route path="/recover-password" element={React.createElement(require('./components/RecoverPassword.jsx').default)} />
           </Routes>
         </Layout>
       </BrowserRouter>
