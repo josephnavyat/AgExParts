@@ -1,63 +1,122 @@
 import React, { useEffect, useState } from "react";
-import { PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer } from 'recharts';
-import { DataGrid } from "@mui/x-data-grid";
-import { Accordion, AccordionSummary, AccordionDetails, Typography, Box, Paper } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Select, MenuItem } from "@mui/material";
 
-// Editable form for shipping cost and status
-function OrderEditForm({ order, onUpdate }) {
-  const [shipping, setShipping] = React.useState(order.shipping_total ?? '');
-  const [status, setStatus] = React.useState(order.status ?? '');
-  const [email, setEmail] = React.useState(order.customer_email ?? '');
-  const [emailSubject, setEmailSubject] = React.useState('Order Update');
-  const [emailText, setEmailText] = React.useState('');
-  React.useEffect(() => {
-    setShipping(order.shipping_total ?? '');
-    setStatus(order.status ?? '');
-    setEmail(order.customer_email ?? '');
-  }, [order]);
+// Simple Orders Dashboard: Orders table and Order Items table
+export default function OrdersDashboard() {
+  const [orders, setOrders] = useState([]);
+  const [orderItems, setOrderItems] = useState([]);
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    async function fetchOrders() {
+      setLoading(true);
+      setError("");
+      try {
+        const res = await fetch("/.netlify/functions/get-orders");
+        const data = await res.json();
+        setOrders(data.orders || []);
+        setOrderItems(data.order_items || []);
+      } catch (err) {
+        setError("Failed to load orders.");
+      }
+      setLoading(false);
+    }
+    fetchOrders();
+  }, []);
+
+  const handleStatusChange = async (orderId, newStatus) => {
+    setLoading(true);
+    try {
+      await fetch("/.netlify/functions/update-order-status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId, status: newStatus })
+      });
+      setOrders(orders => orders.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
+    } catch {
+      setError("Failed to update status.");
+    }
+    setLoading(false);
+  };
+
   return (
-    <form
-      onSubmit={e => {
-        e.preventDefault();
-        onUpdate({
-          orderId: order.id,
-          shipping_total: shipping,
-          status,
-          email,
-          emailSubject,
-          emailText,
-        });
-      }}
-      style={{ display: 'flex', flexDirection: 'column', gap: 12 }}
-    >
-      <label>
-        Shipping Cost ($):
-        <input type="number" step="0.01" value={shipping} onChange={e => setShipping(e.target.value)} style={{ marginLeft: 8 }} />
-      </label>
-      <label>
-        Status:
-        <input type="text" value={status} onChange={e => setStatus(e.target.value)} style={{ marginLeft: 8 }} />
-      </label>
-      <label>
-        Email (optional):
-        <input type="email" value={email} onChange={e => setEmail(e.target.value)} style={{ marginLeft: 8 }} />
-      </label>
-      <label>
-        Email Subject:
-        <input type="text" value={emailSubject} onChange={e => setEmailSubject(e.target.value)} style={{ marginLeft: 8 }} />
-      </label>
-      <label>
-        Email Text:
-        <textarea value={emailText} onChange={e => setEmailText(e.target.value)} style={{ marginLeft: 8, minHeight: 60 }} />
-      </label>
-      <button type="submit" style={{ marginTop: 12, fontWeight: 700, borderRadius: 6, padding: '0.5rem 1.5rem', background: '#1976d2', color: '#fff', border: 'none' }}>Update & Send Email</button>
-    </form>
+    <Box sx={{ p: 3 }}>
+      <Typography variant="h4" gutterBottom>Orders Dashboard</Typography>
+      {error && <Typography color="error">{error}</Typography>}
+      <TableContainer component={Paper} sx={{ mb: 4 }}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Order ID</TableCell>
+              <TableCell>Customer</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell>Total</TableCell>
+              <TableCell>Created</TableCell>
+              <TableCell>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {orders.map(order => (
+              <TableRow key={order.id} selected={order.id === selectedOrderId}>
+                <TableCell>{order.id}</TableCell>
+                <TableCell>{order.customer_name || order.customer_email}</TableCell>
+                <TableCell>
+                  <Select
+                    value={order.status || ""}
+                    onChange={e => handleStatusChange(order.id, e.target.value)}
+                    size="small"
+                  >
+                    <MenuItem value="pending">Pending</MenuItem>
+                    <MenuItem value="processing">Processing</MenuItem>
+                    <MenuItem value="shipped">Shipped</MenuItem>
+                    <MenuItem value="completed">Completed</MenuItem>
+                    <MenuItem value="cancelled">Cancelled</MenuItem>
+                  </Select>
+                </TableCell>
+                <TableCell>${order.total}</TableCell>
+                <TableCell>{order.created_at}</TableCell>
+                <TableCell>
+                  <Button variant="outlined" size="small" onClick={() => setSelectedOrderId(order.id)}>View Items</Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      {selectedOrderId && (
+        <Box>
+          <Typography variant="h6" gutterBottom>Order Items for Order #{selectedOrderId}</Typography>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Item ID</TableCell>
+                  <TableCell>Product</TableCell>
+                  <TableCell>Quantity</TableCell>
+                  <TableCell>Unit Price</TableCell>
+                  <TableCell>Total</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {orderItems.filter(item => item.order_id === selectedOrderId).map(item => (
+                  <TableRow key={item.id}>
+                    <TableCell>{item.id}</TableCell>
+                    <TableCell>{item.product_name || item.product_id}</TableCell>
+                    <TableCell>{item.quantity}</TableCell>
+                    <TableCell>${item.unit_price}</TableCell>
+                    <TableCell>${item.total}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
+      )}
+    </Box>
   );
 }
-
-function OrdersDashboard({ orders, setOrders, error, statusCounts, statusFilter, setStatusFilter, columns, loading, expandedOrder, setExpandedOrder }) {
-  // Ensure statusCounts is always an object
   const safeStatusCounts = statusCounts || {};
   // Ensure chartData is always an array
   const chartData = Array.isArray(Object.entries(safeStatusCounts)) ? Object.entries(safeStatusCounts).map(([status, count], idx) => ({
