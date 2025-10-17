@@ -21,17 +21,14 @@ exports.handler = async (event) => {
   }
   const items = itemsRes.rows;
 
-  // Attach items to their orders
-  const ordersWithItems = orders.map(order => ({
-    ...order,
-    items: items.filter(item => item.order_id === order.id)
-  }));
-
   await client.end();
 
   return {
     statusCode: 200,
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(ordersWithItems)
+    body: JSON.stringify({
+      orders,
+      order_items: items
+    })
   };
 };
