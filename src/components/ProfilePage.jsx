@@ -116,12 +116,25 @@ function ProfilePage() {
                 <Typography variant="h4" align="center" gutterBottom color="text.primary">
                   Welcome, {loggedInUser.first_name} {loggedInUser.last_name}!
                 </Typography>
-                <Box sx={{ mb: 3, p: 2, borderRadius: 2, bgcolor: 'background.default', color: 'text.primary' }}>
+                {/* Navigation Tabs */}
+                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3, gap: 2 }}>
+                  <Button variant="outlined" color="primary" component={Link} to="#account-info" sx={{ fontWeight: 600 }}>
+                    Account Info
+                  </Button>
+                  {loggedInUser.user_type === 'admin' && (
+                    <Button variant="outlined" color="secondary" component={Link} to="/orders" sx={{ fontWeight: 600 }}>
+                      Order Dashboard
+                    </Button>
+                  )}
+                </Box>
+                {/* Account Info Section */}
+                <Box id="account-info" sx={{ mb: 3, p: 2, borderRadius: 2, bgcolor: 'background.default', color: 'text.primary' }}>
                   <Typography variant="body1"><strong>Username:</strong> {loggedInUser.username}</Typography>
                   <Typography variant="body1"><strong>Email:</strong> {loggedInUser.email || '—'}</Typography>
                   <Typography variant="body1"><strong>Address:</strong> {loggedInUser.address || '—'}</Typography>
                   <Typography variant="body1"><strong>Phone:</strong> {loggedInUser.phone || '—'}</Typography>
                 </Box>
+                {/* Edit Profile Section */}
                 {!editMode ? (
                   <Button fullWidth variant="contained" color="primary" sx={{ mb: 2, fontWeight: 600 }} onClick={() => setEditMode(true)}>
                     Edit Profile
