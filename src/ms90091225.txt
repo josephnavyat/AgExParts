@@ -1,0 +1,5 @@
+﻿{
+  "Description": "Domain ownership verification file for Microsoft 365 - place in the website root",
+  "Domain": "agexparts.com",
+  "Id": "6b298d12-e70d-413d-9f20-1c85438459e4"
+}
