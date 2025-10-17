@@ -116,7 +116,7 @@ export default function OrdersDashboard() {
       )}
     </Box>
   );
-}
+// ...existing code...
   const safeStatusCounts = statusCounts || {};
   // Ensure chartData is always an array
   const chartData = Array.isArray(Object.entries(safeStatusCounts)) ? Object.entries(safeStatusCounts).map(([status, count], idx) => ({
