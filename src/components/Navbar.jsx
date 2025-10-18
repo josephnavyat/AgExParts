@@ -6,6 +6,19 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [searchValue, setSearchValue] = useState("");
+  const [productNames, setProductNames] = useState([]);
+
+  useEffect(() => {
+    // Fetch product names for search autofill
+    fetch('/.netlify/functions/get-data')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setProductNames([...new Set(data.map(p => p.name).filter(Boolean))]);
+        }
+      })
+      .catch(() => setProductNames([]));
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -102,6 +115,7 @@ export default function Navbar() {
                 placeholder="Search for parts..."
                 value={searchValue}
                 onChange={e => setSearchValue(e.target.value)}
+                list="navbar-product-names-list"
                 style={{
                   padding: '0.75rem 1rem',
                   fontSize: '1.1rem',
@@ -113,6 +127,11 @@ export default function Navbar() {
                   flex: 1
                 }}
               />
+              <datalist id="navbar-product-names-list">
+                {productNames.map(name => (
+                  <option key={name} value={name} />
+                ))}
+              </datalist>
               <button
                 type="submit"
                 style={{

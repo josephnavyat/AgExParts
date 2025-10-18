@@ -137,7 +137,13 @@ export default function SimpleGallery() {
                   placeholder="Search..."
                   value={searchText}
                   onChange={e => setSearchText(e.target.value)}
+                  list="product-names-list"
                 />
+                <datalist id="product-names-list">
+                  {[...new Set(products.map(p => p.name).filter(Boolean))].map(name => (
+                    <option key={name} value={name} />
+                  ))}
+                </datalist>
               </div>
               <div className="filter-section">
                 <label className="filter-label">Category</label>

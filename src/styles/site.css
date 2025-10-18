@@ -160,6 +160,23 @@ footer { background: #0b0c0e; border-top: 1px solid #1c2026; padding: 50px 0; ma
 
 /* --- Responsive mobile styles for checkout/cart page --- */
 @media (max-width: 600px) {
+  .order-success-table th,
+  .order-success-table td {
+    padding: 0.5rem !important;
+    font-size: 1rem !important;
+  }
+  .order-success-table th:nth-child(2),
+  .order-success-table td:nth-child(2) {
+    min-width: 60px !important;
+    width: 70px !important;
+    text-align: center !important;
+  }
+  .order-success-table th:nth-child(3),
+  .order-success-table td:nth-child(3) {
+    min-width: 90px !important;
+    width: 110px !important;
+    text-align: right !important;
+  }
   .gallery-title {
     font-size: 1.3rem !important;
   }
