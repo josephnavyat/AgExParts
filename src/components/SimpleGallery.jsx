@@ -67,7 +67,7 @@ export default function SimpleGallery() {
           </select>
         </div>
         {/* Filter icon for mobile, fixed to left and moves down as you scroll */}
-        {/* Only show filter icon on mobile */}
+        {/* Show filter icon on all screen sizes */}
         <button
           className="simple-gallery-filter-toggle"
           aria-label={filterOpen ? 'Hide Filters' : 'Show Filters'}
@@ -87,7 +87,7 @@ export default function SimpleGallery() {
             boxShadow: '0 2px 8px rgba(0,0,0,0.13)',
             cursor: 'pointer',
             transition: 'top 0.3s',
-            display: 'none', // hidden by default, shown in mobile CSS
+            display: 'block',
           }}
           id="filter-toggle-btn"
         >
@@ -102,99 +102,97 @@ export default function SimpleGallery() {
         {/* Expand/collapse button only on mobile, handled by CSS */}
     {/* Removed old toggle button, now handled above with icon */}
         {/* Slide-in filter pane */}
-        {(window.innerWidth > 700 || filterOpen) && (
+        {filterOpen && (
           <aside
             className={`simple-gallery-filter-pane`}
             style={{
-              position: window.innerWidth > 700 ? 'static' : 'fixed',
-              left: window.innerWidth > 700 ? undefined : 0,
-              top: window.innerWidth > 700 ? undefined : 156,
-              zIndex: window.innerWidth > 700 ? undefined : 99,
+              position: 'fixed',
+              left: 0,
+              top: 156,
+              zIndex: 99,
               minWidth: 260,
               maxWidth: 340,
               height: 'fit-content',
               marginTop: 0,
-              transition: window.innerWidth > 700 ? undefined : 'top 0.3s',
+              transition: 'top 0.3s',
             }}
           >
             <div className="simple-gallery-filter-header" onClick={() => setFilterOpen((v) => !v)}>
               Filters {filterOpen ? '▼' : '▶'}
             </div>
-            {(window.innerWidth > 700 || filterOpen) && (
-              <div className="simple-gallery-filter-content">
-                <div className="filter-section filter-checkbox">
-                  <input
-                    type="checkbox"
-                    id="inStock"
-                    checked={inStockOnly}
-                    onChange={e => setInStockOnly(e.target.checked)}
-                  />
-                  <span className="checkbox-text">In Stock</span>
-                </div>
-                <div className="filter-section">
-                  <input
-                    type="text"
-                    className="search-input"
-                    placeholder="Search..."
-                    value={searchText}
-                    onChange={e => setSearchText(e.target.value)}
-                  />
-                </div>
-                <div className="filter-section">
-                  <label className="filter-label">Category</label>
-                  <select value={category} onChange={e => setCategory(e.target.value)} className="filter-select">
-                    <option value="">All Categories</option>
-                    {[...new Set(products.map(p => p.category).filter(Boolean))].map(c => (
-                      <option key={c} value={c}>{c}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="filter-section">
-                  <label className="filter-label">Sub-Category</label>
-                  <select value={subCategory} onChange={e => setSubCategory(e.target.value)} className="filter-select">
-                    <option value="">All Sub-Categories</option>
-                    {[...new Set(products.map(p => p.subcategory).filter(Boolean))].map(sc => (
-                      <option key={sc} value={sc}>{sc}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="filter-section">
-                  <label className="filter-label">Manufacturer</label>
-                  <select value={manufacturer} onChange={e => setManufacturer(e.target.value)} className="filter-select">
-                    <option value="">All Manufacturers</option>
-                    {[...new Set(products.map(p => p.manufacturer).filter(Boolean))].map(m => (
-                      <option key={m} value={m}>{m}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="filter-section">
-                  <label className="filter-label">Machine Type</label>
-                  <select value={machineType} onChange={e => setMachineType(e.target.value)} className="filter-select">
-                    <option value="">All Machine Types</option>
-                    {[...new Set(products.map(p => p.machine_type).filter(Boolean))].map(m => (
-                      <option key={m} value={m}>{m}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="filter-section">
-                  <label className="filter-label">Model</label>
-                  <select value={model} onChange={e => setModel(e.target.value)} className="filter-select">
-                    <option value="">All Models</option>
-                    {[...new Set(products.map(p => p.model).filter(Boolean))].map(m => (
-                      <option key={m} value={m}>{m}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="filter-section">
-                  <label className="filter-label">Sort by</label>
-                  <select value={sort} onChange={e => setSort(e.target.value)} className="filter-select">
-                    <option value="">None</option>
-                    <option value="price-asc">Price: Low to High</option>
-                    <option value="price-desc">Price: High to Low</option>
-                  </select>
-                </div>
+            <div className="simple-gallery-filter-content">
+              <div className="filter-section filter-checkbox">
+                <input
+                  type="checkbox"
+                  id="inStock"
+                  checked={inStockOnly}
+                  onChange={e => setInStockOnly(e.target.checked)}
+                />
+                <span className="checkbox-text">In Stock</span>
               </div>
-            )}
+              <div className="filter-section">
+                <input
+                  type="text"
+                  className="search-input"
+                  placeholder="Search..."
+                  value={searchText}
+                  onChange={e => setSearchText(e.target.value)}
+                />
+              </div>
+              <div className="filter-section">
+                <label className="filter-label">Category</label>
+                <select value={category} onChange={e => setCategory(e.target.value)} className="filter-select">
+                  <option value="">All Categories</option>
+                  {[...new Set(products.map(p => p.category).filter(Boolean))].map(c => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="filter-section">
+                <label className="filter-label">Sub-Category</label>
+                <select value={subCategory} onChange={e => setSubCategory(e.target.value)} className="filter-select">
+                  <option value="">All Sub-Categories</option>
+                  {[...new Set(products.map(p => p.subcategory).filter(Boolean))].map(sc => (
+                    <option key={sc} value={sc}>{sc}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="filter-section">
+                <label className="filter-label">Manufacturer</label>
+                <select value={manufacturer} onChange={e => setManufacturer(e.target.value)} className="filter-select">
+                  <option value="">All Manufacturers</option>
+                  {[...new Set(products.map(p => p.manufacturer).filter(Boolean))].map(m => (
+                    <option key={m} value={m}>{m}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="filter-section">
+                <label className="filter-label">Machine Type</label>
+                <select value={machineType} onChange={e => setMachineType(e.target.value)} className="filter-select">
+                  <option value="">All Machine Types</option>
+                  {[...new Set(products.map(p => p.machine_type).filter(Boolean))].map(m => (
+                    <option key={m} value={m}>{m}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="filter-section">
+                <label className="filter-label">Model</label>
+                <select value={model} onChange={e => setModel(e.target.value)} className="filter-select">
+                  <option value="">All Models</option>
+                  {[...new Set(products.map(p => p.model).filter(Boolean))].map(m => (
+                    <option key={m} value={m}>{m}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="filter-section">
+                <label className="filter-label">Sort by</label>
+                <select value={sort} onChange={e => setSort(e.target.value)} className="filter-select">
+                  <option value="">None</option>
+                  <option value="price-asc">Price: Low to High</option>
+                  <option value="price-desc">Price: High to Low</option>
+                </select>
+              </div>
+            </div>
           </aside>
         )}
         {/* Main grid, with left margin for filter pane if open */}

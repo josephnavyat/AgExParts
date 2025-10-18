@@ -24,13 +24,13 @@
 
 @media (min-width: 701px) {
   .simple-gallery-filter-toggle {
-    display: none !important;
+    display: block !important;
   }
   .simple-gallery-filter-pane {
-    position: static !important;
-    left: unset !important;
-    top: unset !important;
-    z-index: unset !important;
+    position: fixed !important;
+    left: 0 !important;
+    top: 156px !important;
+    z-index: 99 !important;
     min-width: 260px !important;
     max-width: 340px !important;
     height: fit-content !important;
