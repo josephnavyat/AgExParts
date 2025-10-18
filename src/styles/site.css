@@ -197,6 +197,7 @@ footer { background: #0b0c0e; border-top: 1px solid #1c2026; padding: 50px 0; ma
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    zoom: 0.97;
   }
   .cart-cards {
     width: 100%;
