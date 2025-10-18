@@ -49,17 +49,17 @@ export default function OrderSuccess() {
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
                 <tr style={{ borderBottom: "1px solid #eee" }}>
-                  <th style={{ textAlign: "left", padding: "0.5rem" }}>Product</th>
-                  <th style={{ textAlign: "center", padding: "0.5rem" }}>Qty</th>
-                  <th style={{ textAlign: "right", padding: "0.5rem" }}>Price</th>
+                  <th style={{ textAlign: "left", padding: "0.5rem", minWidth: 120 }}>Product</th>
+                  <th style={{ textAlign: "center", padding: "0.5rem", minWidth: 70 }}>Qty</th>
+                  <th style={{ textAlign: "right", padding: "0.5rem", minWidth: 100 }}>Price</th>
                 </tr>
               </thead>
               <tbody>
                 {order.items.map(item => (
                   <tr key={item.id} style={{ borderBottom: "1px solid #f0f0f0" }}>
-                    <td style={{ padding: "0.5rem" }}>{item.name || item.part_id}</td>
-                    <td style={{ textAlign: "center" }}>{item.qty}</td>
-                    <td style={{ textAlign: "right" }}>${item.unit_price}</td>
+                    <td style={{ padding: "0.5rem", minWidth: 120 }}>{item.name || item.part_id}</td>
+                    <td style={{ textAlign: "center", minWidth: 70 }}>{item.qty}</td>
+                    <td style={{ textAlign: "right", minWidth: 100 }}>${item.unit_price}</td>
                   </tr>
                 ))}
               </tbody>
