@@ -319,5 +319,4 @@ export default function SimpleGallery() {
         </div>
       </div>
     </div>
-  );
-}
+    </div>);}
