@@ -190,7 +190,6 @@ export default function SimpleGallery() {
             </div>
           </div>
         </aside>
-      </aside>
       {/* Main grid, with left margin for filter pane if open */}
       <div
         className="simple-gallery-grid"
