@@ -49,22 +49,10 @@
     transition: top 0.3s, left 0.3s !important;
     left: 0 !important;
   }
-  .simple-gallery-filter-pane.simple-gallery-filter-pane--closed {
-    left: -340px !important;
-  }
-    height: 70vh !important;
-    overflow-y: auto !important;
-    margin-top: 0 !important;
-    margin-right: 0 !important;
-    margin-bottom: 1.5rem !important;
-    background: #3a3939 !important;
-    border-radius: 18px !important;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.18) !important;
   }
   .simple-gallery-filter-pane.simple-gallery-filter-pane--closed {
     left: -340px;
   }
-}
 
 :root {
   --gallery-bg: #181c24;
