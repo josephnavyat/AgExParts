@@ -305,28 +305,62 @@ export default function SimpleGallery() {
             ));
           })()}
         {/* Pagination controls */}
-  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '2rem auto 0 auto', gap: 12, width: '100%' }}>
+        {/* Pagination controls at the very bottom */}
+  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '2.5rem auto 0 auto', gap: 16, width: '100%', textAlign: 'center' }}>
           {page > 1 && (
             <button className="simple-gallery-btn secondary" onClick={() => setPage(page - 1)}>&lt; Prev</button>
           )}
           <span style={{ color: '#c3c3c3', fontWeight: 500, fontSize: '1.05rem', margin: '0 1rem' }}>
-            Page {page}
+            Page
           </span>
-          {products.filter(product => !category || product.category === category)
-            .filter(product => !subCategory || product.subcategory === subCategory)
-            .filter(product => !manufacturer || product.manufacturer === manufacturer)
-            .filter(product => !machineType || product.machine_type === machineType)
-            .filter(product => !model || product.model === model)
-            .filter(product => !inStockOnly || product.quantity > 0)
-            .filter(product => {
-              if (!searchText.trim()) return true;
-              const lower = searchText.toLowerCase();
-              return Object.values(product).some(val =>
-                typeof val === 'string' && val.toLowerCase().includes(lower)
-              );
-            }).length > page * perPage && (
-            <button className="simple-gallery-btn secondary" onClick={() => setPage(page + 1)}>Next &gt;</button>
-          )}
+          <select
+            value={page}
+            onChange={e => setPage(Number(e.target.value))}
+            style={{ fontSize: '1.05rem', padding: '0.3rem 0.7rem', borderRadius: 6, border: '1px solid #ccc', minWidth: 60 }}
+          >
+            {(() => {
+              const filtered = products
+                .filter(product => product.website_visible === true)
+                .filter(product => !category || product.category === category)
+                .filter(product => !subCategory || product.subcategory === subCategory)
+                .filter(product => !manufacturer || product.manufacturer === manufacturer)
+                .filter(product => !machineType || product.machine_type === machineType)
+                .filter(product => !model || product.model === model)
+                .filter(product => !inStockOnly || product.quantity > 0)
+                .filter(product => {
+                  if (!searchText.trim()) return true;
+                  const lower = searchText.toLowerCase();
+                  return Object.values(product).some(val =>
+                    typeof val === 'string' && val.toLowerCase().includes(lower)
+                  );
+                });
+              const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
+              return Array.from({ length: totalPages }, (_, i) => (
+                <option key={i + 1} value={i + 1}>{i + 1}</option>
+              ));
+            })()}
+          </select>
+          {(() => {
+            const filtered = products
+              .filter(product => product.website_visible === true)
+              .filter(product => !category || product.category === category)
+              .filter(product => !subCategory || product.subcategory === subCategory)
+              .filter(product => !manufacturer || product.manufacturer === manufacturer)
+              .filter(product => !machineType || product.machine_type === machineType)
+              .filter(product => !model || product.model === model)
+              .filter(product => !inStockOnly || product.quantity > 0)
+              .filter(product => {
+                if (!searchText.trim()) return true;
+                const lower = searchText.toLowerCase();
+                return Object.values(product).some(val =>
+                  typeof val === 'string' && val.toLowerCase().includes(lower)
+                );
+              });
+            const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
+            return page < totalPages ? (
+              <button className="simple-gallery-btn secondary" onClick={() => setPage(page + 1)}>Next &gt;</button>
+            ) : null;
+          })()}
         </div>
         </div>
       </div>
