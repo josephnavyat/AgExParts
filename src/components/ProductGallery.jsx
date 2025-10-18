@@ -164,6 +164,7 @@ useEffect(() => {
 <<<<<<< HEAD
         {/* Filter boxes */}
         <div style={{ display: 'flex', gap: 16, margin: '1.2rem 0 2rem 0', justifyContent: 'center', flexWrap: 'wrap' }}>
+<<<<<<< HEAD
 =======
         {/* Custom Filters */}
         <div className="filters" style={{ marginBottom: '1.5rem', display: 'flex', gap: '2rem', alignItems: 'center', justifyContent: 'center' }}>
@@ -202,6 +203,8 @@ useEffect(() => {
         </div>
   <div style={{ display: 'flex', gap: 16, margin: '1.2rem 0 2rem 0', justifyContent: 'center', flexWrap: 'wrap' }}>
 >>>>>>> restore-from-283180cd
+=======
+>>>>>>> c0f798768fd887b40ef2071e83565346be4c93c7
           <select value={manufacturer} onChange={e => setManufacturer(e.target.value)}
             style={{
               padding: '1.5rem 1.2rem',
@@ -310,6 +313,9 @@ useEffect(() => {
                 return 0;
               })
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c0f798768fd887b40ef2071e83565346be4c93c7
               .map((product) => {
                 const inStock = product.quantity > 0;
                 const quickAdd = !!quickAddMap[product.id];
@@ -323,6 +329,7 @@ useEffect(() => {
                         loading="lazy"
                         sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 220px"
                       />
+<<<<<<< HEAD
 =======
               .map((product) => (
               <div
@@ -362,6 +369,8 @@ useEffect(() => {
                     <div style={{ fontSize: '0.85em', color: '#888', marginTop: 2 }}>
                       Category: {product.category}
 >>>>>>> restore-from-283180cd
+=======
+>>>>>>> c0f798768fd887b40ef2071e83565346be4c93c7
                     </div>
                     <div className="body" style={{ flex: 1 }}>
                       <h3 className="title" style={{ margin: 0, fontSize: '1.1rem', color: '#222' }}>{product.name}</h3>
@@ -375,6 +384,7 @@ useEffect(() => {
                           {inStock ? '✅ In Stock' : '❌ Out of Stock'}
                         </span>
                       </div>
+<<<<<<< HEAD
                     </div>
                     <div style={{ display: 'flex', gap: '1.5rem', marginTop: 18, justifyContent: 'center', width: '100%' }}>
                       <Link
@@ -587,6 +597,111 @@ useEffect(() => {
           ))}
         </div>
 >>>>>>> restore-from-283180cd
+=======
+                    </div>
+                    <div style={{ display: 'flex', gap: '1.5rem', marginTop: 18, justifyContent: 'center', width: '100%' }}>
+                      <Link
+                        to={{ pathname: `/product/${product.id}` }}
+                        state={{ product }}
+                        className="btn primary"
+                        style={{
+                          padding: '0.9rem 2.2rem',
+                          fontWeight: 700,
+                          fontSize: '1.1rem',
+                          borderRadius: '10px',
+                          background: '#19a974',
+                          color: '#fff',
+                          boxShadow: '0 2px 8px rgba(25,169,116,0.13)',
+                          textDecoration: 'none',
+                          letterSpacing: '0.04em',
+                          transition: 'background 0.2s',
+                          border: 'none',
+                          textAlign: 'center',
+                          display: 'inline-block',
+                        }}
+                        onMouseOver={e => (e.currentTarget.style.background = '#12895c')}
+                        onMouseOut={e => (e.currentTarget.style.background = '#19a974')}
+                      >
+                        View Details
+                      </Link>
+                      {!quickAdd ? (
+                        <button
+                          className="btn secondary"
+                          style={{
+                            padding: '0.9rem 2.2rem',
+                            fontWeight: 700,
+                            fontSize: '1.1rem',
+                            borderRadius: '10px',
+                            background: '#f0f0f0',
+                            color: '#222',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.10)',
+                            border: 'none',
+                            letterSpacing: '0.04em',
+                            textAlign: 'center',
+                            display: 'inline-block',
+                            cursor: 'pointer',
+                            transition: 'background 0.2s',
+                          }}
+                          onMouseOver={e => (e.currentTarget.style.background = '#e0e0e0')}
+                          onMouseOut={e => (e.currentTarget.style.background = '#f0f0f0')}
+                          onClick={() => setQuickAddMap(q => ({ ...q, [product.id]: true }))}
+                          disabled={!inStock}
+                        >
+                          Quick Add
+                        </button>
+                      ) : (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#eafbe7', borderRadius: 8, padding: '0.5rem 1.2rem', flex: 1, justifyContent: 'center' }}>
+                          <button
+                            style={{
+                              background: '#28a745',
+                              color: '#fff',
+                              border: 'none',
+                              borderRadius: 6,
+                              width: 32,
+                              height: 32,
+                              fontWeight: 700,
+                              fontSize: '1.2rem',
+                              cursor: 'pointer',
+                            }}
+                            onClick={() => {
+                              if (qty > 1) setQtyMap(qm => ({ ...qm, [product.id]: qty - 1 }));
+                              dispatch({ type: 'SUBTRACT_FROM_CART', product });
+                            }}
+                            disabled={qty <= 1}
+                            aria-label="Decrease quantity"
+                          >
+                            -
+                          </button>
+                          <span style={{ minWidth: 28, textAlign: 'center', fontWeight: 600, color: '#222', fontSize: '1.1rem' }}>{qty}</span>
+                          <button
+                            style={{
+                              background: '#28a745',
+                              color: '#fff',
+                              border: 'none',
+                              borderRadius: 6,
+                              width: 32,
+                              height: 32,
+                              fontWeight: 700,
+                              fontSize: '1.2rem',
+                              cursor: 'pointer',
+                            }}
+                            onClick={() => {
+                              setQtyMap(qm => ({ ...qm, [product.id]: qty + 1 }));
+                              dispatch({ type: 'ADD_TO_CART', product });
+                            }}
+                            disabled={qty >= (product.quantity || 99)}
+                            aria-label="Increase quantity"
+                          >
+                            +
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+          </div>
+>>>>>>> c0f798768fd887b40ef2071e83565346be4c93c7
         )}
       </div>
       <Footer />

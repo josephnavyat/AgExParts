@@ -24,6 +24,10 @@ export default function ProductDetail() {
 
   useEffect(() => {
     const controller = new AbortController();
+<<<<<<< HEAD
+=======
+  
+>>>>>>> c0f798768fd887b40ef2071e83565346be4c93c7
     const fetchProducts = async () => {
       try {
         const res = await fetch('/.netlify/functions/get-data', {
@@ -31,6 +35,9 @@ export default function ProductDetail() {
         });
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         const data = await res.json();
+<<<<<<< HEAD
+        const found = data.find((p) => String(p.id) === String(id));
+=======
         const found = data.find((p) => String(p.id) === String(id));
         setProduct(found);
       } catch (error) {
@@ -41,9 +48,47 @@ export default function ProductDetail() {
         setLoading(false);
       }
     };
+  
+    fetchProducts();
+  
+    return () => controller.abort();
+  }, []);
+  /*
+  useEffect(() => {
+  fetch(`${import.meta.env.VITE_API_URL}/api/products`)
+      .then((res) => {
+        console.log('Fetch response:', res);
+        if (!res.ok) throw new Error("Failed to fetch product");
+        return res.json();
+      })
+      .then((data) => {
+        console.log('Fetched data:', data);
+        const found = data.find((p) => String(p.id) === String(id));
+        console.log('Found product:', found);
+        if (!found) throw new Error("Product not found");
+>>>>>>> c0f798768fd887b40ef2071e83565346be4c93c7
+        setProduct(found);
+      } catch (error) {
+        if (error.name !== 'AbortError') {
+          console.error('Failed to fetch products:', error);
+        }
+      } finally {
+        setLoading(false);
+<<<<<<< HEAD
+      }
+    };
     fetchProducts();
     return () => controller.abort();
   }, [id]);
+=======
+      })
+      .catch((err) => {
+        console.error('Fetch error:', err);
+        setError(err.message);
+        setLoading(false);
+      });
+  }, [id]);*/
+>>>>>>> c0f798768fd887b40ef2071e83565346be4c93c7
 
   useEffect(() => {
     if (!product) return;
@@ -110,6 +155,7 @@ export default function ProductDetail() {
             justifyContent: 'center',
             boxShadow: '0 1px 8px rgba(0,0,0,0.06)'
           }}>
+<<<<<<< HEAD
             {/* Image carousel */}
             {images.length > 0 && (
               <div style={{ position: 'relative', width: '100%', height: '100%' }}>
@@ -173,6 +219,20 @@ export default function ProductDetail() {
             {availableStock < 20 && availableStock > 0 ? (
               <span style={{ fontSize: '1rem', color: 'orange', fontWeight: 600, marginLeft: 12, display: 'inline-flex', alignItems: 'center', gap: 6 }}>
                 Low Stock: {availableStock} Available
+=======
+            <img src={product.image} alt={product.name} style={{ width: 320, height: 200, objectFit: 'cover', borderRadius: 12, marginBottom: 24, background: '#f8f8f8' }} />
+            <h2 className="distressed" style={{ fontSize: '2.2rem', marginBottom: 8 }}>{product.name}</h2>
+            <div style={{ color: '#888', fontSize: '1.1rem', marginBottom: 16 }}>{product.part_number}</div>
+            <div style={{ color: '#333', fontWeight: 600, fontSize: '1.3rem', marginBottom: 12 }}>
+              {(!isNaN(Number(product.price)) && product.price !== null && product.price !== undefined) ? `$${Number(product.price).toFixed(2)}` : 'Price N/A'}
+              <span style={{
+                fontSize: '1rem',
+                color: product.quantity > 0 ? '#28a745' : '#d32f2f',
+                fontWeight: 600,
+                marginLeft: 12
+              }}>
+                {product.quantity && product.quantity > 0 ? 'In Stock' : 'Out of Stock'}
+>>>>>>> c0f798768fd887b40ef2071e83565346be4c93c7
               </span>
             ) : (
               <span style={{ fontSize: '1rem', color: availableStock > 0 ? '#28a745' : '#d32f2f', fontWeight: 600, marginLeft: 12, display: 'inline-flex', alignItems: 'center', gap: 6 }}>

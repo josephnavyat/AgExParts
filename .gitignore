@@ -1,5 +1,11 @@
 node_modules/
 src/PartsDB/server/.env
+<<<<<<< HEAD
 # Local Netlify folder
 .netlify
 .env
+=======
+
+# Local Netlify folder
+.netlify
+>>>>>>> c0f798768fd887b40ef2071e83565346be4c93c7

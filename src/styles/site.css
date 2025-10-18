@@ -1,4 +1,7 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c0f798768fd887b40ef2071e83565346be4c93c7
 /* Hide on mobile utility */
 .hide-mobile {
   display: block;
@@ -6,6 +9,7 @@
 @media (max-width: 600px) {
   .hide-mobile {
     display: none !important;
+<<<<<<< HEAD
   }
 =======
 @media (max-width: 480px) {
@@ -68,6 +72,9 @@ img {
   .product-gallery { padding: 1rem !important; }
   .feature .panel { padding: 12px !important; }
 >>>>>>> restore-from-283180cd
+=======
+  }
+>>>>>>> c0f798768fd887b40ef2071e83565346be4c93c7
 }
 
 /* GLOBAL RESET + VARIABLES */
@@ -153,6 +160,9 @@ footer { background: #0b0c0e; border-top: 1px solid #1c2026; padding: 50px 0; ma
 .footer-grid h4 { margin: 0 0 10px; font-size: 14px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
 .footer-grid p, .footer-grid a { color: #b7c0cc; font-size: 14px; }
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c0f798768fd887b40ef2071e83565346be4c93c7
 
 /* Grid: make cards narrower and auto-wrap nicely */
 .gallery-grid {
@@ -255,6 +265,7 @@ footer { background: #0b0c0e; border-top: 1px solid #1c2026; padding: 50px 0; ma
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 18px;
   }
+<<<<<<< HEAD
 }
 =======
 @media (max-width: 900px) { .footer-grid { grid-template-columns: 1fr; } }
@@ -411,3 +422,6 @@ footer { background: #0b0c0e; border-top: 1px solid #1c2026; padding: 50px 0; ma
   }
 }
 >>>>>>> restore-from-283180cd
+=======
+}
+>>>>>>> c0f798768fd887b40ef2071e83565346be4c93c7
