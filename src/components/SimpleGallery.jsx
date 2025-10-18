@@ -122,75 +122,75 @@ export default function SimpleGallery() {
             Filters {filterOpen ? '▼' : '▶'}
           </div>
           <div className="simple-gallery-filter-content">
-              <input
-                type="text"
-                className="search-input"
-                placeholder="Search..."
-                value={searchText}
-                onChange={e => setSearchText(e.target.value)}
-                list="product-names-list"
-              />
-                <datalist id="product-names-list">
-                  {[...new Set(products.map(p => p.name).filter(Boolean))].map(name => (
-                    <option key={name} value={name} />
-                  ))}
-                </datalist>
-              </div>
-              <div className="filter-section">
-                <label className="filter-label">Category</label>
-                <select value={category} onChange={e => setCategory(e.target.value)} className="filter-select">
-                  <option value="">All Categories</option>
-                  {[...new Set(products.map(p => p.category).filter(Boolean))].map(c => (
-                    <option key={c} value={c}>{c}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="filter-section">
-                <label className="filter-label">Sub-Category</label>
-                <select value={subCategory} onChange={e => setSubCategory(e.target.value)} className="filter-select">
-                  <option value="">All Sub-Categories</option>
-                  {[...new Set(products.map(p => p.subcategory).filter(Boolean))].map(sc => (
-                    <option key={sc} value={sc}>{sc}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="filter-section">
-                <label className="filter-label">Manufacturer</label>
-                <select value={manufacturer} onChange={e => setManufacturer(e.target.value)} className="filter-select">
-                  <option value="">All Manufacturers</option>
-                  {[...new Set(products.map(p => p.manufacturer).filter(Boolean))].map(m => (
-                    <option key={m} value={m}>{m}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="filter-section">
-                <label className="filter-label">Machine Type</label>
-                <select value={machineType} onChange={e => setMachineType(e.target.value)} className="filter-select">
-                  <option value="">All Machine Types</option>
-                  {[...new Set(products.map(p => p.machine_type).filter(Boolean))].map(m => (
-                    <option key={m} value={m}>{m}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="filter-section">
-                <label className="filter-label">Model</label>
-                <select value={model} onChange={e => setModel(e.target.value)} className="filter-select">
-                  <option value="">All Models</option>
-                  {[...new Set(products.map(p => p.model).filter(Boolean))].map(m => (
-                    <option key={m} value={m}>{m}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="filter-section">
-                <label className="filter-label">Sort by</label>
-                <select value={sort} onChange={e => setSort(e.target.value)} className="filter-select">
-                  <option value="">None</option>
-                  <option value="price-asc">Price: Low to High</option>
-                  <option value="price-desc">Price: High to Low</option>
-                </select>
-              </div>
-    </div>
-  </aside>
+            <input
+              type="text"
+              className="search-input"
+              placeholder="Search..."
+              value={searchText}
+              onChange={e => setSearchText(e.target.value)}
+              list="product-names-list"
+            />
+            <datalist id="product-names-list">
+              {[...new Set(products.map(p => p.name).filter(Boolean))].map(name => (
+                <option key={name} value={name} />
+              ))}
+            </datalist>
+            <div className="filter-section">
+              <label className="filter-label">Category</label>
+              <select value={category} onChange={e => setCategory(e.target.value)} className="filter-select">
+                <option value="">All Categories</option>
+                {[...new Set(products.map(p => p.category).filter(Boolean))].map(c => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </div>
+            <div className="filter-section">
+              <label className="filter-label">Sub-Category</label>
+              <select value={subCategory} onChange={e => setSubCategory(e.target.value)} className="filter-select">
+                <option value="">All Sub-Categories</option>
+                {[...new Set(products.map(p => p.subcategory).filter(Boolean))].map(sc => (
+                  <option key={sc} value={sc}>{sc}</option>
+                ))}
+              </select>
+            </div>
+            <div className="filter-section">
+              <label className="filter-label">Manufacturer</label>
+              <select value={manufacturer} onChange={e => setManufacturer(e.target.value)} className="filter-select">
+                <option value="">All Manufacturers</option>
+                {[...new Set(products.map(p => p.manufacturer).filter(Boolean))].map(m => (
+                  <option key={m} value={m}>{m}</option>
+                ))}
+              </select>
+            </div>
+            <div className="filter-section">
+              <label className="filter-label">Machine Type</label>
+              <select value={machineType} onChange={e => setMachineType(e.target.value)} className="filter-select">
+                <option value="">All Machine Types</option>
+                {[...new Set(products.map(p => p.machine_type).filter(Boolean))].map(m => (
+                  <option key={m} value={m}>{m}</option>
+                ))}
+              </select>
+            </div>
+            <div className="filter-section">
+              <label className="filter-label">Model</label>
+              <select value={model} onChange={e => setModel(e.target.value)} className="filter-select">
+                <option value="">All Models</option>
+                {[...new Set(products.map(p => p.model).filter(Boolean))].map(m => (
+                  <option key={m} value={m}>{m}</option>
+                ))}
+              </select>
+            </div>
+            <div className="filter-section">
+              <label className="filter-label">Sort by</label>
+              <select value={sort} onChange={e => setSort(e.target.value)} className="filter-select">
+                <option value="">None</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+              </select>
+            </div>
+          </div>
+        </aside>
+      </aside>
       {/* Main grid, with left margin for filter pane if open */}
       <div
         className="simple-gallery-grid"
