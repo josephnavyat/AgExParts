@@ -200,6 +200,39 @@ footer { background: #0b0c0e; border-top: 1px solid #1c2026; padding: 50px 0; ma
     zoom: 0.95;
     max-width: 420px;
   }
+  .cart-page-content .cart-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    width: 100%;
+    justify-content: center;
+    margin-top: 1.2rem;
+  }
+  .cart-page-content .btn.primary,
+  .cart-page-content .btn.danger,
+  .cart-page-content .btn.freight {
+    min-width: 120px !important;
+    font-size: 1.05rem !important;
+    padding: 0.7rem 1.2rem !important;
+    border-radius: 8px !important;
+    flex: 1 1 0;
+    margin: 0 !important;
+  }
+  .cart-page-content .btn.danger {
+    background: #d32f2f !important;
+    color: #fff !important;
+    box-shadow: 0 2px 8px rgba(211,47,47,0.10) !important;
+  }
+  .cart-page-content .btn.freight {
+    background: #557a2cff !important;
+    color: #fff !important;
+    box-shadow: 0 2px 8px rgba(139,195,74,0.10) !important;
+  }
+  .cart-page-content .cost-info {
+    text-align: right !important;
+    width: 100%;
+    margin-right: 0;
+  }
   .cart-cards {
     width: 100%;
     display: flex;
