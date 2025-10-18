@@ -40,7 +40,7 @@ export default function OrderSuccess() {
           <div style={{ textAlign: "center", color: "red" }}>Error: {String(error)}</div>
         ) : order ? (
           <div style={{ maxWidth: 700, margin: "0 auto", background: "#fff", borderRadius: 16, boxShadow: "0 2px 12px rgba(0,0,0,0.10)", padding: "2rem", color: "#222" }}>
-            <h3>Order #{order.order_no}</h3>
+            <h3>Order #{order.order_ref}</h3>
             <div><b>Name:</b> {order.customer_name}</div>
             <div><b>Email:</b> {order.customer_email}</div>
             <div><b>Shipping:</b> {order.ship_address1}, {order.ship_city}, {order.ship_state} {order.ship_postal_code}, {order.ship_country}</div>
