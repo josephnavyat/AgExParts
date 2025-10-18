@@ -48,6 +48,7 @@
   .simple-gallery-filter-pane.simple-gallery-filter-pane--closed {
     left: -340px !important;
   }
+}
 
 :root {
   --gallery-bg: #181c24;
