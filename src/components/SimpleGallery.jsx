@@ -189,16 +189,16 @@ export default function SimpleGallery() {
                   <option value="price-desc">Price: High to Low</option>
                 </select>
               </div>
-            </div>
-          </aside>
-        {/* Main grid, with left margin for filter pane if open */}
-        <div
-          className="simple-gallery-grid"
-          style={{
-            marginLeft: '',
-            transition: 'none',
-          }}
-        >
+    </div>
+  </aside>
+      {/* Main grid, with left margin for filter pane if open */}
+      <div
+        className="simple-gallery-grid"
+        style={{
+          marginLeft: '',
+          transition: 'none',
+        }}
+      >
           {(() => {
             const filtered = products
               .filter(product => product.website_visible === true)
@@ -317,7 +317,6 @@ export default function SimpleGallery() {
             }).length > page * perPage && (
             <button className="simple-gallery-btn secondary" onClick={() => setPage(page + 1)}>Next &gt;</button>
           )}
-        </div>
         </div>
       </div>
     </div>
