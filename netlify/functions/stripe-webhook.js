@@ -79,8 +79,11 @@ exports.handler = async (event) => {
     // Example: get items from session metadata (must be set in checkout session creation)
     let items = [];
     try {
+      console.log('Raw items metadata:', session.metadata?.items);
       items = JSON.parse(session.metadata?.items || '[]');
+      console.log('Parsed items:', items);
     } catch (e) {
+      console.error('Error parsing items metadata:', session.metadata?.items, e);
       items = [];
     }
 
@@ -98,8 +101,9 @@ exports.handler = async (event) => {
     }
     try {
       for (const item of items) {
+        console.log('Inserting order item:', item);
         try {
-          await client.query(itemQuery, [
+          const result = await client.query(itemQuery, [
             orderRow.id,
             item.part_id || null,
             item.qty || 1,
@@ -112,11 +116,13 @@ exports.handler = async (event) => {
             item.location_id || null,
             item.name || ''
           ]);
+          console.log('Order item insert result:', result);
           // Decrement inventory for the purchased item
-          await client.query(
+          const invResult = await client.query(
             'UPDATE products SET inventory = GREATEST(inventory - $1, 0) WHERE id = $2',
             [item.qty || 1, item.part_id]
           );
+          console.log('Inventory update result:', invResult);
         } catch (itemErr) {
           console.error('Error inserting single order item or updating inventory:', item, itemErr);
         }
