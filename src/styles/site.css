@@ -192,12 +192,13 @@ footer { background: #0b0c0e; border-top: 1px solid #1c2026; padding: 50px 0; ma
     box-sizing: border-box;
     padding: 0.5rem !important;
     border-radius: 10px !important;
-    margin: 0.5rem 0 !important;
+    margin: 0.5rem auto !important;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    zoom: 0.97;
+    zoom: 0.95;
+    max-width: 420px;
   }
   .cart-cards {
     width: 100%;

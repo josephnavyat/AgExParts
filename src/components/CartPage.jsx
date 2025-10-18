@@ -230,7 +230,7 @@ export default function CartPage() {
               >
                 Clear Cart
               </button>
-              <>
+              {totalWeight > 100 ? (
                 <button
                   className="btn freight"
                   style={{
@@ -239,21 +239,19 @@ export default function CartPage() {
                     borderRadius: 8,
                     padding: '0.7rem 2rem',
                     minWidth: 180,
-                    background: totalWeight > 100 ? '#557a2cff' : '#eee',
-                    color: totalWeight > 100 ? '#fff' : '#aaa',
+                    background: '#557a2cff',
+                    color: '#fff',
                     border: 'none',
-                    boxShadow: totalWeight > 100 ? '0 2px 8px rgba(139,195,74,0.10)' : 'none',
-                    cursor: totalWeight > 100 ? 'pointer' : 'not-allowed',
+                    boxShadow: '0 2px 8px rgba(139,195,74,0.10)',
+                    cursor: 'pointer',
                   }}
-                  onClick={() => {
-                    if (totalWeight > 100) navigate('/freight-inquiry', { state: { cart } });
-                  }}
-                  disabled={totalWeight <= 100}
+                  onClick={() => navigate('/freight-inquiry', { state: { cart } })}
                 >
                   Get Freight Quote
                 </button>
-                <StripeCheckoutButton cart={cart.items} disabled={totalWeight > 100} />
-              </>
+              ) : (
+                <StripeCheckoutButton cart={cart.items} disabled={false} />
+              )}
             </div>
           </div>
         )}
