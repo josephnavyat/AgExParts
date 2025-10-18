@@ -67,6 +67,7 @@ export default function SimpleGallery() {
           </select>
         </div>
         {/* Filter icon for mobile, fixed to left and moves down as you scroll */}
+        {/* Only show filter icon on mobile */}
         <button
           className="simple-gallery-filter-toggle"
           aria-label={filterOpen ? 'Hide Filters' : 'Show Filters'}
@@ -86,7 +87,7 @@ export default function SimpleGallery() {
             boxShadow: '0 2px 8px rgba(0,0,0,0.13)',
             cursor: 'pointer',
             transition: 'top 0.3s',
-            display: 'block',
+            display: 'none', // hidden by default, shown in mobile CSS
           }}
           id="filter-toggle-btn"
         >
@@ -101,20 +102,24 @@ export default function SimpleGallery() {
         {/* Expand/collapse button only on mobile, handled by CSS */}
     {/* Removed old toggle button, now handled above with icon */}
         {/* Slide-in filter pane */}
-        <aside
-          className={`simple-gallery-filter-pane${filterOpen ? '' : ' simple-gallery-filter-pane--closed'}`}
-          style={{
-            position: 'fixed',
-            left: 0,
-            top: 156, // 100px for icon + 56px for spacing
-            zIndex: 99,
-            minWidth: 260,
-            maxWidth: 340,
-            height: 'fit-content',
-            marginTop: 0,
-            transition: 'top 0.3s',
-          }}
-        >
+        {(window.innerWidth > 700 || filterOpen) && (
+          <aside
+            className={`simple-gallery-filter-pane`}
+            style={{
+              position: window.innerWidth > 700 ? 'static' : 'fixed',
+              left: window.innerWidth > 700 ? undefined : 0,
+              top: window.innerWidth > 700 ? undefined : 156,
+              zIndex: window.innerWidth > 700 ? undefined : 99,
+              minWidth: 260,
+              maxWidth: 340,
+              height: 'fit-content',
+              marginTop: 0,
+              transition: window.innerWidth > 700 ? undefined : 'top 0.3s',
+            }}
+          >
+            {/* ...existing filter pane content... */}
+          </aside>
+        )}
           <div className="simple-gallery-filter-header" onClick={() => setFilterOpen((v) => !v)}>
             Filters {filterOpen ? '▼' : '▶'}
           </div>

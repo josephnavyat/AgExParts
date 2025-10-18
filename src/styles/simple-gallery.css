@@ -20,6 +20,27 @@
     cursor: pointer !important;
     transition: top 0.3s !important;
   }
+}
+
+@media (min-width: 701px) {
+  .simple-gallery-filter-toggle {
+    display: none !important;
+  }
+  .simple-gallery-filter-pane {
+    position: static !important;
+    left: unset !important;
+    top: unset !important;
+    z-index: unset !important;
+    min-width: 260px !important;
+    max-width: 340px !important;
+    height: fit-content !important;
+    margin-top: 0 !important;
+    margin-right: 2rem !important;
+    margin-bottom: 1.5rem !important;
+    width: 100% !important;
+    max-width: none !important;
+    display: block !important;
+  }
   .simple-gallery-filter-pane {
     position: fixed !important;
     left: 0 !important;
