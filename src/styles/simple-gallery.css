@@ -5,9 +5,9 @@
 @media (max-width: 700px) {
   .simple-gallery-filter-toggle {
     display: block;
-    position: absolute;
+    position: sticky;
+    top: 90px;
     left: 0;
-    top: 120px;
     z-index: 10;
     background: #3a3939;
     color: #f3f3f3;
@@ -21,9 +21,9 @@
     transition: left 0.3s;
   }
   .simple-gallery-filter-pane {
-    position: absolute !important;
-    left: 0;
+    position: sticky !important;
     top: 100px;
+    left: 0;
     transition: left 0.3s;
     z-index: 9;
     min-width: 260px;
@@ -80,7 +80,8 @@
   cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
+  text-align: right;
 }
 
 .simple-gallery-filter-content {
