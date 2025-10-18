@@ -10,7 +10,7 @@ export default function SimpleGallery() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  // Filter pane is hidden by default on all devices
+  // Filter pane is hidden by default on all devices (mobile and desktop)
   const [filterOpen, setFilterOpen] = useState(false);
   
   // Filter states
@@ -68,8 +68,7 @@ export default function SimpleGallery() {
             ))}
           </select>
         </div>
-        {/* Filter icon for mobile, fixed to left and moves down as you scroll */}
-        {/* Show filter icon on all screen sizes */}
+        {/* Filter icon for both mobile and desktop, fixed to left and moves down as you scroll */}
         <button
           className="simple-gallery-filter-toggle"
           aria-label={filterOpen ? 'Hide Filters' : 'Show Filters'}
