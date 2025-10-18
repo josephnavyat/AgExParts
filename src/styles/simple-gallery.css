@@ -4,26 +4,26 @@
 
 @media (max-width: 700px) {
   .simple-gallery-filter-toggle {
-    display: block;
-    position: sticky;
-    top: 90px;
-    left: 0;
-    z-index: 10;
-    background: #3a3939;
-    color: #f3f3f3;
-    border: none;
-    border-radius: 0 8px 8px 0;
-    padding: 0.7rem 0.9rem;
-    font-weight: 700;
-    font-size: 1.1rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.13);
-    cursor: pointer;
-    transition: left 0.3s;
+    display: block !important;
+    position: fixed !important;
+    left: 0 !important;
+    top: 100px !important;
+    z-index: 100 !important;
+    background: #3a3939 !important;
+    color: #f3f3f3 !important;
+    border: none !important;
+    border-radius: 0 8px 8px 0 !important;
+    padding: 0.7rem 0.9rem !important;
+    font-weight: 700 !important;
+    font-size: 1.1rem !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.13) !important;
+    cursor: pointer !important;
+    transition: top 0.3s !important;
   }
   .simple-gallery-filter-pane {
-    position: sticky !important;
-    top: 100px;
+    position: absolute !important;
     left: 0;
+    top: 100px;
     transition: left 0.3s;
     z-index: 9;
     min-width: 260px;
@@ -80,8 +80,7 @@
   cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  text-align: right;
+  justify-content: space-between;
 }
 
 .simple-gallery-filter-content {

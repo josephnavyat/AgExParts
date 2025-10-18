@@ -66,28 +66,39 @@ export default function SimpleGallery() {
             ))}
           </select>
         </div>
-      </div>
-      <hr className="simple-gallery-divider" />
-      <div className="simple-gallery-layout" style={{ position: 'relative' }}>
-        {/* Expand/collapse button only on mobile, handled by CSS */}
+        {/* Filter icon for mobile, fixed to left and moves down as you scroll */}
         <button
           className="simple-gallery-filter-toggle"
           aria-label={filterOpen ? 'Hide Filters' : 'Show Filters'}
           onClick={() => setFilterOpen((v) => !v)}
+          style={{
+            position: 'fixed',
+            left: 0,
+            top: 100,
+            zIndex: 100,
+            background: '#3a3939',
+            color: '#f3f3f3',
+            border: 'none',
+            borderRadius: '0 8px 8px 0',
+            padding: '0.7rem 0.9rem',
+            fontWeight: 700,
+            fontSize: '1.1rem',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.13)',
+            cursor: 'pointer',
+            transition: 'top 0.3s',
+            display: 'block',
+          }}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="22"
-            height="22"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth="2"
-            style={{ verticalAlign: 'middle' }}
-          >
-            <path d="M4 6h16M6 10h12M8 14h8M10 18h4" strokeLinecap="round" />
-          </svg>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+            <span style={{ fontSize: '1rem', fontWeight: 600 }}>Filter</span>
+          </span>
         </button>
+      </div>
+      <hr className="simple-gallery-divider" />
+      <div className="simple-gallery-layout" style={{ position: 'relative' }}>
+        {/* Expand/collapse button only on mobile, handled by CSS */}
+    {/* Removed old toggle button, now handled above with icon */}
         {/* Slide-in filter pane */}
         <aside
           className={`simple-gallery-filter-pane${filterOpen ? '' : ' simple-gallery-filter-pane--closed'}`}

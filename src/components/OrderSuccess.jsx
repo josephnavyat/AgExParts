@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useCart } from "./CartContext.jsx";
 import { useLocation } from "react-router-dom";
 import Navbar from "./Navbar.jsx";
 import Footer from "./Footer.jsx";
 
 export default function OrderSuccess() {
-  const { dispatch } = useCart();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -22,14 +20,12 @@ export default function OrderSuccess() {
       .then(data => {
         setOrder(data);
         setLoading(false);
-        // Clear cart on order success
-        dispatch({ type: "CLEAR_CART" });
       })
       .catch(err => {
         setError(err);
         setLoading(false);
       });
-  }, [order_no, dispatch]);
+  }, [order_no]);
 
   return (
     <>
