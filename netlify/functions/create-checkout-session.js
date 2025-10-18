@@ -41,7 +41,15 @@ exports.handler = async (event) => {
     metadata: {
       // Only send a short summary to avoid exceeding Stripe's 500 character limit
       cart_summary: cart.map(({ product, quantity }) => `${product.name.slice(0, 30)} x${quantity}`).join(', '),
-      shipping_cost: shippingCost || 0
+      shipping_cost: shippingCost || 0,
+      items: JSON.stringify(
+        cart.map(({ product, quantity }) => ({
+          part_id: product.id,
+          qty: quantity,
+          unit_price: Number(product.price),
+          name: product.name
+        }))
+      ).slice(0, 500) // Stripe metadata value limit
     }
   });
 
