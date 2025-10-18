@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useCart } from "./CartContext.jsx";
 import { getProductQuantity } from "./CartContext.jsx";
 import { Link } from "react-router-dom";
+import { CartContext } from './CartContext';
 import Navbar from "./Navbar.jsx";
 import Footer from "./Footer.jsx";
 import "../styles/site.css";
@@ -11,6 +12,9 @@ import "../styles/site.css";
 export default function ProductGallery() {
   const [products, setProducts] = useState([]);
   const anyOutOfStock = products.some(p => p.quantity === 0);
+  const [inStockOnly, setInStockOnly] = useState(false);
+  const [searchText, setSearchText] = useState('');
+  const [searchActive, setSearchActive] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { cart, dispatch } = useCart();
@@ -73,6 +77,41 @@ useEffect(() => {
       .catch((err) => {
         setError(err.message);
         setLoading(false);
+        <div className="filters">
+          <h3>Filters</h3>
+          <div>
+            <input
+              type="checkbox"
+              id="inStock"
+              checked={inStockOnly}
+              onChange={e => setInStockOnly(e.target.checked)}
+            />
+            <label htmlFor="inStock">In Stock</label>
+          </div>
+          <div style={{ marginTop: '1em' }}>
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchText}
+              onChange={e => setSearchText(e.target.value)}
+              style={{ width: '80%' }}
+            />
+            <button
+              style={{ marginLeft: '0.5em' }}
+              onClick={() => setSearchActive(true)}
+            >
+              Search
+            </button>
+            {searchActive && (
+              <button
+                style={{ marginLeft: '0.5em' }}
+                onClick={() => { setSearchText(''); setSearchActive(false); }}
+              >
+                Clear
+              </button>
+            )}
+          </div>
+        </div>
       });
   }, []);*/
   
@@ -122,8 +161,47 @@ useEffect(() => {
             </div>
           )}
         </div>
+<<<<<<< HEAD
         {/* Filter boxes */}
         <div style={{ display: 'flex', gap: 16, margin: '1.2rem 0 2rem 0', justifyContent: 'center', flexWrap: 'wrap' }}>
+=======
+        {/* Custom Filters */}
+        <div className="filters" style={{ marginBottom: '1.5rem', display: 'flex', gap: '2rem', alignItems: 'center', justifyContent: 'center' }}>
+          <div>
+            <input
+              type="checkbox"
+              id="inStock"
+              checked={inStockOnly}
+              onChange={e => setInStockOnly(e.target.checked)}
+            />
+            <label htmlFor="inStock" style={{ marginLeft: 6 }}>In Stock</label>
+          </div>
+          <div>
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchText}
+              onChange={e => setSearchText(e.target.value)}
+              style={{ width: '180px', padding: '0.4em' }}
+            />
+            <button
+              style={{ marginLeft: '0.5em', padding: '0.4em 1em' }}
+              onClick={() => setSearchActive(true)}
+            >
+              Search
+            </button>
+            {searchActive && (
+              <button
+                style={{ marginLeft: '0.5em', padding: '0.4em 1em' }}
+                onClick={() => { setSearchText(''); setSearchActive(false); }}
+              >
+                Clear
+              </button>
+            )}
+          </div>
+        </div>
+  <div style={{ display: 'flex', gap: 16, margin: '1.2rem 0 2rem 0', justifyContent: 'center', flexWrap: 'wrap' }}>
+>>>>>>> restore-from-283180cd
           <select value={manufacturer} onChange={e => setManufacturer(e.target.value)}
             style={{
               padding: '1.5rem 1.2rem',
@@ -207,19 +285,31 @@ useEffect(() => {
         ) : (
           <div
             className="gallery-grid"
+<<<<<<< HEAD
             style={{
               margin: '0 auto',
             }}
+=======
+>>>>>>> restore-from-283180cd
           >
             {products
               .filter(product => !manufacturer || product.manufacturer === manufacturer)
               .filter(product => !machineType || product.machine_type === machineType)
               .filter(product => !model || product.model === model)
+              .filter(product => !inStockOnly || product.quantity > 0)
+              .filter(product => {
+                if (!searchActive || !searchText.trim()) return true;
+                const lower = searchText.toLowerCase();
+                return Object.values(product).some(val =>
+                  typeof val === 'string' && val.toLowerCase().includes(lower)
+                );
+              })
               .sort((a, b) => {
                 if (sort === 'price-asc') return (a.price || 0) - (b.price || 0);
                 if (sort === 'price-desc') return (b.price || 0) - (a.price || 0);
                 return 0;
               })
+<<<<<<< HEAD
               .map((product) => {
                 const inStock = product.quantity > 0;
                 const quickAdd = !!quickAddMap[product.id];
@@ -233,6 +323,45 @@ useEffect(() => {
                         loading="lazy"
                         sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 220px"
                       />
+=======
+              .map((product) => (
+              <div
+                key={product.id}
+                className="product-card"
+                style={{
+                  border: '1px solid #e0e0e0',
+                  borderRadius: '10px',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                  overflow: 'hidden',
+                  background: '#fff',
+                  minHeight: '260px',
+                  fontSize: '0.97rem',
+                }}
+              >
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  style={{ width: '100%', height: '120px', objectFit: 'cover', background: '#f8f8f8' }}
+                />
+                <div style={{ padding: '0.6rem' }}>
+                  <h3 style={{ margin: '0 0 0.3rem 0', color: '#333',fontSize: '1rem' }}>{product.name}</h3>
+                  <div style={{ color: '#333', fontWeight: 600, marginTop: 6, fontSize: '0.95rem' }}>
+                    {(!isNaN(Number(product.price)) && product.price !== null && product.price !== undefined) ? `$${Number(product.price).toFixed(2)}` : 'Price N/A'}
+                    {product.quantity !== undefined && (
+                      <span style={{
+                        fontSize: '0.9em',
+                        color: product.quantity > 0 ? '#28a745' : '#d32f2f',
+                        fontWeight: 600,
+                        marginLeft: 6
+                      }}>
+                        {product.quantity > 0 ? 'In Stock' : 'Out of Stock'}
+                      </span>
+                    )}
+                  </div>
+                  {product.category && (
+                    <div style={{ fontSize: '0.85em', color: '#888', marginTop: 2 }}>
+                      Category: {product.category}
+>>>>>>> restore-from-283180cd
                     </div>
                     <div className="body" style={{ flex: 1 }}>
                       <h3 className="title" style={{ margin: 0, fontSize: '1.1rem', color: '#222' }}>{product.name}</h3>
@@ -345,10 +474,119 @@ useEffect(() => {
                         </div>
                       )}
                     </div>
+<<<<<<< HEAD
                   </div>
                 );
               })}
           </div>
+=======
+                  )}
+                </div>
+                <div style={{ display: 'flex', borderTop: '1px solid #eee', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                  <Link
+                    to={`/product/${product.id}`}
+                    className="btn secondary"
+                    style={{
+                      padding: '0.75rem 0',
+                      border: 'none',
+                      background: '#f0f0f0',
+                      color: '#333',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      borderBottomLeftRadius: '12px',
+                      transition: 'background 0.2s, box-shadow 0.2s',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.10)',
+                      textAlign: 'center',
+                      textDecoration: 'none',
+                    }}
+                    onMouseOver={e => {
+                      e.currentTarget.style.background = '#e0e0e0';
+                      e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.13)';
+                    }}
+                    onMouseOut={e => {
+                      e.currentTarget.style.background = '#f0f0f0';
+                      e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.10)';
+                    }}
+                  >
+                    View
+                  </Link>
+                {getProductQuantity(cart, product.id) > 0 ? (
+                  <div style={{
+                    background: '#eafbe7',
+                    borderBottomRightRadius: '12px',
+                    borderLeft: '1px solid #e0e0e0',
+                    padding: '0.5rem 0',
+                    gap: 8,
+                  }}>
+                    <button
+                      style={{
+                        background: '#28a745',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: 6,
+                        width: 28,
+                        height: 28,
+                        fontWeight: 700,
+                        fontSize: '1.2rem',
+                        cursor: 'pointer',
+                        marginRight: 4,
+                      }}
+                      onClick={() => dispatch({ type: 'SUBTRACT_FROM_CART', product })}
+                      aria-label="Decrease quantity"
+                    >
+                      -
+                    </button>
+                    <span style={{ minWidth: 24, textAlign: 'center', fontWeight: 600, color: '#222' }}>{getProductQuantity(cart, product.id)}</span>
+                    <button
+                      style={{
+                        background: '#28a745',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: 6,
+                        width: 28,
+                        height: 28,
+                        fontWeight: 700,
+                        fontSize: '1.2rem',
+                        cursor: 'pointer',
+                        marginLeft: 4,
+                      }}
+                      onClick={() => dispatch({ type: 'ADD_TO_CART', product })}
+                      aria-label="Increase quantity"
+                    >
+                      +
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    style={{
+                      padding: '0.75rem 0',
+                      border: 'none',
+                      background: '#28a745',
+                      color: '#fff',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      borderBottomRightRadius: '12px',
+                      transition: 'background 0.2s, box-shadow 0.2s',
+                      boxShadow: '0 2px 8px rgba(40,167,69,0.18)',
+                    }}
+                    onMouseOver={e => {
+                      e.currentTarget.style.background = '#1e7e34';
+                      e.currentTarget.style.boxShadow = '0 4px 16px rgba(40,167,69,0.22)';
+                    }}
+                    onMouseOut={e => {
+                      e.currentTarget.style.background = '#28a745';
+                      e.currentTarget.style.boxShadow = '0 2px 8px rgba(40,167,69,0.18)';
+                    }}
+                    onClick={() => handleAddToCart(product)}
+                  >
+                    Add to Cart
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+>>>>>>> restore-from-283180cd
         )}
       </div>
       <Footer />

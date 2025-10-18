@@ -8,23 +8,27 @@ const initialState = {
 
 function cartReducer(state, action) {
   switch (action.type) {
-    case "ADD_TO_CART": {
-      const existing = state.items.find(i => i.product.id === action.product.id);
-      if (existing) {
+  // ...existing code...
+      case "ADD_TO_CART": {
+        const existing = state.items.find(i => i.product.id === action.product.id);
+        const available = Number(action.product.inventory ?? action.product.quantity ?? 0);
+        const addQty = action.quantity || 1;
+        if (existing) {
+          const newQty = existing.quantity + addQty;
+          return {
+            ...state,
+            items: state.items.map(i =>
+              i.product.id === action.product.id
+                ? { ...i, quantity: newQty > available ? available : newQty }
+                : i
+            ),
+          };
+        }
         return {
           ...state,
-          items: state.items.map(i =>
-            i.product.id === action.product.id
-              ? { ...i, quantity: i.quantity + (action.quantity || 1) }
-              : i
-          ),
+          items: [...state.items, { product: action.product, quantity: addQty > available ? available : addQty }],
         };
       }
-      return {
-        ...state,
-        items: [...state.items, { product: action.product, quantity: action.quantity || 1 }],
-      };
-    }
     case "SUBTRACT_FROM_CART": {
       const existing = state.items.find(i => i.product.id === action.product.id);
       if (existing && existing.quantity > 1) {

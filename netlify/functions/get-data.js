@@ -1,9 +1,9 @@
-// netlify/functions/get-data.mjs
-import { neon } from '@neondatabase/serverless';
+// netlify/functions/get-data.js
+const { neon } = require('@neondatabase/serverless');
 
 const sql = neon(process.env.DATABASE_URL);
 
-export const handler = async (event, context) => {
+exports.handler = async function(event, context) {
   try {
     const result = await sql`SELECT * FROM products;`;
     return {
