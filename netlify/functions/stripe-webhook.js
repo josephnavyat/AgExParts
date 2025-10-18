@@ -2,12 +2,14 @@ const { Client } = require('pg');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 exports.handler = async (event) => {
+  console.log('stripe-webhook function invoked');
   const sig = event.headers['stripe-signature'];
   let stripeEvent;
 
   try {
     stripeEvent = stripe.webhooks.constructEvent(event.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
   } catch (err) {
+    console.error('Stripe webhook constructEvent error:', err);
     return { statusCode: 400, body: `Webhook Error: ${err.message}` };
   }
 
