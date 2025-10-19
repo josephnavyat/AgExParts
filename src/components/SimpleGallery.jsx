@@ -50,7 +50,7 @@ export default function SimpleGallery() {
   const [page, setPage] = useState(1);
   const { dispatch } = useCart();
   return (
-    <div className="simple-gallery-root">
+  <div className="simple-gallery-root" role="main">
       <Navbar />
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 32, marginBottom: 16 }}>
         <h2 className="simple-gallery-title" style={{ flex: 1, textAlign: 'center', margin: 0 }}>Agex Parts</h2>
@@ -72,6 +72,8 @@ export default function SimpleGallery() {
         <button
           className="simple-gallery-filter-toggle"
           aria-label={filterOpen ? 'Hide Filters' : 'Show Filters'}
+          aria-pressed={filterOpen}
+          aria-controls="gallery-filter-pane"
           onClick={() => setFilterOpen((v) => !v)}
           style={{
             position: 'fixed',
@@ -104,7 +106,11 @@ export default function SimpleGallery() {
     {/* Removed old toggle button, now handled above with icon */}
         {/* Slide-in filter pane */}
         <aside
+          id="gallery-filter-pane"
           className={`simple-gallery-filter-pane${!filterOpen ? ' simple-gallery-filter-pane--closed' : ''}`}
+          aria-label="Product Filters"
+          aria-hidden={!filterOpen}
+          tabIndex={filterOpen ? 0 : -1}
           style={{
             position: 'fixed',
             left: filterOpen ? 0 : -340,
@@ -277,7 +283,7 @@ export default function SimpleGallery() {
                   }
                 })()}
               </div>
-              <div className="simple-gallery-card-actions" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', margin: '10px 8px 0 8px', gap: 10 }}>
+              <div className="simple-gallery-card-actions" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', margin: '10px 8px 0 8px', gap: 10 }} role="group" aria-label="Product Actions">
                   <div style={{ display: 'flex', flexDirection: 'row', gap: 8, marginTop: 12, justifyContent: 'center', alignItems: 'center' }}>
                     <Link
                       to={`/product/${product.id}`}
@@ -290,6 +296,7 @@ export default function SimpleGallery() {
                       className="simple-gallery-btn primary"
                       onClick={() => dispatch({ type: "ADD_TO_CART", product })}
                       title="Add to Cart"
+                      aria-label={Number(product.inventory ?? product.quantity ?? 0) === 0 ? 'Out of Stock' : 'Add to Cart'}
                       style={{ flex: 1, minWidth: 0, height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: Number(product.inventory ?? product.quantity ?? 0) === 0 ? 0.5 : 1, pointerEvents: Number(product.inventory ?? product.quantity ?? 0) === 0 ? 'none' : 'auto' }}
                       disabled={Number(product.inventory ?? product.quantity ?? 0) === 0}
                     >
