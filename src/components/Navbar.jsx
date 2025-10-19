@@ -6,19 +6,6 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [searchValue, setSearchValue] = useState("");
-  const [productNames, setProductNames] = useState([]);
-
-  useEffect(() => {
-    // Fetch product names for search autofill
-    fetch('/.netlify/functions/get-data')
-      .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data)) {
-          setProductNames([...new Set(data.map(p => p.name).filter(Boolean))]);
-        }
-      })
-      .catch(() => setProductNames([]));
-  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -35,7 +22,10 @@ export default function Navbar() {
       <nav id="nav" className={`nav ${scrolled ? 'scrolled' : ''}${showSearch ? ' nav--search-open' : ''}`}> 
         <div className="container nav-inner" style={{ flexWrap: 'wrap', alignItems: 'center' }}>
           <div className="brand">
-            <img src="/logo.png" alt="AgEx Parts logo" style={{ height: '80px', width: 'auto' }} />
+            <picture>
+              <source srcSet={"/logo.webp"} type="image/webp" />
+              <img src="/logo.png" alt="AgEx Parts logo" style={{ height: '80px', width: 'auto' }} srcSet={"/logo.png 1x, /logo@2x.png 2x"} />
+            </picture>
             <h1 className="distressed">For your ideal PART</h1>
           </div>
           <div className="nav-cta" style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
@@ -115,7 +105,6 @@ export default function Navbar() {
                 placeholder="Search for parts..."
                 value={searchValue}
                 onChange={e => setSearchValue(e.target.value)}
-                list="navbar-product-names-list"
                 style={{
                   padding: '0.75rem 1rem',
                   fontSize: '1.1rem',
@@ -127,11 +116,6 @@ export default function Navbar() {
                   flex: 1
                 }}
               />
-              <datalist id="navbar-product-names-list">
-                {productNames.map(name => (
-                  <option key={name} value={name} />
-                ))}
-              </datalist>
               <button
                 type="submit"
                 style={{

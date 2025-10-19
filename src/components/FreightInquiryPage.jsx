@@ -44,7 +44,16 @@ export default function FreightInquiryPage() {
           {cart.items.map(({ product, quantity }) => (
             <div key={product.id} className="cart-card" style={{ display: 'flex', alignItems: 'center', background: '#f8f8f8', borderRadius: 12, padding: '1rem', boxShadow: '0 1px 4px #eee', width: '100%' }}>
               {product.image && (
-                <img src={product.image.startsWith('http') ? product.image : `https://agexparts.netlify.app${product.image}`} alt={product.name} style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 8, boxShadow: '0 1px 4px #ccc', marginRight: 16 }} />
+                <picture>
+                  <source srcSet={(product.image.startsWith('http') ? product.image : `https://agexparts.netlify.app${product.image}`).replace(/\.(jpg|jpeg|png)$/i, '.webp')} type="image/webp" />
+                  <img 
+                    src={product.image.startsWith('http') ? product.image : `https://agexparts.netlify.app${product.image}`} 
+                    alt={product.name} 
+                    style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 8, boxShadow: '0 1px 4px #ccc', marginRight: 16 }} 
+                    loading="lazy"
+                    srcSet={(product.image.startsWith('http') ? product.image : `https://agexparts.netlify.app${product.image}`) + ' 1x, ' + (product.image.startsWith('http') ? product.image : `https://agexparts.netlify.app${product.image}`).replace(/\.(jpg|jpeg|png)$/i, '@2x.$1') + ' 2x'}
+                  />
+                </picture>
               )}
               <div style={{ flex: 1 }}>
                 <span className="cart-product-name" style={{ fontWeight: 700, fontSize: '1.05rem', display: 'block', marginBottom: 2 }}>

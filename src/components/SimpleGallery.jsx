@@ -222,7 +222,16 @@ export default function SimpleGallery() {
             const end = start + perPage;
             return filtered.slice(start, end).map((product) => (
             <div key={product.id} className="simple-gallery-card">
-              <img src={product.image} alt={product.name} />
+              <picture>
+                <source srcSet={product.image.replace(/\.(jpg|jpeg|png)$/i, '.webp')} type="image/webp" />
+                <img 
+                  src={product.image} 
+                  alt={product.name} 
+                  style={{ width: '100%', height: 'auto', objectFit: 'contain', background: '#f8f8f8', borderRadius: 10 }} 
+                  loading="lazy"
+                  srcSet={product.image + ' 1x, ' + product.image.replace(/\.(jpg|jpeg|png)$/i, '@2x.$1') + ' 2x'}
+                />
+              </picture>
               {product.sku && (
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, fontWeight: 400, fontSize: '1.15rem', color: '#dededeff', margin: '2px 0 0 0' }}>
                   <span>{product.sku}</span>

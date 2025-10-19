@@ -308,11 +308,16 @@ useEffect(() => {
                   fontSize: '0.97rem',
                 }}
               >
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  style={{ width: '100%', height: '120px', objectFit: 'cover', background: '#f8f8f8' }}
-                />
+                <picture>
+                  <source srcSet={product.image.replace(/\.(jpg|jpeg|png)$/i, '.webp')} type="image/webp" />
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    style={{ width: '100%', height: '120px', objectFit: 'cover', background: '#f8f8f8' }}
+                    loading="lazy"
+                    srcSet={product.image + ' 1x, ' + product.image.replace(/\.(jpg|jpeg|png)$/i, '@2x.$1') + ' 2x'}
+                  />
+                </picture>
                 <div style={{ padding: '0.6rem' }}>
                   <h3 style={{ margin: '0 0 0.3rem 0', color: '#333',fontSize: '1rem' }}>{product.name}</h3>
                   <div style={{ color: '#333', fontWeight: 600, marginTop: 6, fontSize: '0.95rem' }}>

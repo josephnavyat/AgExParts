@@ -54,7 +54,16 @@ export default function SearchResults() {
           ) : (
             filtered.map(product => (
               <div key={product.id} className="simple-gallery-card">
-                <img src={product.image} alt={product.name} />
+                <picture>
+                  <source srcSet={product.image.replace(/\.(jpg|jpeg|png)$/i, '.webp')} type="image/webp" />
+                  <img 
+                    src={product.image} 
+                    alt={product.name} 
+                    style={{ width: '100%', height: 'auto', objectFit: 'contain', background: '#f8f8f8', borderRadius: 10 }} 
+                    loading="lazy"
+                    srcSet={product.image + ' 1x, ' + product.image.replace(/\.(jpg|jpeg|png)$/i, '@2x.$1') + ' 2x'}
+                  />
+                </picture>
                 <h3 className="simple-gallery-card-title">{product.name}</h3>
                 <div className="simple-gallery-card-price" style={{ margin: '8px 0 0 0', fontSize: '1.15rem', fontWeight: 700 }}>
                   ${Number(product.price).toFixed(2)}
