@@ -86,7 +86,7 @@ export default function ProductDetail() {
         <div style={{ textAlign: 'center', color: 'red' }}>{error}</div>
       ) : product ? (
         <div className="product-detail-card" style={{
-          maxWidth: 700,
+          maxWidth: '95vw',
           margin: '2rem auto',
           background: '#fff',
           borderRadius: 18,
@@ -99,7 +99,7 @@ export default function ProductDetail() {
           {/* Main Product Info */}
           <div style={{
             width: '100%',
-            maxWidth: 420,
+            maxWidth: '90vw',
             aspectRatio: '4/3',
             background: '#f8f8f8',
             borderRadius: 16,
