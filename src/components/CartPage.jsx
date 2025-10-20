@@ -139,18 +139,16 @@ export default function CartPage() {
                 <div key={product.id} className="cart-card" style={{ display: 'flex', flexDirection: 'column', background: '#f8f8f8', borderRadius: 12, padding: '1rem', boxShadow: '0 1px 4px #eee', width: '100%' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                     {product.image && (
-                      <picture>
-                        <source srcSet={getImageUrl(product.image).replace(/\.(jpg|jpeg|png)$/i, '.webp')} type="image/webp" />
+                      <>
                         <img 
                           src={getImageUrl(product.image)} 
                           alt={product.name} 
                           style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 8, boxShadow: '0 1px 4px #ccc' }} 
                           loading="lazy"
-                          srcSet={getImageUrl(product.image) + ' 1x, ' + getImageUrl(product.image).replace(/\.(jpg|jpeg|png)$/i, '@2x.$1') + ' 2x'}
                           onError={e => { console.log('Image error:', product.image, getImageUrl(product.image)); e.currentTarget.src = '/logo.png'; }}
                         />
                         <span style={{fontSize:'0.7em',color:'#d32f2f'}}>{getImageUrl(product.image)}</span>
-                      </picture>
+                      </>
                     )}
                     <div style={{ flex: 1 }}>
                       <span className="cart-product-name" style={{ fontWeight: 700, fontSize: '1.05rem', display: 'block', marginBottom: 2 }}>
