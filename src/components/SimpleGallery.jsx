@@ -246,6 +246,7 @@ export default function SimpleGallery() {
             return filtered.slice(start, end).map((product) => (
             <div key={product.id} className="simple-gallery-card">
               <picture>
+                <source srcSet={product.image.replace(/\.(jpg|jpeg|png)$/i, '.webp')} type="image/webp" />
                 <img 
                   src={product.image} 
                   alt={product.name} 
