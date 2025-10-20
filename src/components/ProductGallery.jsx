@@ -1,5 +1,18 @@
 
 import React, { useEffect, useState } from "react";
+// Simple cart SVG icon
+const CartIcon = ({ size = 18, color = '#28a745', style = {} }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    fill={color}
+    viewBox="0 0 24 24"
+    style={{ verticalAlign: 'middle', ...style }}
+  >
+    <path d="M7 18c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2zm10 0c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2zM7.334 16h9.332c.828 0 1.554-.522 1.847-1.303l3.484-8.707A1 1 0 0 0 21 5H6.21l-.94-2.342A1 1 0 0 0 4.342 2H1a1 1 0 1 0 0 2h2.382l3.6 8.99-1.357 2.444C4.52 16.316 5.48 18 7.334 18zm12.362-10l-2.93 7.333A1 1 0 0 1 15.834 14H7.334a1 1 0 0 1-.894-1.447l1.357-2.444A1 1 0 0 0 7.334 9h10.332l2.03-5z"/>
+  </svg>
+);
 import { useCart } from "./CartContext.jsx";
 import { getProductQuantity } from "./CartContext.jsx";
 import { Link } from "react-router-dom";
@@ -392,6 +405,10 @@ useEffect(() => {
                         fontSize: '1.2rem',
                         cursor: 'pointer',
                         marginRight: 4,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        position: 'relative',
                       }}
                       onClick={() => dispatch({ type: 'SUBTRACT_FROM_CART', product })}
                       aria-label="Decrease quantity"
@@ -411,11 +428,16 @@ useEffect(() => {
                         fontSize: '1.2rem',
                         cursor: 'pointer',
                         marginLeft: 4,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        position: 'relative',
                       }}
                       onClick={() => dispatch({ type: 'ADD_TO_CART', product })}
                       aria-label="Increase quantity"
                     >
-                      +
+                      <CartIcon size={16} color="#fff" style={{ position: 'absolute', left: 3, top: 3 }} />
+                      <span style={{ marginLeft: 10 }}>+</span>
                     </button>
                   </div>
                 ) : (
@@ -430,6 +452,10 @@ useEffect(() => {
                       borderBottomRightRadius: '12px',
                       transition: 'background 0.2s, box-shadow 0.2s',
                       boxShadow: '0 2px 8px rgba(40,167,69,0.18)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: 8,
                     }}
                     onMouseOver={e => {
                       e.currentTarget.style.background = '#1e7e34';
@@ -441,7 +467,8 @@ useEffect(() => {
                     }}
                     onClick={() => handleAddToCart(product)}
                   >
-                    Add to Cart
+                    <CartIcon size={18} color="#fff" />
+                    <span>Add to Cart</span>
                   </button>
                 )}
               </div>
