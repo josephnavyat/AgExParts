@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from "react";
 // Unify image path logic with CartPage
-const getImageUrl = (img) => img && img.startsWith('http') ? img : (img ? `https://agexparts.netlify.app${img}` : '/logo.png');
+const getImageUrl = (img) => img && img.startsWith('http') ? img : (img ? img : '/logo.png');
 // Simple cart SVG icon
 const CartIcon = ({ size = 18, color = '#28a745', style = {} }) => (
   <svg
