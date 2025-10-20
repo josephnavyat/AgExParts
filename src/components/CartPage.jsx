@@ -147,7 +147,6 @@ export default function CartPage() {
                           loading="lazy"
                           onError={e => { console.log('Image error:', product.image, getImageUrl(product.image)); e.currentTarget.src = '/logo.png'; }}
                         />
-                        <span style={{fontSize:'0.7em',color:'#d32f2f'}}>{getImageUrl(product.image)}</span>
                       </>
                     )}
                     <div style={{ flex: 1 }}>
