@@ -147,8 +147,9 @@ export default function CartPage() {
                           style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 8, boxShadow: '0 1px 4px #ccc' }} 
                           loading="lazy"
                           srcSet={getImageUrl(product.image) + ' 1x, ' + getImageUrl(product.image).replace(/\.(jpg|jpeg|png)$/i, '@2x.$1') + ' 2x'}
-                          onError={e => { e.currentTarget.src = '/logo.png'; }}
+                          onError={e => { console.log('Image error:', product.image, getImageUrl(product.image)); e.currentTarget.src = '/logo.png'; }}
                         />
+                        <span style={{fontSize:'0.7em',color:'#d32f2f'}}>{getImageUrl(product.image)}</span>
                       </picture>
                     )}
                     <div style={{ flex: 1 }}>
