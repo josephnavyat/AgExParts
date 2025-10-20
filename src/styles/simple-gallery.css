@@ -384,6 +384,28 @@
   font-size: 0.97rem;
   margin-bottom: 18px;
   text-align: center;
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.2rem 1rem;
+  margin: 0 auto;
+  max-width: 1400px;
+}
+
+@media (min-width: 900px) {
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.1rem 0.8rem;
+    max-width: 1600px;
+  }
+}
+
+.product-card {
+  min-width: 0;
+  max-width: 220px;
+  min-height: 200px;
+  font-size: 0.93rem;
+}
   cursor: pointer;
   overflow: hidden;
   text-overflow: ellipsis;
