@@ -49,8 +49,25 @@ export default function SimpleGallery() {
   const [perPage, setPerPage] = useState(50);
   const [page, setPage] = useState(1);
   const { dispatch } = useCart();
+  if (loading) {
+    return (
+      <div className="simple-gallery-root" role="main" style={{color:'#fff',textAlign:'center',padding:'4rem 0'}}>
+        <Navbar />
+        <h2>Loading products…</h2>
+      </div>
+    );
+  }
+  if (error) {
+    return (
+      <div className="simple-gallery-root" role="main" style={{color:'#fff',textAlign:'center',padding:'4rem 0'}}>
+        <Navbar />
+        <h2>Failed to load products</h2>
+        <div style={{color:'#f88',marginTop:'1rem'}}>{error}</div>
+      </div>
+    );
+  }
   return (
-  <div className="simple-gallery-root" role="main">
+    <div className="simple-gallery-root" role="main">
       <Navbar />
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 32, marginBottom: 16 }}>
         <h2 className="simple-gallery-title" style={{ flex: 1, textAlign: 'center', margin: 0 }}>Agex Parts</h2>
