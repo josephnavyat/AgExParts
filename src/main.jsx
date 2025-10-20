@@ -36,5 +36,30 @@ function CartPageWrapper() {
 
 
 createRoot(document.getElementById('root')).render(
-  <div style={{color: 'red', fontSize: '2rem', textAlign: 'center', marginTop: '4rem'}}>Hello World</div>
+  <React.StrictMode>
+    <CartProvider>
+      <BrowserRouter>
+        <Suspense fallback={<div style={{textAlign:'center',marginTop:'3rem'}}>Loading...</div>}>
+          <Layout>
+            <Routes>
+              <Route path="/" element={<App />} />
+              <Route path="/catalog" element={<SimpleGallery />} />
+              <Route path="/product/:id" element={<ProductDetail />} />
+              <Route path="/cart" element={<CartPageWrapper />} />
+              <Route path="/simple-gallery" element={<SimpleGallery />} />
+              <Route path="/success" element={<OrderSuccess />} />
+              <Route path="/cancel" element={<FailurePage />} />
+              <Route path="/search-results" element={<SearchResults />} />
+              <Route path="/freight-inquiry" element={<FreightInquiryPage />} />
+              <Route path="/contact-parts-specialist" element={<ContactPartsSpecialist />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/orders" element={<OrdersDashboard />} />
+              <Route path="/recover-password" element={<RecoverPassword />} />
+              <Route path="/freight-order-confirmation" element={<FreightOrderConfirmation />} />
+            </Routes>
+          </Layout>
+        </Suspense>
+      </BrowserRouter>
+    </CartProvider>
+  </React.StrictMode>
 );

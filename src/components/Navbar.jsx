@@ -22,10 +22,7 @@ export default function Navbar() {
       <nav id="nav" className={`nav ${scrolled ? 'scrolled' : ''}${showSearch ? ' nav--search-open' : ''}`}> 
         <div className="container nav-inner" style={{ flexWrap: 'wrap', alignItems: 'center' }}>
           <div className="brand">
-            <picture>
-              <source srcSet={"/logo.webp"} type="image/webp" />
-              <img src="/logo.png" alt="AgEx Parts logo" style={{ height: '80px', width: 'auto' }} srcSet={"/logo.png 1x, /logo@2x.png 2x"} />
-            </picture>
+            <img src="/logo.png" alt="AgEx Parts logo" style={{ height: '80px', width: 'auto' }} />
             <h1 className="distressed">For your ideal PART</h1>
           </div>
           <div className="nav-cta" style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
