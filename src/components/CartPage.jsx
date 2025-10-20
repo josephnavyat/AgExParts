@@ -58,7 +58,7 @@ function StripeCheckoutButton({ cart, disabled }) {
   );
 }
 
-const getImageUrl = (img) => img && img.startsWith('http') ? img : (img ? `https://agexparts.netlify.app${img}` : '');
+const getImageUrl = (img) => img && img.startsWith('http') ? img : (img ? img : '/logo.png');
 
 function calculateShipping(cartItems) {
   const totalWeight = cartItems.reduce((sum, i) => sum + ((i.product.weight || 0) * i.quantity), 0);
@@ -147,6 +147,7 @@ export default function CartPage() {
                           style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 8, boxShadow: '0 1px 4px #ccc' }} 
                           loading="lazy"
                           srcSet={getImageUrl(product.image) + ' 1x, ' + getImageUrl(product.image).replace(/\.(jpg|jpeg|png)$/i, '@2x.$1') + ' 2x'}
+                          onError={e => { e.currentTarget.src = '/logo.png'; }}
                         />
                       </picture>
                     )}

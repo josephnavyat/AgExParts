@@ -1,5 +1,7 @@
 
 import React, { useEffect, useState } from "react";
+// Unify image path logic with CartPage
+const getImageUrl = (img) => img && img.startsWith('http') ? img : (img ? `https://agexparts.netlify.app${img}` : '/logo.png');
 // Simple cart SVG icon
 const CartIcon = ({ size = 18, color = '#28a745', style = {} }) => (
   <svg
@@ -322,13 +324,14 @@ useEffect(() => {
                 }}
               >
                 <picture>
-                  <source srcSet={product.image.replace(/\.(jpg|jpeg|png)$/i, '.webp')} type="image/webp" />
+                  <source srcSet={getImageUrl(product.image).replace(/\.(jpg|jpeg|png)$/i, '.webp')} type="image/webp" />
                   <img
-                    src={product.image}
+                    src={getImageUrl(product.image)}
                     alt={product.name}
                     style={{ width: '100%', height: '120px', objectFit: 'cover', background: '#f8f8f8' }}
                     loading="lazy"
-                    srcSet={product.image + ' 1x, ' + product.image.replace(/\.(jpg|jpeg|png)$/i, '@2x.$1') + ' 2x'}
+                    srcSet={getImageUrl(product.image) + ' 1x, ' + getImageUrl(product.image).replace(/\.(jpg|jpeg|png)$/i, '@2x.$1') + ' 2x'}
+                    onError={e => { e.currentTarget.src = '/logo.png'; }}
                   />
                 </picture>
                 <div style={{ padding: '0.6rem' }}>
