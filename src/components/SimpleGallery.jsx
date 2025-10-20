@@ -250,7 +250,7 @@ export default function SimpleGallery() {
                   )}
                 </div>
               )}
-              <h3 className="simple-gallery-card-title">{product.name}</h3>
+              <h3 className="simple-gallery-card-title" title={product.name}>{product.name}</h3>
               <div style={{ textAlign: 'center', fontSize: '1.05rem', color: '#888', margin: '4px 0 0 0' }}>{product.part_number}</div>
               <div className="simple-gallery-card-price" style={{ margin: '8px 0 0 0', fontSize: '1.15rem', fontWeight: 700 }}>
                 {(() => {
