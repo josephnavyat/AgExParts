@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { useCart } from "./CartContext.jsx";
+import { useCart, getProductQuantity } from "./CartContext.jsx";
 import { Link } from "react-router-dom";
 import Navbar from "./Navbar.jsx";
 import "../styles/simple-gallery.css";
@@ -48,7 +48,7 @@ export default function SimpleGallery() {
   // Pagination state
   const [perPage, setPerPage] = useState(50);
   const [page, setPage] = useState(1);
-  const { dispatch } = useCart();
+  const { dispatch, cart } = useCart();
   return (
   <div className="simple-gallery-root" role="main">
       <Navbar />
@@ -286,16 +286,55 @@ export default function SimpleGallery() {
                 >
                   View Details
                 </Link>
-                <button
-                  className="simple-gallery-btn primary"
-                  onClick={() => dispatch({ type: "ADD_TO_CART", product })}
-                  title="Add to Cart"
-                  aria-label={Number(product.inventory ?? product.quantity ?? 0) === 0 ? 'Out of Stock' : 'Add to Cart'}
-                  style={{ width: '48%', minWidth: 110, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, fontSize: '1.05rem', opacity: Number(product.inventory ?? product.quantity ?? 0) === 0 ? 0.5 : 1, pointerEvents: Number(product.inventory ?? product.quantity ?? 0) === 0 ? 'none' : 'auto' }}
-                  disabled={Number(product.inventory ?? product.quantity ?? 0) === 0}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-shopping-cart"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61l1.38-7.39H6"></path></svg>
-                </button>
+                {(() => {
+                  const qty = getProductQuantity(cart, product.id);
+                  return (
+                    <button
+                      className="simple-gallery-btn primary"
+                      onClick={() => dispatch({ type: "ADD_TO_CART", product })}
+                      title="Add to Cart"
+                      aria-label={Number(product.inventory ?? product.quantity ?? 0) === 0 ? 'Out of Stock' : 'Add to Cart'}
+                      style={{
+                        width: '48%',
+                        minWidth: 110,
+                        height: 44,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 8,
+                        fontSize: '1.05rem',
+                        opacity: Number(product.inventory ?? product.quantity ?? 0) === 0 ? 0.5 : 1,
+                        pointerEvents: Number(product.inventory ?? product.quantity ?? 0) === 0 ? 'none' : 'auto',
+                        background: qty > 0 ? '#28a745' : '',
+                        color: qty > 0 ? '#fff' : '',
+                        position: 'relative',
+                      }}
+                      disabled={Number(product.inventory ?? product.quantity ?? 0) === 0}
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-shopping-cart"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61l1.38-7.39H6"></path></svg>
+                      {qty > 0 && (
+                        <span style={{
+                          position: 'absolute',
+                          top: 4,
+                          right: 8,
+                          background: '#fff',
+                          color: '#28a745',
+                          borderRadius: '50%',
+                          fontSize: '0.85em',
+                          fontWeight: 700,
+                          minWidth: 18,
+                          height: 18,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          boxShadow: '0 1px 4px #bbb',
+                          border: '2px solid #28a745',
+                          zIndex: 2,
+                        }}>{qty}</span>
+                      )}
+                    </button>
+                  );
+                })()}
               </div>
             </div>
             ));
