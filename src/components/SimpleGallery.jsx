@@ -52,16 +52,15 @@ export default function SimpleGallery() {
   return (
   <div className="simple-gallery-root" role="main">
       <Navbar />
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 32, marginBottom: 16 }}>
-        <h2 className="simple-gallery-title" style={{ flex: 1, textAlign: 'center', margin: 0 }}>Agex Parts</h2>
-        <div style={{ minWidth: 180, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 8 }}>
-          <label className="filter-label" htmlFor="perPageSelect" style={{ marginRight: 6, marginTop: 0 }}>Show:</label>
+      <div className="simple-gallery-header">
+        <h2 className="simple-gallery-title">Agex Parts</h2>
+        <div className="simple-gallery-perpage">
+          <label className="filter-label" htmlFor="perPageSelect">Show:</label>
           <select
             id="perPageSelect"
             className="filter-select"
             value={perPage}
             onChange={e => { setPerPage(Number(e.target.value)); setPage(1); }}
-            style={{ minWidth: 90 }}
           >
             {[24, 48, 72, 96].map(n => (
               <option key={n} value={n}>{n} per page</option>
