@@ -98,14 +98,14 @@
 }
 
 :root {
-  --gallery-bg: #181c24;
-  /* subtle translucent card background for modern frosted look */
-  /* slightly lighter translucent card background for modern frosted look */
-  --gallery-card-bg: rgba(255,255,255,0.18);
+  /* much lighter overall background */
+  --gallery-bg: #f5f7fa;
+  /* nearly white card with very subtle translucency */
+  --gallery-card-bg: rgba(255,255,255,0.96);
   --gallery-card-radius: 12px;
-  --gallery-card-shadow: 0 1px 6px rgba(16,24,40,0.04);
-  --gallery-title: #dcdcdc;
-  --gallery-text: #222;
+  --gallery-card-shadow: 0 1px 4px rgba(16,24,40,0.03);
+  --gallery-title: #111827;
+  --gallery-text: #111827;
   --gallery-accent: #19a974;
   --gallery-btn-bg: #19a974;
   --gallery-btn-text: #fff;
