@@ -99,7 +99,8 @@
 :root {
   --gallery-bg: #181c24;
   /* subtle translucent card background for modern frosted look */
-  --gallery-card-bg: rgba(255,255,255,0.06);
+  /* slightly lighter translucent card background for modern frosted look */
+  --gallery-card-bg: rgba(255,255,255,0.11);
   --gallery-card-radius: 12px;
   --gallery-card-shadow: 0 2px 12px rgba(16,24,40,0.06);
   --gallery-title: #dcdcdc;
@@ -341,7 +342,7 @@
 
 .simple-gallery-card {
   background: var(--gallery-card-bg);
-  border: 1px solid rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.10);
   backdrop-filter: blur(6px) saturate(120%);
   -webkit-backdrop-filter: blur(6px) saturate(120%);
   border-radius: var(--gallery-card-radius);
@@ -387,7 +388,7 @@
 
 /* SKU style */
 .simple-gallery-sku {
-  color: rgba(255,255,255,0.85);
+  color: var(--gallery-text);
   font-weight: 400;
   letter-spacing: 0.02em;
   font-size: 1.1rem;
@@ -398,7 +399,7 @@
 .simple-gallery-part-number {
   text-align: center;
   font-size: 1.05rem;
-  color: rgba(255,255,255,0.8);
+  color: var(--gallery-text);
   margin-top: 4px;
 }
 
