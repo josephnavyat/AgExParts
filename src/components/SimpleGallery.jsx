@@ -284,7 +284,7 @@ export default function SimpleGallery() {
                 <Link
                   to={`/product/${product.id}`}
                   className="simple-gallery-btn secondary"
-                  style={{ width: '48%', minWidth: 110, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: 6, fontSize: '1.05rem' }}
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: 6 }}
                 >
                   View Details
                 </Link>
@@ -297,14 +297,10 @@ export default function SimpleGallery() {
                       title="Add to Cart"
                       aria-label={Number(product.inventory ?? product.quantity ?? 0) === 0 ? 'Out of Stock' : 'Add to Cart'}
                       style={{
-                        width: '48%',
-                        minWidth: 110,
-                        height: 44,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         gap: 8,
-                        fontSize: '1.05rem',
                         opacity: Number(product.inventory ?? product.quantity ?? 0) === 0 ? 0.5 : 1,
                         pointerEvents: Number(product.inventory ?? product.quantity ?? 0) === 0 ? 'none' : 'auto',
                         background: qty > 0 ? '#28a745' : '',
