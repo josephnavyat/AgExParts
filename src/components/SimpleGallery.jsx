@@ -228,29 +228,16 @@ export default function SimpleGallery() {
             const end = start + perPage;
             return filtered.slice(start, end).map((product) => (
             <div key={product.id} className="simple-gallery-card">
-              <img 
-                src={getImageUrl(product.image)} 
-                alt={product.name} 
-                style={{ width: '100%', height: 'auto', objectFit: 'contain', background: '#f8f8f8', borderRadius: 10 }} 
-                loading="lazy"
-                onError={e => { e.currentTarget.src = '/logo.png'; }}
-              />
+              <div className="simple-gallery-image-wrapper">
+                <img 
+                  src={getImageUrl(product.image)} 
+                  alt={product.name} 
+                  loading="lazy"
+                  onError={e => { e.currentTarget.src = '/logo.png'; }}
+                />
+              </div>
               {product.sku && (
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, fontWeight: 400, fontSize: '1.15rem', color: '#dededeff', margin: '2px 0 0 0' }}>
-                  <span>{product.sku}</span>
-                  {Number(product.inventory ?? product.quantity ?? 0) > 0 ? (
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="#28a745" strokeWidth="2" style={{ verticalAlign: 'middle' }}>
-                      <circle cx="12" cy="12" r="10" stroke="#28a745" strokeWidth="2" fill="#fff"/>
-                      <path d="M8 12l2 2 4-4" stroke="#28a745" strokeWidth="2" fill="none"/>
-                    </svg>
-                  ) : (
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="#d32f2f" strokeWidth="2" style={{ verticalAlign: 'middle' }}>
-                      <circle cx="12" cy="12" r="10" stroke="#d32f2f" strokeWidth="2" fill="#fff"/>
-                      <line x1="8" y1="8" x2="16" y2="16" stroke="#d32f2f" strokeWidth="2"/>
-                      <line x1="16" y1="8" x2="8" y2="16" stroke="#d32f2f" strokeWidth="2"/>
-                    </svg>
-                  )}
-                </div>
+                <div className="simple-gallery-sku">{product.sku}</div>
               )}
               <h3 className="simple-gallery-card-title" title={product.name}>{product.name}</h3>
               <div style={{ textAlign: 'center', fontSize: '1.05rem', color: '#888', margin: '4px 0 0 0' }}>{product.part_number}</div>
@@ -311,24 +298,7 @@ export default function SimpleGallery() {
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-shopping-cart"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61l1.38-7.39H6"></path></svg>
                       {qty > 0 && (
-                        <span style={{
-                          position: 'absolute',
-                          top: 4,
-                          right: 8,
-                          background: '#fff',
-                          color: '#28a745',
-                          borderRadius: '50%',
-                          fontSize: '0.85em',
-                          fontWeight: 700,
-                          minWidth: 18,
-                          height: 18,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          boxShadow: '0 1px 4px #bbb',
-                          border: '2px solid #28a745',
-                          zIndex: 2,
-                        }}>{qty}</span>
+                        <span className="qty-bubble">{qty}</span>
                       )}
                     </button>
                   );
