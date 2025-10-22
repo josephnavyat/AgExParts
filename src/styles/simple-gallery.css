@@ -442,10 +442,11 @@
   padding: 10px 12px;
 }
 .simple-gallery-btn.primary {
-  background: var(--gallery-accent);
-  color: #fff;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.25);
-  border-radius: 10px;
+  background: var(--gallery-btn-bg);
+  color: var(--gallery-btn-text);
+  box-shadow: none; /* remove heavy shadow */
+  border: none; /* remove black/strong border */
+  border-radius: 12px; /* slightly more rounded */
   padding: 10px 12px;
 }
 
@@ -513,6 +514,21 @@
   box-shadow: 0 2px 8px #aaa;
 }
 
+/* Icon inside Add to Cart button */
+.simple-gallery-btn.primary .add-to-cart-icon {
+  stroke: white; /* icon uses currentColor normally; force white to match text */
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.add-to-cart-label { color: var(--gallery-btn-text); }
+
+.simple-gallery-btn.primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 @media (max-width: 700px) {
   .simple-gallery-card-actions {
     flex-direction: column;
@@ -545,16 +561,45 @@
   font-family: 'Bebas Neue', Impact, 'Arial Narrow Bold', sans-serif;
   font-size: clamp(2.2rem, 5vw, 3.6rem);
   letter-spacing: 0.04em;
-  color: #d3d3d3;
+  color: #222;
   margin-bottom: 0.2em;
   margin-top: 0.7em;
-  text-shadow: none;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.12);
   font-weight: 700;
   text-transform: uppercase;
   line-height: 1.1;
   /* Distressed effect */
   filter: contrast(1.2) grayscale(0.1);
   text-align: center;
+  /* metallic gradient */
+  background: linear-gradient(180deg, #4b4b4b 0%, #1f1f1f 40%, #3a3a3a 60%, #111111 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  position: relative;
+  /* subtle noise overlay via pseudo-element */
+}
+
+.simple-gallery-title::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(90deg, rgba(255,255,255,0.16), rgba(255,255,255,0.02), rgba(255,255,255,0.12));
+  mix-blend-mode: overlay;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.simple-gallery-title::before {
+  /* scratch texture and worn edges */
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='60'><g fill='none' stroke='%23000000' stroke-opacity='0.05' stroke-width='1'><path d='M2,10 C40,0 60,20 110,10 M10,40 C50,32 80,48 180,38' /></g></svg>");
+  background-repeat: repeat-x;
+  mix-blend-mode: multiply;
+  opacity: 0.35;
+  pointer-events: none;
 }
 
 .simple-gallery-grid {

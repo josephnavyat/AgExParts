@@ -279,12 +279,12 @@ export default function SimpleGallery() {
                         gap: 8,
                         opacity: Number(product.inventory ?? product.quantity ?? 0) === 0 ? 0.5 : 1,
                         pointerEvents: Number(product.inventory ?? product.quantity ?? 0) === 0 ? 'none' : 'auto',
-                        background: qty > 0 ? '#28a745' : '',
-                        color: qty > 0 ? '#fff' : '',
                         position: 'relative',
                       }}
                       disabled={Number(product.inventory ?? product.quantity ?? 0) === 0}
                     >
+                      {/* Cart icon (inline SVG) placed before text */}
+                      <svg className="add-to-cart-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1"></circle><circle cx="20" cy="20" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
                       <span className="add-to-cart-label" style={{ fontWeight: 800, fontSize: '0.98rem' }}>Add to Cart</span>
                       {qty > 0 && (
                         <span className="qty-bubble">{qty}</span>
