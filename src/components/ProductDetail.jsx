@@ -101,17 +101,17 @@ export default function ProductDetail() {
           {/* Main Product Info */}
           <div style={{
             width: '100%',
-            maxWidth: 520,
+            maxWidth: 260, // reduced to ~half
             aspectRatio: '4/3',
             background: '#f8f8f8',
-            borderRadius: 10,
+            borderRadius: 8,
             overflow: 'hidden',
-            marginBottom: 14,
+            marginBottom: 12,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             boxShadow: '0 1px 6px rgba(0,0,0,0.06)',
-            maxHeight: 420,
+            maxHeight: 210, // reduced to ~half
           }}>
             {/* Image carousel */}
             {images.length > 0 && (
