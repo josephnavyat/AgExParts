@@ -94,7 +94,7 @@
 
 :root {
   --gallery-bg: #181c24;
-  --gallery-card-bg: #f2f2f4;
+  --gallery-card-bg: #e9eaec;
   --gallery-card-radius: 12px;
   --gallery-card-shadow: 0 2px 12px rgba(16,24,40,0.06);
   --gallery-title: #dcdcdc;
@@ -376,10 +376,10 @@
 
 /* SKU style */
 .simple-gallery-sku {
-  color: var(--gallery-title);
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  font-size: 1.35rem;
+  color: #6b6b6b;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  font-size: 1.1rem;
   text-align: center;
   margin-bottom: 6px;
 }
@@ -607,8 +607,8 @@
 }
 
 .simple-gallery-card-title {
-  color: var(--gallery-text);
-  font-weight: 400;
+  color: #000;
+  font-weight: 800;
   font-size: clamp(0.92rem, 3.2vw, 1.08rem);
   margin-bottom: 16px;
   text-align: center;
