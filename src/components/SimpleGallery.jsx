@@ -297,7 +297,8 @@ export default function SimpleGallery() {
             ));
           })()}
         {/* Pagination controls */}
-  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '2rem auto 0 auto', gap: 12, width: '100%' }}>
+  <div className="simple-gallery-pagination">
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '2rem auto 0 auto', gap: 12, width: '100%' }}>
           {page > 1 && (
             <button className="simple-gallery-btn secondary" onClick={() => setPage(page - 1)}>&lt; Prev</button>
           )}
@@ -319,7 +320,8 @@ export default function SimpleGallery() {
             }).length > page * perPage && (
             <button className="simple-gallery-btn secondary" onClick={() => setPage(page + 1)}>Next &gt;</button>
           )}
-        </div>
+    </div>
+  </div>
       </div>
     </div>
     </div>);}
