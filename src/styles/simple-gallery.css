@@ -81,7 +81,7 @@
     max-width: 340px !important;
     height: fit-content !important;
     margin-top: 0 !important;
-    background: #3a3939 !important;
+  background: var(--gallery-card-bg) !important;
     border-radius: 18px !important;
     box-shadow: 0 2px 12px rgba(0,0,0,0.18) !important;
     transition: top 0.3s, left 0.3s !important;
@@ -93,17 +93,17 @@
 }
 
 :root {
-  --gallery-bg: #181c24;
-  --gallery-card-bg: #343635;
-  --gallery-card-radius: 14px;
-  --gallery-card-shadow: 0 2px 12px rgba(0,0,0,0.18);
-  --gallery-title: #f3f3f3;
-  --gallery-text: #c3c3c3;
+  --gallery-bg: #f6f7f9;
+  --gallery-card-bg: #f2f2f4;
+  --gallery-card-radius: 12px;
+  --gallery-card-shadow: 0 2px 12px rgba(16,24,40,0.06);
+  --gallery-title: #222;
+  --gallery-text: #333;
   --gallery-accent: #19a974;
   --gallery-btn-bg: #19a974;
   --gallery-btn-text: #fff;
-  --gallery-btn-secondary-bg: #1b1b1b;
-  --gallery-btn-secondary-text: #f3f3f3;
+  --gallery-btn-secondary-bg: #ffffff;
+  --gallery-btn-secondary-text: #222;
 }
 
 .simple-gallery-layout {
@@ -114,8 +114,8 @@
 }
 
 .simple-gallery-filter-pane {
-  background: #3a3939;
-  color: #f3f3f3;
+  background: var(--gallery-card-bg);
+  color: var(--gallery-text);
   min-width: 0;
   max-width: 100vw;
   width: 100%;
@@ -158,9 +158,9 @@
 .search-input {
   width: 100%;
   padding: 0.8rem 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(16,24,40,0.08);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.05);
+  background: #fff;
   color: var(--gallery-text);
   font-size: 0.95rem;
   transition: all 0.2s;
@@ -179,9 +179,9 @@
 .filter-select {
   width: 100%;
   padding: 0.8rem 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(16,24,40,0.08);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.05);
+  background: #fff;
   color: var(--gallery-text);
   cursor: pointer;
   font-size: 0.95rem;
