@@ -240,7 +240,7 @@ export default function SimpleGallery() {
                 <div className="simple-gallery-sku">{product.sku}</div>
               )}
               <h3 className="simple-gallery-card-title" title={product.name}>{product.name}</h3>
-              <div style={{ textAlign: 'center', fontSize: '1.05rem', color: '#888', margin: '4px 0 0 0' }}>{product.part_number}</div>
+              <div className="simple-gallery-part-number">{product.part_number}</div>
               <div className="simple-gallery-card-price" style={{ margin: '8px 0 0 0', fontSize: '1.15rem', fontWeight: 700 }}>
                 {(() => {
                   const price = Number(product.price);
@@ -252,18 +252,14 @@ export default function SimpleGallery() {
                     const salePrice = (price * (1 - discountPerc)).toFixed(2);
                     return (
                       <>
-                        <span style={{ textDecoration: 'line-through', color: '#fff', marginRight: 8, background: '#888', borderRadius: 4, padding: '2px 8px' }}>
-                          ${price.toFixed(2)}
-                        </span>
-                        <span style={{ color: '#d32f2f', fontWeight: 700, background: '#fff', borderRadius: 4, padding: '2px 8px' }}>
-                          ${salePrice}
-                        </span>
+                        <span className="price-original">${price.toFixed(2)}</span>
+                        <span className="price-current">${salePrice}</span>
                       </>
                     );
                   } else if (!isNaN(price)) {
-                    return <span style={{ color: '#fff', background: '#444a58', borderRadius: 4, padding: '2px 8px' }}>${price.toFixed(2)}</span>;
+                    return <span className="price-current">${price.toFixed(2)}</span>;
                   } else {
-                    return <span style={{ color: '#fff', background: '#444a58', borderRadius: 4, padding: '2px 8px' }}>Price N/A</span>;
+                    return <span className="price-current">Price N/A</span>;
                   }
                 })()}
               </div>

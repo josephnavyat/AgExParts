@@ -93,12 +93,12 @@
 }
 
 :root {
-  --gallery-bg: #f6f7f9;
+  --gallery-bg: #181c24;
   --gallery-card-bg: #f2f2f4;
   --gallery-card-radius: 12px;
   --gallery-card-shadow: 0 2px 12px rgba(16,24,40,0.06);
-  --gallery-title: #222;
-  --gallery-text: #333;
+  --gallery-title: #dcdcdc;
+  --gallery-text: #222;
   --gallery-accent: #19a974;
   --gallery-btn-bg: #19a974;
   --gallery-btn-text: #fff;
@@ -376,12 +376,35 @@
 
 /* SKU style */
 .simple-gallery-sku {
-  color: #dcdcdc;
+  color: var(--gallery-title);
   font-weight: 700;
   letter-spacing: 0.06em;
   font-size: 1.35rem;
   text-align: center;
   margin-bottom: 6px;
+}
+
+.simple-gallery-part-number {
+  text-align: center;
+  font-size: 1.05rem;
+  color: #666;
+  margin-top: 4px;
+}
+
+.price-original{
+  text-decoration: line-through;
+  color: #666;
+  margin-right: 8px;
+  background: transparent;
+  border-radius: 4px;
+  padding: 2px 8px;
+}
+.price-current{
+  color: #111;
+  background: transparent;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-weight: 800;
 }
 
 /* Price badge */
@@ -559,7 +582,7 @@
     min-width: 260px !important;
     max-width: 340px !important;
     display: block !important;
-    background: #3a3939 !important;
+  background: var(--gallery-card-bg) !important;
     border-radius: 18px !important;
     box-shadow: 0 2px 12px rgba(0,0,0,0.18) !important;
     height: fit-content !important;
@@ -577,14 +600,14 @@
   min-height: 100px;
   max-height: 140px;
   object-fit: contain;
-  background: #181c24;
-  border-radius: 10px;
+  background: transparent;
+  border-radius: 0;
   margin-bottom: 10px;
   flex-shrink: 0;
 }
 
 .simple-gallery-card-title {
-  color: #d3d3d3;
+  color: var(--gallery-text);
   font-weight: 400;
   font-size: clamp(0.92rem, 3.2vw, 1.08rem);
   margin-bottom: 16px;
