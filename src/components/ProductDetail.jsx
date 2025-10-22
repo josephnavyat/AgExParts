@@ -87,12 +87,13 @@ export default function ProductDetail() {
         <div style={{ textAlign: 'center', color: 'red' }}>{error}</div>
       ) : product ? (
         <div className="product-detail-card" style={{
-          maxWidth: '95vw',
-          margin: '2rem auto',
+          maxWidth: '1100px',
+          width: '100%',
+          margin: '1.5rem auto',
           background: '#fff',
-          borderRadius: 18,
-          boxShadow: '0 2px 16px rgba(0,0,0,0.10)',
-          padding: '2.5rem',
+          borderRadius: 14,
+          boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+          padding: '1.5rem',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -100,16 +101,17 @@ export default function ProductDetail() {
           {/* Main Product Info */}
           <div style={{
             width: '100%',
-            maxWidth: '90vw',
+            maxWidth: 720,
             aspectRatio: '4/3',
             background: '#f8f8f8',
-            borderRadius: 16,
+            borderRadius: 12,
             overflow: 'hidden',
-            marginBottom: 28,
+            marginBottom: 20,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 1px 8px rgba(0,0,0,0.06)'
+            boxShadow: '0 1px 8px rgba(0,0,0,0.06)',
+            maxHeight: 560,
           }}>
             {/* Image carousel */}
             {images.length > 0 && (
@@ -152,13 +154,13 @@ export default function ProductDetail() {
             )}
           </div>
           {product.sku && (
-            <div style={{ textAlign: 'center', color: '#444a58', fontWeight: 400, fontSize: '1.15rem', margin: '10px 0 2px 0' }}>
+            <div style={{ textAlign: 'center', color: '#444a58', fontWeight: 500, fontSize: '0.95rem', margin: '6px 0 4px 0' }}>
               {product.sku}
             </div>
           )}
-          <h2 className="distressed" style={{ fontSize: '2.2rem', marginBottom: 8, color: '#444a58' }}>{product.name}</h2>
-          <div style={{ color: '#888', fontSize: '1.1rem', marginBottom: 16 }}>{product.part_number}</div>
-          <div style={{ color: '#444a58', fontWeight: 600, fontSize: '1.3rem', marginBottom: 12 }}>
+          <h2 className="distressed" style={{ fontSize: '1.5rem', marginBottom: 6, color: '#333' }}>{product.name}</h2>
+          <div style={{ color: '#888', fontSize: '0.98rem', marginBottom: 12 }}>{product.part_number}</div>
+          <div style={{ color: '#444a58', fontWeight: 700, fontSize: '1.05rem', marginBottom: 10 }}>
             {(() => {
               const price = Number(product.price);
               const discountPerc = Number(product.discount_perc) || 0;
