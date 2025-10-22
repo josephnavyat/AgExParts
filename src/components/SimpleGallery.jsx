@@ -49,6 +49,7 @@ export default function SimpleGallery() {
   const [perPage, setPerPage] = useState(50);
   const [page, setPage] = useState(1);
   const { dispatch, cart } = useCart();
+  const getImageUrl = (img) => img && img.startsWith('http') ? img : (img ? img : '/logo.png');
   return (
   <div className="simple-gallery-root" role="main">
       <Navbar />
@@ -228,10 +229,11 @@ export default function SimpleGallery() {
             return filtered.slice(start, end).map((product) => (
             <div key={product.id} className="simple-gallery-card">
               <img 
-                src={product.image} 
+                src={getImageUrl(product.image)} 
                 alt={product.name} 
                 style={{ width: '100%', height: 'auto', objectFit: 'contain', background: '#f8f8f8', borderRadius: 10 }} 
                 loading="lazy"
+                onError={e => { e.currentTarget.src = '/logo.png'; }}
               />
               {product.sku && (
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, fontWeight: 400, fontSize: '1.15rem', color: '#dededeff', margin: '2px 0 0 0' }}>
