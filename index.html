@@ -12,7 +12,10 @@
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
     <script>
-      if ('serviceWorker' in navigator) {
+      // Register service worker only in production/non-local environments.
+      // This prevents a previously-registered SW (from production) from
+      // intercepting local dev requests and returning HTML for module imports.
+      if ('serviceWorker' in navigator && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('/service-worker.js');
         });
