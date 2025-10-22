@@ -12,6 +12,7 @@ export default function ProductDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { cart, dispatch } = useCart();
+  const getImageUrl = (img) => img && img.startsWith('http') ? img : (img ? img : '/logo.png');
   // Helper for available inventory
   const availableStock = product && Number(product.inventory ?? product.quantity ?? 0);
 
@@ -113,16 +114,23 @@ export default function ProductDetail() {
             {/* Image carousel */}
             {images.length > 0 && (
               <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-                <picture>
-                  <source srcSet={images[imgIndex]?.replace(/\.(jpg|jpeg|png)$/i, '.webp')} type="image/webp" />
-                  <img
-                    src={images[imgIndex]}
-                    alt={product.name}
-                    style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block', background: 'none', borderRadius: 0 }}
-                    loading="lazy"
-                    srcSet={images[imgIndex] + ' 1x, ' + images[imgIndex]?.replace(/\.(jpg|jpeg|png)$/i, '@2x.$1') + ' 2x'}
-                  />
-                </picture>
+                <img
+                  src={getImageUrl(images[imgIndex])}
+                  alt={product.name}
+                  style={{
+                    maxWidth: '100%',
+                    maxHeight: '100%',
+                    width: 'auto',
+                    height: 'auto',
+                    objectFit: 'contain',
+                    display: 'block',
+                    margin: '0 auto',
+                    background: 'none',
+                    borderRadius: 0
+                  }}
+                  loading="lazy"
+                  onError={e => { e.currentTarget.src = '/logo.png'; }}
+                />
                 {imgIndex > 0 && (
                   <button
                     style={{ position: 'absolute', left: 8, top: '50%', transform: 'translateY(-50%)', background: '#fff', border: 'none', borderRadius: '50%', width: 36, height: 36, boxShadow: '0 2px 8px rgba(0,0,0,0.10)', cursor: 'pointer', fontSize: 22, fontWeight: 700 }}
