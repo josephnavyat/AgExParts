@@ -227,7 +227,7 @@ export default function SimpleGallery() {
             const start = (page - 1) * perPage;
             const end = start + perPage;
             return filtered.slice(start, end).map((product) => (
-            <div key={product.id} className="simple-gallery-card">
+            <Link key={product.id} to={`/product/${product.id}`} className="simple-gallery-card" style={{ textDecoration: 'none' }}>
               <div className="simple-gallery-image-wrapper">
                 <img 
                   src={getImageUrl(product.image)} 
@@ -264,19 +264,12 @@ export default function SimpleGallery() {
                 })()}
               </div>
               <div className="simple-gallery-card-actions" role="group" aria-label="Product Actions">
-                <Link
-                  to={`/product/${product.id}`}
-                  className="simple-gallery-btn secondary"
-                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: 6 }}
-                >
-                  View Details
-                </Link>
                 {(() => {
                   const qty = getProductQuantity(cart, product.id);
                   return (
                     <button
                       className="simple-gallery-btn primary"
-                      onClick={() => dispatch({ type: "ADD_TO_CART", product })}
+                      onClick={(e) => { e.stopPropagation(); e.preventDefault(); dispatch({ type: "ADD_TO_CART", product }); }}
                       title="Add to Cart"
                       aria-label={Number(product.inventory ?? product.quantity ?? 0) === 0 ? 'Out of Stock' : 'Add to Cart'}
                       style={{
@@ -300,7 +293,7 @@ export default function SimpleGallery() {
                   );
                 })()}
               </div>
-            </div>
+            </Link>
             ));
           })()}
         {/* Pagination controls */}
