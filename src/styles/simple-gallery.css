@@ -75,8 +75,9 @@
     display: block !important;
   }
   .simple-gallery-filter-pane {
-  position: fixed !important;
-  top: 156px !important;
+    /* use sticky positioning so the pane follows scrolling without overlapping the navbar */
+    position: sticky !important;
+    top: calc(72px + 20px) !important; /* navbar height + spacing */
   z-index: 99 !important;
   min-width: 260px !important;
   max-width: 340px !important;
@@ -92,7 +93,7 @@
     left: 0 !important;
   }
   .simple-gallery-filter-pane.simple-gallery-filter-pane--closed {
-    left: -340px !important;
+  left: -340px !important;
   }
 }
 
@@ -100,9 +101,9 @@
   --gallery-bg: #181c24;
   /* subtle translucent card background for modern frosted look */
   /* slightly lighter translucent card background for modern frosted look */
-  --gallery-card-bg: rgba(255,255,255,0.11);
+  --gallery-card-bg: rgba(255,255,255,0.18);
   --gallery-card-radius: 12px;
-  --gallery-card-shadow: 0 2px 12px rgba(16,24,40,0.06);
+  --gallery-card-shadow: 0 1px 6px rgba(16,24,40,0.04);
   --gallery-title: #dcdcdc;
   --gallery-text: #222;
   --gallery-accent: #19a974;
