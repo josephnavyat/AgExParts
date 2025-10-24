@@ -23,7 +23,7 @@ export default function Navbar() {
         <div className="container nav-inner" style={{ flexWrap: 'wrap', alignItems: 'center' }}>
           <div className="brand">
             <img src="/logo.png" alt="AgEx Parts logo" style={{ height: '80px', width: 'auto' }} />
-            <h1 className="distressed">For your ideal PART</h1>
+            <h1 className="distressed" style={{ color: 'white' }}>For your ideal PART</h1>
           </div>
           <div className="nav-cta" style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
             <Link to="/" className="nav-icon" aria-label="Home" title="Home">
