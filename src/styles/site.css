@@ -131,6 +131,17 @@ a { color: inherit; text-decoration: none; }
 }
 .nav-icon:hover { color: var(--brand) !important; }
 
+/* Smooth color transition for nav icons and their SVG strokes */
+.nav-icon, .nav-cta a.nav-icon {
+  transition: color 160ms ease, background 160ms ease, transform 120ms ease;
+}
+.nav-svg {
+  transition: stroke 160ms ease, fill 160ms ease, transform 120ms ease;
+}
+.nav-cta a.nav-icon:hover, .nav-icon:hover {
+  color: var(--brand) !important;
+}
+
 /* HERO */
 .hero { position: relative; height: 90vh; min-height: 540px; display: grid; place-items: center; }
 /* You can override the image via inline style: style={{ '--hero': 'url(/hero-16x9.png)' }} */
