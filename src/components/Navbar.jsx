@@ -26,46 +26,37 @@ export default function Navbar() {
             <h1 className="distressed">For your ideal PART</h1>
           </div>
           <div className="nav-cta" style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
-            <Link to="/" className="btn secondary distressed" style={{ textDecoration: 'none', fontWeight: 600, fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Link to="/" className="nav-icon" aria-label="Home" title="Home">
               {/* Modern Home icon */}
-              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9.5L12 3l9 6.5V21a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9.5z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-              <span style={{ display: 'none' }}>Home</span>
+              <svg className="nav-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9.5L12 3l9 6.5V21a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9.5z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             </Link>
-            <Link to="/profile" className="btn secondary distressed" style={{ textDecoration: 'none', fontWeight: 600, fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: 6 }} title="User Profile / Login">
+            <Link to="/profile" className="nav-icon" aria-label="Profile" title="Profile">
               {/* User/Profile icon */}
-              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>
-              <span style={{ display: 'none' }}>Profile</span>
+              <svg className="nav-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>
             </Link>
             <button
-              className="btn secondary distressed"
-              style={{ textDecoration: 'none', fontWeight: 600, fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: 6 }}
+              className="nav-icon"
               onClick={() => setShowSearch((s) => !s)}
               title="Search"
+              aria-label="Search"
             >
               {/* Modern Search icon */}
-              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              <span style={{ display: 'none' }}>Search</span>
+              <svg className="nav-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             </button>
-            <Link to="/cart" style={{ marginLeft: 0, position: 'relative', display: 'flex', alignItems: 'center', height: 40 }}>
-              <span style={{ display: 'flex', alignItems: 'center', marginRight: 2, lineHeight: 1 }}>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'block' }}>
-                  <circle cx="9" cy="21" r="1.5" fill="#fff" stroke="#111" />
-                  <circle cx="19" cy="21" r="1.5" fill="#fff" stroke="#111" />
-                  <path d="M1 1h2l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" fill="none" stroke="#111" />
-                </svg>
-              </span>
+            <Link to="/cart" className="nav-icon" aria-label="Cart" title="Cart" style={{ position: 'relative' }}>
+              <svg className="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="21" r="1.5" /><circle cx="19" cy="21" r="1.5" /><path d="M1 1h2l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" fill="none" /></svg>
               {cartCount > 0 && (
                 <span style={{
                   position: 'absolute',
-                  top: '-4px',
+                  top: '-6px',
                   right: '-6px',
                   background: '#19a974',
                   color: '#fff',
                   borderRadius: '50%',
                   fontSize: '0.75rem',
                   fontWeight: 700,
-                  padding: '1px 5px',
-                  minWidth: 16,
+                  padding: '2px 6px',
+                  minWidth: 18,
                   textAlign: 'center',
                   boxShadow: '0 1px 4px rgba(0,0,0,0.13)',
                 }}>{cartCount}</span>
