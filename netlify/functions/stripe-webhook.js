@@ -131,6 +131,75 @@ exports.handler = async (event) => {
       console.error('Error inserting order items:', err);
     }
     await client.end();
+
+    // Send order confirmation email via Mailgun if configured
+    try {
+      const mailgunApiKey = process.env.MAILGUN_API_KEY;
+      const mailgunDomain = process.env.MAILGUN_DOMAIN;
+      const mailFrom = process.env.MAILGUN_FROM || `support@${mailgunDomain || 'agexparts.com'}`;
+
+      if (mailgunApiKey && mailgunDomain) {
+        const orderUrl = `${process.env.BASE_URL || 'https://agexparts.netlify.app'}/orders/${orderRow.id}`;
+
+        const itemsRows = Array.isArray(items) ? items : [];
+        const itemsHtml = itemsRows.map(it => {
+          const name = it.name || '';
+          const qty = Number(it.qty || 1);
+          const unit = Number(it.unit_price || 0).toFixed(2);
+          const line = Number(it.line_total || (qty * Number(it.unit_price || 0))).toFixed(2);
+          return `<tr><td style="padding:6px 8px;border:1px solid #eee">${name}</td><td style="padding:6px 8px;border:1px solid #eee;text-align:center">${qty}</td><td style="padding:6px 8px;border:1px solid #eee;text-align:right">$${unit}</td><td style="padding:6px 8px;border:1px solid #eee;text-align:right">$${line}</td></tr>`;
+        }).join('');
+
+        const html = `
+          <div style="font-family:Arial,Helvetica,sans-serif;color:#222">
+            <h2>Order Confirmation — ${order.order_no}</h2>
+            <p>Thank you for your order, <strong>${order.customer_name || ''}</strong> — we received payment and are processing your order.</p>
+            <h3>Order summary</h3>
+            <table style="border-collapse:collapse;width:100%;max-width:700px">
+              <thead>
+                <tr>
+                  <th style="text-align:left;padding:6px 8px;border:1px solid #eee">Item</th>
+                  <th style="text-align:center;padding:6px 8px;border:1px solid #eee">Qty</th>
+                  <th style="text-align:right;padding:6px 8px;border:1px solid #eee">Unit</th>
+                  <th style="text-align:right;padding:6px 8px;border:1px solid #eee">Line</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${itemsHtml}
+              </tbody>
+            </table>
+            <p style="max-width:700px">Subtotal: <strong>$${order.subtotal.toFixed(2)}</strong><br/>Shipping: <strong>$${order.shipping_total.toFixed(2)}</strong><br/>Tax: <strong>$${order.tax_total.toFixed(2)}</strong><br/>Total: <strong>$${order.grand_total.toFixed(2)}</strong></p>
+            <p><a href="${orderUrl}">View your order</a></p>
+            <hr/>
+            <p style="font-size:13px;color:#666">If you have any questions, reply to this email or contact support@agexparts.com.</p>
+          </div>
+        `;
+
+        const mgUrl = `https://api.mailgun.net/v3/${mailgunDomain}/messages`;
+        const params = new URLSearchParams();
+        params.append('from', mailFrom);
+        params.append('to', order.customer_email);
+        params.append('subject', `Order Confirmation — ${order.order_no}`);
+        params.append('html', html);
+
+        const resp = await fetch(mgUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Basic ' + Buffer.from('api:' + mailgunApiKey).toString('base64'),
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: params.toString()
+        });
+        const text = await resp.text();
+        if (!resp.ok) {
+          console.error('Mailgun order email error:', resp.status, text);
+        } else {
+          console.log('Mailgun order email sent:', text);
+        }
+      }
+    } catch (mailErr) {
+      console.error('Error sending order confirmation email:', mailErr && mailErr.message ? mailErr.message : mailErr);
+    }
   }
 
   return { statusCode: 200, body: 'Webhook received' };
