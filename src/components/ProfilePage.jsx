@@ -89,24 +89,55 @@ function ProfilePage() {
     setMessage('Logged out successfully.');
     setEditMode(false);
   };
-  const darkTheme = createTheme({
+  const lightTheme = createTheme({
     palette: {
-      mode: 'dark',
+      mode: 'light',
       primary: {
         main: '#19a974',
       },
       background: {
-        default: '#181818',
-        paper: '#232323',
+        default: '#f7f7f7',
+        paper: '#ffffff',
       },
       text: {
-        primary: '#fff',
-        secondary: '#ccc',
+        primary: '#222',
+        secondary: '#555',
       },
     },
   });
+  const [taxFile, setTaxFile] = useState(null);
+  const [taxUploadMessage, setTaxUploadMessage] = useState('');
+  const [taxPreviewUrl, setTaxPreviewUrl] = useState(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [taxStatus, setTaxStatus] = useState(null);
+  const [taxExpDate, setTaxExpDate] = useState(null);
+
+  // Fetch fresh user profile including tax exemption fields
+  React.useEffect(() => {
+    async function fetchProfile() {
+      try {
+        const token = localStorage.getItem('jwt');
+        if (!token) return;
+        const res = await fetch('/.netlify/functions/get-user', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data && data.user) {
+          setTaxStatus(Boolean(data.user.tax_exempt_status));
+          setTaxExpDate(data.user.tax_exempt_exp_date || null);
+          // update loggedInUser with any fresh fields
+          setLoggedInUser(prev => ({ ...(prev || {}), ...data.user }));
+        }
+      } catch (err) {
+        // ignore fetch errors silently
+        console.error('Failed to fetch profile', err);
+      }
+    }
+    fetchProfile();
+  }, []);
   return (
-    <ThemeProvider theme={darkTheme}>
+    <ThemeProvider theme={lightTheme}>
       <Navbar />
       <Container maxWidth="sm">
         <Box sx={{ mt: 6 }}>
@@ -121,6 +152,9 @@ function ProfilePage() {
                   <Button variant="outlined" color="primary" component={Link} to="#account-info" sx={{ fontWeight: 600 }}>
                     Account Info
                   </Button>
+                  <Button variant="outlined" color="primary" component={Link} to="#tax-exemption" sx={{ fontWeight: 600 }}>
+                    Tax Exemption
+                  </Button>
                   {loggedInUser.user_type === 'admin' && (
                     <Button variant="outlined" color="secondary" component={Link} to="/orders" sx={{ fontWeight: 600 }}>
                       Order Dashboard
@@ -133,6 +167,85 @@ function ProfilePage() {
                   <Typography variant="body1"><strong>Email:</strong> {loggedInUser.email || '—'}</Typography>
                   <Typography variant="body1"><strong>Address:</strong> {loggedInUser.address || '—'}</Typography>
                   <Typography variant="body1"><strong>Phone:</strong> {loggedInUser.phone || '—'}</Typography>
+                </Box>
+                {/* Tax Exemption Section */}
+                <Box id="tax-exemption" sx={{ mb: 3, p: 2, borderRadius: 2, bgcolor: 'background.default', color: 'text.primary' }}>
+                  <Typography variant="h6" sx={{ mb: 1 }}>Tax Exemption</Typography>
+                  <TextField
+                    label="Tax Exemption"
+                    variant="filled"
+                    value={taxStatus ? 'Tax Exempt' : 'Not Tax Exempt'}
+                    InputProps={{ readOnly: true }}
+                    fullWidth
+                    sx={{ mb: 2 }}
+                  />
+                  <TextField
+                    label="Tax Exemption Expiration"
+                    variant="filled"
+                    value={taxExpDate ? new Date(taxExpDate).toLocaleDateString() : '—'}
+                    InputProps={{ readOnly: true }}
+                    fullWidth
+                    sx={{ mb: 2 }}
+                  />
+                  <Typography variant="body2" sx={{ mb: 1 }}>
+                    Upload your tax exemption document (PDF or image). Our team will review and update your status.
+                  </Typography>
+                  <input
+                    id="tax-file"
+                    type="file"
+                    accept="application/pdf,image/*"
+                    onChange={e => {
+                      const f = e.target.files && e.target.files[0];
+                      setTaxFile(f);
+                      if (f && f.type && f.type.startsWith('image/')) {
+                        const url = URL.createObjectURL(f);
+                        setTaxPreviewUrl(url);
+                      } else {
+                        setTaxPreviewUrl(null);
+                      }
+                    }}
+                    style={{ marginBottom: 8 }}
+                  />
+                  {taxPreviewUrl && <img src={taxPreviewUrl} alt="preview" style={{ maxWidth: '100%', marginBottom: 8 }} />}
+                  <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
+                    <Button variant="contained" color="primary" disabled={!taxFile} onClick={() => {
+                      if (!taxFile) return;
+                      setTaxUploadMessage('');
+                      setUploadProgress(0);
+                      const form = new FormData();
+                      form.append('file', taxFile);
+                      form.append('username', loggedInUser.username || '');
+                      const xhr = new XMLHttpRequest();
+                      xhr.open('POST', '/.netlify/functions/upload-tax-exempt');
+                      xhr.upload.onprogress = (e) => {
+                        if (e.lengthComputable) setUploadProgress(Math.round((e.loaded / e.total) * 100));
+                      };
+                      xhr.onload = () => {
+                        try {
+                          const res = JSON.parse(xhr.responseText || '{}');
+                          if (xhr.status >= 200 && xhr.status < 300) {
+                            setTaxUploadMessage('Upload successful. We will review and update your tax exemption status.');
+                            setTaxFile(null);
+                            setTaxPreviewUrl(null);
+                            const input = document.getElementById('tax-file'); if (input) input.value = '';
+                          } else {
+                            setTaxUploadMessage(res.error || 'Upload failed');
+                          }
+                        } catch (err) {
+                          setTaxUploadMessage('Upload returned unexpected response');
+                        }
+                      };
+                      xhr.onerror = () => setTaxUploadMessage('Network error during upload');
+                      xhr.send(form);
+                    }}>
+                      Upload
+                    </Button>
+                    <Button variant="outlined" color="secondary" onClick={() => { setTaxFile(null); const input = document.getElementById('tax-file'); if (input) input.value = ''; setTaxUploadMessage(''); }}>
+                      Cancel
+                    </Button>
+                  </Box>
+                  {uploadProgress > 0 && uploadProgress < 100 && <Typography variant="body2">Uploading: {uploadProgress}%</Typography>}
+                  {taxUploadMessage && <Typography variant="body2" color={taxUploadMessage.toLowerCase().includes('success') ? 'primary' : 'error'}>{taxUploadMessage}</Typography>}
                 </Box>
                 {/* Edit Profile Section */}
                 {!editMode ? (
