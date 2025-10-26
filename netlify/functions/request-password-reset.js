@@ -58,13 +58,43 @@ exports.handler = async function(event) {
     }
     const resetUrl = `${base}/reset-password?token=${token}`;
 
-    // Send email and return more informative errors on failure
-    await transporter.sendMail({
-      from: process.env.SMTP_FROM,
-      to: email,
-      subject: 'Password Reset Request',
-      html: `<p>You requested a password reset. <a href="${resetUrl}">Click here to reset your password</a>. This link expires in 1 hour.</p>`
-    });
+    // Send email: prefer Mailgun HTTP API if configured, otherwise use SMTP transporter
+    const mailgunApiKey = process.env.MAILGUN_API_KEY;
+    const mailgunDomain = process.env.MAILGUN_DOMAIN;
+    const mailFrom = process.env.MAILGUN_FROM || process.env.SMTP_FROM || `no-reply@${mailgunDomain || 'example.com'}`;
+
+    if (mailgunApiKey && mailgunDomain) {
+      // Use Mailgun HTTP API
+      const mgUrl = `https://api.mailgun.net/v3/${mailgunDomain}/messages`;
+      const params = new URLSearchParams();
+      params.append('from', mailFrom);
+      params.append('to', email);
+      params.append('subject', 'Password Reset Request');
+      params.append('html', `<p>You requested a password reset. <a href="${resetUrl}">Click here to reset your password</a>. This link expires in 1 hour.</p>`);
+
+      const resp = await fetch(mgUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Basic ' + Buffer.from('api:' + mailgunApiKey).toString('base64'),
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: params.toString()
+      });
+
+      const text = await resp.text();
+      if (!resp.ok) {
+        throw new Error(`Mailgun error: ${resp.status} ${text}`);
+      }
+      console.log('Mailgun response:', text);
+    } else {
+      // Fallback to SMTP transporter
+      await transporter.sendMail({
+        from: process.env.SMTP_FROM,
+        to: email,
+        subject: 'Password Reset Request',
+        html: `<p>You requested a password reset. <a href="${resetUrl}">Click here to reset your password</a>. This link expires in 1 hour.</p>`
+      });
+    }
 
     await client.end();
     return {
