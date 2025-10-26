@@ -88,11 +88,12 @@ exports.handler = async (event) => {
     }
 
     // Insert each item into order_items table with logging and error handling
+    // Only insert columns that are expected to exist in the order_items table
     const itemQuery = `
       INSERT INTO order_items (
-        order_id, part_id, qty, unit_price, tax_code, tax_amount, line_total, fulfillment_method, supplier_id, location_id, name
+        order_id, part_id, qty, unit_price, line_total, name
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
+        $1, $2, $3, $4, $5, $6
       )
     `;
     console.log('Order items to insert:', items);
@@ -108,21 +109,20 @@ exports.handler = async (event) => {
             item.part_id || null,
             item.qty || 1,
             item.unit_price || 0,
-            item.tax_code || '',
-            item.tax_amount || 0,
             item.line_total || 0,
-            item.fulfillment_method || null,
-            item.supplier_id || null,
-            item.location_id || null,
             item.name || ''
           ]);
           console.log('Order item insert result:', result);
-          // Decrement inventory for the purchased item
-          const invResult = await client.query(
-            'UPDATE products SET inventory = GREATEST(inventory - $1, 0) WHERE id = $2',
-            [item.qty || 1, item.part_id]
-          );
-          console.log('Inventory update result:', invResult);
+          // Decrement inventory for the purchased item if part_id is present
+          if (item.part_id) {
+            const invResult = await client.query(
+              'UPDATE products SET inventory = GREATEST(inventory - $1, 0) WHERE id = $2',
+              [item.qty || 1, item.part_id]
+            );
+            console.log('Inventory update result:', invResult);
+          } else {
+            console.log('No part_id provided, skipping inventory update for item:', item.name);
+          }
         } catch (itemErr) {
           console.error('Error inserting single order item or updating inventory:', item, itemErr);
         }
@@ -139,7 +139,10 @@ exports.handler = async (event) => {
       const mailFrom = process.env.MAILGUN_FROM || `support@${mailgunDomain || 'agexparts.com'}`;
 
       if (mailgunApiKey && mailgunDomain) {
-        const orderUrl = `${process.env.BASE_URL || 'https://agexparts.netlify.app'}/orders/${orderRow.id}`;
+  // Build order URL: keep the order path for compatibility but include the Stripe session id as a query param
+  // so the front-end can look up order by session if needed. Use `session.id` (the Checkout Session id).
+  const baseUrl = process.env.BASE_URL || 'https://agexparts.netlify.app';
+  const orderUrl = `${baseUrl}/orders/${orderRow.id}?session_id=${encodeURIComponent(session.id)}`;
 
         const itemsRows = Array.isArray(items) ? items : [];
         const itemsHtml = itemsRows.map(it => {
@@ -149,6 +152,16 @@ exports.handler = async (event) => {
           const line = Number(it.line_total || (qty * Number(it.unit_price || 0))).toFixed(2);
           return `<tr><td style="padding:6px 8px;border:1px solid #eee">${name}</td><td style="padding:6px 8px;border:1px solid #eee;text-align:center">${qty}</td><td style="padding:6px 8px;border:1px solid #eee;text-align:right">$${unit}</td><td style="padding:6px 8px;border:1px solid #eee;text-align:right">$${line}</td></tr>`;
         }).join('');
+
+        // compute display subtotal from item lines (exclude shipping)
+        const itemsSubtotal = itemsRows.reduce((acc, it) => {
+          const lineVal = Number(it.line_total || (Number(it.qty || 1) * Number(it.unit_price || 0)));
+          return acc + (isNaN(lineVal) ? 0 : lineVal);
+        }, 0);
+        const displaySubtotal = itemsRows.length > 0 ? itemsSubtotal : Number(order.subtotal || 0);
+        const displayShipping = Number(order.shipping_total || 0);
+        const displayTax = Number(order.tax_total || 0);
+        const displayGrand = displaySubtotal + displayShipping + displayTax;
 
         const html = `
           <div style="font-family:Arial,Helvetica,sans-serif;color:#222">
@@ -168,7 +181,7 @@ exports.handler = async (event) => {
                 ${itemsHtml}
               </tbody>
             </table>
-            <p style="max-width:700px">Subtotal: <strong>$${order.subtotal.toFixed(2)}</strong><br/>Shipping: <strong>$${order.shipping_total.toFixed(2)}</strong><br/>Tax: <strong>$${order.tax_total.toFixed(2)}</strong><br/>Total: <strong>$${order.grand_total.toFixed(2)}</strong></p>
+            <p style="max-width:700px">Subtotal: <strong>$${displaySubtotal.toFixed(2)}</strong><br/>Shipping: <strong>$${displayShipping.toFixed(2)}</strong><br/>Tax: <strong>$${displayTax.toFixed(2)}</strong><br/>Total: <strong>$${displayGrand.toFixed(2)}</strong></p>
             <p><a href="${orderUrl}">View your order</a></p>
             <hr/>
             <p style="font-size:13px;color:#666">If you have any questions, reply to this email or contact support@agexparts.com.</p>
