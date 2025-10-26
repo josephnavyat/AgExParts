@@ -63,7 +63,7 @@ img {
 
 :root {
   /* Lighter site theme */
-  --bg: #d4d3d3;
+  --bg: #484848;
   --surface: #ffffff;
   --surface-2: #f8f9fb;
   --text: #111827;
@@ -72,6 +72,7 @@ img {
   --accent: #f59f00;
   --radius: 12px;
   --shadow: 0 6px 18px rgba(16,24,40,0.06);
+  --categories-bg: #d6b889; /* beige sampled from attachment */
   --maxw: 1200px;
 }
 * { box-sizing: border-box; }
@@ -159,11 +160,37 @@ a { color: inherit; text-decoration: none; }
 }
 /* Darker overlay to increase legibility */
 .hero::after {
-  /* subtle light haze so the hero image stays visible but lighter */
+  /* subtle light haze that fades into the categories background */
   content: "";
   position: absolute; inset: 0;
-  background: linear-gradient(180deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.18) 50%, rgba(255, 255, 255, 0.14) 100%);
+  background: linear-gradient(180deg,
+    rgba(255,255,255,0.22) 0%,
+    rgba(255,255,255,0.18) 40%,
+    rgba(255,255,255,0.12) 65%,
+    var(--categories-bg) 100%
+  );
   pointer-events: none;
+}
+
+/* Categories section background to visually blend with the hero */
+.categories, .categories > .container {
+  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, var(--categories-bg) 100%);
+  color: #111;
+}
+
+/* Category boxes: dark translucent panels that sit on top of the beige */
+.categories .card,
+.categories .panel,
+.categories .category-item {
+  background: rgba(0,0,0,0.6);
+  border: 1px solid rgba(255,255,255,0.06);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+}
+
+/* Ensure text inside category boxes is readable */
+.categories .card h3, .categories .card p, .categories .panel h3, .categories .panel p {
+  color: #fff;
 }
 
 .hero-content { position: relative; z-index: 1; text-align: center; padding: 24px; }

@@ -10,7 +10,7 @@ const Card = ({ title, tag, note }) => (
 
 export default function Categories() {
   return (
-    <section id="catalog">
+    <section id="catalog" className="categories-section">
       <div className="container">
         <h2 style={{ margin: 0, marginBottom: 18, fontSize: 28 }}>Popular Categories</h2>
         <div className="card-grid">
