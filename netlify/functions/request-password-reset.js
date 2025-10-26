@@ -2,11 +2,6 @@ const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const { Client } = require('pg');
 
-// Connect to DB
-const client = new Client({
-  connectionString: process.env.DATABASE_URL
-});
-
 exports.handler = async function(event) {
   try {
     if (event.httpMethod !== 'POST') {
@@ -18,7 +13,8 @@ exports.handler = async function(event) {
       return { statusCode: 400, body: JSON.stringify({ success: false, error: 'Email required' }) };
     }
 
-    // Connect and check if user exists
+    // Create a new DB client for this invocation and check if user exists
+    const client = new Client({ connectionString: process.env.DATABASE_URL });
     await client.connect();
     const userRes = await client.query('SELECT id FROM users WHERE email = $1', [email]);
     if (userRes.rows.length === 0) {
@@ -103,7 +99,7 @@ exports.handler = async function(event) {
     };
   } catch (err) {
     console.error('request-password-reset error', err && err.message ? err.message : err);
-    try { await client.end(); } catch (e) { /* ignore */ }
+    try { if (typeof client !== 'undefined' && client) await client.end(); } catch (e) { /* ignore */ }
     return {
       statusCode: 500,
       body: JSON.stringify({ success: false, error: err && err.message ? err.message : 'Server error' })
