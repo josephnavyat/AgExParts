@@ -20,8 +20,36 @@ export default function ContactPartsSpecialist() {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    // TODO: Implement backend email sending and file upload
-    setSubmitted(true);
+    try {
+      // Convert attachment to base64 if present
+      let attachmentPayload = null;
+      if (form.attachment) {
+        const file = form.attachment;
+        const base64 = await new Promise((res, rej) => {
+          const reader = new FileReader();
+          reader.onload = () => res(reader.result.split(',')[1]);
+          reader.onerror = rej;
+          reader.readAsDataURL(file);
+        });
+        attachmentPayload = { name: file.name, type: file.type, base64 };
+      }
+
+      const resp = await fetch('/.netlify/functions/contact-parts-specialist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subject: form.subject, email: form.email, message: form.message, attachment: attachmentPayload })
+      });
+      if (!resp.ok) {
+        const text = await resp.text();
+        console.error('Contact submit failed:', resp.status, text);
+        alert('Failed to submit request: ' + resp.statusText);
+        return;
+      }
+      setSubmitted(true);
+    } catch (err) {
+      console.error('Contact submit error:', err);
+      alert('Failed to submit request');
+    }
   };
 
   return (
