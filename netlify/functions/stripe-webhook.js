@@ -18,6 +18,31 @@ exports.handler = async (event) => {
     // Example: extract info from session
     // Always use shipping_details from collected_information if present
     const shipping = session.collected_information?.shipping_details;
+
+    // Parse items metadata early so we can compute a true subtotal (exclude shipping/tax)
+    let items = [];
+    try {
+      items = JSON.parse(session.metadata?.items || '[]');
+    } catch (e) {
+      console.error('Error parsing items metadata (early):', session.metadata?.items, e);
+      items = [];
+    }
+    const itemsRows = Array.isArray(items) ? items : [];
+
+    // compute items subtotal (sum of line_total or qty*unit_price). This represents the products subtotal.
+    const itemsSubtotal = itemsRows.reduce((acc, it) => {
+      const lineVal = Number(it.line_total || (Number(it.qty || 1) * Number(it.unit_price || 0)));
+      return acc + (isNaN(lineVal) ? 0 : lineVal);
+    }, 0);
+
+    // shipping: prefer metadata (created at checkout), otherwise fall back to Stripe totals
+    const shippingTotal = session.metadata?.shipping_cost ? Number(session.metadata.shipping_cost) : (session.total_details?.amount_shipping ? session.total_details.amount_shipping / 100 : 0);
+    const taxTotal = session.total_details?.amount_tax ? session.total_details.amount_tax / 100 : 0;
+
+    // subtotal should exclude shipping and tax; if we have item rows use that, otherwise fall back to session.amount_subtotal
+    const computedSubtotal = itemsRows.length > 0 ? itemsSubtotal : (session.amount_subtotal ? session.amount_subtotal / 100 : 0);
+    const computedGrandTotal = computedSubtotal + (Number(shippingTotal) || 0) + (Number(taxTotal) || 0);
+
     const order = {
       order_no: session.id,
       status: 'paid',
@@ -29,11 +54,11 @@ exports.handler = async (event) => {
       ship_state: shipping?.address?.state || session.customer_details?.address?.state,
       ship_postal_code: shipping?.address?.postal_code || session.customer_details?.address?.postal_code,
       ship_country: shipping?.address?.country || session.customer_details?.address?.country,
-      subtotal: session.amount_subtotal / 100,
+      subtotal: computedSubtotal,
       discount_total: 0,
-  shipping_total: session.metadata?.shipping_cost ? Number(session.metadata.shipping_cost) : (session.total_details?.amount_shipping ? session.total_details.amount_shipping / 100 : 0),
-      tax_total: session.total_details?.amount_tax ? session.total_details.amount_tax / 100 : 0,
-      grand_total: session.amount_total / 100,
+      shipping_total: shippingTotal,
+      tax_total: taxTotal,
+      grand_total: computedGrandTotal,
       currency: session.currency,
       payment_ref: session.payment_intent,
     };
@@ -76,16 +101,8 @@ exports.handler = async (event) => {
     const orderResult = await client.query(query, values);
     const orderRow = orderResult.rows[0];
 
-    // Example: get items from session metadata (must be set in checkout session creation)
-    let items = [];
-    try {
-      console.log('Raw items metadata:', session.metadata?.items);
-      items = JSON.parse(session.metadata?.items || '[]');
-      console.log('Parsed items:', items);
-    } catch (e) {
-      console.error('Error parsing items metadata:', session.metadata?.items, e);
-      items = [];
-    }
+  // Items were parsed earlier into `itemsRows`; log for debug and reuse that for inserts
+  console.log('Using parsed items for insertion:', itemsRows);
 
     // Insert each item into order_items table with logging and error handling
     // Only insert columns that are expected to exist in the order_items table
@@ -96,12 +113,12 @@ exports.handler = async (event) => {
         $1, $2, $3, $4, $5, $6
       )
     `;
-    console.log('Order items to insert:', items);
-    if (!Array.isArray(items) || items.length === 0) {
+    console.log('Order items to insert:', itemsRows);
+    if (!Array.isArray(itemsRows) || itemsRows.length === 0) {
       console.error('No order items found in metadata:', session.metadata?.items);
     }
     try {
-      for (const item of items) {
+      for (const item of itemsRows) {
         console.log('Inserting order item:', item);
         try {
           const result = await client.query(itemQuery, [
@@ -144,8 +161,7 @@ exports.handler = async (event) => {
   const baseUrl = process.env.BASE_URL || 'https://agexparts.netlify.app';
   const orderUrl = `${baseUrl}/orders/${orderRow.id}?session_id=${encodeURIComponent(session.id)}`;
 
-        const itemsRows = Array.isArray(items) ? items : [];
-        const itemsHtml = itemsRows.map(it => {
+  const itemsHtml = itemsRows.map(it => {
           const name = it.name || '';
           const qty = Number(it.qty || 1);
           const unit = Number(it.unit_price || 0).toFixed(2);
@@ -153,19 +169,16 @@ exports.handler = async (event) => {
           return `<tr><td style="padding:6px 8px;border:1px solid #eee">${name}</td><td style="padding:6px 8px;border:1px solid #eee;text-align:center">${qty}</td><td style="padding:6px 8px;border:1px solid #eee;text-align:right">$${unit}</td><td style="padding:6px 8px;border:1px solid #eee;text-align:right">$${line}</td></tr>`;
         }).join('');
 
-        // compute display subtotal from item lines (exclude shipping)
-        const itemsSubtotal = itemsRows.reduce((acc, it) => {
-          const lineVal = Number(it.line_total || (Number(it.qty || 1) * Number(it.unit_price || 0)));
-          return acc + (isNaN(lineVal) ? 0 : lineVal);
-        }, 0);
-        const displaySubtotal = itemsRows.length > 0 ? itemsSubtotal : Number(order.subtotal || 0);
+  // displaySubtotal: reuse earlier computed itemsSubtotal (products subtotal)
+  const displaySubtotal = itemsRows.length > 0 ? itemsSubtotal : Number(order.subtotal || 0);
         const displayShipping = Number(order.shipping_total || 0);
         const displayTax = Number(order.tax_total || 0);
         const displayGrand = displaySubtotal + displayShipping + displayTax;
 
+        const displayOrderRef = orderRow.order_ref || order.order_no;
         const html = `
           <div style="font-family:Arial,Helvetica,sans-serif;color:#222">
-            <h2>Order Confirmation — ${order.order_no}</h2>
+            <h2>Order Confirmation — ${displayOrderRef}</h2>
             <p>Thank you for your order, <strong>${order.customer_name || ''}</strong> — we received payment and are processing your order.</p>
             <h3>Order summary</h3>
             <table style="border-collapse:collapse;width:100%;max-width:700px">
@@ -192,7 +205,7 @@ exports.handler = async (event) => {
         const params = new URLSearchParams();
         params.append('from', mailFrom);
         params.append('to', order.customer_email);
-        params.append('subject', `Order Confirmation — ${order.order_no}`);
+  params.append('subject', `Order Confirmation — ${displayOrderRef}`);
         params.append('html', html);
 
         const resp = await fetch(mgUrl, {

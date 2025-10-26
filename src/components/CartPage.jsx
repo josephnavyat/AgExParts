@@ -112,6 +112,13 @@ export default function CartPage() {
   }, [cart.items]);
   const totalWeight = cart.items.reduce((sum, i) => sum + ((i.product.weight || 0) * i.quantity), 0);
 
+  // Cost breakdown calculations (used in the UI)
+  const subtotal = total; // products subtotal (discounts already applied)
+  const shippingCost = (shipping && shipping.type !== 'freight') ? Number(shipping.cost || 0) : 0;
+  const isFreight = shipping?.type === 'freight' || totalWeight > 100;
+  const tax = 0; // placeholder for tax calculation if needed
+  const grandTotal = subtotal + (isFreight ? 0 : shippingCost) + tax;
+
   return (
     <>
       <Navbar />
@@ -207,20 +214,15 @@ export default function CartPage() {
                 </div>
               ))}
             </div>
-            <div style={{ textAlign: 'right', marginTop: '2rem', fontWeight: 700, fontSize: '1.2rem', wordBreak: 'break-word' }}>
-              Total: ${total.toFixed(2)}
+            {/* Cost breakdown */}
+            <div className="cart-summary" style={{ textAlign: 'right', marginTop: '2rem' }}>
+              <div style={{ fontWeight: 700, fontSize: '1.2rem', wordBreak: 'break-word' }}>Subtotal: ${subtotal.toFixed(2)}</div>
+              <div style={{ fontWeight: 500, fontSize: '1.05rem', color: '#555', marginTop: '0.5rem' }}>Total Weight: {totalWeight.toFixed(2)} lbs</div>
+              <div style={{ fontWeight: 500, fontSize: '1.05rem', color: '#555', marginTop: '0.5rem' }}>Shipping: {isFreight ? 'Need to Quote (Freight)' : `$${shippingCost.toFixed(2)}`}</div>
+              <div style={{ fontWeight: 500, fontSize: '1.05rem', color: '#555', marginTop: '0.5rem' }}>Tax: ${tax.toFixed(2)}</div>
+              <div style={{ fontWeight: 800, fontSize: '1.25rem', color: '#222', marginTop: '0.75rem' }}>Total: ${grandTotal.toFixed(2)}</div>
             </div>
-            <div style={{ textAlign: 'right', marginTop: '0.5rem', fontWeight: 500, fontSize: '1.05rem', color: '#555' }}>
-              Total Weight: {totalWeight.toFixed(2)} lbs
-            </div>
-            <div style={{ textAlign: 'right', marginTop: '1rem' }}>
-              {shipping && (
-                <span style={{ fontWeight: 500, fontSize: '1.05rem', color: '#555', marginLeft: 12 }}>
-                  Shipping: {shipping.type === 'freight' ? 'Freight' : 'Ground'}: {totalWeight > 100 ? 'Need to Quote' : `$${shipping.cost}`}
-                </span>
-              )}
-            </div>
-            <div style={{ textAlign: 'right', marginTop: '1.5rem', display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'flex-end' }}>
+            <div style={{ textAlign: 'right', marginTop: '1rem', display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'flex-end' }}>
               <button
                 className="btn danger"
                 style={{
@@ -238,7 +240,7 @@ export default function CartPage() {
               >
                 Clear Cart
               </button>
-              {totalWeight > 100 ? (
+              { (shipping?.type === 'freight' || totalWeight > 100) ? (
                 <button
                   className="btn freight"
                   style={{
