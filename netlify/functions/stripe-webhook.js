@@ -35,13 +35,15 @@ exports.handler = async (event) => {
       return acc + (isNaN(lineVal) ? 0 : lineVal);
     }, 0);
 
-    // shipping: prefer metadata (created at checkout), otherwise fall back to Stripe totals
-    const shippingTotal = session.metadata?.shipping_cost ? Number(session.metadata.shipping_cost) : (session.total_details?.amount_shipping ? session.total_details.amount_shipping / 100 : 0);
-    const taxTotal = session.total_details?.amount_tax ? session.total_details.amount_tax / 100 : 0;
+  // shipping: prefer metadata (created at checkout), otherwise fall back to Stripe totals
+  const shippingTotal = session.metadata?.shipping_cost ? Number(session.metadata.shipping_cost) : (session.total_details?.amount_shipping ? session.total_details.amount_shipping / 100 : 0);
+  // Stripe will compute tax; we will not persist tax in our DB but will display it in emails
+  const stripeTaxTotal = session.total_details?.amount_tax ? session.total_details.amount_tax / 100 : 0;
 
-    // subtotal should exclude shipping and tax; if we have item rows use that, otherwise fall back to session.amount_subtotal
-    const computedSubtotal = itemsRows.length > 0 ? itemsSubtotal : (session.amount_subtotal ? session.amount_subtotal / 100 : 0);
-    const computedGrandTotal = computedSubtotal + (Number(shippingTotal) || 0) + (Number(taxTotal) || 0);
+  // subtotal should exclude shipping and tax; if we have item rows use that, otherwise fall back to session.amount_subtotal minus shipping
+  const computedSubtotal = itemsRows.length > 0 ? itemsSubtotal : ((session.amount_subtotal ? session.amount_subtotal / 100 : 0) - (Number(shippingTotal) || 0));
+  // grand total comes from Stripe (includes tax & shipping)
+  const stripeGrandTotal = session.amount_total ? session.amount_total / 100 : (computedSubtotal + (Number(shippingTotal) || 0) + stripeTaxTotal);
 
     const order = {
       order_no: session.id,
@@ -54,17 +56,33 @@ exports.handler = async (event) => {
       ship_state: shipping?.address?.state || session.customer_details?.address?.state,
       ship_postal_code: shipping?.address?.postal_code || session.customer_details?.address?.postal_code,
       ship_country: shipping?.address?.country || session.customer_details?.address?.country,
-      subtotal: computedSubtotal,
+  subtotal: computedSubtotal,
       discount_total: 0,
       shipping_total: shippingTotal,
-      tax_total: taxTotal,
-      grand_total: computedGrandTotal,
+  // persist Stripe-calculated tax into tax_total
+  tax_total: stripeTaxTotal,
+  // store grand_total from Stripe
+  grand_total: stripeGrandTotal,
       currency: session.currency,
       payment_ref: session.payment_intent,
     };
 
     const client = new Client({ connectionString: process.env.DATABASE_URL });
     await client.connect();
+    // Persist raw Stripe session JSON for auditing / reconciliation
+    try {
+      await client.query(`
+        CREATE TABLE IF NOT EXISTS stripe_sessions (
+          id SERIAL PRIMARY KEY,
+          session_id TEXT UNIQUE,
+          payload JSONB,
+          created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT (now())
+        );
+      `);
+      await client.query('INSERT INTO stripe_sessions (session_id, payload) VALUES ($1, $2) ON CONFLICT (session_id) DO NOTHING', [session.id, session]);
+    } catch (sessErr) {
+      console.error('Failed to persist stripe session:', sessErr);
+    }
     const query = `
       INSERT INTO orders (
         order_no, status, customer_name, customer_email,

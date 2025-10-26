@@ -29,46 +29,29 @@ exports.handler = async (event) => {
     });
   }
 
-  // Build a full items array (with line_total) and then produce a safely-truncated JSON string
-  const fullItems = cart.map(({ product, quantity }) => ({
-    part_id: product.id,
-    qty: quantity,
-    unit_price: Number(product.price),
-    line_total: Number((product.price * quantity).toFixed(2)),
-    name: product.name
-  }));
-
-  // Try to include as many full items as possible under a conservative limit (480 chars)
-  let itemsToUse = fullItems.slice();
-  let itemsJson = JSON.stringify(itemsToUse);
-  let itemsTruncated = false;
-  const LIMIT = 480;
-  if (itemsJson.length > LIMIT) {
-    itemsTruncated = true;
-    // First strategy: drop trailing items until it fits
-    while (itemsToUse.length > 0 && itemsJson.length > LIMIT) {
-      itemsToUse.pop();
-      itemsJson = JSON.stringify(itemsToUse);
-    }
+  // Build truncated items JSON for metadata. Include line_total and ensure we stay within Stripe metadata size limits (~500 chars).
+  const itemsArr = [];
+  for (const { product, quantity } of cart) {
+    const item = {
+      part_id: product.id,
+      qty: quantity,
+      unit_price: Number(product.price),
+      line_total: Number((product.price * quantity).toFixed(2)),
+      name: product.name
+    };
+    const testItems = [...itemsArr, item];
+    const testStr = JSON.stringify(testItems);
+    // Keep a conservative limit to avoid hitting Stripe metadata size limits
+    if (testStr.length > 480) break;
+    itemsArr.push(item);
   }
-
-  // If still too large, try shortening names (take first 20 chars)
-  if (itemsJson.length > LIMIT) {
-    itemsToUse = fullItems.map(it => ({ ...it, name: (it.name || '').slice(0, 20) }));
-    itemsJson = JSON.stringify(itemsToUse);
-    itemsTruncated = true;
-  }
-
-  // As a last resort, fall back to minimal fields and truncate the string
-  if (itemsJson.length > LIMIT) {
-    itemsToUse = fullItems.map(it => ({ part_id: it.part_id, qty: it.qty, line_total: it.line_total }));
-    itemsJson = JSON.stringify(itemsToUse).slice(0, LIMIT);
-    itemsTruncated = true;
-  }
+  const itemsJson = JSON.stringify(itemsArr);
+  const itemsTruncated = JSON.stringify(itemsArr).length !== JSON.stringify(cart.map(({ product, quantity }) => ({ part_id: product.id, qty: quantity, unit_price: Number(product.price), line_total: Number((product.price * quantity).toFixed(2)), name: product.name }))).length;
 
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
     line_items,
+  automatic_tax: { enabled: true },
     mode: 'payment',
     success_url: 'https://agexparts.netlify.app/success?session_id={CHECKOUT_SESSION_ID}',
     cancel_url: 'https://agexparts.netlify.app/cancel',
@@ -76,9 +59,9 @@ exports.handler = async (event) => {
       allowed_countries: ['US', 'CA', 'GB', 'AU'] // Add more countries as needed
     },
     metadata: {
-      cart_summary: String(cart.map(({ product, quantity }) => `${product.name.slice(0, 30)} x${quantity}`).join(', ')),
-      shipping_cost: String(shippingCost || 0),
-      items: String(itemsJson),
+      cart_summary: cart.map(({ product, quantity }) => `${product.name.slice(0, 30)} x${quantity}`).join(', '),
+      shipping_cost: shippingCost || 0,
+      items: itemsJson,
       items_truncated: itemsTruncated ? '1' : '0'
     }
   });
