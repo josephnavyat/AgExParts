@@ -159,7 +159,7 @@ exports.handler = async (event) => {
   // Build order URL: keep the order path for compatibility but include the Stripe session id as a query param
   // so the front-end can look up order by session if needed. Use `session.id` (the Checkout Session id).
   const baseUrl = process.env.BASE_URL || 'https://agexparts.netlify.app';
-  const orderUrl = `${baseUrl}/orders/${orderRow.id}?session_id=${encodeURIComponent(session.id)}`;
+  const orderUrl = `${baseUrl}/success?session_id=${encodeURIComponent(session.id)}`;
 
   const itemsHtml = itemsRows.map(it => {
           const name = it.name || '';
