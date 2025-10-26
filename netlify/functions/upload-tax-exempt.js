@@ -1,14 +1,16 @@
 const Busboy = require('busboy');
-const AWS = require('aws-sdk');
+const { S3Client } = require('@aws-sdk/client-s3');
+const { Upload } = require('@aws-sdk/lib-storage');
 const { Client } = require('pg');
 const fetch = require('node-fetch');
 const crypto = require('crypto');
 
-// Configure AWS from env
-const s3 = new AWS.S3({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  region: process.env.AWS_REGION
+const s3Client = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY ? {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+  } : undefined
 });
 
 exports.handler = async (event) => {
@@ -54,18 +56,19 @@ exports.handler = async (event) => {
         });
 
         const key = `tax-exempt/${Date.now()}-${crypto.randomBytes(6).toString('hex')}-${filename.replace(/[^a-zA-Z0-9.\-_]/g, '')}`;
-        const params = {
+        const uploadParams = {
           Bucket: process.env.AWS_S3_BUCKET,
           Key: key,
           Body: file,
-          ContentType: mimeType,
-          ACL: 'private'
+          ContentType: mimeType
         };
-        // use promise-based upload to ensure completion before continuing
-        const p = s3.upload(params).promise().then(data => {
-          uploadResult = { url: data.Location, key, filename };
+        const parallelUpload = new Upload({ client: s3Client, params: uploadParams });
+        const p = parallelUpload.done().then(data => {
+          // AWS SDK v3 does not return Location; construct URL if region and bucket known
+          const url = `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+          uploadResult = { url, key, filename };
           return uploadResult;
-        }).catch(err => { throw err; });
+        });
         uploadPromises.push(p);
       });
 

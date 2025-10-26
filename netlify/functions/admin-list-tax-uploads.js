@@ -1,11 +1,14 @@
 const { Client } = require('pg');
 const jwt = require('jsonwebtoken');
-const AWS = require('aws-sdk');
+const { S3Client, GetObjectCommand } = require('@aws-sdk/client-s3');
+const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 
-const s3 = new AWS.S3({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  region: process.env.AWS_REGION
+const s3 = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY ? {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+  } : undefined
 });
 
 exports.handler = async function(event) {
@@ -26,7 +29,8 @@ exports.handler = async function(event) {
     const rows = await Promise.all(res.rows.map(async r => {
       if (r.file_key && process.env.AWS_S3_BUCKET) {
         try {
-          const url = s3.getSignedUrl('getObject', { Bucket: process.env.AWS_S3_BUCKET, Key: r.file_key, Expires: 60 * 30 }); // 30 minutes
+          const cmd = new GetObjectCommand({ Bucket: process.env.AWS_S3_BUCKET, Key: r.file_key });
+          const url = await getSignedUrl(s3, cmd, { expiresIn: 60 * 30 });
           return { ...r, preview_url: url };
         } catch (e) {
           return { ...r };
