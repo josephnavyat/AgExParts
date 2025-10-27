@@ -21,6 +21,7 @@ const ContactPartsSpecialist = lazy(() => import('./components/ContactPartsSpeci
 const ProfilePage = lazy(() => import('./components/ProfilePage.jsx'));
 const OrdersDashboard = lazy(() => import('./components/OrdersDashboard.jsx'));
 const RecoverPassword = lazy(() => import('./components/RecoverPassword.jsx'));
+const ResetPassword = lazy(() => import('./components/ResetPassword.jsx'));
 const FreightOrderConfirmation = lazy(() => import('./components/FreightOrderConfirmation.jsx'));
 
 const stripePromise = loadStripe('pk_test_51S4XMHBpsFVjn5cM6uD1BRgbmhvLSnfeLPMZcp4EJNQYAQrQea122tUoOAF2exUh0Qu83i8uQj5Yp5zZXlCgj0Fc00LA6gZqpZ');
@@ -55,6 +56,7 @@ createRoot(document.getElementById('root')).render(
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/orders" element={<OrdersDashboard />} />
               <Route path="/recover-password" element={<RecoverPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/freight-order-confirmation" element={<FreightOrderConfirmation />} />
             </Routes>
           </Layout>
