@@ -10,18 +10,19 @@ const Card = ({ title, tag, note }) => (
 
 export default function Categories() {
   return (
+    
     <section id="catalog">
-      <div className="container">
-        <h2 style={{ margin: 0, marginBottom: 18, fontSize: 28, color: 'white' }}>Popular Categories</h2>
-        <div className="card-grid">
-          <Card title="Discs & Tines" tag="Tillage" note="Blades, shanks, sweeps" />
-          <Card title="Belts & Chains" tag="Drive" note="V‑belts, roller chain" />
-          <Card title="Hoses & Fittings" tag="Hydraulics" note="Quick‑connects, cylinders" />
-          <Card title="Bearings & Seals" tag="Bearings" note="Pillow blocks, seals" />
-          <Card title="Lighting & Harness" tag="Electrical" note="LEDs, connectors" />
-          <Card title="Oil & Air" tag="Filters" note="OEM & aftermarket" />
+      <div className="badges">
+        <div className="badge">
+          <h3>Order with confidence</h3>
+          <p>We verify fitment before shipping and offer returns on unused parts. Need help? Our team knows ag equipment inside and out.</p>
+        </div>
+        <div className="badge">
+          <h3>Fast, reliable delivery</h3>
+          <p>Select parts parts ship the same day and free local pick-up available from our Midwest warehouse.</p>
         </div>
       </div>
+
     </section>
   )
 }

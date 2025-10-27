@@ -78,7 +78,7 @@ img {
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; }
 a { color: inherit; text-decoration: none; }
-.container { max-width: var(--maxw); margin: 0 auto; padding: 0 20px; }
+.container { align-items: center; max-width: var(--maxw); margin: 0 auto; padding: 0 20px; }
 
 /* NAV */
 .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 40; transition: background .25s ease, box-shadow .25s ease; background: rgba(15,16,18,.35); backdrop-filter: saturate(140%) blur(6px); }
@@ -174,7 +174,7 @@ a { color: inherit; text-decoration: none; }
 
 /* Categories section background to visually blend with the hero */
 .categories, .categories > .container {
-  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, var(--categories-bg) 100%);
+  background: linear-gradient(180deg, rgba(255,255,255,.5) 0%, var(--categories-bg) 100%);
   color: #111;
 }
 
@@ -182,10 +182,29 @@ a { color: inherit; text-decoration: none; }
 .categories .card,
 .categories .panel,
 .categories .category-item {
-  background: rgba(0,0,0,0.6);
+  background: rgba(0,0,0,0.8);
   border: 1px solid rgba(255,255,255,0.06);
   color: #fff;
   box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+}
+
+/* When the hero is visible, make the categories boxes more transparent so the hero image reads through */
+body.hero-active .categories .card,
+body.hero-active .categories .panel,
+body.hero-active .categories .category-item {
+  background: rgba(0,0,0,0.5);
+}
+
+/* Also make the cards that appear inside the hero container more translucent while hero is active */
+body.hero-active .hero .card,
+body.hero-active .hero .card .pill {
+  background: rgba(255,255,255,0.85);
+}
+/* Keep the muted note text transparent so the card translucency shows through */
+body.hero-active .hero .card .muted {
+  background: transparent !important;
+  color: #000 !important;
+  text-shadow: none !important;
 }
 
 /* Ensure text inside category boxes is readable */
@@ -202,9 +221,16 @@ a { color: inherit; text-decoration: none; }
 
 .cta-row { display: inline-flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
 
-/* Add space between hero content and the card grid that sits below it */
-.hero > .container {
-  margin-top: 56px; /* creates breathing room between hero text and cards */
+/* Space between hero call-to-action row and the container that holds the card-grid */
+.hero .cta-row + .container {
+  margin-top: 28px;
+}
+
+/* Make text inside the hero's inner container plain black with no text-shadow.
+   Exclude typical interactive controls so buttons and badges keep their intended styles. */
+.hero .hero-content > .container :where(:not(.btn):not(.badge):not(.pill)) {
+  color: #000 !important;
+  text-shadow: none !important;
 }
 .btn {
   display: inline-flex;
@@ -272,21 +298,26 @@ a { color: inherit; text-decoration: none; }
 @media (max-width: 900px) { .feature { grid-template-columns: 1fr; } }
 
 /* CONTENT SECTIONS */
-section { padding: 80px 0; }
-.card-grid { display: grid; grid-template-columns: repeat(6, minmax(0,1fr)); gap: 16px; }
-@media (max-width: 1200px) { .card-grid { grid-template-columns: repeat(3, minmax(0,1fr)); } }
-@media (max-width: 680px) { .card-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+.section { padding: 80px 0; }
+.card-grid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(220px, 1fr);
+  gap: 16px;
+  justify-content: center; /* center columns when fewer items */
+  justify-items: center;
+  margin: 0 auto;
+}
+@media (max-width: 1200px) {
+  .card-grid { grid-auto-columns: minmax(200px, 1fr); }
+}
+@media (max-width: 680px) {
+  .card-grid { grid-auto-columns: minmax(160px, 1fr); }
+}
 .card { background: var(--surface); border: 1px solid #22262c; border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); transition: transform .2s ease, border-color .2s ease; }
 .card:hover { transform: translateY(-3px); border-color: #2a3038; }
 .card h3 { margin: 10px 0 6px; font-size: 16px; }
 .pill { display: inline-block; font-size: 12px; color: var(--muted); background: var(--surface-2); padding: 6px 10px; border-radius: 999px; border: 1px solid #22262c; }
-
-/* In the hero, make the small note text plain black without text-shadow for clarity */
-.hero .card .muted {
-  color: #000 !important;
-  text-shadow: none !important;
-  opacity: 1 !important;
-}
 
 
 
