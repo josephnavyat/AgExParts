@@ -31,7 +31,6 @@ export default function Hero() {
             <Card title="Belts & Chains" tag="Drive" note="V‑belts, roller chain" />
             <Card title="Hoses & Fittings" tag="Hydraulics" note="Quick‑connects, cylinders" />
             <Card title="Bearings & Seals" tag="Bearings" note="Pillow blocks, seals" />
-            <Card title="Lighting & Harness" tag="Electrical" note="LEDs, connectors" />
           </div>
         </div>
       </div>
