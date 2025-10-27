@@ -26,6 +26,11 @@ exports.handler = async function(event) {
       return { statusCode: 400, body: JSON.stringify({ error: 'Invalid or expired token' }) };
     }
     const row = res.rows[0];
+    // Log which user/email the token maps to (mask token for safety)
+    try {
+      const masked = token.slice(0, 6) + '...' + token.slice(-6);
+      console.log(`reset attempt token=${masked} -> user_id=${row.user_id} email=${row.email}`);
+    } catch (e) { /* ignore logging errors */ }
     // Ensure the email on the token matches the supplied email
     if ((row.email || '').toLowerCase() !== (email || '').toLowerCase()) {
       await client.end();
@@ -42,10 +47,18 @@ exports.handler = async function(event) {
     // Hash new password and update user
     const salt = await bcrypt.genSalt(10);
     const hashed = await bcrypt.hash(password, salt);
-    await client.query('UPDATE users SET password_hash = $1 WHERE id = $2', [hashed, row.user_id]);
+    // Update the user's password and return the affected id to verify
+    const updateRes = await client.query('UPDATE users SET password_hash = $1 WHERE id = $2 RETURNING id', [hashed, row.user_id]);
+    if (updateRes.rows.length === 0) {
+      // No rows updated
+      console.error(`Password update affected 0 rows for user_id=${row.user_id}`);
+      await client.end();
+      return { statusCode: 500, body: JSON.stringify({ error: 'Failed to update password' }) };
+    }
 
     // Remove used token
     await client.query('DELETE FROM password_resets WHERE token = $1', [token]);
+    console.log(`password updated for user_id=${row.user_id}`);
     await client.end();
 
     return { statusCode: 200, body: JSON.stringify({ success: true }) };
