@@ -198,7 +198,7 @@ body.hero-active .categories .category-item {
 /* Also make the cards that appear inside the hero container more translucent while hero is active */
 body.hero-active .hero .card,
 body.hero-active .hero .card .pill {
-  background: rgba(255,255,255,0.85);
+  background: rgba(255,255,255,0.75);
 }
 /* Keep the muted note text transparent so the card translucency shows through */
 body.hero-active .hero .card .muted {
@@ -325,7 +325,9 @@ body.hero-active .hero .card .muted {
   --card-w: 220px;
   --card-h: 200px;
   width: var(--card-w);
-  height: var(--card-h);
+  /* allow height to grow on mobile to avoid clipping */
+  height: auto;
+  min-height: 160px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -337,7 +339,8 @@ body.hero-active .hero .card .muted {
   .card-grid .card { --card-w: 200px; --card-h: 190px; }
 }
 @media (max-width: 680px) {
-  .card-grid .card { --card-w: 160px; --card-h: 170px; }
+  .card-grid { flex-wrap: wrap; justify-content: center; }
+  .card-grid .card { --card-w: 160px; --card-h: auto; width: 46%; min-height: 140px; }
 }
 
 /* Further scale down typography and pills for better mobile fit */
