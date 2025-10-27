@@ -305,7 +305,7 @@ export default function ProductDetail() {
           </section>
           */}
           <div style={{ color: '#888', fontSize: '1rem', marginBottom: 8, width: '100%' }}>
-            Category: {product.category} | Vendor: {product.vendor}
+            Category: {product.category} | Manufacturer: {product.manufacturer}
           </div>
           {/* Actions */}
           <div style={{ display: 'flex', gap: '1.5rem', marginTop: 32 }}>

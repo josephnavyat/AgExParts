@@ -12,7 +12,7 @@ export default function Categories() {
   return (
     <section id="catalog">
       <div className="container">
-        <h2 style={{ margin: 0, marginBottom: 18, fontSize: 28, color: 'light grey' }}>Popular Categories</h2>
+        <h2 style={{ margin: 0, marginBottom: 18, fontSize: 28, color: 'white' }}>Popular Categories</h2>
         <div className="card-grid">
           <Card title="Discs & Tines" tag="Tillage" note="Blades, shanks, sweeps" />
           <Card title="Belts & Chains" tag="Drive" note="V‑belts, roller chain" />

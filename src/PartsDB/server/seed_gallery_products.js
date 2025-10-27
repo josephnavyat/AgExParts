@@ -15,7 +15,7 @@ async function seed() {
       price: 10.99,
       quantity: 25,
       category: 'General',
-  vendor: 'DemoCo'
+      manufacturer: 'DemoCo'
     },
     {
       part_number: 'PG-0002',
@@ -25,7 +25,7 @@ async function seed() {
       price: 12.99,
       quantity: 30,
       category: 'General',
-  vendor: 'DemoCo'
+      manufacturer: 'DemoCo'
     },
     {
       part_number: 'PG-0003',
@@ -35,7 +35,7 @@ async function seed() {
       price: 8.99,
       quantity: 40,
       category: 'General',
-  vendor: 'DemoCo'
+      manufacturer: 'DemoCo'
     },
     {
       part_number: 'PG-0004',
@@ -45,7 +45,7 @@ async function seed() {
       price: 15.99,
       quantity: 20,
       category: 'General',
-  vendor: 'DemoCo'
+      manufacturer: 'DemoCo'
     },
     {
       part_number: 'PG-0005',
@@ -55,7 +55,7 @@ async function seed() {
       price: 9.99,
       quantity: 50,
       category: 'General',
-  vendor: 'DemoCo'
+      manufacturer: 'DemoCo'
     },
     {
       part_number: 'PG-0006',
@@ -65,14 +65,14 @@ async function seed() {
       price: 11.99,
       quantity: 35,
       category: 'General',
-  vendor: 'DemoCo'
+      manufacturer: 'DemoCo'
     }
   ];
   for (const p of products) {
     await db.run(
-  `INSERT OR IGNORE INTO products (part_number, name, image, description, price, quantity, category, vendor)
-  VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-  [p.part_number, p.name, p.image, p.description, p.price, p.quantity, p.category, p.vendor]
+      `INSERT OR IGNORE INTO products (part_number, name, image, description, price, quantity, category, manufacturer)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [p.part_number, p.name, p.image, p.description, p.price, p.quantity, p.category, p.manufacturer]
     );
   }
   await db.close();

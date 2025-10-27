@@ -36,7 +36,7 @@ export default function ProductGallery() {
   const [showBanner, setShowBanner] = useState(false);
 
   // Filter state
-  const [vendor, setVendor] = useState('');
+  const [manufacturer, setManufacturer] = useState('');
   const [machineType, setMachineType] = useState('');
   const [model, setModel] = useState('');
   const [sort, setSort] = useState('');
@@ -208,7 +208,7 @@ useEffect(() => {
           </div>
         </div>
   <div style={{ display: 'flex', gap: 16, margin: '1.2rem 0 2rem 0', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <select value={vendor} onChange={e => setVendor(e.target.value)}
+          <select value={manufacturer} onChange={e => setManufacturer(e.target.value)}
             style={{
               padding: '1.5rem 1.2rem',
               borderRadius: 10,
@@ -222,8 +222,8 @@ useEffect(() => {
               color: '#222',
               boxShadow: '0 2px 8px rgba(40,167,69,0.07)',
             }}>
-            <option value="">All Vendors</option>
-            {[...new Set(products.map(p => p.vendor).filter(Boolean))].map(m => (
+            <option value="">All Manufacturers</option>
+            {[...new Set(products.map(p => p.manufacturer).filter(Boolean))].map(m => (
               <option key={m} value={m}>{m}</option>
             ))}
           </select>
@@ -293,7 +293,7 @@ useEffect(() => {
             className="gallery-grid"
           >
             {products
-              .filter(product => !vendor || product.vendor === vendor)
+              .filter(product => !manufacturer || product.manufacturer === manufacturer)
               .filter(product => !machineType || product.machine_type === machineType)
               .filter(product => !model || product.model === model)
               .filter(product => !inStockOnly || product.quantity > 0)
@@ -354,9 +354,9 @@ useEffect(() => {
                       Category: {product.category}
                     </div>
                   )}
-                  {product.vendor && (
+                  {product.manufacturer && (
                     <div style={{ fontSize: '0.85em', color: '#888' }}>
-                      Vendor: {product.vendor}
+                      Manufacturer: {product.manufacturer}
                     </div>
                   )}
                 </div>
