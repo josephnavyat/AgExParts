@@ -15,8 +15,8 @@ async function createTable() {
     price REAL,
     priceUSD REAL,
     quantity INTEGER,
-    category TEXT,
-    manufacturer TEXT
+  category TEXT,
+  vendor TEXT
   )`);
   await db.close();
   console.log('Products table created (if it did not exist).');

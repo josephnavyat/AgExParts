@@ -18,11 +18,11 @@ async function migrate() {
     price REAL,
     quantity INTEGER,
     category TEXT,
-    manufacturer TEXT
+    vendor TEXT
   )`);
-  // Copy data from old table (if any)
-  await db.exec(`INSERT INTO products (id, name, image, description)
-    SELECT id, name, image, description FROM products_old`);
+  // Copy data from old table (if any). If the old table had 'manufacturer', copy it into 'vendor'.
+  await db.exec(`INSERT INTO products (id, name, image, description, price, quantity, category, vendor)
+    SELECT id, name, image, description, price, quantity, category, manufacturer FROM products_old`);
   // Drop old table
   await db.exec('DROP TABLE products_old');
   await db.close();

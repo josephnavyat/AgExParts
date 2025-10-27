@@ -16,7 +16,7 @@ export default function SimpleGallery() {
   // Filter states
   const [inStockOnly, setInStockOnly] = useState(false);
   const [searchText, setSearchText] = useState('');
-  const [manufacturer, setManufacturer] = useState('');
+  const [vendor, setVendor] = useState('');
   const [machineType, setMachineType] = useState('');
   const [model, setModel] = useState('');
   const [sort, setSort] = useState('');
@@ -159,10 +159,10 @@ export default function SimpleGallery() {
               </select>
             </div>
             <div className="filter-section">
-              <label className="filter-label">Manufacturer</label>
-              <select value={manufacturer} onChange={e => setManufacturer(e.target.value)} className="filter-select">
-                <option value="">All Manufacturers</option>
-                {[...new Set(products.map(p => p.manufacturer).filter(Boolean))].map(m => (
+              <label className="filter-label">Vendor</label>
+              <select value={vendor} onChange={e => setVendor(e.target.value)} className="filter-select">
+                <option value="">All Vendors</option>
+                {[...new Set(products.map(p => p.vendor).filter(Boolean))].map(m => (
                   <option key={m} value={m}>{m}</option>
                 ))}
               </select>
@@ -208,7 +208,7 @@ export default function SimpleGallery() {
               .filter(product => product.website_visible === true)
               .filter(product => !category || product.category === category)
               .filter(product => !subCategory || product.subcategory === subCategory)
-              .filter(product => !manufacturer || product.manufacturer === manufacturer)
+              .filter(product => !vendor || product.vendor === vendor)
               .filter(product => !machineType || product.machine_type === machineType)
               .filter(product => !model || product.model === model)
               .filter(product => !inStockOnly || product.quantity > 0)
@@ -299,15 +299,15 @@ export default function SimpleGallery() {
         {/* Pagination controls */}
   <div className="simple-gallery-pagination">
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '2rem auto 0 auto', gap: 12, width: '100%' }}>
-          {page > 1 && (
+            {page > 1 && (
             <button className="simple-gallery-btn secondary" onClick={() => setPage(page - 1)}>&lt; Prev</button>
           )}
           <span style={{ color: '#c3c3c3', fontWeight: 500, fontSize: '1.05rem', margin: '0 1rem' }}>
             Page {page}
           </span>
-          {products.filter(product => !category || product.category === category)
+            {products.filter(product => !category || product.category === category)
             .filter(product => !subCategory || product.subcategory === subCategory)
-            .filter(product => !manufacturer || product.manufacturer === manufacturer)
+            .filter(product => !vendor || product.vendor === vendor)
             .filter(product => !machineType || product.machine_type === machineType)
             .filter(product => !model || product.model === model)
             .filter(product => !inStockOnly || product.quantity > 0)

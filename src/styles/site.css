@@ -69,10 +69,10 @@ img {
   --text: #111827;
   --muted: #6b7280;
   --brand: #19a974;
-  --accent: #f59f00;
+  --accent: #484848;
   --radius: 12px;
   --shadow: 0 6px 18px rgba(16,24,40,0.06);
-  --categories-bg: #d6b889; /* beige sampled from attachment */
+  --categories-bg: #484848; /* beige sampled from attachment */
   --maxw: 1200px;
 }
 * { box-sizing: border-box; }
