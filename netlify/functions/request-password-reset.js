@@ -52,14 +52,15 @@ exports.handler = async function(event) {
     if (!base) {
       console.error('BASE_URL is not set');
     }
-    const resetUrl = `${base}/reset-password?token=${token}`;
+  // Include the email in the reset URL to help ensure the token is used for the intended account
+  const resetUrl = `${base}/reset-password?token=${token}&email=${encodeURIComponent(email)}`;
 
     // Send email: prefer Mailgun HTTP API if configured, otherwise use SMTP transporter
     const mailgunApiKey = process.env.MAILGUN_API_KEY;
     const mailgunDomain = process.env.MAILGUN_DOMAIN;
     const mailFrom = process.env.MAILGUN_FROM || process.env.SMTP_FROM || `no-reply@${mailgunDomain || 'example.com'}`;
 
-    if (mailgunApiKey && mailgunDomain) {
+  if (mailgunApiKey && mailgunDomain) {
       // Use Mailgun HTTP API
       const mgUrl = `https://api.mailgun.net/v3/${mailgunDomain}/messages`;
       const params = new URLSearchParams();
@@ -91,6 +92,11 @@ exports.handler = async function(event) {
         html: `<p>You requested a password reset. <a href="${resetUrl}">Click here to reset your password</a>. This link expires in 1 hour.</p>`
       });
     }
+    // Log minimal debug info (mask token for safety)
+    try {
+      const masked = token.slice(0, 6) + '...' + token.slice(-6);
+      console.log(`password reset created for user id=${userRes.rows[0].id} email=${email} token=${masked}`);
+    } catch (e) { /* ignore */ }
 
     await client.end();
     return {

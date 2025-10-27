@@ -7,21 +7,30 @@ exports.handler = async function(event) {
   }
 
   try {
-    const { token, password } = JSON.parse(event.body || '{}');
-    if (!token || !password) {
-      return { statusCode: 400, body: JSON.stringify({ error: 'Token and password required' }) };
+    const { token, password, email } = JSON.parse(event.body || '{}');
+    if (!token || !password || !email) {
+      return { statusCode: 400, body: JSON.stringify({ error: 'Token, email and password required' }) };
     }
 
     const client = new Client({ connectionString: process.env.DATABASE_URL });
     await client.connect();
 
     // Find token and ensure not expired
-    const res = await client.query('SELECT user_id, expires_at FROM password_resets WHERE token = $1', [token]);
+    // Join password_resets to users to make sure the token belongs to the supplied email
+    const res = await client.query(
+      `SELECT pr.user_id, pr.expires_at, u.email FROM password_resets pr JOIN users u ON u.id = pr.user_id WHERE pr.token = $1`,
+      [token]
+    );
     if (res.rows.length === 0) {
       await client.end();
       return { statusCode: 400, body: JSON.stringify({ error: 'Invalid or expired token' }) };
     }
     const row = res.rows[0];
+    // Ensure the email on the token matches the supplied email
+    if ((row.email || '').toLowerCase() !== (email || '').toLowerCase()) {
+      await client.end();
+      return { statusCode: 400, body: JSON.stringify({ error: 'Token does not match provided email' }) };
+    }
     const expires = new Date(row.expires_at);
     if (expires < new Date()) {
       // token expired

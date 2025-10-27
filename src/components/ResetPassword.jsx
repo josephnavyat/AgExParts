@@ -22,6 +22,7 @@ const lightTheme = createTheme({
 export default function ResetPassword() {
   const query = useQuery();
   const token = query.get('token') || '';
+  const emailFromQs = query.get('email') || '';
   const navigate = useNavigate();
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -48,7 +49,7 @@ export default function ResetPassword() {
       const res = await fetch('/.netlify/functions/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token, password }),
+        body: JSON.stringify({ token, password, email: emailFromQs }),
       });
       const data = await res.json();
   if (!res.ok) throw new Error(data && data.error ? data.error : 'Unknown error');
