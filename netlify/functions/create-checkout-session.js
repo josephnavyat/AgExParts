@@ -8,26 +8,31 @@ exports.handler = async (event) => {
   const { cart, customer_name, customer_email, shippingCost, captchaToken } = JSON.parse(event.body);
 
   // Verify Turnstile token and ensure secret is configured
-  if (!TURNSTILE_SECRET) {
-    console.error('TURNSTILE_SECRET not set in environment');
-    return { statusCode: 500, body: JSON.stringify({ error: 'Server misconfiguration: captcha secret missing' }) };
-  }
-  if (!captchaToken) {
-    return { statusCode: 400, body: JSON.stringify({ error: 'Captcha token required' }) };
-  }
-  try {
-    const verifyRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: `secret=${encodeURIComponent(TURNSTILE_SECRET)}&response=${encodeURIComponent(captchaToken)}`
-    });
-    const verifyJson = await verifyRes.json();
-    if (!verifyJson.success) {
-      return { statusCode: 403, body: JSON.stringify({ error: 'Captcha verification failed' }) };
+  // Allow short-circuit via TURNSTILE_BYPASS=1 for urgent testing (disable in production after fix)
+  if (process.env.TURNSTILE_BYPASS === '1') {
+    console.warn('Turnstile bypass enabled via TURNSTILE_BYPASS=1 - skipping captcha verification');
+  } else {
+    if (!TURNSTILE_SECRET) {
+      console.error('TURNSTILE_SECRET not set in environment');
+      return { statusCode: 500, body: JSON.stringify({ error: 'Server misconfiguration: captcha secret missing' }) };
     }
-  } catch (err) {
-    console.error('turnstile verify error', err && err.message ? err.message : err);
-    return { statusCode: 500, body: JSON.stringify({ error: 'Captcha verification error' }) };
+    if (!captchaToken) {
+      return { statusCode: 400, body: JSON.stringify({ error: 'Captcha token required' }) };
+    }
+    try {
+      const verifyRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `secret=${encodeURIComponent(TURNSTILE_SECRET)}&response=${encodeURIComponent(captchaToken)}`
+      });
+      const verifyJson = await verifyRes.json();
+      if (!verifyJson.success) {
+        return { statusCode: 403, body: JSON.stringify({ error: 'Captcha verification failed' }) };
+      }
+    } catch (err) {
+      console.error('turnstile verify error', err && err.message ? err.message : err);
+      return { statusCode: 500, body: JSON.stringify({ error: 'Captcha verification error' }) };
+    }
   }
 
   // Map cart items to Stripe line_items

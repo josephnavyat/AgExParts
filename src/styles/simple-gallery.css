@@ -523,14 +523,6 @@
   box-shadow: 0 2px 8px #aaa;
 }
 
-/* Icon inside Add to Cart button */
-.simple-gallery-btn.primary .add-to-cart-icon {
-  stroke: white; /* icon uses currentColor normally; force white to match text */
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
-}
-
 .add-to-cart-label { color: var(--gallery-btn-text); }
 
 .simple-gallery-btn.primary:disabled {
