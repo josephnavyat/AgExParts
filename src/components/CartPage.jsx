@@ -11,6 +11,82 @@ import FreightInquiryPage from './FreightInquiryPage';
 function StripeCheckoutButton({ cart, disabled }) {
   const stripe = useStripe();
   const navigate = useNavigate();
+  // Helper to load Turnstile and get a token. Falls back to rendering an invisible widget if execute not available.
+  const getTurnstileToken = async (siteKey) => {
+    // If execute is available, try it first
+  // We must render a widget and call execute(widgetId). Calling execute(siteKey, ...) is invalid.
+
+    // Load script if not present and wait for ready
+    if (!window.turnstile) {
+      await new Promise((resolve, reject) => {
+        const existing = document.querySelector('script[src*="challenges.cloudflare.com/turnstile"]');
+        if (existing) {
+          existing.addEventListener('load', resolve);
+          existing.addEventListener('error', reject);
+          return;
+        }
+        const s = document.createElement('script');
+        s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+        s.async = true;
+        s.onload = resolve;
+        s.onerror = reject;
+        document.head.appendChild(s);
+      });
+    }
+
+  // After load, proceed to render a fresh invisible widget and execute it.
+
+    // Render an invisible widget and execute it, with timeout.
+    return await new Promise((resolve, reject) => {
+      let finished = false;
+      const timeout = setTimeout(() => {
+        if (!finished) {
+          finished = true;
+          reject(new Error('Turnstile widget timeout'));
+        }
+      }, 10000); // 10s
+
+      try {
+        const wrapper = document.createElement('div');
+        wrapper.style.position = 'absolute';
+        wrapper.style.left = '-9999px';
+        document.body.appendChild(wrapper);
+        const widget = document.createElement('div');
+        wrapper.appendChild(widget);
+        // Render with valid size; 'invisible' is not a supported value per Turnstile API.
+        const widgetId = window.turnstile.render(widget, {
+          sitekey: siteKey,
+          size: 'compact',
+          callback: (t) => {
+            if (finished) return;
+            finished = true;
+            clearTimeout(timeout);
+            try { document.body.removeChild(wrapper); } catch (e) {}
+            resolve(t);
+          }
+        });
+        // execute the rendered widget id
+        setTimeout(() => {
+          try {
+            // Some older versions may require reset before execute if already running
+            if (window.turnstile && typeof window.turnstile.reset === 'function') {
+              try { window.turnstile.reset(widgetId); } catch (e) {}
+            }
+            window.turnstile.execute(widgetId);
+          } catch (e) {
+            if (!finished) {
+              finished = true;
+              clearTimeout(timeout);
+              try { document.body.removeChild(wrapper); } catch (e) {}
+              reject(e);
+            }
+          }
+        }, 50);
+      } catch (e) {
+        reject(e);
+      }
+    });
+  };
   // Map cart items to use discounted price if sale is active
   const getStripeCart = () => {
     return cart.map(({ product, quantity }) => {
@@ -41,22 +117,14 @@ function StripeCheckoutButton({ cart, disabled }) {
     const siteKey = '0x4AAAAAAB-d-eg5_99Hui2g';
     let captchaToken = null;
     try {
-      if (window.turnstile && typeof window.turnstile.execute === 'function') {
-        captchaToken = await window.turnstile.execute(siteKey, { action: 'checkout' });
-      } else {
-        // dynamically load turnstile script
-        await new Promise((resolve, reject) => {
-          const s = document.createElement('script');
-          s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
-          s.async = true;
-          s.onload = resolve;
-          s.onerror = reject;
-          document.head.appendChild(s);
-        });
-        captchaToken = await window.turnstile.execute(siteKey, { action: 'checkout' });
-      }
+      captchaToken = await getTurnstileToken(siteKey);
     } catch (err) {
-      console.warn('Turnstile error, proceeding without token', err);
+      console.warn('Turnstile error', err);
+    }
+
+    if (!captchaToken) {
+      window.alert('Captcha failed — please try again.');
+      return;
     }
 
     const res = await fetch('/.netlify/functions/create-checkout-session', {

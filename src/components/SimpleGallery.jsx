@@ -35,7 +35,7 @@ export default function SimpleGallery() {
         setProducts(data);
       } catch (error) {
         if (error.name !== 'AbortError') {
-          setError(error.message);
+          setError(error.message + (error.response ? ' ' + JSON.stringify(error.response) : ''));
         }
       } finally {
         setLoading(false);
@@ -203,7 +203,9 @@ export default function SimpleGallery() {
           transition: 'none',
         }}
       >
-          {(() => {
+          {error ? (
+            <div style={{ padding: 24, textAlign: 'center', color: 'red' }} role="alert">Failed to load products: {error}</div>
+          ) : (() => {
             const filtered = products
               .filter(product => product.website_visible === true)
               .filter(product => !category || product.category === category)

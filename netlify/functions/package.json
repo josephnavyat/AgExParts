@@ -1,6 +1,7 @@
 {
   "type": "commonjs",
   "dependencies": {
-    "shippo": "^2.15.0"
+  "shippo": "^2.15.0",
+  "@neondatabase/serverless": "^1.0.1"
   }
 }

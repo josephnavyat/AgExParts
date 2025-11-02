@@ -16,11 +16,11 @@ export default function FreightOrderConfirmation() {
 
   const handleCheckout = async () => {
     const siteKey = '0x4AAAAAAB-d-eg5_99Hui2g';
-    let captchaToken = null;
-    try {
+    const getTurnstileToken = async (siteKey) => {
       if (window.turnstile && typeof window.turnstile.execute === 'function') {
-        captchaToken = await window.turnstile.execute(siteKey, { action: 'checkout' });
-      } else {
+        return await window.turnstile.execute(siteKey, { action: 'checkout' });
+      }
+      if (!window.turnstile) {
         await new Promise((resolve, reject) => {
           const s = document.createElement('script');
           s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
@@ -29,10 +29,42 @@ export default function FreightOrderConfirmation() {
           s.onerror = reject;
           document.head.appendChild(s);
         });
-        captchaToken = await window.turnstile.execute(siteKey, { action: 'checkout' });
       }
+      if (window.turnstile && typeof window.turnstile.execute === 'function') {
+        return await window.turnstile.execute(siteKey, { action: 'checkout' });
+      }
+      return await new Promise((resolve, reject) => {
+        try {
+          const wrapper = document.createElement('div');
+          wrapper.style.position = 'absolute';
+          wrapper.style.left = '-9999px';
+          document.body.appendChild(wrapper);
+          const widget = document.createElement('div');
+          wrapper.appendChild(widget);
+          const widgetId = window.turnstile.render(widget, {
+            sitekey: siteKey,
+            size: 'invisible',
+            callback: (token) => {
+              resolve(token);
+              try { document.body.removeChild(wrapper); } catch(e){}
+            }
+          });
+          window.turnstile.execute(widgetId);
+        } catch (e) {
+          reject(e);
+        }
+      });
+    };
+    let captchaToken = null;
+    try {
+      captchaToken = await getTurnstileToken(siteKey);
     } catch (err) {
       console.warn('Turnstile error', err);
+    }
+
+    if (!captchaToken) {
+      window.alert('Captcha failed — please try again.');
+      return;
     }
 
     const res = await fetch('/.netlify/functions/create-checkout-session', {
