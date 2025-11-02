@@ -45,7 +45,7 @@ function ProfilePage() {
     try {
       const endpoint = mode === 'login' ? '/.netlify/functions/login-user' : '/.netlify/functions/register-user';
       const body = mode === 'login'
-        ? { username, password }
+        ? { email: username, password }
         : {
             username,
             password,

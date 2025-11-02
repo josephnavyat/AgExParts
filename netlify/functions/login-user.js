@@ -10,11 +10,11 @@ exports.handler = async function(event) {
     };
   }
 
-  const { username, password } = JSON.parse(event.body || '{}');
-  if (!username || !password) {
+  const { email, password } = JSON.parse(event.body || '{}');
+  if (!email || !password) {
     return {
       statusCode: 400,
-      body: JSON.stringify({ error: 'Username and password required' })
+      body: JSON.stringify({ error: 'Email and password required' })
     };
   }
 
@@ -24,12 +24,12 @@ exports.handler = async function(event) {
   await client.connect();
 
   // Get user
-  const userRes = await client.query('SELECT id, username, first_name, last_name, email, address, phone, user_type, password_hash FROM users WHERE username = $1', [username]);
+  const userRes = await client.query('SELECT id, username, first_name, last_name, email, address, phone, user_type, password_hash FROM users WHERE email = $1', [email]);
   await client.end();
   if (userRes.rows.length === 0) {
     return {
       statusCode: 401,
-      body: JSON.stringify({ error: 'Invalid username or password' })
+      body: JSON.stringify({ error: 'Invalid email or password' })
     };
   }
 
@@ -38,7 +38,7 @@ exports.handler = async function(event) {
   if (!valid) {
     return {
       statusCode: 401,
-      body: JSON.stringify({ error: 'Invalid username or password' })
+      body: JSON.stringify({ error: 'Invalid email or password' })
     };
   }
 
