@@ -17,11 +17,15 @@ export default function FreightOrderConfirmation() {
   const handleCheckout = async () => {
     const siteKey = '0x4AAAAAAB-d-eg5_99Hui2g';
     const getTurnstileToken = async (siteKey) => {
-      if (window.turnstile && typeof window.turnstile.execute === 'function') {
-        return await window.turnstile.execute(siteKey, { action: 'checkout' });
-      }
+      // Load script if needed
       if (!window.turnstile) {
         await new Promise((resolve, reject) => {
+          const existing = document.querySelector('script[src*="challenges.cloudflare.com/turnstile"]');
+          if (existing) {
+            existing.addEventListener('load', resolve);
+            existing.addEventListener('error', reject);
+            return;
+          }
           const s = document.createElement('script');
           s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
           s.async = true;
@@ -30,10 +34,17 @@ export default function FreightOrderConfirmation() {
           document.head.appendChild(s);
         });
       }
-      if (window.turnstile && typeof window.turnstile.execute === 'function') {
-        return await window.turnstile.execute(siteKey, { action: 'checkout' });
-      }
+
+      // Render invisible/compact widget and execute it
       return await new Promise((resolve, reject) => {
+        let finished = false;
+        const timeout = setTimeout(() => {
+          if (!finished) {
+            finished = true;
+            reject(new Error('Turnstile widget timeout'));
+          }
+        }, 10000);
+
         try {
           const wrapper = document.createElement('div');
           wrapper.style.position = 'absolute';
@@ -43,13 +54,30 @@ export default function FreightOrderConfirmation() {
           wrapper.appendChild(widget);
           const widgetId = window.turnstile.render(widget, {
             sitekey: siteKey,
-            size: 'invisible',
+            size: 'compact',
             callback: (token) => {
+              if (finished) return;
+              finished = true;
+              clearTimeout(timeout);
+              try { document.body.removeChild(wrapper); } catch (e) {}
               resolve(token);
-              try { document.body.removeChild(wrapper); } catch(e){}
             }
           });
-          window.turnstile.execute(widgetId);
+          setTimeout(() => {
+            try {
+              if (window.turnstile && typeof window.turnstile.reset === 'function') {
+                try { window.turnstile.reset(widgetId); } catch (e) {}
+              }
+              window.turnstile.execute(widgetId);
+            } catch (e) {
+              if (!finished) {
+                finished = true;
+                clearTimeout(timeout);
+                try { document.body.removeChild(wrapper); } catch (e) {}
+                reject(e);
+              }
+            }
+          }, 50);
         } catch (e) {
           reject(e);
         }
