@@ -15,11 +15,36 @@ export default function FreightOrderConfirmation() {
   const total = subtotal + Number(shipping);
 
   const handleCheckout = async () => {
+    const siteKey = '0x4AAAAAAB-d-eg5_99Hui2g';
+    let captchaToken = null;
+    try {
+      if (window.turnstile && typeof window.turnstile.execute === 'function') {
+        captchaToken = await window.turnstile.execute(siteKey, { action: 'checkout' });
+      } else {
+        await new Promise((resolve, reject) => {
+          const s = document.createElement('script');
+          s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+          s.async = true;
+          s.onload = resolve;
+          s.onerror = reject;
+          document.head.appendChild(s);
+        });
+        captchaToken = await window.turnstile.execute(siteKey, { action: 'checkout' });
+      }
+    } catch (err) {
+      console.warn('Turnstile error', err);
+    }
+
     const res = await fetch('/.netlify/functions/create-checkout-session', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ cart, shippingCost: shipping }),
+      body: JSON.stringify({ cart, shippingCost: shipping, captchaToken }),
     });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: 'Unknown error' }));
+      window.alert(err.error || 'Checkout failed');
+      return;
+    }
     const { url } = await res.json();
     window.location = url;
   };

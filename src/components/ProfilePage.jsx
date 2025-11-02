@@ -29,6 +29,7 @@ function ProfilePage() {
     phone: loggedInUser?.phone || ''
   });
   const [mode, setMode] = useState('login');
+  const [loginEmail, setLoginEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -38,16 +39,28 @@ function ProfilePage() {
   const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [emailError, setEmailError] = useState('');
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage('');
+    setEmailError('');
+    // basic client-side email validation
+    if (mode === 'login') {
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!re.test(loginEmail)) {
+        setEmailError('Please enter a valid email address');
+        setLoading(false);
+        return;
+      }
+    }
     try {
       const endpoint = mode === 'login' ? '/.netlify/functions/login-user' : '/.netlify/functions/register-user';
       const body = mode === 'login'
-        ? { email: username, password }
+        ? { email: loginEmail, password }
         : {
-            username,
+            username: username,
             password,
             first_name: firstName,
             last_name: lastName,
@@ -69,7 +82,7 @@ function ProfilePage() {
             const payload = JSON.parse(atob(data.token.split('.')[1]));
             setLoggedInUser(payload);
           } catch {
-            setLoggedInUser({ username });
+            setLoggedInUser({ email: loginEmail });
           }
         } else {
           setMessage('Registration successful! You can now log in.');
@@ -339,12 +352,15 @@ function ProfilePage() {
                 </Typography>
                 <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                   <TextField
-                    label="Username"
+                    label="Email"
                     variant="filled"
-                    value={username}
-                    onChange={e => setUsername(e.target.value)}
+                    value={loginEmail}
+                    onChange={e => setLoginEmail(e.target.value)}
                     required
+                    type="email"
                     color="primary"
+                    error={Boolean(emailError)}
+                    helperText={emailError}
                   />
                   <TextField
                     label="Password"
@@ -357,6 +373,14 @@ function ProfilePage() {
                   />
                   {mode === 'register' && (
                     <>
+                      <TextField
+                        label="Username"
+                        variant="filled"
+                        value={username}
+                        onChange={e => setUsername(e.target.value)}
+                        required
+                        color="primary"
+                      />
                       <TextField
                         label="First Name"
                         variant="filled"
