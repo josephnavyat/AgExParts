@@ -68,6 +68,8 @@ function StripeCheckoutButton({ cart, disabled }) {
         // execute the rendered widget id
         setTimeout(() => {
           try {
+            // debug: log widgetId and type to catch misuse (e.g. siteKey passed here)
+            try { console.debug('turnstile.execute -> widgetId:', widgetId, 'type:', typeof widgetId); } catch (e) {}
             // Some older versions may require reset before execute if already running
             if (window.turnstile && typeof window.turnstile.reset === 'function') {
               try { window.turnstile.reset(widgetId); } catch (e) {}

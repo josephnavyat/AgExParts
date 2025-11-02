@@ -65,6 +65,7 @@ export default function FreightOrderConfirmation() {
           });
           setTimeout(() => {
             try {
+              try { console.debug('turnstile.execute -> widgetId:', widgetId, 'type:', typeof widgetId); } catch (e) {}
               if (window.turnstile && typeof window.turnstile.reset === 'function') {
                 try { window.turnstile.reset(widgetId); } catch (e) {}
               }
