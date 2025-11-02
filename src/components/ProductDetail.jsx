@@ -12,7 +12,42 @@ export default function ProductDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { cart, dispatch } = useCart();
-  const getImageUrl = (img) => img && img.startsWith('http') ? img : (img ? img : '/logo.png');
+  const getImageUrl = (img) => {
+    if (!img) return '/logo.png';
+    if (img.startsWith('http://') || img.startsWith('https://')) return img;
+    // Ensure local image paths are absolute so they resolve correctly from any route
+    return img.startsWith('/') ? img : `/${img}`;
+  };
+  // Retry logic for image onError (lowercase, origin-prefixed, relative), then fallback
+  const handleImgError = (e) => {
+    const img = e.currentTarget;
+    const attempts = Number(img.dataset.attempts || 0);
+    img.dataset.attempts = attempts + 1;
+    const src = img.getAttribute('src') || '';
+    const path = src.startsWith(window.location.origin) ? src.slice(window.location.origin.length) : src;
+    const filename = path.split('/').pop() || '';
+
+    if (attempts === 0) {
+      const lower = filename.toLowerCase();
+      if (lower !== filename) {
+        const candidate = path.replace(new RegExp(filename + '$'), lower);
+        img.src = candidate.startsWith('/') ? candidate : `/${candidate}`;
+        return;
+      }
+    }
+    if (attempts === 1) {
+      if (path && path.startsWith('/')) {
+        img.src = window.location.origin + path;
+        return;
+      }
+    }
+    if (attempts === 2) {
+      const noSlash = path.startsWith('/') ? path.slice(1) : path;
+      img.src = noSlash || '/logo.png';
+      return;
+    }
+    img.src = '/logo.png';
+  };
   // Helper for available inventory
   const availableStock = product && Number(product.inventory ?? product.quantity ?? 0);
 
@@ -58,13 +93,14 @@ export default function ProductDetail() {
     for (let i = 2; i <= 5; i++) {
       imgList.push(`${baseName}_${i}${ext}`);
     }
-    // Check which images exist by attempting to load them
+    // Check which images exist by attempting to load them using normalized URLs
     Promise.all(imgList.map(src =>
       new Promise(resolve => {
-        const img = new window.Image();
-        img.src = src;
-        img.onload = () => resolve(src);
-        img.onerror = () => resolve(null);
+        const imgEl = new window.Image();
+        const url = getImageUrl(src);
+        imgEl.src = url;
+        imgEl.onload = () => resolve(url);
+        imgEl.onerror = () => resolve(null);
       })
     )).then(arr => setImages(arr.filter(Boolean)));
     setImgIndex(0);
@@ -131,7 +167,7 @@ export default function ProductDetail() {
                     borderRadius: 0
                   }}
                   loading="lazy"
-                  onError={e => { e.currentTarget.src = '/logo.png'; }}
+                  onError={handleImgError}
                 />
                 {imgIndex > 0 && (
                   <button

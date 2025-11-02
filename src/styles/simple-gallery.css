@@ -538,7 +538,8 @@
   margin-top: 0;
   margin-bottom: 0;
   align-items: stretch;
-  position: relative;
+  /* let actions flow in document on mobile so they are not clipped */
+  position: static !important;
   left: auto;
   right: auto;
   bottom: auto;
@@ -549,11 +550,35 @@
   width: 96%;
   min-width: 0;
   max-width: 100%;
-  height: 44px;
-  font-size: 1.03rem;
+  height: 56px; /* slightly taller so qty bubble doesn't overlap */
+  font-size: 1.06rem;
     margin: 0;
     border-radius: 8px;
     box-sizing: border-box;
+    padding-left: 18px; /* give text some left breathing room */
+    padding-right: 18px;
+  }
+  /* Make qty bubble inline and right-aligned within the button on mobile to avoid overlap */
+  .qty-bubble {
+    position: relative;
+    top: 0;
+    right: 0;
+    margin-left: 10px;
+    min-width: 20px;
+    height: 20px;
+    align-self: center;
+  }
+  /* Allow product title to show up to 3 lines on mobile */
+  .simple-gallery-card-title {
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    min-height: 3.6em; /* approximate height for 3 lines */
+    height: 3.6em;
+    font-size: 0.98rem;
+  }
+  /* Add extra bottom padding so the action area is visible and not clipped */
+  .simple-gallery-card {
+    padding-bottom: 140px; /* ensures room for the buttons below content */
   }
 }
 

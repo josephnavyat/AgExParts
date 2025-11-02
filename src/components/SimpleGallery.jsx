@@ -49,7 +49,46 @@ export default function SimpleGallery() {
   const [perPage, setPerPage] = useState(50);
   const [page, setPage] = useState(1);
   const { dispatch, cart } = useCart();
-  const getImageUrl = (img) => img && img.startsWith('http') ? img : (img ? img : '/logo.png');
+  const getImageUrl = (img) => {
+    if (!img) return '/logo.png';
+    if (img.startsWith('http://') || img.startsWith('https://')) return img;
+    return img.startsWith('/') ? img : `/${img}`;
+  };
+  // Robust image error handler with retries for common issues (case, origin, relative)
+  const handleImgError = (e) => {
+    const img = e.currentTarget;
+    const attempts = Number(img.dataset.attempts || 0);
+    img.dataset.attempts = attempts + 1;
+    const src = img.getAttribute('src') || '';
+    // Normalize to path relative to origin
+    const path = src.startsWith(window.location.origin) ? src.slice(window.location.origin.length) : src;
+    const filename = path.split('/').pop() || '';
+
+    if (attempts === 0) {
+      // Try lowercase filename (case-sensitive servers)
+      const lower = filename.toLowerCase();
+      if (lower !== filename) {
+        const candidate = path.replace(new RegExp(filename + '$'), lower);
+        img.src = candidate.startsWith('/') ? candidate : `/${candidate}`;
+        return;
+      }
+    }
+    if (attempts === 1) {
+      // Try absolute origin-prefixed URL
+      if (path && path.startsWith('/')) {
+        img.src = window.location.origin + path;
+        return;
+      }
+    }
+    if (attempts === 2) {
+      // Try without leading slash (relative)
+      const noSlash = path.startsWith('/') ? path.slice(1) : path;
+      img.src = noSlash || '/logo.png';
+      return;
+    }
+    // Final fallback
+    img.src = '/logo.png';
+  };
   return (
   <div className="simple-gallery-root" role="main">
       <Navbar />
@@ -235,7 +274,7 @@ export default function SimpleGallery() {
                   src={getImageUrl(product.image)} 
                   alt={product.name} 
                   loading="lazy"
-                  onError={e => { e.currentTarget.src = '/logo.png'; }}
+                  onError={handleImgError}
                 />
               </div>
               {product.sku && (
