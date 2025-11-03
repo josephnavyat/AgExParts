@@ -347,21 +347,17 @@ export default function ProductDetail() {
           <div style={{ display: 'flex', gap: '1.5rem', marginTop: 32 }}>
             <Link
               to="/catalog"
-              className="btn secondary"
+              className="btn btn-lg secondary"
               style={{
-                padding: '0.9rem 2.2rem',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.5rem',
                 fontWeight: 700,
-                fontSize: '1.1rem',
-                borderRadius: '10px',
-                background: '#f0f0f0',
-                color: '#222',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.10)',
-                textDecoration: 'none',
                 letterSpacing: '0.04em',
                 transition: 'background 0.2s',
+                textDecoration: 'none',
                 border: 'none',
-                textAlign: 'center',
-                display: 'inline-block',
                 cursor: 'pointer',
               }}
               onMouseOver={e => (e.currentTarget.style.background = '#e0e0e0')}
@@ -410,21 +406,13 @@ export default function ProductDetail() {
               </div>
             ) : (
               <button
-                className="btn primary"
+                className="btn btn-lg brand"
                 style={{
-                  padding: '0.9rem 2.2rem',
                   fontWeight: 700,
-                  fontSize: '1.1rem',
-                  borderRadius: '10px',
-                  background: '#19a974',
-                  color: '#fff',
-                  boxShadow: '0 2px 8px rgba(25,169,116,0.13)',
-                  border: 'none',
                   letterSpacing: '0.04em',
-                  textAlign: 'center',
-                  display: 'inline-block',
-                  cursor: 'pointer',
-                  transition: 'background 0.2s',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
                 }}
                 onMouseOver={e => (e.currentTarget.style.background = '#12895c')}
                 onMouseOut={e => (e.currentTarget.style.background = '#19a974')}

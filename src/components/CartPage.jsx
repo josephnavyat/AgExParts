@@ -145,8 +145,16 @@ function StripeCheckoutButton({ cart, disabled }) {
 
   return (
     <button
-      className="btn primary"
-      style={{ fontWeight: 700, fontSize: '1.1rem', borderRadius: 8, padding: '0.7rem 2rem', marginLeft: '1rem', opacity: disabled ? 0.5 : 1, pointerEvents: disabled ? 'none' : 'auto' }}
+      className="btn brand"
+      style={{
+        fontWeight: 700,
+        fontSize: '1.1rem',
+        borderRadius: 8,
+        padding: '0.7rem 2rem',
+        marginLeft: '1rem',
+        opacity: disabled ? 0.5 : 1,
+        pointerEvents: disabled ? 'none' : 'auto'
+      }}
       onClick={handleCheckout}
       disabled={disabled}
     >
@@ -321,17 +329,10 @@ export default function CartPage() {
             </div>
             <div style={{ textAlign: 'right', marginTop: '1rem', display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'flex-end' }}>
               <button
-                className="btn danger"
+                className="btn btn-lg danger"
                 style={{
                   fontWeight: 700,
-                  fontSize: '1.1rem',
-                  borderRadius: 8,
-                  padding: '0.7rem 2rem',
                   minWidth: 120,
-                  background: '#d32f2f',
-                  color: '#fff',
-                  border: 'none',
-                  boxShadow: '0 2px 8px rgba(211,47,47,0.10)',
                 }}
                 onClick={() => { dispatch({ type: 'CLEAR_CART' }); }}
               >
@@ -339,17 +340,10 @@ export default function CartPage() {
               </button>
               { (shipping?.type === 'freight' || totalWeight > 100) ? (
                 <button
-                  className="btn freight"
+                  className="btn btn-lg neutral freight"
                   style={{
                     fontWeight: 700,
-                    fontSize: '1.1rem',
-                    borderRadius: 8,
-                    padding: '0.7rem 2rem',
                     minWidth: 180,
-                    background: '#557a2cff',
-                    color: '#fff',
-                    border: 'none',
-                    boxShadow: '0 2px 8px rgba(139,195,74,0.10)',
                     cursor: 'pointer',
                   }}
                   onClick={() => navigate('/freight-inquiry', { state: { cart } })}

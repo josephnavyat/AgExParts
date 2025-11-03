@@ -249,6 +249,35 @@ body.hero-active .hero .card .muted {
   -webkit-backdrop-filter: blur(6px);
   box-shadow: 0 6px 18px rgba(0,0,0,0.12);
 }
+/* Brand and neutral button utilities */
+.btn.brand {
+  background: var(--brand) !important;
+  color: #fff !important;
+  box-shadow: 0 2px 8px rgba(25,169,116,0.13) !important;
+}
+.btn.neutral {
+  background: #6b6b6b !important;
+  color: #fff !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12) !important;
+}
+/* Large button sizing utility */
+.btn-lg {
+  padding: 0.7rem 2rem !important;
+  font-size: 1.1rem !important;
+  border-radius: 8px !important;
+  min-width: 120px !important;
+  min-height: 48px !important;
+}
+
+/* Hover and focus states */
+.btn.brand:hover, .btn.brand:focus {
+  background: color-mix(in srgb, var(--brand) 85%, black 15%) !important;
+  transform: translateY(-1px);
+}
+.btn.neutral:hover, .btn.neutral:focus {
+  background: color-mix(in srgb, #6b6b6b 85%, black 15%) !important;
+  transform: translateY(-1px);
+}
 @media (max-width: 700px) {
   .btn, .btn.primary, .btn.secondary {
     padding: 18px 0.9rem !important;
@@ -261,7 +290,7 @@ body.hero-active .hero .card .muted {
 .btn.primary {
   /* subtle branded tint on top of the dark translucent base */
   /* fully match badge look */
-  background: rgba(0,0,0,0.4);
+  background: 19a974;
   border-color: rgba(255,255,255,0.06);
   color: white;
 }
