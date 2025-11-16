@@ -23,8 +23,8 @@ exports.handler = async function(event) {
       const rows = await sql`
       SELECT mc.id, mc.manufacturer, mc.machine_type, mc.model
       FROM machine_compatibility mc
-        JOIN machine_compatibility_link mcl ON mcl.machine_compatibility_id = mc.id
-      WHERE mcl.sku = ${sku}
+    JOIN machine_compatibility_link mcl ON mcl.machine_compatibility_id = mc.id
+    WHERE mcl.product_sku = ${sku}
     `;
   console.log('get-compatibility-by-sku: result', { sku, count: rows && rows.length ? rows.length : 0 });
   return { statusCode: 200, body: JSON.stringify({ compatibility: rows }) };
