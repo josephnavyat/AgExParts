@@ -36,6 +36,23 @@ self.addEventListener('fetch', event => {
     return;
   }
 
+  // Prefer network-first for Netlify Function endpoints to avoid serving stale demo data
+  if (url.pathname.startsWith('/.netlify/functions/')) {
+    event.respondWith(
+      fetch(req).then(networkResp => {
+        try {
+          const contentType = networkResp.headers.get('content-type') || '';
+          if (networkResp && networkResp.ok && !contentType.includes('text/html')) {
+            const clone = networkResp.clone();
+            caches.open('v1').then(cache => cache.put(req, clone));
+          }
+        } catch (e) {}
+        return networkResp;
+      }).catch(() => caches.match(req).then(cached => cached || Promise.reject('network-failure')))
+    );
+    return;
+  }
+
   event.respondWith(
     caches.match(req).then(cached => {
       if (cached) return cached;
