@@ -91,7 +91,7 @@ exports.handler = async function(event, context) {
     // fetch links between products and compatibility rows (sku -> machine_compatibility_id)
     let links = [];
     try {
-      links = await sql`SELECT sku, machine_compatibility_id FROM machine_compatibility_links;`;
+      links = await sql`SELECT sku, machine_compatibility_id FROM machine_compatibility_link;`;
     } catch (linksErr) {
       headers['X-CompatLinks-Error'] = linksErr.message || 'links query failed';
       links = [];

@@ -19,11 +19,11 @@ exports.handler = async function(event) {
   }
 
   try {
-    // join machine_compatibility_links -> machine_compatibility
-  const rows = await sql`
+      // join machine_compatibility_link -> machine_compatibility
+      const rows = await sql`
       SELECT mc.id, mc.manufacturer, mc.machine_type, mc.model
       FROM machine_compatibility mc
-      JOIN machine_compatibility_links mcl ON mcl.machine_compatibility_id = mc.id
+        JOIN machine_compatibility_link mcl ON mcl.machine_compatibility_id = mc.id
       WHERE mcl.sku = ${sku}
     `;
   console.log('get-compatibility-by-sku: result', { sku, count: rows && rows.length ? rows.length : 0 });
