@@ -23,6 +23,52 @@ export default function SimpleGallery() {
   const [category, setCategory] = useState('');
   const [subCategory, setSubCategory] = useState('');
 
+  // Derived list of subcategories that match the currently selected category
+  const availableSubcategories = [...new Set(
+    products
+      .filter(p => p.subcategory)
+      .filter(p => !category || p.category === category)
+      .map(p => p.subcategory)
+  )];
+
+  // Mutual filtering: compute available manufacturers/machine types/models based on other active filters
+  const filteredByCategoryAndSub = products.filter(p => !category || p.category === category).filter(p => !subCategory || p.subcategory === subCategory);
+
+  const availableManufacturers = [...new Set(
+    filteredByCategoryAndSub
+      .filter(p => p.manufacturer)
+      .filter(p => !machineType || p.machine_type === machineType)
+      .filter(p => !model || p.model === model)
+      .map(p => p.manufacturer)
+  )];
+
+  const availableMachineTypes = [...new Set(
+    filteredByCategoryAndSub
+      .filter(p => p.machine_type)
+      .filter(p => !manufacturer || p.manufacturer === manufacturer)
+      .filter(p => !model || p.model === model)
+      .map(p => p.machine_type)
+  )];
+
+  const availableModels = [...new Set(
+    filteredByCategoryAndSub
+      .filter(p => p.model)
+      .filter(p => !manufacturer || p.manufacturer === manufacturer)
+      .filter(p => !machineType || p.machine_type === machineType)
+      .map(p => p.model)
+  )];
+
+  // Clear invalid selections when their available options change
+  useEffect(() => {
+    if (manufacturer && !availableManufacturers.includes(manufacturer)) setManufacturer('');
+  }, [availableManufacturers.join('|')]);
+  useEffect(() => {
+    if (machineType && !availableMachineTypes.includes(machineType)) setMachineType('');
+  }, [availableMachineTypes.join('|')]);
+  useEffect(() => {
+    if (model && !availableModels.includes(model)) setModel('');
+  }, [availableModels.join('|')]);
+
   useEffect(() => {
     const controller = new AbortController();
     const fetchProducts = async () => {
@@ -175,7 +221,17 @@ export default function SimpleGallery() {
             />
             <div className="filter-section">
               <label className="filter-label">Category</label>
-              <select value={category} onChange={e => setCategory(e.target.value)} className="filter-select">
+              <select value={category} onChange={e => {
+                  const val = e.target.value;
+                  setCategory(val);
+                  if (val === '') {
+                    setSubCategory('');
+                    return;
+                  }
+                  // If a subCategory is currently selected but isn't available for the new category, clear it
+                  const subsForNewCat = new Set(products.filter(p => p.category === val && p.subcategory).map(p => p.subcategory));
+                  if (subCategory && !subsForNewCat.has(subCategory)) setSubCategory('');
+                }} className="filter-select">
                 <option value="">All Categories</option>
                 {[...new Set(products.map(p => p.category).filter(Boolean))].map(c => (
                   <option key={c} value={c}>{c}</option>
@@ -184,39 +240,87 @@ export default function SimpleGallery() {
             </div>
             <div className="filter-section">
               <label className="filter-label">Sub-Category</label>
-              <select value={subCategory} onChange={e => setSubCategory(e.target.value)} className="filter-select">
-                <option value="">All Sub-Categories</option>
-                {[...new Set(products.map(p => p.subcategory).filter(Boolean))].map(sc => (
-                  <option key={sc} value={sc}>{sc}</option>
-                ))}
-              </select>
+              <div className="select-with-tooltip">
+                <select
+                  value={subCategory}
+                  onChange={e => setSubCategory(e.target.value)}
+                  className="filter-select"
+                  disabled={!category}
+                  aria-disabled={!category}
+                  title={!category ? 'Select a category first' : ''}
+                >
+                  <option value="">All Sub-Categories</option>
+                  {availableSubcategories.map(sc => (
+                    <option key={sc} value={sc}>{sc}</option>
+                  ))}
+                </select>
+                {!category && (
+                  <div className="disabled-tooltip" role="status">Select Category to continue</div>
+                )}
+              </div>
             </div>
             <div className="filter-section">
               <label className="filter-label">Manufacturer</label>
-              <select value={manufacturer} onChange={e => setManufacturer(e.target.value)} className="filter-select">
-                <option value="">All Manufacturers</option>
-                {[...new Set(products.map(p => p.manufacturer).filter(Boolean))].map(m => (
-                  <option key={m} value={m}>{m}</option>
-                ))}
-              </select>
+              <div className="select-with-tooltip">
+                <select
+                  value={manufacturer}
+                  onChange={e => setManufacturer(e.target.value)}
+                  className="filter-select"
+                  disabled={availableManufacturers.length === 0}
+                  aria-disabled={availableManufacturers.length === 0}
+                  title={availableManufacturers.length === 0 ? 'No manufacturers available for selected filters' : ''}
+                >
+                  <option value="">All Manufacturers</option>
+                  {availableManufacturers.map(m => (
+                    <option key={m} value={m}>{m}</option>
+                  ))}
+                </select>
+                {availableManufacturers.length === 0 && (
+                  <div className="disabled-tooltip" role="status">Select other filters to enable</div>
+                )}
+              </div>
             </div>
             <div className="filter-section">
               <label className="filter-label">Machine Type</label>
-              <select value={machineType} onChange={e => setMachineType(e.target.value)} className="filter-select">
-                <option value="">All Machine Types</option>
-                {[...new Set(products.map(p => p.machine_type).filter(Boolean))].map(m => (
-                  <option key={m} value={m}>{m}</option>
-                ))}
-              </select>
+              <div className="select-with-tooltip">
+                <select
+                  value={machineType}
+                  onChange={e => setMachineType(e.target.value)}
+                  className="filter-select"
+                  disabled={availableMachineTypes.length === 0}
+                  aria-disabled={availableMachineTypes.length === 0}
+                  title={availableMachineTypes.length === 0 ? 'No machine types available for selected filters' : ''}
+                >
+                  <option value="">All Machine Types</option>
+                  {availableMachineTypes.map(m => (
+                    <option key={m} value={m}>{m}</option>
+                  ))}
+                </select>
+                {availableMachineTypes.length === 0 && (
+                  <div className="disabled-tooltip" role="status">Select other filters to enable</div>
+                )}
+              </div>
             </div>
             <div className="filter-section">
               <label className="filter-label">Model</label>
-              <select value={model} onChange={e => setModel(e.target.value)} className="filter-select">
-                <option value="">All Models</option>
-                {[...new Set(products.map(p => p.model).filter(Boolean))].map(m => (
-                  <option key={m} value={m}>{m}</option>
-                ))}
-              </select>
+              <div className="select-with-tooltip">
+                <select
+                  value={model}
+                  onChange={e => setModel(e.target.value)}
+                  className="filter-select"
+                  disabled={availableModels.length === 0}
+                  aria-disabled={availableModels.length === 0}
+                  title={availableModels.length === 0 ? 'No models available for selected filters' : ''}
+                >
+                  <option value="">All Models</option>
+                  {availableModels.map(m => (
+                    <option key={m} value={m}>{m}</option>
+                  ))}
+                </select>
+                {availableModels.length === 0 && (
+                  <div className="disabled-tooltip" role="status">Select other filters to enable</div>
+                )}
+              </div>
             </div>
             <div className="filter-section">
               <label className="filter-label">Sort by</label>
@@ -300,7 +404,7 @@ export default function SimpleGallery() {
               </div>
               <div className="simple-gallery-card-actions" role="group" aria-label="Product Actions">
                 {(() => {
-                  const qty = getProductQuantity(cagrt, product.id);
+                  const qty = getProductQuantity(cart, product.id);
                   return (
                     <button
                       className="simple-gallery-btn primary"

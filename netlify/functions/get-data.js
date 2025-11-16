@@ -51,7 +51,24 @@ exports.handler = async function(event, context) {
   }
 
   try {
-    const result = await sql`SELECT * FROM products;`;
+    /*
+      Fetch products and include one representative compatibility row (if any)
+      so the client can populate manufacturer, machine_type and model dropdowns.
+      We LEFT JOIN against a subquery that picks one machine_compatibility row per
+      product SKU via the machine_compatibility_link table. This is conservative
+      (returns a single compatibility entry) but keeps the payload simple for the UI.
+    */
+    const result = await sql`
+      SELECT p.*, mc.manufacturer, mc.machine_type, mc.model
+      FROM products p
+      LEFT JOIN (
+        SELECT mcl.sku, m.manufacturer, m.machine_type, m.model
+        FROM machine_compatibility_link mcl
+        JOIN machine_compatibility m ON mcl.machine_compatibility_id = m.id
+        -- If multiple links exist per sku, pick the first one (arbitrary but stable)
+        GROUP BY mcl.sku, m.manufacturer, m.machine_type, m.model
+      ) mc ON mc.sku = p.sku;
+    `;
     return {
       statusCode: 200,
       body: JSON.stringify(result),

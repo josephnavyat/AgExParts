@@ -24,6 +24,8 @@ const RecoverPassword = lazy(() => import('./components/RecoverPassword.jsx'));
 const ResetPassword = lazy(() => import('./components/ResetPassword.jsx'));
 const FreightOrderConfirmation = lazy(() => import('./components/FreightOrderConfirmation.jsx'));
 
+import ErrorBoundary from './components/ErrorBoundary.jsx';
+
 const stripePromise = loadStripe('pk_test_51S4XMHBpsFVjn5cM6uD1BRgbmhvLSnfeLPMZcp4EJNQYAQrQea122tUoOAF2exUh0Qu83i8uQj5Yp5zZXlCgj0Fc00LA6gZqpZ');
 
 
@@ -40,9 +42,10 @@ createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <CartProvider>
       <BrowserRouter>
-        <Suspense fallback={<div style={{textAlign:'center',marginTop:'3rem'}}>Loading...</div>}>
-          <Layout>
-            <Routes>
+        <ErrorBoundary>
+          <Suspense fallback={<div style={{textAlign:'center',marginTop:'3rem'}}>Loading...</div>}>
+            <Layout>
+              <Routes>
               <Route path="/" element={<App />} />
               <Route path="/catalog" element={<SimpleGallery />} />
               <Route path="/product/:id" element={<ProductDetail />} />
@@ -59,8 +62,9 @@ createRoot(document.getElementById('root')).render(
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/freight-order-confirmation" element={<FreightOrderConfirmation />} />
             </Routes>
-          </Layout>
-        </Suspense>
+            </Layout>
+          </Suspense>
+        </ErrorBoundary>
       </BrowserRouter>
     </CartProvider>
   </React.StrictMode>
