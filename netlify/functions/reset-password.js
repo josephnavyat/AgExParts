@@ -58,6 +58,13 @@ exports.handler = async function(event) {
 
     // Remove used token
     await client.query('DELETE FROM password_resets WHERE token = $1', [token]);
+    // Clear any login lock for this email so password reset also resets lockout
+    try {
+      await client.query('DELETE FROM login_locks WHERE email = $1', [row.email]);
+    } catch (e) {
+      // If table doesn't exist or delete fails, continue - not critical
+      console.warn('failed to clear login_locks for email', row.email, e && e.message ? e.message : e);
+    }
     console.log(`password updated for user_id=${row.user_id}`);
     await client.end();
 

@@ -46,40 +46,21 @@ exports.handler = async function(event, context) {
   if (!sql) {
     return {
       statusCode: 200,
-      headers: { 'X-Products-Source': 'demo', 'X-Products-Count': String(demoProducts.length) },
       body: JSON.stringify(demoProducts),
     };
   }
 
   try {
-    /*
-      Fetch products and include one representative compatibility row (if any)
-      so the client can populate manufacturer, machine_type and model dropdowns.
-      We LEFT JOIN against a subquery that picks one machine_compatibility row per
-      product SKU via the machine_compatibility_link table. This is conservative
-      (returns a single compatibility entry) but keeps the payload simple for the UI.
-    */
-    const result = await sql`
-      SELECT p.*, mc.manufacturer, mc.machine_type, mc.model
-      FROM products p
-      LEFT JOIN (
-        SELECT mcl.sku, m.manufacturer, m.machine_type, m.model
-        FROM machine_compatibility_link mcl
-        JOIN machine_compatibility m ON mcl.machine_compatibility_id = m.id
-        -- If multiple links exist per sku, pick the first one (arbitrary but stable)
-        GROUP BY mcl.sku, m.manufacturer, m.machine_type, m.model
-      ) mc ON mc.sku = p.sku;
-    `;
+    const result = await sql`SELECT * FROM products;`;
     return {
       statusCode: 200,
-      headers: { 'X-Products-Source': 'db', 'X-Products-Count': String(result.length) },
       body: JSON.stringify(result),
     };
   } catch (error) {
     // If DB query failed, return demo products + error message in header for debug
     return {
       statusCode: 200,
-      headers: { 'X-Products-Source': 'error-fallback', 'X-Products-Error': error.message, 'X-Products-Count': String(demoProducts.length) },
+      headers: { 'X-Products-Error': error.message },
       body: JSON.stringify(demoProducts),
     };
   }
