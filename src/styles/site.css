@@ -534,6 +534,29 @@ footer { background:rgb(97, 97, 97); border-top: 1px solid #626262; padding: 50p
     box-shadow: none !important;
     background: #fff !important;
   }
+
+/* Compatibility table styles used on product detail pages */
+.compat-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1rem;
+  color: #444a58;
+}
+.compat-table th, .compat-table td {
+  padding: 8px 6px;
+  text-align: left;
+  vertical-align: middle;
+}
+.compat-table thead th {
+  font-weight: 700;
+  border-bottom: 2px solid #ececec;
+}
+.compat-table tbody tr:nth-child(odd) { background: #fafbfc; }
+.compat-table tbody td { border-bottom: 1px solid #f1f3f5; }
+
+@media (max-width: 680px) {
+  .compat-table th, .compat-table td { font-size: 0.95rem; padding: 8px 4px; }
+}
   .cart-page-content table {
     margin-bottom: 1rem !important;
   }

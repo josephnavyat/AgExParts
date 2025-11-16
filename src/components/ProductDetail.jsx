@@ -57,6 +57,8 @@ export default function ProductDetail() {
 
   // Product attributes state
   const [attributes, setAttributes] = useState([]);
+  const [compatibility, setCompatibility] = useState([]);
+  const [compatLinks, setCompatLinks] = useState([]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -71,6 +73,11 @@ export default function ProductDetail() {
   let products = [];
   if (Array.isArray(data)) products = data;
   else if (data && Array.isArray(data.products)) products = data.products;
+  // compatibility may be returned as data.compatibility (array) and links as data.compat_links
+  if (data && Array.isArray(data.compatibility)) setCompatibility(data.compatibility);
+  else setCompatibility([]);
+  if (data && Array.isArray(data.compat_links)) setCompatLinks(data.compat_links);
+  else setCompatLinks([]);
   const found = products.find((p) => String(p.id) === String(id));
   setProduct(found);
       } catch (error) {
@@ -302,6 +309,90 @@ export default function ProductDetail() {
                 )}
               </tbody>
             </table>
+          </section>
+          {/* Machine Compatibility Section */}
+          <section style={{
+            width: '100%',
+            margin: '0 0 18px 0',
+            background: 'none',
+            borderRadius: 0,
+            boxShadow: 'none',
+            padding: 0,
+            marginBottom: 18
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', margin: '24px 0 14px 0' }}>
+              <h3 style={{
+                fontSize: '1.25rem',
+                fontWeight: 700,
+                color: '#3b3b3bff',
+                letterSpacing: '0.01em',
+                textAlign: 'left',
+                textTransform: 'none',
+                margin: 0,
+                paddingRight: 16,
+                whiteSpace: 'nowrap'
+              }}>Machine Compatibility</h3>
+              <div style={{ flex: 1, height: 6, background: '#3b3b3bff', borderRadius: 3 }} />
+            </div>
+            {/* build a list of compatibility rows that apply to this product's SKU using compatLinks */}
+            {(() => {
+              if (!product) return null;
+              // Build map compatId -> set of SKUs
+              const compatMap = {};
+              for (const link of compatLinks || []) {
+                if (!link || !link.machine_compatibility_id) continue;
+                const id = String(link.machine_compatibility_id);
+                compatMap[id] = compatMap[id] || new Set();
+                if (link.sku) compatMap[id].add(String(link.sku));
+              }
+              // Find compat rows that reference this product.sku
+              const sku = product.sku ? String(product.sku) : null;
+              let matched = [];
+              if (sku && Object.keys(compatMap).length > 0 && compatibility && compatibility.length > 0) {
+                const matchedIds = new Set();
+                for (const [id, skuSet] of Object.entries(compatMap)) {
+                  if (skuSet.has(sku)) matchedIds.add(id);
+                }
+                if (matchedIds.size > 0) {
+                  matched = compatibility.filter(c => matchedIds.has(String(c.id)));
+                }
+              }
+              // If no compat_links matched, try to fall back to compatibility rows that match manufacturer or model fields if present
+              if (matched.length === 0 && compatibility && compatibility.length > 0) {
+                matched = compatibility.filter(c => {
+                  if (!c) return false;
+                  const man = (c.manufacturer || c.manufactur || '').toLowerCase();
+                  const type = (c.machine_type || c.machine || '').toLowerCase();
+                  const model = (c.model || c.models || '').toLowerCase();
+                  return (product.manufacturer && man && product.manufacturer.toLowerCase().includes(man)) ||
+                         (product.machine_type && type && String(product.machine_type).toLowerCase().includes(type)) ||
+                         (product.model && model && String(product.model).toLowerCase().includes(model));
+                });
+              }
+
+              return (
+                <table className="compat-table" style={{ width: '100%', background: 'none' }}>
+                  <thead>
+                    <tr style={{ textAlign: 'left', borderBottom: '2px solid #ececec' }}>
+                      <th style={{ padding: '8px 0', fontWeight: 700, width: '33%' }}>Manufacturer</th>
+                      <th style={{ padding: '8px 0', fontWeight: 700, width: '33%' }}>Machine Type</th>
+                      <th style={{ padding: '8px 0', fontWeight: 700, width: '34%' }}>Model</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {matched && matched.length > 0 ? matched.map((row, idx) => (
+                      <tr key={idx} style={{ borderBottom: idx < matched.length - 1 ? '1px solid #ececec' : 'none', background: idx % 2 === 1 ? '#fafbfc' : 'none' }}>
+                        <td style={{ padding: '8px 0' }}>{row.manufacturer || row.manufactur || '-'}</td>
+                        <td style={{ padding: '8px 0' }}>{row.machine_type || row.machine || '-'}</td>
+                        <td style={{ padding: '8px 0' }}>{row.model || row.models || '-'}</td>
+                      </tr>
+                    )) : (
+                      <tr><td colSpan={3} style={{ padding: '8px 0', color: '#888' }}>No compatibility information available for this part.</td></tr>
+                    )}
+                  </tbody>
+                </table>
+              );
+            })()}
           </section>
           {/*
           OEM Parts Section
