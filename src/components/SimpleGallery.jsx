@@ -328,14 +328,19 @@ export default function SimpleGallery() {
           ) : (() => {
             // If compatibility links are provided, use them to filter products by
             // selected manufacturer/machineType/model. The links map product SKU -> compat id.
+            // when compat-based filtering is available, prefer it and skip product-level
+            // manufacturer/machine_type/model field checks because many products
+            // don't have those fields populated; the compat_links map to SKUs.
+            const useCompatFiltering = compatibility.length && compatLinks.length;
+
             const filtered = (() => {
               if (compatibility.length && compatLinks.length) {
                 // build a map of compat id -> set of SKUs
                 const map = {};
                 compatLinks.forEach(l => {
-                  if (!l.machine_compatibility_id || !l.sku) return;
+                  if (!l.machine_compatibility_id || !l.product_sku) return;
                   map[l.machine_compatibility_id] = map[l.machine_compatibility_id] || new Set();
-                  map[l.machine_compatibility_id].add(l.sku);
+                  map[l.machine_compatibility_id].add(l.product_sku);
                 });
 
                 // find compat rows matching selected filters
@@ -359,9 +364,9 @@ export default function SimpleGallery() {
               .filter(product => product.website_visible === true)
               .filter(product => !category || product.category === category)
               .filter(product => !subCategory || product.subcategory === subCategory)
-              .filter(product => !manufacturer || product.manufacturer === manufacturer)
-              .filter(product => !machineType || product.machine_type === machineType)
-              .filter(product => !model || product.model === model)
+              .filter(product => useCompatFiltering ? true : (!manufacturer || product.manufacturer === manufacturer))
+              .filter(product => useCompatFiltering ? true : (!machineType || product.machine_type === machineType))
+              .filter(product => useCompatFiltering ? true : (!model || product.model === model))
               .filter(product => !inStockOnly || product.quantity > 0)
               .filter(product => {
                 if (!searchText.trim()) return true;

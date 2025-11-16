@@ -74,8 +74,28 @@ exports.handler = async function(event, context) {
       }
     }
 
+    // fetch links between products and compatibility rows (product_sku -> machine_compatibility_id)
+    let links = [];
+    let linksErr = null;
+    try {
+      // prefer the column `product_sku` if it exists
+      links = await sql`SELECT product_sku, machine_compatibility_id FROM machine_compatibility_link;`;
+      // normalize field name to product_sku (already correct)
+      links = links.map(l => ({ product_sku: l.product_sku, machine_compatibility_id: l.machine_compatibility_id }));
+    } catch (e1) {
+      try {
+        // fall back to sku as product_sku for older schemas
+        links = await sql`SELECT sku AS product_sku, machine_compatibility_id FROM machine_compatibility_link;`;
+        links = links.map(l => ({ product_sku: l.product_sku, machine_compatibility_id: l.machine_compatibility_id }));
+      } catch (e2) {
+        linksErr = e2.message || e1.message || 'links query failed';
+        links = [];
+      }
+    }
+
     const headers = { 'X-Data-Source': 'database' };
-    if (compatErr) headers['X-Compat-Error'] = compatErr;
+  if (compatErr) headers['X-Compat-Error'] = compatErr;
+  if (linksErr) headers['X-CompatLinks-Error'] = linksErr;
 
     // Debug log: show counts returned so it's easy to inspect in function logs
     try {
@@ -86,15 +106,6 @@ exports.handler = async function(event, context) {
       });
     } catch (e) {
       console.log('get-data: debug log failed', e && e.message);
-    }
-
-    // fetch links between products and compatibility rows (sku -> machine_compatibility_id)
-    let links = [];
-    try {
-      links = await sql`SELECT sku, machine_compatibility_id FROM machine_compatibility_link;`;
-    } catch (linksErr) {
-      headers['X-CompatLinks-Error'] = linksErr.message || 'links query failed';
-      links = [];
     }
 
     return {
