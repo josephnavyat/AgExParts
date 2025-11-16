@@ -151,7 +151,7 @@ function ProfilePage() {
   }, []);
   return (
     <ThemeProvider theme={lightTheme}>
-      <Navbar />
+      
       <Container maxWidth="sm">
         <Box sx={{ mt: 6 }}>
           <Paper elevation={6} sx={{ p: 4, borderRadius: 3, bgcolor: 'background.paper' }}>

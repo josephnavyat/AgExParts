@@ -35,7 +35,6 @@ export default function OrderSuccess() {
 
   return (
     <>
-      <Navbar />
       <div style={{ minHeight: "80vh", padding: "2rem", background: "var(--bg)" }}>
         <h2 className="distressed gallery-title" style={{ textAlign: "center", marginBottom: "2rem", marginTop: "4.5rem", color: "#222" }}>
           Order Success

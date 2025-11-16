@@ -204,40 +204,6 @@
   padding-right: 2.5rem;
 }
 
-/* Disabled select visual treatment */
-.filter-select:disabled,
-.filter-select[aria-disabled="true"] {
-  background: #f0f0f3; /* light grey */
-  color: rgba(34,34,34,0.6);
-  border-color: rgba(16,24,40,0.04);
-  cursor: not-allowed;
-}
-
-/* Container to show tooltip when control is disabled */
-.select-with-tooltip {
-  position: relative;
-  display: inline-block;
-  width: 100%;
-}
-.select-with-tooltip .disabled-tooltip {
-  display: none;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: calc(100% + 8px);
-  background: rgba(0,0,0,0.8);
-  color: #fff;
-  padding: 6px 8px;
-  font-size: 0.85rem;
-  border-radius: 6px;
-  white-space: nowrap;
-  z-index: 200;
-  pointer-events: none;
-}
-.select-with-tooltip:hover .disabled-tooltip {
-  display: block;
-}
-
 .filter-select:focus {
   outline: none;
   border-color: var(--gallery-accent);

@@ -226,7 +226,6 @@ export default function CartPage() {
 
   return (
     <>
-      <Navbar />
       <div style={{ minHeight: '80vh', padding: '2rem', background: 'var(--bg)', boxSizing: 'border-box' }}>
         <h2
           className="distressed gallery-title"

@@ -45,8 +45,9 @@ const demoProducts = [
 exports.handler = async function(event, context) {
   if (!sql) {
     return {
-      statusCode: 200,
-      body: JSON.stringify(demoProducts),
+  statusCode: 200,
+  headers: { 'X-Data-Source': 'demo-fallback' },
+  body: JSON.stringify(demoProducts),
     };
   }
 
@@ -54,13 +55,14 @@ exports.handler = async function(event, context) {
     const result = await sql`SELECT * FROM products;`;
     return {
       statusCode: 200,
+      headers: { 'X-Data-Source': 'database' },
       body: JSON.stringify(result),
     };
   } catch (error) {
     // If DB query failed, return demo products + error message in header for debug
     return {
       statusCode: 200,
-      headers: { 'X-Products-Error': error.message },
+      headers: { 'X-Products-Error': error.message, 'X-Data-Source': 'demo-fallback' },
       body: JSON.stringify(demoProducts),
     };
   }
