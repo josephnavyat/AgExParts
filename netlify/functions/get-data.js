@@ -53,11 +53,30 @@ exports.handler = async function(event, context) {
 
   try {
     const result = await sql`SELECT * FROM products;`;
-    // fetch compatibility rows (manufactur is the column name in the compatibility table)
-    const compat = await sql`SELECT manufactur AS manufacturer, machine_type, model FROM machine_compatibility;`;
+
+    // fetch compatibility rows. older schema used `manufactur` while newer uses
+    // `manufacturer` — try both and fall back to an empty array if neither exists.
+    let compat = [];
+    let compatErr = null;
+    try {
+      compat = await sql`SELECT manufactur AS manufacturer, machine_type, model FROM machine_compatibility;`;
+    } catch (e1) {
+      // try the other common column name
+      try {
+        compat = await sql`SELECT manufacturer, machine_type, model FROM machine_compatibility;`;
+      } catch (e2) {
+        // both compatibility attempts failed; record the message but continue
+        compatErr = e2.message || e1.message || 'compatibility query failed';
+        compat = [];
+      }
+    }
+
+    const headers = { 'X-Data-Source': 'database' };
+    if (compatErr) headers['X-Compat-Error'] = compatErr;
+
     return {
       statusCode: 200,
-      headers: { 'X-Data-Source': 'database' },
+      headers,
       body: JSON.stringify({ products: result, compatibility: compat }),
     };
   } catch (error) {
