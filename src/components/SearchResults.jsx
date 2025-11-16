@@ -65,6 +65,14 @@ export default function SearchResults() {
                   />
                 </picture>
                 <h3 className="simple-gallery-card-title">{product.name}</h3>
+                {/* Category and subcategory display */}
+                {product.category && (
+                  <div className="search-result-category">
+                    <div className="search-result-category-main">{product.category}</div>
+                    {product.subcategory && <div className="search-result-subcategory">{product.subcategory}</div>}
+                  </div>
+                )}
+
                 <div className="simple-gallery-card-price" style={{ margin: '8px 0 0 0', fontSize: '1.15rem', fontWeight: 700 }}>
                   ${Number(product.price).toFixed(2)}
                 </div>

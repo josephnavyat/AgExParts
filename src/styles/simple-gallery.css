@@ -413,6 +413,22 @@
   margin-top: 4px;
 }
 
+/* Search result category / subcategory styling */
+.search-result-category {
+  text-align: center;
+  margin-bottom: 6px;
+}
+.search-result-category-main {
+  font-weight: 800;
+  color: #111;
+  font-size: 0.95rem;
+}
+.search-result-subcategory {
+  font-weight: 400;
+  color: #666;
+  font-size: 0.88rem;
+}
+
 .price-original{
   text-decoration: line-through;
   color: #666;
@@ -627,6 +643,37 @@
   opacity: 0.35;
   pointer-events: none;
 }
+
+/* Navbar inline search suggestions */
+.nav-search-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 420px;
+  max-width: calc(100vw - 48px);
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+  margin-top: 8px;
+  overflow: hidden;
+  z-index: 60;
+}
+.nav-search-suggestion {
+  display: block;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  color: #111;
+  text-decoration: none;
+}
+.nav-search-suggestion:hover, .nav-search-suggestion.active {
+  background: rgba(25,169,116,0.06);
+}
+.nav-search-suggestion-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 4px; }
+.nav-search-suggestion-meta { font-size: 0.85rem; color: #666; display:flex; flex-direction:column; gap:2px; }
+.nav-search-suggestion-category { font-weight: 800; color: #111; }
+.nav-search-suggestion-subcategory { font-weight: 400; color: #666; }
+
 
 .simple-gallery-grid {
   display: grid;

@@ -175,7 +175,17 @@ export default function SimpleGallery() {
               list="product-names-list"
             />
             <datalist id="product-names-list">
-              {[...new Set(products.map(p => p.name).filter(Boolean))].map(name => (
+              {/* Exclude demo-category products from suggestions (e.g., "Demo Part A") */}
+              {[...new Set(products
+                .filter(p => {
+                  const name = String(p.name || '').toLowerCase();
+                  const cat = String(p.category || '').toLowerCase();
+                  // exclude demo-category or names that look like demo/sample data
+                  return cat !== 'demo' && !name.includes('demo') && !name.includes('sample');
+                })
+                .map(p => p.name)
+                .filter(Boolean)
+              )].map(name => (
                 <option key={name} value={name} />
               ))}
             </datalist>
