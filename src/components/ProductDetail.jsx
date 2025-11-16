@@ -66,9 +66,13 @@ export default function ProductDetail() {
           signal: controller.signal,
         });
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-        const data = await res.json();
-        const found = data.find((p) => String(p.id) === String(id));
-        setProduct(found);
+  const data = await res.json();
+  // Support prior shape (array) and new shape { products, compatibility }
+  let products = [];
+  if (Array.isArray(data)) products = data;
+  else if (data && Array.isArray(data.products)) products = data.products;
+  const found = products.find((p) => String(p.id) === String(id));
+  setProduct(found);
       } catch (error) {
         if (error.name !== 'AbortError') {
           console.error('Failed to fetch products:', error);
