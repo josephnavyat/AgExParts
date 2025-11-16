@@ -1,32 +1,11 @@
 import { Link } from 'react-router-dom';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useCart } from './CartContext.jsx';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [searchValue, setSearchValue] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
-  const [suggestOpen, setSuggestOpen] = useState(false);
-  const [highlightIndex, setHighlightIndex] = useState(-1);
-
-  useEffect(() => {
-    let mounted = true;
-    const fetchProducts = async () => {
-      try {
-        const res = await fetch('/.netlify/functions/get-data');
-        if (!res.ok) return;
-        const data = await res.json();
-        if (mounted) setSuggestions(data || []);
-      } catch (e) {
-        /* ignore */
-      }
-    };
-    fetchProducts();
-    return () => { mounted = false; };
-  }, []);
-
-  const searchInputRef = useRef(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -40,7 +19,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav id="nav" className={`nav ${scrolled ? 'scrolled' : ''}${showSearch ? ' nav--search-open' : ''}`}> 
+  <nav id="nav" className={`nav ${scrolled ? 'scrolled' : ''}${showSearch ? ' nav--search-open' : ''}`} style={{ position: 'relative', zIndex: 60 }}> 
         <div className="container nav-inner" style={{ flexWrap: 'wrap', alignItems: 'center' }}>
           <div className="brand">
             <img src="/logo.png" alt="AgEx Parts logo" style={{ height: '80px', width: 'auto' }} />
@@ -57,11 +36,7 @@ export default function Navbar() {
             </Link>
             <button
               className="nav-icon"
-              onClick={() => {
-                setShowSearch((s) => !s);
-                // focus input after it's rendered
-                setTimeout(() => searchInputRef.current && searchInputRef.current.focus(), 60);
-              }}
+              onClick={() => setShowSearch((s) => !s)}
               title="Search"
               aria-label="Search"
             >
@@ -93,15 +68,17 @@ export default function Navbar() {
           <div
             className="search-bar-collapsible"
             style={{
+              position: 'absolute',
+              top: '100%',
+              left: 0,
               width: '100%',
-              background: 'rgba(30,30,30,0.55)',
-              boxShadow: '0 2px 12px rgba(0,0,0,0.10)',
+              background: 'rgba(10,10,10,0.55)',
+              boxShadow: '0 6px 24px rgba(0,0,0,0.25)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               padding: '1rem 0',
-              position: 'static',
-              zIndex: 39,
+              zIndex: 999,
             }}
           >
             <form
@@ -117,17 +94,7 @@ export default function Navbar() {
                 type="text"
                 placeholder="Search for parts..."
                 value={searchValue}
-                onChange={e => { setSearchValue(e.target.value); setSuggestOpen(true); setHighlightIndex(-1); }}
-                onFocus={() => setSuggestOpen(true)}
-                ref={searchInputRef}
-                onKeyDown={(e) => {
-                  if (e.key === 'ArrowDown') { setHighlightIndex(i => Math.min(i + 1, Math.max(0, filtered.length - 1))); e.preventDefault(); }
-                  if (e.key === 'ArrowUp') { setHighlightIndex(i => Math.max(-1, i - 1)); e.preventDefault(); }
-                  if (e.key === 'Enter' && highlightIndex >= 0) {
-                    const pick = filtered[highlightIndex];
-                    if (pick) window.location.href = `/product/${pick.id}`;
-                  }
-                }}
+                onChange={e => setSearchValue(e.target.value)}
                 style={{
                   padding: '0.75rem 1rem',
                   fontSize: '1.1rem',
@@ -139,35 +106,6 @@ export default function Navbar() {
                   flex: 1
                 }}
               />
-              {/* suggestion dropdown */}
-        {suggestOpen && (
-                (() => {
-          const q = searchValue.trim().toLowerCase();
-          const filtered = suggestions.filter(p => p.website_visible && p.name && (q === '' || p.name.toLowerCase().includes(q) || (p.part_number || '').toLowerCase().includes(q))).slice(0, 8);
-                  return (
-                    <div className="nav-search-suggestions" role="listbox">
-                      {filtered.length === 0 ? (
-                        <div className="nav-search-suggestion empty">No matches</div>
-                      ) : filtered.map((p, idx) => (
-                        <a
-                          key={p.id}
-                          href={`/product/${p.id}`}
-                          className={`nav-search-suggestion${idx === highlightIndex ? ' active' : ''}`}
-                          onMouseDown={(ev) => { ev.preventDefault(); /* keep focus behavior */ }}
-                        >
-                          <div className="nav-search-suggestion-title">{p.name}</div>
-                          {p.category && (
-                            <div className="nav-search-suggestion-meta">
-                              <div className="nav-search-suggestion-category">{p.category}</div>
-                              {p.subcategory && <div className="nav-search-suggestion-subcategory">{p.subcategory}</div>}
-                            </div>
-                          )}
-                        </a>
-                      ))}
-                    </div>
-                  );
-                })()
-              )}
               <button
                 type="submit"
                 style={{

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import Navbar from "./Navbar.jsx";
 import "../styles/simple-gallery.css";
 
 export default function SearchResults() {
@@ -37,8 +36,7 @@ export default function SearchResults() {
   );
 
   return (
-    <div className="simple-gallery-root">
-      <Navbar />
+  <div className="simple-gallery-root">
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 32, marginBottom: 16 }}>
         <h2 className="simple-gallery-title" style={{ flex: 1, textAlign: 'center', margin: 0 }}>Search Results</h2>
       </div>
@@ -65,14 +63,6 @@ export default function SearchResults() {
                   />
                 </picture>
                 <h3 className="simple-gallery-card-title">{product.name}</h3>
-                {/* Category and subcategory display */}
-                {product.category && (
-                  <div className="search-result-category">
-                    <div className="search-result-category-main">{product.category}</div>
-                    {product.subcategory && <div className="search-result-subcategory">{product.subcategory}</div>}
-                  </div>
-                )}
-
                 <div className="simple-gallery-card-price" style={{ margin: '8px 0 0 0', fontSize: '1.15rem', fontWeight: 700 }}>
                   ${Number(product.price).toFixed(2)}
                 </div>

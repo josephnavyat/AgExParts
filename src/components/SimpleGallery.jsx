@@ -172,23 +172,7 @@ export default function SimpleGallery() {
               placeholder="Search..."
               value={searchText}
               onChange={e => setSearchText(e.target.value)}
-              list="product-names-list"
             />
-            <datalist id="product-names-list">
-              {/* Exclude demo-category products from suggestions (e.g., "Demo Part A") */}
-              {[...new Set(products
-                .filter(p => {
-                  const name = String(p.name || '').toLowerCase();
-                  const cat = String(p.category || '').toLowerCase();
-                  // exclude demo-category or names that look like demo/sample data
-                  return cat !== 'demo' && !name.includes('demo') && !name.includes('sample');
-                })
-                .map(p => p.name)
-                .filter(Boolean)
-              )].map(name => (
-                <option key={name} value={name} />
-              ))}
-            </datalist>
             <div className="filter-section">
               <label className="filter-label">Category</label>
               <select value={category} onChange={e => setCategory(e.target.value)} className="filter-select">
@@ -316,7 +300,7 @@ export default function SimpleGallery() {
               </div>
               <div className="simple-gallery-card-actions" role="group" aria-label="Product Actions">
                 {(() => {
-                  const qty = getProductQuantity(cart, product.id);
+                  const qty = getProductQuantity(cagrt, product.id);
                   return (
                     <button
                       className="simple-gallery-btn primary"
