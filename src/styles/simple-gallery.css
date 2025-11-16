@@ -210,6 +210,21 @@
   background-color: rgba(255, 255, 255, 0.08);
 }
 
+/* Disabled select styling */
+.filter-select:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  background: #f3f3f3;
+  color: #666;
+}
+
+/* Small hint text beneath filters */
+.filter-hint {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 6px;
+}
+
 .filter-select option {
   background: var(--gallery-card-bg);
   color: var(--gallery-text);

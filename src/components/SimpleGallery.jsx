@@ -8,6 +8,7 @@ import "../styles/simple-gallery.css";
 export default function SimpleGallery() {
   const isMobile = window.matchMedia('(max-width: 700px)').matches;
   const [products, setProducts] = useState([]);
+  const [compatibility, setCompatibility] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   // Filter pane is hidden by default on all devices (mobile and desktop)
@@ -32,7 +33,17 @@ export default function SimpleGallery() {
 
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         const data = await res.json();
-        setProducts(data);
+        // Support prior shape (array) and new shape { products, compatibility }
+        if (Array.isArray(data)) {
+          setProducts(data);
+          setCompatibility([]);
+        } else if (data && Array.isArray(data.products)) {
+          setProducts(data.products);
+          setCompatibility(Array.isArray(data.compatibility) ? data.compatibility : []);
+        } else {
+          setProducts([]);
+          setCompatibility([]);
+        }
       } catch (error) {
         if (error.name !== 'AbortError') {
           setError(error.message + (error.response ? ' ' + JSON.stringify(error.response) : ''));
@@ -208,30 +219,70 @@ export default function SimpleGallery() {
             </div>
             <div className="filter-section">
               <label className="filter-label">Manufacturer</label>
-              <select value={manufacturer} onChange={e => setManufacturer(e.target.value)} className="filter-select">
-                <option value="">All Manufacturers</option>
-                {[...new Set(products.map(p => p.manufacturer).filter(Boolean))].map(m => (
-                  <option key={m} value={m}>{m}</option>
-                ))}
-              </select>
+              {(() => {
+                const options = [...new Set((compatibility.length ? compatibility.map(c => c.manufacturer) : products.map(p => p.manufacturer)).filter(Boolean))];
+                return (
+                  <>
+                    <select value={manufacturer} onChange={e => { setManufacturer(e.target.value); setMachineType(''); setModel(''); }} className="filter-select">
+                      <option value="">All Manufacturers</option>
+                      {options.map(m => <option key={m} value={m}>{m}</option>)}
+                    </select>
+                    {options.length === 0 && <div className="filter-hint">No manufacturers available</div>}
+                  </>
+                );
+              })()}
             </div>
             <div className="filter-section">
               <label className="filter-label">Machine Type</label>
-              <select value={machineType} onChange={e => setMachineType(e.target.value)} className="filter-select">
-                <option value="">All Machine Types</option>
-                {[...new Set(products.map(p => p.machine_type).filter(Boolean))].map(m => (
-                  <option key={m} value={m}>{m}</option>
-                ))}
-              </select>
+              {(() => {
+                const options = [...new Set((
+                  (compatibility.length ? compatibility
+                    .filter(c => !manufacturer || c.manufacturer === manufacturer)
+                    .map(c => c.machine_type)
+                    : products.map(p => p.machine_type))
+                ).filter(Boolean))];
+                return (
+                  <>
+                    <select
+                      value={machineType}
+                      onChange={e => { setMachineType(e.target.value); setModel(''); }}
+                      className="filter-select"
+                      disabled={!manufacturer}
+                      title={!manufacturer ? 'Select a manufacturer first' : 'Filter by machine type'}
+                    >
+                      <option value="">All Machine Types</option>
+                      {options.map(m => <option key={m} value={m}>{m}</option>)}
+                    </select>
+                    {!manufacturer ? <div className="filter-hint">Select a manufacturer to see machine types</div> : options.length === 0 && <div className="filter-hint">No machine types available</div>}
+                  </>
+                );
+              })()}
             </div>
             <div className="filter-section">
               <label className="filter-label">Model</label>
-              <select value={model} onChange={e => setModel(e.target.value)} className="filter-select">
-                <option value="">All Models</option>
-                {[...new Set(products.map(p => p.model).filter(Boolean))].map(m => (
-                  <option key={m} value={m}>{m}</option>
-                ))}
-              </select>
+              {(() => {
+                const options = [...new Set((
+                  (compatibility.length ? compatibility
+                    .filter(c => (!manufacturer || c.manufacturer === manufacturer) && (!machineType || c.machine_type === machineType))
+                    .map(c => c.model)
+                    : products.map(p => p.model))
+                ).filter(Boolean))];
+                return (
+                  <>
+                    <select
+                      value={model}
+                      onChange={e => setModel(e.target.value)}
+                      className="filter-select"
+                      disabled={!machineType}
+                      title={!machineType ? 'Select a machine type first' : 'Filter by model'}
+                    >
+                      <option value="">All Models</option>
+                      {options.map(m => <option key={m} value={m}>{m}</option>)}
+                    </select>
+                    {!machineType ? <div className="filter-hint">Select a machine type to see models</div> : options.length === 0 && <div className="filter-hint">No models available</div>}
+                  </>
+                );
+              })()}
             </div>
             <div className="filter-section">
               <label className="filter-label">Sort by</label>

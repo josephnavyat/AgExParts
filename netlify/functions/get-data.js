@@ -45,25 +45,27 @@ const demoProducts = [
 exports.handler = async function(event, context) {
   if (!sql) {
     return {
-  statusCode: 200,
-  headers: { 'X-Data-Source': 'demo-fallback' },
-  body: JSON.stringify(demoProducts),
+      statusCode: 200,
+      headers: { 'X-Data-Source': 'demo-fallback' },
+      body: JSON.stringify({ products: demoProducts, compatibility: [] }),
     };
   }
 
   try {
     const result = await sql`SELECT * FROM products;`;
+    // fetch compatibility rows (manufactur is the column name in the compatibility table)
+    const compat = await sql`SELECT manufactur AS manufacturer, machine_type, model FROM machine_compatibility;`;
     return {
       statusCode: 200,
       headers: { 'X-Data-Source': 'database' },
-      body: JSON.stringify(result),
+      body: JSON.stringify({ products: result, compatibility: compat }),
     };
   } catch (error) {
     // If DB query failed, return demo products + error message in header for debug
     return {
       statusCode: 200,
       headers: { 'X-Products-Error': error.message, 'X-Data-Source': 'demo-fallback' },
-      body: JSON.stringify(demoProducts),
+      body: JSON.stringify({ products: demoProducts, compatibility: [] }),
     };
   }
 };
