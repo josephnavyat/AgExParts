@@ -331,10 +331,13 @@ export default function SimpleGallery() {
             // when compat-based filtering is available, prefer it and skip product-level
             // manufacturer/machine_type/model field checks because many products
             // don't have those fields populated; the compat_links map to SKUs.
-            const useCompatFiltering = compatibility.length && compatLinks.length;
+            // only apply compat->SKU filtering when user has selected at least
+            // one compat-related filter (manufacturer/machineType/model)
+            const hasCompatFilterSelected = Boolean(manufacturer || machineType || model);
+            const useCompatFiltering = compatibility.length && compatLinks.length && hasCompatFilterSelected;
 
             const filtered = (() => {
-              if (compatibility.length && compatLinks.length) {
+              if (useCompatFiltering) {
                 // build a map of compat id -> set of SKUs
                 const map = {};
                 compatLinks.forEach(l => {
