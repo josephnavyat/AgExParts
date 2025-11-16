@@ -46,6 +46,7 @@ exports.handler = async function(event, context) {
   if (!sql) {
     return {
       statusCode: 200,
+      headers: { 'X-Products-Source': 'demo', 'X-Products-Count': String(demoProducts.length) },
       body: JSON.stringify(demoProducts),
     };
   }
@@ -71,13 +72,14 @@ exports.handler = async function(event, context) {
     `;
     return {
       statusCode: 200,
+      headers: { 'X-Products-Source': 'db', 'X-Products-Count': String(result.length) },
       body: JSON.stringify(result),
     };
   } catch (error) {
     // If DB query failed, return demo products + error message in header for debug
     return {
       statusCode: 200,
-      headers: { 'X-Products-Error': error.message },
+      headers: { 'X-Products-Source': 'error-fallback', 'X-Products-Error': error.message, 'X-Products-Count': String(demoProducts.length) },
       body: JSON.stringify(demoProducts),
     };
   }
