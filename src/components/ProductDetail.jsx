@@ -112,7 +112,15 @@ export default function ProductDetail() {
       .then(res => res.json())
       .then(data => setAttributes(data))
       .catch(() => setAttributes([]));
+    // also fetch compatibility rows for this product
+    fetch(`/.netlify/functions/get-compatibility?sku=${encodeURIComponent(product.sku)}`)
+      .then(res => res.json())
+      .then(data => setCompatibility(Array.isArray(data) ? data : []))
+      .catch(() => setCompatibility([]));
   }, [product]);
+
+  // compatibility rows state
+  const [compatibility, setCompatibility] = useState([]);
 
   return (
     <>
@@ -296,6 +304,51 @@ export default function ProductDetail() {
                   </tr>
                 )) : (
                   <tr><td colSpan={2} style={{ padding: '8px 0', color: '#888' }}>No attributes available.</td></tr>
+                )}
+              </tbody>
+            </table>
+          </section>
+          {/* Compatibility Section */}
+          <section style={{
+            width: '100%',
+            margin: '0 0 18px 0',
+            background: 'none',
+            borderRadius: 0,
+            boxShadow: 'none',
+            padding: 0,
+            marginBottom: 18
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', margin: '24px 0 14px 0' }}>
+              <h3 style={{
+                fontSize: '1.25rem',
+                fontWeight: 700,
+                color: '#3b3b3bff',
+                letterSpacing: '0.01em',
+                textAlign: 'left',
+                textTransform: 'none',
+                margin: 0,
+                paddingRight: 16,
+                whiteSpace: 'nowrap',
+              }}>Compatible Machines</h3>
+              <div style={{ flex: 1, height: 6, background: '#3b3b3bff', borderRadius: 3 }} />
+            </div>
+            <table style={{ width: '100%', background: 'none', fontSize: '1rem', borderCollapse: 'collapse', color: '#444a58' }}>
+              <thead>
+                <tr style={{ textAlign: 'left', borderBottom: '2px solid #ececec' }}>
+                  <th style={{ padding: '8px 0', fontWeight: 700, width: '33%' }}>Manufacturer</th>
+                  <th style={{ padding: '8px 0', fontWeight: 700, width: '33%' }}>Machine Type</th>
+                  <th style={{ padding: '8px 0', fontWeight: 700, width: '34%' }}>Model</th>
+                </tr>
+              </thead>
+              <tbody>
+                {compatibility && compatibility.length > 0 ? compatibility.map((row, idx) => (
+                  <tr key={`${row.manufacturer}-${row.machine_type}-${row.model}-${idx}`} style={{ borderBottom: idx < compatibility.length - 1 ? '1px solid #ececec' : 'none', background: idx % 2 === 1 ? '#fafbfc' : 'none' }}>
+                    <td style={{ padding: '8px 0', fontWeight: 600 }}>{row.manufacturer}</td>
+                    <td style={{ padding: '8px 0' }}>{row.machine_type}</td>
+                    <td style={{ padding: '8px 0' }}>{row.model}</td>
+                  </tr>
+                )) : (
+                  <tr><td colSpan={3} style={{ padding: '8px 0', color: '#888' }}>No compatibility data available.</td></tr>
                 )}
               </tbody>
             </table>
