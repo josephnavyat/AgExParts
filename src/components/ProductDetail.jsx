@@ -73,11 +73,6 @@ export default function ProductDetail() {
   let products = [];
   if (Array.isArray(data)) products = data;
   else if (data && Array.isArray(data.products)) products = data.products;
-  // compatibility may be returned as data.compatibility (array) and links as data.compat_links
-  if (data && Array.isArray(data.compatibility)) setCompatibility(data.compatibility);
-  else setCompatibility([]);
-  if (data && Array.isArray(data.compat_links)) setCompatLinks(data.compat_links);
-  else setCompatLinks([]);
   const found = products.find((p) => String(p.id) === String(id));
   setProduct(found);
       } catch (error) {
@@ -91,6 +86,21 @@ export default function ProductDetail() {
     fetchProducts();
     return () => controller.abort();
   }, [id]);
+
+  // When a product is set, fetch strict compatibility rows for its SKU
+  useEffect(() => {
+    if (!product || !product.sku) return;
+    const controller = new AbortController();
+    const sku = product.sku;
+    fetch(`/.netlify/functions/get-compatibility-by-sku?sku=${encodeURIComponent(sku)}`, { signal: controller.signal })
+      .then(res => res.ok ? res.json() : { compatibility: [] })
+      .then(data => {
+        if (data && Array.isArray(data.compatibility)) setCompatibility(data.compatibility);
+        else setCompatibility([]);
+      })
+      .catch(() => setCompatibility([]));
+    return () => controller.abort();
+  }, [product]);
 
   useEffect(() => {
     if (!product) return;
@@ -358,27 +368,7 @@ export default function ProductDetail() {
                   matched = compatibility.filter(c => matchedIds.has(String(c.id)));
                 }
               }
-              // If no compat_links matched, try fallbacks:
-              // 1) match compatibility.machine_type against product.category
-              // 2) match keywords from product name/description
-              if (matched.length === 0 && compatibility && compatibility.length > 0) {
-                const name = (product.name || '').toLowerCase();
-                const desc = (product.description || '').toLowerCase();
-                matched = compatibility.filter(c => {
-                  if (!c) return false;
-                  const man = (c.manufacturer || c.manufactur || '').toLowerCase();
-                  const type = (c.machine_type || c.machine || '').toLowerCase();
-                  const model = (c.model || c.models || '').toLowerCase();
-                  const cat = (product.category || '').toLowerCase();
-                  const matchesCategory = type && cat && cat.includes(type);
-                  const matchesText = (model && (name.includes(model) || desc.includes(model))) || (man && (name.includes(man) || desc.includes(man)));
-                  return matchesCategory || matchesText || (
-                    (product.manufacturer && man && product.manufacturer.toLowerCase().includes(man)) ||
-                    (product.machine_type && type && String(product.machine_type).toLowerCase().includes(type)) ||
-                    (product.model && model && String(product.model).toLowerCase().includes(model))
-                  );
-                });
-              }
+              // Strict mode: only show rows explicitly linked via compat_links
 
               return (
                 <table className="compat-table" style={{ width: '100%', background: 'none' }}>

@@ -44,6 +44,8 @@ const demoProducts = [
 
 exports.handler = async function(event, context) {
   if (!sql) {
+    // Log demo fallback so it's visible in Netlify function logs
+    console.log('get-data: demo-fallback', { demoProducts: demoProducts.length });
     return {
       statusCode: 200,
       headers: { 'X-Data-Source': 'demo-fallback' },
@@ -75,6 +77,17 @@ exports.handler = async function(event, context) {
     const headers = { 'X-Data-Source': 'database' };
     if (compatErr) headers['X-Compat-Error'] = compatErr;
 
+    // Debug log: show counts returned so it's easy to inspect in function logs
+    try {
+      console.log('get-data: database', {
+        products: result && result.length ? result.length : 0,
+        compatibility: compat && compat.length ? compat.length : 0,
+        compat_links: links && links.length ? links.length : 0,
+      });
+    } catch (e) {
+      console.log('get-data: debug log failed', e && e.message);
+    }
+
     // fetch links between products and compatibility rows (sku -> machine_compatibility_id)
     let links = [];
     try {
@@ -90,7 +103,8 @@ exports.handler = async function(event, context) {
       body: JSON.stringify({ products: result, compatibility: compat, compat_links: links }),
     };
   } catch (error) {
-    // If DB query failed, return demo products + error message in header for debug
+    // If DB query failed, log and return demo products + error header
+    console.error('get-data: products query failed', { message: error && error.message });
     return {
       statusCode: 200,
       headers: { 'X-Products-Error': error.message, 'X-Data-Source': 'demo-fallback' },
