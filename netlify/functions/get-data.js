@@ -59,11 +59,12 @@ exports.handler = async function(event, context) {
     let compat = [];
     let compatErr = null;
     try {
-      compat = await sql`SELECT manufactur AS manufacturer, machine_type, model FROM machine_compatibility;`;
+      // include the id so links can reference compatibility rows
+      compat = await sql`SELECT id, manufactur AS manufacturer, machine_type, model FROM machine_compatibility;`;
     } catch (e1) {
       // try the other common column name
       try {
-        compat = await sql`SELECT manufacturer, machine_type, model FROM machine_compatibility;`;
+        compat = await sql`SELECT id, manufacturer, machine_type, model FROM machine_compatibility;`;
       } catch (e2) {
         // both compatibility attempts failed; record the message but continue
         compatErr = e2.message || e1.message || 'compatibility query failed';
@@ -74,10 +75,19 @@ exports.handler = async function(event, context) {
     const headers = { 'X-Data-Source': 'database' };
     if (compatErr) headers['X-Compat-Error'] = compatErr;
 
+    // fetch links between products and compatibility rows (sku -> machine_compatibility_id)
+    let links = [];
+    try {
+      links = await sql`SELECT sku, machine_compatibility_id FROM machine_compatibility_links;`;
+    } catch (linksErr) {
+      headers['X-CompatLinks-Error'] = linksErr.message || 'links query failed';
+      links = [];
+    }
+
     return {
       statusCode: 200,
       headers,
-      body: JSON.stringify({ products: result, compatibility: compat }),
+      body: JSON.stringify({ products: result, compatibility: compat, compat_links: links }),
     };
   } catch (error) {
     // If DB query failed, return demo products + error message in header for debug

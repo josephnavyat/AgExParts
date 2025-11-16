@@ -40,9 +40,16 @@ export default function SimpleGallery() {
         } else if (data && Array.isArray(data.products)) {
           setProducts(data.products);
           setCompatibility(Array.isArray(data.compatibility) ? data.compatibility : []);
+          // set compatibility links if provided
+          if (Array.isArray(data.compat_links)) {
+            setCompatLinks(data.compat_links);
+          } else {
+            setCompatLinks([]);
+          }
         } else {
           setProducts([]);
           setCompatibility([]);
+          setCompatLinks([]);
         }
       } catch (error) {
         if (error.name !== 'AbortError') {
@@ -60,6 +67,7 @@ export default function SimpleGallery() {
   const [perPage, setPerPage] = useState(50);
   const [page, setPage] = useState(1);
   const { dispatch, cart } = useCart();
+  const [compatLinks, setCompatLinks] = useState([]);
   const getImageUrl = (img) => {
     if (!img) return '/logo.png';
     if (img.startsWith('http://') || img.startsWith('https://')) return img;
@@ -210,12 +218,27 @@ export default function SimpleGallery() {
             </div>
             <div className="filter-section">
               <label className="filter-label">Sub-Category</label>
-              <select value={subCategory} onChange={e => setSubCategory(e.target.value)} className="filter-select">
-                <option value="">All Sub-Categories</option>
-                {[...new Set(products.map(p => p.subcategory).filter(Boolean))].map(sc => (
-                  <option key={sc} value={sc}>{sc}</option>
-                ))}
-              </select>
+              {(() => {
+                // Only show subcategories relevant to the selected category when available
+                const subOptions = category ? [...new Set(products.filter(p => p.category === category).map(p => p.subcategory).filter(Boolean))] : [];
+                return (
+                  <>
+                    <select
+                      value={subCategory}
+                      onChange={e => setSubCategory(e.target.value)}
+                      className="filter-select"
+                      disabled={!category}
+                      title={!category ? 'Select a category first' : (subOptions.length === 0 ? 'No sub-categories available' : 'Filter by sub-category')}
+                    >
+                      <option value="">All Sub-Categories</option>
+                      {subOptions.map(sc => (
+                        <option key={sc} value={sc}>{sc}</option>
+                      ))}
+                    </select>
+                    {!category && <div className="filter-hint">Select a category to enable sub-categories</div>}
+                  </>
+                );
+              })()}
             </div>
             <div className="filter-section">
               <label className="filter-label">Manufacturer</label>
@@ -248,12 +271,11 @@ export default function SimpleGallery() {
                       onChange={e => { setMachineType(e.target.value); setModel(''); }}
                       className="filter-select"
                       disabled={!manufacturer}
-                      title={!manufacturer ? 'Select a manufacturer first' : 'Filter by machine type'}
+                      title={!manufacturer ? 'Select a manufacturer to see machine types' : (options.length === 0 ? 'No machine types available' : 'Filter by machine type')}
                     >
                       <option value="">All Machine Types</option>
                       {options.map(m => <option key={m} value={m}>{m}</option>)}
                     </select>
-                    {!manufacturer ? <div className="filter-hint">Select a manufacturer to see machine types</div> : options.length === 0 && <div className="filter-hint">No machine types available</div>}
                   </>
                 );
               })()}
@@ -274,12 +296,11 @@ export default function SimpleGallery() {
                       onChange={e => setModel(e.target.value)}
                       className="filter-select"
                       disabled={!machineType}
-                      title={!machineType ? 'Select a machine type first' : 'Filter by model'}
+                      title={!machineType ? 'Select a machine type to see models' : (options.length === 0 ? 'No models available' : 'Filter by model')}
                     >
                       <option value="">All Models</option>
                       {options.map(m => <option key={m} value={m}>{m}</option>)}
                     </select>
-                    {!machineType ? <div className="filter-hint">Select a machine type to see models</div> : options.length === 0 && <div className="filter-hint">No models available</div>}
                   </>
                 );
               })()}
@@ -305,7 +326,36 @@ export default function SimpleGallery() {
           {error ? (
             <div style={{ padding: 24, textAlign: 'center', color: 'red' }} role="alert">Failed to load products: {error}</div>
           ) : (() => {
-            const filtered = products
+            // If compatibility links are provided, use them to filter products by
+            // selected manufacturer/machineType/model. The links map product SKU -> compat id.
+            const filtered = (() => {
+              if (compatibility.length && compatLinks.length) {
+                // build a map of compat id -> set of SKUs
+                const map = {};
+                compatLinks.forEach(l => {
+                  if (!l.machine_compatibility_id || !l.sku) return;
+                  map[l.machine_compatibility_id] = map[l.machine_compatibility_id] || new Set();
+                  map[l.machine_compatibility_id].add(l.sku);
+                });
+
+                // find compat rows matching selected filters
+                const matchingCompatIds = compatibility
+                  .filter(c => !manufacturer || c.manufacturer === manufacturer)
+                  .filter(c => !machineType || c.machine_type === machineType)
+                  .filter(c => !model || c.model === model)
+                  .map(c => c.id);
+
+                // collect SKUs for those compat ids
+                const matchingSkus = new Set();
+                matchingCompatIds.forEach(id => {
+                  (map[id] || []).forEach(sku => matchingSkus.add(sku));
+                });
+
+                // return products that either match the SKU set or (if no matchingSkus) none
+                return products.filter(p => matchingSkus.size === 0 ? true : matchingSkus.has(p.sku));
+              }
+              return products;
+            })()
               .filter(product => product.website_visible === true)
               .filter(product => !category || product.category === category)
               .filter(product => !subCategory || product.subcategory === subCategory)
