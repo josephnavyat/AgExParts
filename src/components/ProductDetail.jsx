@@ -310,14 +310,7 @@ export default function ProductDetail() {
               </tbody>
             </table>
           </section>
-          {/* Debug: show counts for compatibility data (remove in production) */}
-          <div style={{ width: '100%', marginBottom: 12, color: '#666', fontSize: '0.95rem' }}>
-            <div>Compatibility rows: {compatibility ? compatibility.length : 0} | Links: {compatLinks ? compatLinks.length : 0}</div>
-            <details style={{ marginTop: 8 }}>
-              <summary style={{ cursor: 'pointer', color: '#444' }}>Show raw compatibility payload</summary>
-              <pre style={{ maxHeight: 240, overflow: 'auto', background: '#fafafa', padding: 8, borderRadius: 8 }}>{JSON.stringify({ compatibility, compatLinks }, null, 2)}</pre>
-            </details>
-          </div>
+          
           {/* Machine Compatibility Section */}
           <section style={{
             width: '100%',
@@ -451,9 +444,6 @@ export default function ProductDetail() {
             </table>
           </section>
           */}
-          <div style={{ color: '#888', fontSize: '1rem', marginBottom: 8, width: '100%' }}>
-            Category: {product.category} | Manufacturer: {product.manufacturer}
-          </div>
           {/* Actions */}
           <div style={{ display: 'flex', gap: '1.5rem', marginTop: 32 }}>
             <Link
