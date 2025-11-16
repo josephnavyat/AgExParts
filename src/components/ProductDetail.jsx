@@ -310,6 +310,14 @@ export default function ProductDetail() {
               </tbody>
             </table>
           </section>
+          {/* Debug: show counts for compatibility data (remove in production) */}
+          <div style={{ width: '100%', marginBottom: 12, color: '#666', fontSize: '0.95rem' }}>
+            <div>Compatibility rows: {compatibility ? compatibility.length : 0} | Links: {compatLinks ? compatLinks.length : 0}</div>
+            <details style={{ marginTop: 8 }}>
+              <summary style={{ cursor: 'pointer', color: '#444' }}>Show raw compatibility payload</summary>
+              <pre style={{ maxHeight: 240, overflow: 'auto', background: '#fafafa', padding: 8, borderRadius: 8 }}>{JSON.stringify({ compatibility, compatLinks }, null, 2)}</pre>
+            </details>
+          </div>
           {/* Machine Compatibility Section */}
           <section style={{
             width: '100%',
@@ -357,16 +365,25 @@ export default function ProductDetail() {
                   matched = compatibility.filter(c => matchedIds.has(String(c.id)));
                 }
               }
-              // If no compat_links matched, try to fall back to compatibility rows that match manufacturer or model fields if present
+              // If no compat_links matched, try fallbacks:
+              // 1) match compatibility.machine_type against product.category
+              // 2) match keywords from product name/description
               if (matched.length === 0 && compatibility && compatibility.length > 0) {
+                const name = (product.name || '').toLowerCase();
+                const desc = (product.description || '').toLowerCase();
                 matched = compatibility.filter(c => {
                   if (!c) return false;
                   const man = (c.manufacturer || c.manufactur || '').toLowerCase();
                   const type = (c.machine_type || c.machine || '').toLowerCase();
                   const model = (c.model || c.models || '').toLowerCase();
-                  return (product.manufacturer && man && product.manufacturer.toLowerCase().includes(man)) ||
-                         (product.machine_type && type && String(product.machine_type).toLowerCase().includes(type)) ||
-                         (product.model && model && String(product.model).toLowerCase().includes(model));
+                  const cat = (product.category || '').toLowerCase();
+                  const matchesCategory = type && cat && cat.includes(type);
+                  const matchesText = (model && (name.includes(model) || desc.includes(model))) || (man && (name.includes(man) || desc.includes(man)));
+                  return matchesCategory || matchesText || (
+                    (product.manufacturer && man && product.manufacturer.toLowerCase().includes(man)) ||
+                    (product.machine_type && type && String(product.machine_type).toLowerCase().includes(type)) ||
+                    (product.model && model && String(product.model).toLowerCase().includes(model))
+                  );
                 });
               }
 
