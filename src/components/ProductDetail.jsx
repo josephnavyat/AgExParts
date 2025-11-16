@@ -75,6 +75,12 @@ export default function ProductDetail() {
   else if (data && Array.isArray(data.products)) products = data.products;
   const found = products.find((p) => String(p.id) === String(id));
   setProduct(found);
+  // set compatLinks if present in payload
+  if (data && Array.isArray(data.compat_links)) {
+    setCompatLinks(data.compat_links);
+  } else {
+    setCompatLinks([]);
+  }
       } catch (error) {
         if (error.name !== 'AbortError') {
           console.error('Failed to fetch products:', error);
@@ -348,13 +354,38 @@ export default function ProductDetail() {
             {/* build a list of compatibility rows that apply to this product's SKU using compatLinks */}
             {(() => {
               if (!product) return null;
-              // Build map compatId -> set of SKUs
+              // Prefer direct compatibility rows fetched by SKU endpoint
+              if (compatibility && compatibility.length > 0) {
+                const matched = compatibility;
+                return (
+                  <table className="compat-table" style={{ width: '100%', background: 'none' }}>
+                    <thead>
+                      <tr style={{ textAlign: 'left', borderBottom: '2px solid #ececec' }}>
+                        <th style={{ padding: '8px 0', fontWeight: 700, width: '33%' }}>Manufacturer</th>
+                        <th style={{ padding: '8px 0', fontWeight: 700, width: '33%' }}>Machine Type</th>
+                        <th style={{ padding: '8px 0', fontWeight: 700, width: '34%' }}>Model</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {matched.map((row, idx) => (
+                        <tr key={idx} style={{ borderBottom: idx < matched.length - 1 ? '1px solid #ececec' : 'none', background: idx % 2 === 1 ? '#fafbfc' : 'none' }}>
+                          <td style={{ padding: '8px 0' }}>{row.manufacturer || row.manufactur || '-'}</td>
+                          <td style={{ padding: '8px 0' }}>{row.machine_type || row.machine || '-'}</td>
+                          <td style={{ padding: '8px 0' }}>{row.model || row.models || '-'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                );
+              }
+
+              // Fallback: build map compatId -> set of product_skus from compatLinks
               const compatMap = {};
               for (const link of compatLinks || []) {
                 if (!link || !link.machine_compatibility_id) continue;
                 const id = String(link.machine_compatibility_id);
                 compatMap[id] = compatMap[id] || new Set();
-                if (link.sku) compatMap[id].add(String(link.sku));
+                if (link.product_sku) compatMap[id].add(String(link.product_sku));
               }
               // Find compat rows that reference this product.sku
               const sku = product.sku ? String(product.sku) : null;
