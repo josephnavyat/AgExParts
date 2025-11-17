@@ -112,6 +112,7 @@ export default function SimpleGallery() {
   <div className="simple-gallery-root" role="main">
       <div className="simple-gallery-header">
   <h2 className="simple-gallery-title distressed">Agex Parts</h2>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <div className="simple-gallery-perpage">
           <label className="filter-label" htmlFor="perPageSelect">Show:</label>
           <select
@@ -125,6 +126,7 @@ export default function SimpleGallery() {
             ))}
           </select>
         </div>
+  </div>
         {/* Filter icon for both mobile and desktop, fixed to left and moves down as you scroll */}
         <button
           className="simple-gallery-filter-toggle"
@@ -184,6 +186,39 @@ export default function SimpleGallery() {
             Filters {filterOpen ? '▼' : '▶'}
           </div>
           <div className="simple-gallery-filter-content">
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '0.25rem 0 0.5rem 0' }}>
+              <button
+                title="Clear filters"
+                aria-label="Clear filters"
+                onClick={() => {
+                  setManufacturer('');
+                  setMachineType('');
+                  setModel('');
+                  setCategory('');
+                  setSubCategory('');
+                  setSearchText('');
+                  setInStockOnly(false);
+                  setSort('');
+                  setPage(1);
+                  setFilterOpen(false);
+                }}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#444',
+                  cursor: 'pointer',
+                  padding: '0.35rem 0.6rem',
+                  borderRadius: 6,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  fontWeight: 600,
+                }}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="4" rx="1" ry="1"></rect><path d="M6 8v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8"></path><line x1="10" y1="12" x2="14" y2="12"></line></svg>
+                <span style={{ fontSize: '0.95rem' }}>Clear filters</span>
+              </button>
+            </div>
             <input
               type="text"
               className="search-input"
@@ -359,8 +394,10 @@ export default function SimpleGallery() {
                   (map[id] || []).forEach(sku => matchingSkus.add(sku));
                 });
 
-                // return products that either match the SKU set or (if no matchingSkus) none
-                return products.filter(p => matchingSkus.size === 0 ? true : matchingSkus.has(p.sku));
+                // Strict behavior: if there are no matching SKUs for the selected
+                // compat filters, return an empty array (no items matched).
+                if (matchingSkus.size === 0) return [];
+                return products.filter(p => matchingSkus.has(p.sku));
               }
               return products;
             })()
@@ -385,6 +422,17 @@ export default function SimpleGallery() {
               });
             const start = (page - 1) * perPage;
             const end = start + perPage;
+            // If the user selected any compat-related filter and there are
+            // zero products after strict compat filtering, render a friendly
+            // message instead of the grid.
+            if (hasCompatFilterSelected && filtered.length === 0) {
+              return (
+                <div key="no-results" style={{ padding: 48, textAlign: 'center', color: '#666' }} role="status">
+                  No items matched filters.
+                </div>
+              );
+            }
+
             return filtered.slice(start, end).map((product) => (
             <Link key={product.id} to={`/product/${product.id}`} className="simple-gallery-card" style={{ textDecoration: 'none' }}>
               <div className="simple-gallery-image-wrapper">
@@ -425,22 +473,45 @@ export default function SimpleGallery() {
               <div className="simple-gallery-card-actions" role="group" aria-label="Product Actions">
                 {(() => {
                   const qty = getProductQuantity(cart, product.id);
+                  const outOfStock = Number(product.inventory ?? product.quantity ?? 0) === 0;
+                  if (outOfStock) {
+                    return (
+                      <button
+                        className="simple-gallery-btn"
+                        title="Out of Stock"
+                        aria-label="Out of Stock"
+                        disabled
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: 8,
+                          background: '#d33',
+                          color: '#fff',
+                          border: 'none',
+                          padding: '0.5rem 0.9rem',
+                          borderRadius: 6,
+                          cursor: 'not-allowed',
+                          opacity: 0.9,
+                        }}
+                      >
+                        <span style={{ fontWeight: 800, fontSize: '0.98rem' }}>Out of Stock</span>
+                      </button>
+                    );
+                  }
                   return (
                     <button
                       className="simple-gallery-btn primary"
                       onClick={(e) => { e.stopPropagation(); e.preventDefault(); dispatch({ type: "ADD_TO_CART", product }); }}
                       title="Add to Cart"
-                      aria-label={Number(product.inventory ?? product.quantity ?? 0) === 0 ? 'Out of Stock' : 'Add to Cart'}
+                      aria-label="Add to Cart"
                       style={{
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         gap: 8,
-                        opacity: Number(product.inventory ?? product.quantity ?? 0) === 0 ? 0.5 : 1,
-                        pointerEvents: Number(product.inventory ?? product.quantity ?? 0) === 0 ? 'none' : 'auto',
                         position: 'relative',
                       }}
-                      disabled={Number(product.inventory ?? product.quantity ?? 0) === 0}
                     >
                       {/* Icon removed — keep label and qty bubble */}
                       <span className="add-to-cart-label" style={{ fontWeight: 800, fontSize: '0.98rem' }}>Add to Cart</span>
