@@ -129,6 +129,7 @@ useEffect(() => {
 
   return (
     <>
+      <Navbar />
       {showBanner && (
         <div style={{
           position: 'fixed',

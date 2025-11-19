@@ -163,7 +163,14 @@ function StripeCheckoutButton({ cart, disabled }) {
   );
 }
 
-const getImageUrl = (img) => img && img.startsWith('http') ? img : (img ? img : '/logo.png');
+const getImageUrl = (img) => {
+  const base = (import.meta.env && import.meta.env.VITE_IMAGE_BASE_URL) || process.env.VITE_IMAGE_BASE_URL || '';
+  if (!img) return '/logo.png';
+  if (String(img).toLowerCase().endsWith('logo.png')) return '/logo.png';
+  if (img.startsWith('http://') || img.startsWith('https://')) return img;
+  if (base) return `${base.replace(/\/$/, '')}/${String(img).replace(/^\//, '')}`;
+  return img;
+};
 
 function calculateShipping(cartItems) {
   const totalWeight = cartItems.reduce((sum, i) => sum + ((i.product.weight || 0) * i.quantity), 0);

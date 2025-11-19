@@ -13,8 +13,11 @@ export default function ProductDetail() {
   const [error, setError] = useState(null);
   const { cart, dispatch } = useCart();
   const getImageUrl = (img) => {
-    if (!img) return '/logo.png';
-    if (img.startsWith('http://') || img.startsWith('https://')) return img;
+    const base = (import.meta.env && import.meta.env.VITE_IMAGE_BASE_URL) || process.env.VITE_IMAGE_BASE_URL || '';
+  if (!img) return '/logo.png';
+  if (String(img).toLowerCase().endsWith('logo.png')) return '/logo.png';
+  if (img.startsWith('http://') || img.startsWith('https://')) return img;
+  if (base) return `${base.replace(/\/$/, '')}/${String(img).replace(/^\//, '')}`;
     // Ensure local image paths are absolute so they resolve correctly from any route
     return img.startsWith('/') ? img : `/${img}`;
   };
