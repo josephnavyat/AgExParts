@@ -27,7 +27,12 @@ export default function ProductDetail() {
       const lower = filename.toLowerCase();
       if (lower !== filename) {
         const candidate = path.replace(new RegExp(filename + '$'), lower);
-        img.src = candidate.startsWith('/') ? candidate : `/${candidate}`;
+        // If candidate is an absolute URL, use as-is. If it's root-relative, keep it.
+        if (/^https?:\/\//i.test(candidate) || /^\/\//.test(candidate) || candidate.startsWith('/')) {
+          img.src = candidate;
+        } else {
+          img.src = `/${candidate}`;
+        }
         return;
       }
     }
@@ -178,8 +183,8 @@ export default function ProductDetail() {
             {/* Image carousel */}
             {images.length > 0 && (
               <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-                <img
-                  src={getImageUrl(images[imgIndex])}
+                <SmartImage
+                  src={images[imgIndex]}
                   alt={product.name}
                   style={{
                     maxWidth: '100%',
@@ -193,7 +198,6 @@ export default function ProductDetail() {
                     borderRadius: 0
                   }}
                   loading="lazy"
-                  onError={handleImgError}
                 />
                 {imgIndex > 0 && (
                   <button

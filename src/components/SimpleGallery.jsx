@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import Navbar from "./Navbar.jsx";
 import "../styles/simple-gallery.css";
 import getImageUrl from '../utils/getImageUrl.js';
+import SmartImage from './SmartImage.jsx';
 
 export default function SimpleGallery() {
   const isMobile = window.matchMedia('(max-width: 700px)').matches;
@@ -85,7 +86,11 @@ export default function SimpleGallery() {
       const lower = filename.toLowerCase();
       if (lower !== filename) {
         const candidate = path.replace(new RegExp(filename + '$'), lower);
-        img.src = candidate.startsWith('/') ? candidate : `/${candidate}`;
+        if (/^https?:\/\//i.test(candidate) || /^\/\//.test(candidate) || candidate.startsWith('/')) {
+          img.src = candidate;
+        } else {
+          img.src = `/${candidate}`;
+        }
         return;
       }
     }
@@ -433,11 +438,10 @@ export default function SimpleGallery() {
             return filtered.slice(start, end).map((product) => (
             <Link key={product.id} to={`/product/${product.id}`} className="simple-gallery-card" style={{ textDecoration: 'none' }}>
               <div className="simple-gallery-image-wrapper">
-                <img 
-                  src={getImageUrl(product.image)} 
-                  alt={product.name} 
+                <SmartImage
+                  src={product.image}
+                  alt={product.name}
                   loading="lazy"
-                  onError={handleImgError}
                 />
               </div>
               {product.sku && (
