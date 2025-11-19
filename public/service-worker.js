@@ -1,4 +1,5 @@
-const CACHE_NAME = 'agex-cache-v2';
+// Bump cache name when changing caching behavior so clients pick up a fresh SW.
+const CACHE_NAME = 'agex-cache-v3';
 
 self.addEventListener('install', event => {
   self.skipWaiting();
@@ -28,6 +29,12 @@ self.addEventListener('fetch', event => {
 
   // Only handle GET requests here
   if (req.method !== 'GET') return;
+
+  // Skip handling JS module and asset requests; letting the browser fetch these
+  // directly avoids serving index.html (text/html) for chunk imports.
+  if (req.destination === 'script' || url.pathname.startsWith('/assets/') || url.pathname.endsWith('.js') || url.pathname.endsWith('.css')) {
+    return; // fall back to network for scripts/styles
+  }
 
   // For images, prefer network first to avoid serving stale/broken cached images
   if (req.destination === 'image' || url.pathname.match(/\.(png|jpg|jpeg|gif|webp|svg)$/i)) {
