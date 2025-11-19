@@ -1,7 +1,6 @@
 
 import React, { useEffect, useState } from "react";
-// Unify image path logic with CartPage
-const getImageUrl = (img) => img && img.startsWith('http') ? img : (img ? img : '/logo.png');
+import getImageUrl from '../utils/getImageUrl.js';
 // Simple cart SVG icon
 const CartIcon = ({ size = 18, color = '#28a745', style = {} }) => (
   <svg

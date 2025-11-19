@@ -7,6 +7,7 @@ import { useStripe } from '@stripe/react-stripe-js';
 import ShippingRatesButton from './ShippingRatesButton.jsx';
 import { useNavigate } from 'react-router-dom';
 import FreightInquiryPage from './FreightInquiryPage';
+import getImageUrl from '../utils/getImageUrl.js';
 
 function StripeCheckoutButton({ cart, disabled }) {
   const stripe = useStripe();
@@ -163,14 +164,7 @@ function StripeCheckoutButton({ cart, disabled }) {
   );
 }
 
-const getImageUrl = (img) => {
-  const base = (import.meta.env && import.meta.env.VITE_IMAGE_BASE_URL) || process.env.VITE_IMAGE_BASE_URL || '';
-  if (!img) return '/logo.png';
-  if (String(img).toLowerCase().endsWith('logo.png')) return '/logo.png';
-  if (img.startsWith('http://') || img.startsWith('https://')) return img;
-  if (base) return `${base.replace(/\/$/, '')}/${String(img).replace(/^\//, '')}`;
-  return img;
-};
+// ...existing code...
 
 function calculateShipping(cartItems) {
   const totalWeight = cartItems.reduce((sum, i) => sum + ((i.product.weight || 0) * i.quantity), 0);

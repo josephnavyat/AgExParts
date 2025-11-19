@@ -5,6 +5,7 @@ import Footer from "./Footer.jsx";
 import { useCart } from "./CartContext.jsx";
 import { getProductQuantity } from "./CartContext.jsx";
 import "../styles/site.css";
+import getImageUrl from '../utils/getImageUrl.js';
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -12,15 +13,7 @@ export default function ProductDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { cart, dispatch } = useCart();
-  const getImageUrl = (img) => {
-    const base = (import.meta.env && import.meta.env.VITE_IMAGE_BASE_URL) || process.env.VITE_IMAGE_BASE_URL || '';
-  if (!img) return '/logo.png';
-  if (String(img).toLowerCase().endsWith('logo.png')) return '/logo.png';
-  if (img.startsWith('http://') || img.startsWith('https://')) return img;
-  if (base) return `${base.replace(/\/$/, '')}/${String(img).replace(/^\//, '')}`;
-    // Ensure local image paths are absolute so they resolve correctly from any route
-    return img.startsWith('/') ? img : `/${img}`;
-  };
+  // image helper provided by shared utility
   // Retry logic for image onError (lowercase, origin-prefixed, relative), then fallback
   const handleImgError = (e) => {
     const img = e.currentTarget;

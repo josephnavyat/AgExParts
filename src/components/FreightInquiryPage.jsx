@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Navbar from './Navbar.jsx';
 import { useLocation } from 'react-router-dom';
+import getImageUrl from '../utils/getImageUrl.js';
 
 export default function FreightInquiryPage() {
   const location = useLocation();
@@ -34,7 +35,7 @@ export default function FreightInquiryPage() {
     setSubmitted(true);
   };
 
-  const getImageUrl = (img) => img && img.startsWith('http') ? img : (img ? img : '/logo.png');
+  // shared getImageUrl used for consistent image path handling
 
   return (
     <>

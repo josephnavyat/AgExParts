@@ -4,6 +4,7 @@ import { useCart, getProductQuantity } from "./CartContext.jsx";
 import { Link } from "react-router-dom";
 import Navbar from "./Navbar.jsx";
 import "../styles/simple-gallery.css";
+import getImageUrl from '../utils/getImageUrl.js';
 
 export default function SimpleGallery() {
   const isMobile = window.matchMedia('(max-width: 700px)').matches;
@@ -68,15 +69,7 @@ export default function SimpleGallery() {
   const [page, setPage] = useState(1);
   const { dispatch, cart } = useCart();
   const [compatLinks, setCompatLinks] = useState([]);
-  const getImageUrl = (img) => {
-  const base = (import.meta.env && import.meta.env.VITE_IMAGE_BASE_URL) || process.env.VITE_IMAGE_BASE_URL || '';
-  if (!img) return '/logo.png';
-  // Always prefer the local logo from public folder
-  if (String(img).toLowerCase().endsWith('logo.png')) return '/logo.png';
-  if (img.startsWith('http://') || img.startsWith('https://')) return img;
-  if (base) return `${base.replace(/\/$/, '')}/${String(img).replace(/^\//, '')}`;
-  return img.startsWith('/') ? img : `/${img}`;
-  };
+  
   // Robust image error handler with retries for common issues (case, origin, relative)
   const handleImgError = (e) => {
     const img = e.currentTarget;
