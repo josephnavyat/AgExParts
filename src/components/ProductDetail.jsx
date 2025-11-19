@@ -6,6 +6,7 @@ import { useCart } from "./CartContext.jsx";
 import { getProductQuantity } from "./CartContext.jsx";
 import "../styles/site.css";
 import getImageUrl from '../utils/getImageUrl.js';
+import SmartImage from './SmartImage.jsx';
 
 export default function ProductDetail() {
   const { id } = useParams();
