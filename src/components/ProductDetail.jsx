@@ -106,21 +106,25 @@ export default function ProductDetail() {
 
   useEffect(() => {
     if (!product) return;
-    // Build image list: main image, then _2, _3, _4, _5
+    // Build image list robustly: extract filename (basename) from whatever
+    // `product.image` contains (it may be '/DN125005.png', 'DN125005.png', or
+    // a full URL). Then generate variant keys like basename_2.png and resolve
+    // them via getImageUrl so the helper normalizes to the CDN/origin.
     const base = product.image;
     if (!base) return setImages([]);
-    const extIdx = base.lastIndexOf('.');
-    const baseName = extIdx !== -1 ? base.slice(0, extIdx) : base;
-    const ext = extIdx !== -1 ? base.slice(extIdx) : '';
-    const imgList = [base];
-    for (let i = 2; i <= 5; i++) {
-      imgList.push(`${baseName}_${i}${ext}`);
-    }
+    // Extract only the filename portion to avoid dots in hostnames affecting ext detection
+    const filename = String(base).split('/').pop();
+    const extIdx = filename.lastIndexOf('.');
+    const baseName = extIdx !== -1 ? filename.slice(0, extIdx) : filename;
+    const ext = extIdx !== -1 ? filename.slice(extIdx) : '';
+    const keys = [filename];
+    for (let i = 2; i <= 5; i++) keys.push(`${baseName}_${i}${ext}`);
+
     // Check which images exist by attempting to load them using normalized URLs
-    Promise.all(imgList.map(src =>
+    Promise.all(keys.map(key =>
       new Promise(resolve => {
         const imgEl = new window.Image();
-        const url = getImageUrl(src);
+        const url = getImageUrl(key);
         imgEl.src = url;
         imgEl.onload = () => resolve(url);
         imgEl.onerror = () => resolve(null);
