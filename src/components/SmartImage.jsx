@@ -15,28 +15,39 @@ export default function SmartImage({ src, alt = '', className, style, loading = 
     const attempt = attemptsRef.current;
     // Derive filename and extension
     try {
-      const s = String(src || '').trim();
+      // Normalize src to remove querystring/fragment and extract filename
+      let s = String(src || '').trim();
+      try {
+        if (/^https?:\/\//i.test(s) || /^\/\//.test(s)) {
+          const tmp = s.startsWith('//') ? (window.location.protocol + s) : s;
+          s = new URL(tmp).pathname;
+        } else {
+          s = s.split('?')[0].split('#')[0];
+        }
+      } catch (e) {
+        s = s.split('?')[0].split('#')[0];
+      }
       const filename = s.split('/').pop();
       const extIdx = filename.lastIndexOf('.');
       const baseName = extIdx !== -1 ? filename.slice(0, extIdx) : filename;
       const ext = extIdx !== -1 ? filename.slice(extIdx) : '';
 
       if (attempt === 1) {
-        // try webp variant
-        const webp = baseName + (ext ? '.webp' : '.webp');
+        // try webp variant first
+        const webp = `${baseName}.webp`;
         setCurrent(getImageUrl(webp));
         return;
       }
       if (attempt === 2) {
-        // try numbered variant _2
-        const v2 = `${baseName}_2${ext}`;
-        setCurrent(getImageUrl(v2));
+        // try thumbnail webp before numbered variants
+        const thumb = `${baseName}.thumb.webp`;
+        setCurrent(getImageUrl(thumb));
         return;
       }
       if (attempt === 3) {
-        // try thumbnail webp name.thumb.webp or baseName.thumb.webp
-        const thumb = `${baseName}.thumb.webp`;
-        setCurrent(getImageUrl(thumb));
+        // try numbered variant _2
+        const v2 = `${baseName}_2${ext}`;
+        setCurrent(getImageUrl(v2));
         return;
       }
     } catch (e) {

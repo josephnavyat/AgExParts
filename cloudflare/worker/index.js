@@ -1,6 +1,17 @@
 export default {
   async fetch(request, env) {
     try {
+      // Always prepare CORS headers to include on every response
+      const corsHeaders = new Headers();
+      corsHeaders.set('Access-Control-Allow-Origin', '*');
+      corsHeaders.set('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS');
+      corsHeaders.set('Access-Control-Allow-Headers', 'Content-Type');
+
+      // Respond to preflight requests immediately
+      if (request.method === 'OPTIONS') {
+        return new Response(null, { status: 204, headers: corsHeaders });
+      }
+
       const url = new URL(request.url);
       // path after the hostname, strip leading slash
       const key = url.pathname.replace(/^\/+/, '');
@@ -10,7 +21,7 @@ export default {
       const obj = await env.AGEX_IMAGES.get(key, { type: 'stream' });
       if (!obj) return new Response('Not found', { status: 404 });
 
-      const headers = new Headers();
+  const headers = new Headers();
       // preserve content-type if the object has it
       if (obj.httpMetadata && obj.httpMetadata.contentType) {
         headers.set('Content-Type', obj.httpMetadata.contentType);
@@ -23,13 +34,16 @@ export default {
         if (map[ext]) headers.set('Content-Type', map[ext]);
       }
 
-      // Caching & CORS
-      headers.set('Cache-Control', 'public, max-age=31536000, immutable');
-      headers.set('Access-Control-Allow-Origin', '*');
+  // Caching
+  headers.set('Cache-Control', 'public, max-age=31536000, immutable');
+  // Merge in CORS headers for successful object responses
+  for (const [k, v] of corsHeaders.entries()) headers.set(k, v);
 
       return new Response(obj.body, { status: 200, headers });
     } catch (err) {
-      return new Response('Worker error: ' + (err && err.message), { status: 500 });
+  const errHeaders = new Headers();
+  for (const [k, v] of corsHeaders.entries()) errHeaders.set(k, v);
+  return new Response('Worker error: ' + (err && err.message), { status: 500, headers: errHeaders });
     }
   }
 };

@@ -118,24 +118,64 @@ export default function ProductDetail() {
     // them via getImageUrl so the helper normalizes to the CDN/origin.
     const base = product.image;
     if (!base) return setImages([]);
-    // Extract only the filename portion to avoid dots in hostnames affecting ext detection
-    const filename = String(base).split('/').pop();
+    // Normalize the incoming value: strip querystring/fragment and ensure we
+    // only operate on the pathname so we don't accidentally include
+    // ?v=... or #hash parts in constructed variant names.
+    let pathname = String(base).trim();
+    try {
+      if (/^https?:\/\//i.test(pathname) || /^\/\//.test(pathname)) {
+        const tmp = pathname.startsWith('//') ? (window.location.protocol + pathname) : pathname;
+        pathname = new URL(tmp).pathname;
+      } else {
+        pathname = pathname.split('?')[0].split('#')[0];
+      }
+    } catch (e) {
+      // Fallback: best-effort strip of query/fragment
+      pathname = pathname.split('?')[0].split('#')[0];
+    }
+
+    const filename = pathname.split('/').pop() || '';
     const extIdx = filename.lastIndexOf('.');
     const baseName = extIdx !== -1 ? filename.slice(0, extIdx) : filename;
     const ext = extIdx !== -1 ? filename.slice(extIdx) : '';
-    const keys = [filename];
-    for (let i = 2; i <= 5; i++) keys.push(`${baseName}_${i}${ext}`);
 
-    // Check which images exist by attempting to load them using normalized URLs
-    Promise.all(keys.map(key =>
-      new Promise(resolve => {
-        const imgEl = new window.Image();
-        const url = getImageUrl(key);
-        imgEl.src = url;
-        imgEl.onload = () => resolve(url);
-        imgEl.onerror = () => resolve(null);
-      })
-    )).then(arr => setImages(arr.filter(Boolean)));
+    // Prefer plausible generated variants we create with the optimizer first
+    // (webp and thumb.webb), then numbered fallbacks. This reduces 404s for
+    // the common case where webp/thumb variants exist but numbered variants do not.
+    const keys = [filename,
+      `${baseName}.webp`,
+      `${baseName}.thumb.webp`,
+      `${baseName}_2${ext}`,
+      `${baseName}_3${ext}`,
+      `${baseName}_4${ext}`,
+      `${baseName}_5${ext}`
+    ];
+
+    // Check which images exist. Creating Image() and assigning src floods the
+    // network panel with 404s when variants are missing. Use a HEAD fetch to
+    // check availability quietly; fall back to Image() probe if fetch is
+    // unsupported or blocked.
+    const checkPromises = keys.map(async (key) => {
+      const url = getImageUrl(key);
+      try {
+        const res = await fetch(url, { method: 'HEAD' });
+        if (res && res.ok) return url;
+      } catch (e) {
+        // HEAD may be blocked by CORS or not allowed; fall back to Image probe
+      }
+      // Fallback probe using Image element (last resort)
+      return await new Promise(resolve => {
+        try {
+          const imgEl = new window.Image();
+          imgEl.src = url;
+          imgEl.onload = () => resolve(url);
+          imgEl.onerror = () => resolve(null);
+        } catch (e) {
+          resolve(null);
+        }
+      });
+    });
+    Promise.all(checkPromises).then(arr => setImages(arr.filter(Boolean)));
     setImgIndex(0);
   }, [product]);
 
