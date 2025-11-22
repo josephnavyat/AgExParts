@@ -284,6 +284,19 @@ body.hero-active .hero .card .muted {
     min-width: 56px !important;
     min-height: 56px !important;
     font-size: 1.15rem !important;
+/* ProductDetailNew responsive tweaks */
+.product-detail-new { display: flex; gap: 24px; align-items: flex-start; }
+.product-detail-new__media { flex: 0 0 420px; }
+.product-detail-new__content { flex: 1 1 auto; }
+
+@media (max-width: 800px) {
+  .product-detail-new { flex-direction: column !important; padding: 12px !important; }
+  .product-detail-new__media { width: 100% !important; display: flex !important; justify-content: center !important; }
+  .product-detail-new__media > div { width: 92%; max-width: 420px; }
+  .product-detail-new__content { width: 100%; }
+  .product-detail-new__media img { width: 100%; height: auto; }
+  .product-detail-new .gallery-thumbs { justify-content: center; }
+}
     border-radius: 18px !important;
   }
 }

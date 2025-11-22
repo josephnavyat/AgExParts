@@ -109,8 +109,8 @@ export default function ProductDetailNew() {
   if (!product) return <div style={{ textAlign: 'center', padding: 24 }}>Product not found.</div>;
 
   return (
-  <div style={{ maxWidth: 1100, margin: '2rem auto', padding: '1rem', display: 'flex', gap: 32, alignItems: 'flex-start', background: '#fff', borderRadius: 8 }}>
-      <div style={{ flex: '0 0 420px', display: 'flex', alignItems: 'flex-start', flexDirection: 'column', gap: 12 }}>
+    <div className="product-detail-new" style={{ display: 'flex', maxWidth: 1100, margin: '2rem auto', padding: '1rem', background: '#fff', borderRadius: 8, gap: 32, alignItems: 'flex-start' }}>
+      <div className="product-detail-new__media" style={{ flex: '0 0 420px', display: 'flex', alignItems: 'flex-start', flexDirection: 'column', gap: 12 }}>
         <div style={{ width: 360, height: 360, borderRadius: 8, overflow: 'hidden', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 6px 18px rgba(0,0,0,0.06)' }}>
           <SmartImage src={images[selectedImageIndex] || getImageUrl(product.image || '')} alt={product.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
         </div>
@@ -126,9 +126,12 @@ export default function ProductDetailNew() {
         )}
       </div>
 
-      <div style={{ flex: '1 1 auto' }}>
+      <div className="product-detail-new__content" style={{ flex: '1 1 auto', alignSelf: 'flex-start' }}>
         <h1 style={{ fontSize: '2rem', margin: 0 }}>{product.name || 'Product Title'}</h1>
         <p style={{ color: '#666', marginTop: 8 }}>{product.description || 'This is a brief, product description that highlights key features and uses.'}</p>
+        {product.part_number && (
+          <div style={{ marginTop: 8, color: '#444', fontWeight: 600 }}>Part #: {product.part_number}</div>
+        )}
         <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 16 }}>
           <div style={{ fontSize: '1.6rem', fontWeight: 800 }}>${Number(product.price || 0).toFixed(2)}</div>
           {qtyInCart > 0 ? (
