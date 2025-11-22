@@ -399,6 +399,50 @@ body.hero-active .hero .card .muted {
   .card p { font-size: 12px; }
   .pill { padding: 3px 6px; font-size: 10px; }
 }
+
+/* Mobile safety overrides for product detail: ensure image stacks above content and prevent horizontal overflow.
+   Use !important here to override inline styles set in the component on narrow viewports. */
+@media (max-width: 600px) {
+  .product-detail-new {
+    flex-direction: column !important;
+    padding: 12px !important;
+    margin: 0 8px !important;
+    gap: 12px !important;
+    overflow: hidden !important;
+    align-items: stretch !important;
+  }
+
+  .product-detail-new__media {
+    /* allow the media column to be full width on mobile */
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+  }
+
+  .product-detail-new__media > div {
+    /* override fixed pixel width/height used inline in the component */
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+  }
+
+  .product-detail-new__media img,
+  .product-detail-new__media > div img {
+    width: 100% !important;
+    height: auto !important;
+    object-fit: contain !important;
+    display: block !important;
+  }
+
+  .product-detail-new__content {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 8px 0 !important;
+  }
+}
 .card { background: var(--surface); border: 1px solid #22262c; border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); transition: transform .2s ease, border-color .2s ease; }
 .card:hover { transform: translateY(-3px); border-color: #2a3038; }
 .card h3 { margin: 10px 0 6px; font-size: 16px; }

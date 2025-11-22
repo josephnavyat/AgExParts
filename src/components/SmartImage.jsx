@@ -20,14 +20,20 @@ export default function SmartImage({ src, alt = '', className, style, loading = 
       try {
         if (/^https?:\/\//i.test(s) || /^\/\//.test(s)) {
           const tmp = s.startsWith('//') ? (window.location.protocol + s) : s;
-          s = new URL(tmp).pathname;
+          try {
+            // new URL can throw on malformed inputs; guard it
+            s = new URL(tmp).pathname;
+          } catch (urlErr) {
+            // fallback to naive stripping if URL parsing fails
+            s = tmp.split('?')[0].split('#')[0];
+          }
         } else {
           s = s.split('?')[0].split('#')[0];
         }
       } catch (e) {
-        s = s.split('?')[0].split('#')[0];
+        s = String(s).split('?')[0].split('#')[0];
       }
-      const filename = s.split('/').pop();
+  const filename = (s && s.split ? s.split('/').pop() : String(s)).trim() || '';
       const extIdx = filename.lastIndexOf('.');
       const baseName = extIdx !== -1 ? filename.slice(0, extIdx) : filename;
       const ext = extIdx !== -1 ? filename.slice(extIdx) : '';
