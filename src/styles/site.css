@@ -329,6 +329,31 @@ body.hero-active .hero .card .muted {
   /* show the side sections rendered under the image */
   .pd-side-sections--desktop { display: block !important; }
   .pd-side-actions { display: none !important; }
+
+  /* Force compatibility table dividers on desktop inside product detail */
+  .product-detail-new .compat-table thead th {
+    border-bottom: 2px solid #e6e6e6 !important;
+  }
+  .product-detail-new .compat-table tbody td {
+    border-bottom: 1px solid #e9eef1 !important;
+  }
+
+  /* Ensure the part-number divider is visible on desktop and spaced */
+  .product-detail-new__content .pd-part-divider,
+  .product-detail-new .product-detail-new__content .pd-part-divider {
+    display: block !important;
+    height: 1px !important;
+    background: #e6e6e6 !important;
+    margin: 12px 0 16px 0 !important;
+    width: 100% !important;
+  }
+
+  /* Add a clear separator between stacked pd-sections rendered under the media column */
+  .product-detail-new .pd-side-sections--desktop .pd-section + .pd-section {
+    border-top: 1px solid #eef0f2 !important;
+    padding-top: 16px !important;
+    margin-top: 12px !important;
+  }
 }
 @media (max-width: 800px) {
   .pd-side-sections--desktop {

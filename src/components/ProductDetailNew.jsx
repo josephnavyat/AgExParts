@@ -151,7 +151,7 @@ export default function ProductDetailNew() {
           <div className="pd-section">
             <h3 style={{ marginBottom: 8 }}>Machine Compatibility</h3>
             {compatibility.length > 0 ? (
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <table className="compat-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                   <tr style={{ textAlign: 'left', borderBottom: '2px solid #eee' }}>
                     <th style={{ padding: '8px 6px', width: '33%' }}>Manufacturer</th>
@@ -191,7 +191,7 @@ export default function ProductDetailNew() {
         )}
         {/* subtle divider below the part number */}
         <div style={{ marginTop: 12 }}>
-          <div className="pd-part-divider" aria-hidden="true" />
+          <div className="pd-part-divider" aria-hidden="true" style={{ height: 1, background: '#e6e6e6', width: '100%' }} />
         </div>
         {/* description placed under part number with extra spacing */}
         <div style={{ marginTop: 12 }}>

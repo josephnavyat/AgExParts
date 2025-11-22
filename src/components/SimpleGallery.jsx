@@ -113,7 +113,7 @@ export default function SimpleGallery() {
   return (
   <div className="simple-gallery-root" role="main">
       <div className="simple-gallery-header">
-  <h2 className="simple-gallery-title distressed">Parts Catalog</h2>
+  <h2 className="simple-gallery-title distressed">Agex Parts</h2>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <div className="simple-gallery-perpage">
           <label className="filter-label" htmlFor="perPageSelect">Show:</label>
@@ -172,7 +172,8 @@ export default function SimpleGallery() {
           aria-label="Product Filters"
           aria-hidden={!filterOpen}
           tabIndex={filterOpen ? 0 : -1}
-          style={{
+          // On mobile we rely on CSS (transform + fixed full-height + overflow-y) so avoid inline positioning
+          style={isMobile ? {} : {
             position: 'fixed',
             left: filterOpen ? 0 : -340,
             top: 156,

@@ -365,6 +365,36 @@
   }
 }
 
+/* Mobile: make the filter pane a full-height, scrollable panel that slides in/out */
+@media (max-width: 700px) {
+  .simple-gallery-filter-pane {
+    position: fixed !important;
+    top: 96px !important; /* below navbar */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    padding: 1.5rem 1rem 2.5rem 1rem !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    z-index: 200 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: var(--gallery-card-bg) !important;
+  }
+
+  /* keep slide-out closed state working via class while avoiding inline left offsets */
+  .simple-gallery-filter-pane.simple-gallery-filter-pane--closed {
+    transform: translateX(-100%) !important;
+    transition: transform 0.28s ease !important;
+  }
+  .simple-gallery-filter-pane {
+    transform: translateX(0) !important;
+    transition: transform 0.28s ease !important;
+  }
+}
+
 .simple-gallery-card {
   background: var(--gallery-card-bg);
   border: 1px solid rgba(255,255,255,0.10);
