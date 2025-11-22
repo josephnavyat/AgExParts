@@ -228,12 +228,7 @@ export default function ProductDetailNew() {
           <div style={{ marginTop: 8, color: 'orange', fontWeight: 700 }}>Low Stock: {availableStock} Available</div>
         )}
 
-        {/* description moved below price/quantity per request */}
-        <div className="pd-desc">
-          <p className="pd-desc-text">{product.description || 'This is a brief, product description that highlights key features and uses.'}</p>
-        </div>
-
-
+  {/* description displayed under part number (duplicate removed) */}
         <div className="pd-section">
           <h3 style={{ marginBottom: 8 }}>Part Attributes</h3>
           {attributes.length > 0 ? (
