@@ -10,7 +10,7 @@ import { loadStripe } from '@stripe/stripe-js';
 const App = lazy(() => import('./App.jsx'));
 const Layout = lazy(() => import('./components/Layout.jsx'));
 const SimpleGallery = lazy(() => import('./components/SimpleGallery.jsx'));
-const ProductDetail = lazy(() => import('./components/ProductDetail.jsx'));
+const ProductDetail = lazy(() => import('./components/ProductDetailNew.jsx'));
 const CartPage = lazy(() => import('./components/CartPage.jsx'));
 const OrderSuccess = lazy(() => import('./components/OrderSuccess.jsx'));
 const SuccessPage = lazy(() => import('./components/SuccessPage.jsx'));
@@ -23,8 +23,6 @@ const OrdersDashboard = lazy(() => import('./components/OrdersDashboard.jsx'));
 const RecoverPassword = lazy(() => import('./components/RecoverPassword.jsx'));
 const ResetPassword = lazy(() => import('./components/ResetPassword.jsx'));
 const FreightOrderConfirmation = lazy(() => import('./components/FreightOrderConfirmation.jsx'));
-
-import ErrorBoundary from './components/ErrorBoundary.jsx';
 
 const stripePromise = loadStripe('pk_test_51S4XMHBpsFVjn5cM6uD1BRgbmhvLSnfeLPMZcp4EJNQYAQrQea122tUoOAF2exUh0Qu83i8uQj5Yp5zZXlCgj0Fc00LA6gZqpZ');
 
@@ -42,10 +40,9 @@ createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <CartProvider>
       <BrowserRouter>
-        <ErrorBoundary>
-          <Suspense fallback={<div style={{textAlign:'center',marginTop:'3rem'}}>Loading...</div>}>
-            <Layout>
-              <Routes>
+        <Suspense fallback={<div style={{textAlign:'center',marginTop:'3rem'}}>Loading...</div>}>
+          <Layout>
+            <Routes>
               <Route path="/" element={<App />} />
               <Route path="/catalog" element={<SimpleGallery />} />
               <Route path="/product/:id" element={<ProductDetail />} />
@@ -62,9 +59,8 @@ createRoot(document.getElementById('root')).render(
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/freight-order-confirmation" element={<FreightOrderConfirmation />} />
             </Routes>
-            </Layout>
-          </Suspense>
-        </ErrorBoundary>
+          </Layout>
+        </Suspense>
       </BrowserRouter>
     </CartProvider>
   </React.StrictMode>
