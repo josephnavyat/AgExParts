@@ -126,12 +126,7 @@ export default function ProductDetailNew() {
         )}
         {/* Desktop-only: render description, attributes and compatibility under the picture */}
   <div className="pd-side-sections pd-side-sections--desktop" style={{ width: '100%', marginTop: 12 }}>
-          <div className="pd-section" style={{ marginBottom: 12 }}>
-            <h3 style={{ marginBottom: 8 }}>Description</h3>
-            <div className="pd-desc">
-              <p className="pd-desc-text">{product.description || 'This is a brief, product description that highlights key features and uses.'}</p>
-            </div>
-          </div>
+          {/* description intentionally not duplicated here on desktop; rendered in content column */}
           <div className="pd-section" style={{ marginBottom: 12 }}>
             <h3 style={{ marginBottom: 8 }}>Part Attributes</h3>
             {attributes.length > 0 ? (
@@ -194,7 +189,13 @@ export default function ProductDetailNew() {
         {product.part_number && (
           <div style={{ marginTop: 8, color: '#444', fontWeight: 600 }}>Part #: {product.part_number}</div>
         )}
-  <div className="pd-actions pd-actions--inline" style={{ marginTop: 48, display: 'flex', alignItems: 'center', gap: 16 }}>
+        {/* description placed under part number with extra spacing */}
+        <div style={{ marginTop: 12 }}>
+          <div className="pd-desc">
+            <p className="pd-desc-text">{product.description || 'This is a brief, product description that highlights key features and uses.'}</p>
+          </div>
+        </div>
+  <div className="pd-actions pd-actions--inline" style={{ marginTop: 32, display: 'flex', alignItems: 'center', gap: 16 }}>
           <div style={{ fontSize: '1.6rem', fontWeight: 800 }}>${Number(product.price || 0).toFixed(2)}</div>
           {qtyInCart > 0 ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
