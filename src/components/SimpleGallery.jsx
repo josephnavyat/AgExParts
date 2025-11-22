@@ -113,7 +113,7 @@ export default function SimpleGallery() {
   return (
   <div className="simple-gallery-root" role="main">
       <div className="simple-gallery-header">
-  <h2 className="simple-gallery-title distressed">Agex Parts</h2>
+  <h2 className="simple-gallery-title distressed">Parts Catalog</h2>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <div className="simple-gallery-perpage">
           <label className="filter-label" htmlFor="perPageSelect">Show:</label>

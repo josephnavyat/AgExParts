@@ -315,6 +315,27 @@ body.hero-active .hero .card .muted {
 }
 .btn:hover { color: var(--brand); transform: translateY(-1px); }
 
+/* Product detail desktop layout tweaks */
+@media (min-width: 801px) {
+  /* hide the in-content attributes & compatibility (we render a desktop copy under the image) */
+  .product-detail-new__content > .pd-section {
+    display: none;
+  }
+  /* show the side sections rendered in the media column */
+  .pd-side-sections--desktop {
+    display: block !important;
+  }
+  /* hide the inline description as we render it under the image on desktop */
+  .product-detail-new__content > .pd-desc {
+    display: none;
+  }
+}
+@media (max-width: 800px) {
+  .pd-side-sections--desktop {
+    display: none !important;
+  }
+}
+
 /* BADGES */
 .badges { display: grid; grid-template-columns: 1.1fr .9fr; gap: 14px; margin-top: 24px; max-width: 760px; margin-left: auto; margin-right: auto; justify-items: stretch; }
 .badge { 

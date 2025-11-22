@@ -124,6 +124,61 @@ export default function ProductDetailNew() {
             ))}
           </div>
         )}
+        {/* Desktop-only: render description, attributes and compatibility under the picture */}
+        <div className="pd-side-sections pd-side-sections--desktop" style={{ width: '100%', marginTop: 12 }}>
+          <div className="pd-section" style={{ marginBottom: 12 }}>
+            <h3 style={{ marginBottom: 8 }}>Description</h3>
+            <div className="pd-desc">
+              <p className="pd-desc-text">{product.description || 'This is a brief, product description that highlights key features and uses.'}</p>
+            </div>
+          </div>
+          <div className="pd-section" style={{ marginBottom: 12 }}>
+            <h3 style={{ marginBottom: 8 }}>Part Attributes</h3>
+            {attributes.length > 0 ? (
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <tbody>
+                  {attributes.map((a, idx) => (
+                    <tr key={a.attribute_name} style={{ borderBottom: idx < attributes.length - 1 ? '1px solid #f1f1f1' : 'none' }}>
+                      <td style={{ padding: '8px 6px', fontWeight: 700 }}>{a.attribute_name}</td>
+                      <td style={{ padding: '8px 6px' }}>
+                        {a.value_text || (a.value_number !== undefined && a.value_number !== null ? a.value_number : (a.value_bool === true ? 'Yes' : a.value_bool === false ? 'No' : ''))}
+                        {a.unit ? ` ${a.unit}` : ''}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <div style={{ color: '#888' }}>No attributes available.</div>
+            )}
+          </div>
+
+          <div className="pd-section">
+            <h3 style={{ marginBottom: 8 }}>Machine Compatibility</h3>
+            {compatibility.length > 0 ? (
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ textAlign: 'left', borderBottom: '2px solid #eee' }}>
+                    <th style={{ padding: '8px 6px', width: '33%' }}>Manufacturer</th>
+                    <th style={{ padding: '8px 6px', width: '33%' }}>Machine Type</th>
+                    <th style={{ padding: '8px 6px', width: '34%' }}>Model</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {compatibility.map((row, i) => (
+                    <tr key={i} style={{ borderBottom: '1px solid #f1f1f1' }}>
+                      <td style={{ padding: '8px 6px' }}>{row.manufacturer || '-'}</td>
+                      <td style={{ padding: '8px 6px' }}>{row.machine_type || '-'}</td>
+                      <td style={{ padding: '8px 6px' }}>{row.model || '-'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <div style={{ color: '#888' }}>No compatibility data available.</div>
+            )}
+          </div>
+        </div>
       </div>
 
       <div className="product-detail-new__content" style={{ flex: '1 1 auto', alignSelf: 'flex-start' }}>
@@ -139,7 +194,7 @@ export default function ProductDetailNew() {
         {product.part_number && (
           <div style={{ marginTop: 8, color: '#444', fontWeight: 600 }}>Part #: {product.part_number}</div>
         )}
-        <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 16 }}>
+  <div className="pd-actions pd-actions--inline" style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 16 }}>
           <div style={{ fontSize: '1.6rem', fontWeight: 800 }}>${Number(product.price || 0).toFixed(2)}</div>
           {qtyInCart > 0 ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -151,28 +206,49 @@ export default function ProductDetailNew() {
               <button onClick={removeFromCart} style={{ background: '#fff', border: '1px solid #ddd', padding: '8px 12px', borderRadius: 6, cursor: 'pointer' }}>Remove</button>
             </div>
           ) : (
-            <button onClick={addToCart} disabled={isOutOfStock} style={{ background: isOutOfStock ? '#f3f3f3' : '#111', color: isOutOfStock ? '#999' : '#fff', border: 'none', padding: '12px 20px', borderRadius: 6, cursor: isOutOfStock ? 'not-allowed' : 'pointer' }}>{isOutOfStock ? 'Out of stock' : 'Add to cart'}</button>
+            <button
+              onClick={addToCart}
+              disabled={isOutOfStock}
+              style={{
+                background: isOutOfStock ? '#f3f3f3' : 'var(--gallery-btn-bg, var(--brand))',
+                color: isOutOfStock ? '#999' : 'var(--gallery-btn-text, #fff)',
+                border: 'none',
+                padding: '12px 20px',
+                borderRadius: 6,
+                cursor: isOutOfStock ? 'not-allowed' : 'pointer'
+              }}
+            >
+              {isOutOfStock ? 'Out of stock' : 'Add to cart'}
+            </button>
           )}
-        </div>
-
-        {/* description moved below price/quantity per request */}
-        <div className="pd-desc">
-          <div className="pd-desc-label">Description</div>
-          <p className="pd-desc-text">{product.description || 'This is a brief, product description that highlights key features and uses.'}</p>
-        </div>
+  </div>
 
         {availableStock <= 20 && availableStock > 0 && (
           <div style={{ marginTop: 8, color: 'orange', fontWeight: 700 }}>Low Stock: {availableStock} Available</div>
         )}
 
+        {/* description moved below price/quantity per request */}
+        <div className="pd-desc">
+          <p className="pd-desc-text">{product.description || 'This is a brief, product description that highlights key features and uses.'}</p>
+        </div>
+
+
         <div className="pd-section">
           <h3 style={{ marginBottom: 8 }}>Part Attributes</h3>
           {attributes.length > 0 ? (
-            <ul>
-              {attributes.map(a => (
-                <li key={a.attribute_name}><strong>{a.attribute_name}:</strong> {a.value_text || a.value_number || (a.value_bool ? 'Yes' : 'No')}</li>
-              ))}
-            </ul>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <tbody>
+                {attributes.map((a, idx) => (
+                  <tr key={a.attribute_name} style={{ borderBottom: idx < attributes.length - 1 ? '1px solid #f1f1f1' : 'none' }}>
+                    <td style={{ padding: '8px 6px', fontWeight: 700 }}>{a.attribute_name}</td>
+                    <td style={{ padding: '8px 6px' }}>
+                      {a.value_text || (a.value_number !== undefined && a.value_number !== null ? a.value_number : (a.value_bool === true ? 'Yes' : a.value_bool === false ? 'No' : ''))}
+                      {a.unit ? ` ${a.unit}` : ''}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           ) : (
             <div style={{ color: '#888' }}>No attributes available.</div>
           )}
