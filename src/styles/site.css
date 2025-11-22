@@ -450,12 +450,35 @@ body.hero-active .hero .card .muted {
 
 
 
-/* FOOTER */
-footer { background:rgb(97, 97, 97); border-top: 1px solid #626262; padding: 50px 0; margin-top: 40px; }
+/* FOOTER - improved contrast for accessibility */
+footer {
+  background: #222428; /* darker, near-black slate for stronger contrast */
+  border-top: 1px solid #151516;
+  padding: 50px 0;
+  margin-top: 40px;
+  color: #e6e7e9;
+}
 .footer-grid { display: grid; grid-template-columns: 1.2fr .8fr .8fr; gap: 20px; }
-.footer-grid h4 { margin: 0 0 10px; font-size: 14px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
-.footer-grid p, .footer-grid a { color: rgb(68, 68, 68); font-size: 14px; }
+.footer-grid h4 {
+  margin: 0 0 10px;
+  font-size: 14px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #f3f4f6; /* near-white heading */
+  font-weight: 700;
+}
+.footer-grid p, .footer-grid a { color: #e6e7e9; font-size: 14px; }
+.footer-grid a { color: var(--brand); text-decoration: none; }
+.footer-grid a:hover, .footer-grid a:focus { color: #ffffff; text-decoration: underline; outline: none; }
+.footer-grid small, .footer-grid .muted { color: #cfcfcf; }
+.footer-note { color: #bfbfc0; font-size: 13px; }
 @media (max-width: 900px) { .footer-grid { grid-template-columns: 1fr; } }
+
+/* Ensure footer links are keyboard-accessible with a visible focus style */
+.footer-grid a:focus {
+  box-shadow: 0 0 0 3px rgba(25,169,116,0.12);
+  border-radius: 4px;
+}
 
 /* --- Responsive mobile styles for checkout/cart page --- */
 @media (max-width: 600px) {
@@ -598,6 +621,27 @@ footer { background:rgb(97, 97, 97); border-top: 1px solid #626262; padding: 50p
   border-collapse: collapse;
   font-size: 1rem;
   color: #444a58;
+}
+
+/* Product detail utility classes (move inline styles here for consistency) */
+.pd-desc {
+  margin-top: 14px;
+  margin-bottom: 16px;
+}
+.pd-desc-label {
+  font-weight: 800;
+  margin-bottom: 8px;
+  font-size: 1.06rem; /* slightly larger for hierarchy */
+  color: #222; /* clear, readable heading color */
+}
+.pd-desc-text {
+  color: #666;
+  margin: 0;
+  line-height: 1.45;
+}
+.pd-section {
+  margin-top: 28px;
+  margin-bottom: 20px;
 }
 .compat-table th, .compat-table td {
   padding: 8px 6px;

@@ -230,12 +230,17 @@ export default function ProductDetail() {
               </div>
             )}
           </div>
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-start', marginBottom: 8 }}>
+            <Link to="/" style={{ textDecoration: 'none' }}>
+              <button style={{ background: 'transparent', border: '1px solid #e6e6e6', padding: '6px 10px', borderRadius: 6, cursor: 'pointer' }}>← Back to catalog</button>
+            </Link>
+          </div>
           {product.sku && (
             <div style={{ textAlign: 'center', color: '#444a58', fontWeight: 500, fontSize: '0.95rem', margin: '6px 0 4px 0' }}>
               {product.sku}
             </div>
           )}
-          <h2 className="distressed" style={{ fontSize: '1.5rem', marginBottom: 6, color: '#333' }}>{product.name}</h2>
+          <h2 className="distressed" style={{ fontSize: '1.35rem', marginBottom: 6, color: '#333' }}>{product.name}</h2>
           <div style={{ color: '#888', fontSize: '0.98rem', marginBottom: 12 }}>{product.part_number}</div>
           <div style={{ color: '#444a58', fontWeight: 700, fontSize: '1.05rem', marginBottom: 10 }}>
             {(() => {

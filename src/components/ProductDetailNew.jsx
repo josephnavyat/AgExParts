@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import getImageUrl from '../utils/getImageUrl.js';
 import SmartImage from './SmartImage.jsx';
 import { useCart, getProductQuantity } from './CartContext.jsx';
@@ -127,8 +127,15 @@ export default function ProductDetailNew() {
       </div>
 
       <div className="product-detail-new__content" style={{ flex: '1 1 auto', alignSelf: 'flex-start' }}>
-        <h1 style={{ fontSize: '2rem', margin: 0 }}>{product.name || 'Product Title'}</h1>
-        <p style={{ color: '#666', marginTop: 8 }}>{product.description || 'This is a brief, product description that highlights key features and uses.'}</p>
+        <div style={{ marginBottom: 10 }}>
+          <Link to="/" style={{ textDecoration: 'none' }}>
+            <button style={{ background: 'transparent', border: '1px solid #e6e6e6', padding: '6px 10px', borderRadius: 6, cursor: 'pointer' }}>← Back to catalog</button>
+          </Link>
+        </div>
+  <h1 style={{ fontSize: '1.75rem', margin: 0 }}>{product.name || 'Product Title'}</h1>
+        {product.sku && (
+          <div style={{ marginTop: 6, color: '#666', fontWeight: 600 }}>{product.sku}</div>
+        )}
         {product.part_number && (
           <div style={{ marginTop: 8, color: '#444', fontWeight: 600 }}>Part #: {product.part_number}</div>
         )}
@@ -148,11 +155,17 @@ export default function ProductDetailNew() {
           )}
         </div>
 
+        {/* description moved below price/quantity per request */}
+        <div className="pd-desc">
+          <div className="pd-desc-label">Description</div>
+          <p className="pd-desc-text">{product.description || 'This is a brief, product description that highlights key features and uses.'}</p>
+        </div>
+
         {availableStock <= 20 && availableStock > 0 && (
           <div style={{ marginTop: 8, color: 'orange', fontWeight: 700 }}>Low Stock: {availableStock} Available</div>
         )}
 
-        <div style={{ marginTop: 28 }}>
+        <div className="pd-section">
           <h3 style={{ marginBottom: 8 }}>Part Attributes</h3>
           {attributes.length > 0 ? (
             <ul>
@@ -165,7 +178,7 @@ export default function ProductDetailNew() {
           )}
         </div>
 
-        <div style={{ marginTop: 24 }}>
+        <div className="pd-section">
           <h3 style={{ marginBottom: 8 }}>Machine Compatibility</h3>
           {compatibility.length > 0 ? (
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>

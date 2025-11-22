@@ -56,7 +56,7 @@ export default function ContactPartsSpecialist() {
     <div style={{ maxWidth: 600, margin: '2rem auto', background: '#fff', borderRadius: 16, boxShadow: '0 2px 12px rgba(0,0,0,0.10)', padding: '2rem', color: '#222' }}>
       <h2 style={{ marginBottom: '1.5rem', fontWeight: 700 }}>Contact a Parts Specialist</h2>
       <div style={{ marginBottom: '1rem', fontSize: '1.05rem' }}>
-        <strong>Email:</strong> <a href="mailto:support@agexparts.com">parts@agexus.com</a><br />
+        <strong>Email:</strong> <a href="mailto:support@agexparts.com">support@agexparts.com</a><br />
         <strong>Phone:</strong> <a href="tel:+18885551234">(888) 555-1234</a>
       </div>
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>

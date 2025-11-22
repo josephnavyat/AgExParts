@@ -474,7 +474,10 @@ export default function SimpleGallery() {
               <div className="simple-gallery-card-actions" role="group" aria-label="Product Actions">
                 {(() => {
                   const qty = getProductQuantity(cart, product.id);
-                  const outOfStock = Number(product.inventory ?? product.quantity ?? 0) === 0;
+                  const availableStock = Number(product.inventory ?? product.quantity ?? 0);
+                  const outOfStock = availableStock === 0;
+                  const isMaxed = qty >= availableStock && availableStock > 0;
+
                   if (outOfStock) {
                     return (
                       <button
@@ -500,6 +503,54 @@ export default function SimpleGallery() {
                       </button>
                     );
                   }
+
+                  // If item already in cart, show - qty + controls inline
+                  if (qty > 0) {
+                    return (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <button
+                          aria-label="Decrease quantity"
+                          onClick={(e) => { e.stopPropagation(); e.preventDefault(); dispatch({ type: 'SUBTRACT_FROM_CART', product }); }}
+                          style={{
+                            background: '#fff',
+                            border: '1px solid #e6e6e6',
+                            borderRadius: 6,
+                            width: 32,
+                            height: 32,
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            cursor: 'pointer',
+                            fontWeight: 700,
+                          }}
+                        >
+                          −
+                        </button>
+                        <div style={{ minWidth: 36, textAlign: 'center', fontWeight: 700 }}>{qty}</div>
+                        <button
+                          aria-label="Increase quantity"
+                          onClick={(e) => { e.stopPropagation(); e.preventDefault(); dispatch({ type: 'ADD_TO_CART', product }); }}
+                          disabled={isMaxed}
+                          style={{
+                            background: isMaxed ? '#f7f7f7' : '#fff',
+                            border: '1px solid #e6e6e6',
+                            borderRadius: 6,
+                            width: 32,
+                            height: 32,
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            cursor: isMaxed ? 'not-allowed' : 'pointer',
+                            fontWeight: 700,
+                          }}
+                        >
+                          +
+                        </button>
+                      </div>
+                    );
+                  }
+
+                  // Default: show Add to Cart button
                   return (
                     <button
                       className="simple-gallery-btn primary"
@@ -514,11 +565,7 @@ export default function SimpleGallery() {
                         position: 'relative',
                       }}
                     >
-                      {/* Icon removed — keep label and qty bubble */}
                       <span className="add-to-cart-label" style={{ fontWeight: 800, fontSize: '0.98rem' }}>Add to Cart</span>
-                      {qty > 0 && (
-                        <span className="qty-bubble">{qty}</span>
-                      )}
                     </button>
                   );
                 })()}

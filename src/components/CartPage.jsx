@@ -233,10 +233,10 @@ export default function CartPage() {
           style={{
             textAlign: 'center',
             marginBottom: '2rem',
-            marginTop: '7rem', // Increased to ensure visibility below navbar
-            color: '#222',
-            textShadow: '0 1px 4px #fff, 0 0px 1px #bbb',
-            fontSize: '2rem',
+            marginTop: '2rem', // reduced top spacing
+            color: '#f3f4f6', // very light grey
+            textShadow: 'none',
+            fontSize: '1.9rem',
             wordBreak: 'break-word',
           }}
         >
