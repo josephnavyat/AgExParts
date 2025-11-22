@@ -125,7 +125,7 @@ export default function ProductDetailNew() {
           </div>
         )}
         {/* Desktop-only: render description, attributes and compatibility under the picture */}
-        <div className="pd-side-sections pd-side-sections--desktop" style={{ width: '100%', marginTop: 12 }}>
+  <div className="pd-side-sections pd-side-sections--desktop" style={{ width: '100%', marginTop: 12 }}>
           <div className="pd-section" style={{ marginBottom: 12 }}>
             <h3 style={{ marginBottom: 8 }}>Description</h3>
             <div className="pd-desc">
@@ -194,7 +194,7 @@ export default function ProductDetailNew() {
         {product.part_number && (
           <div style={{ marginTop: 8, color: '#444', fontWeight: 600 }}>Part #: {product.part_number}</div>
         )}
-  <div className="pd-actions pd-actions--inline" style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 16 }}>
+  <div className="pd-actions pd-actions--inline" style={{ marginTop: 48, display: 'flex', alignItems: 'center', gap: 16 }}>
           <div style={{ fontSize: '1.6rem', fontWeight: 800 }}>${Number(product.price || 0).toFixed(2)}</div>
           {qtyInCart > 0 ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>

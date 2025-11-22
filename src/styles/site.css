@@ -317,18 +317,18 @@ body.hero-active .hero .card .muted {
 
 /* Product detail desktop layout tweaks */
 @media (min-width: 801px) {
-  /* hide the in-content attributes & compatibility (we render a desktop copy under the image) */
-  .product-detail-new__content > .pd-section {
-    display: none;
-  }
-  /* show the side sections rendered in the media column */
-  .pd-side-sections--desktop {
-    display: block !important;
-  }
+  /* Ensure both columns stretch to same height so side sections align with media */
+  .product-detail-new { align-items: stretch; }
+  .product-detail-new__content { align-self: stretch; display: flex; flex-direction: column; }
+  /* hide in-content attributes & compatibility (we render a desktop copy under the image) */
+  .product-detail-new__content > .pd-section { display: none; }
   /* hide the inline description as we render it under the image on desktop */
-  .product-detail-new__content > .pd-desc {
-    display: none;
-  }
+  .product-detail-new__content > .pd-desc { display: none; }
+  /* keep inline actions visible and push them to the bottom of the content column */
+  .pd-actions--inline { display: flex !important; margin-top: auto; }
+  /* show the side sections rendered under the image */
+  .pd-side-sections--desktop { display: block !important; }
+  .pd-side-actions { display: none !important; }
 }
 @media (max-width: 800px) {
   .pd-side-sections--desktop {
@@ -463,6 +463,22 @@ body.hero-active .hero .card .muted {
     box-sizing: border-box !important;
     padding: 8px 0 !important;
   }
+}
+
+/* Product detail section dividers */
+.product-detail-new .pd-section,
+.product-detail-new .pd-desc,
+.product-detail-card section {
+  border-top: 1px solid #f1f1f1;
+  padding-top: 14px;
+  margin-top: 14px;
+}
+
+.product-detail-new .pd-section:first-of-type,
+.product-detail-card section:first-of-type {
+  border-top: none;
+  margin-top: 0;
+  padding-top: 0;
 }
 .card { background: var(--surface); border: 1px solid #22262c; border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); transition: transform .2s ease, border-color .2s ease; }
 .card:hover { transform: translateY(-3px); border-color: #2a3038; }
