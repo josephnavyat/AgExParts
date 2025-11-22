@@ -458,6 +458,30 @@ body.hero-active .hero .card .muted {
     display: block !important;
   }
 
+  /* Mobile: smaller framed image box and smaller thumbs */
+  .product-detail-new__media > div {
+    max-width: 340px !important;
+    height: auto !important;
+    padding: 10px !important;
+    background: #fff !important;
+    border: 1px solid #e6e6e6 !important;
+    border-radius: 10px !important;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06) !important;
+    margin: 0 auto !important;
+  }
+  .product-detail-new__media > div img {
+    width: 100% !important;
+    height: auto !important;
+    max-height: 300px !important;
+    object-fit: contain !important;
+    display: block !important;
+  }
+  .product-detail-new__media > div + div button img {
+    width: 50px !important;
+    height: 50px !important;
+    border-radius: 6px !important;
+  }
+
   .product-detail-new__content {
     width: 100% !important;
     box-sizing: border-box !important;
@@ -664,6 +688,16 @@ footer {
   margin-top: 28px;
   margin-bottom: 20px;
 }
+.pd-part-divider {
+  height: 1px;
+  background: #e6e6e6;
+  border-radius: 1px;
+  width: 100%;
+}
+.pd-compat-top {
+  border-top: 1px solid #eef0f2;
+  padding-top: 16px;
+}
 .compat-table th, .compat-table td {
   padding: 8px 6px;
   text-align: left;
@@ -766,33 +800,3 @@ footer {
     color: #222 !important;
   }
 }
-
-  /* Product detail section dividers and headers */
-  .product-detail-new .pd-section {
-    padding: 16px 0;
-    border-top: 1px solid #eef2f6;
-    margin-top: 12px;
-  }
-  .product-detail-new .pd-section:first-of-type {
-    border-top: none;
-    margin-top: 0;
-  }
-  .product-detail-new .pd-desc {
-    padding: 12px 0;
-    border-top: 1px solid #eef2f6;
-    margin-top: 12px;
-  }
-  .product-detail-new h3 {
-    font-size: 1.05rem;
-    color: #2b2b2b;
-    margin: 0 0 8px 0;
-    padding-bottom: 6px;
-    border-bottom: 2px solid transparent;
-  }
-  .product-detail-new table {
-    background: transparent;
-  }
-  .product-detail-new td, .product-detail-new th {
-    padding: 8px 6px;
-  }
-

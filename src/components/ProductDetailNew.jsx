@@ -130,7 +130,7 @@ export default function ProductDetailNew() {
           <div className="pd-section" style={{ marginBottom: 12 }}>
             <h3 style={{ marginBottom: 8 }}>Part Attributes</h3>
             {attributes.length > 0 ? (
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <table className="compat-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <tbody>
                   {attributes.map((a, idx) => (
                     <tr key={a.attribute_name} style={{ borderBottom: idx < attributes.length - 1 ? '1px solid #f1f1f1' : 'none' }}>
@@ -189,6 +189,10 @@ export default function ProductDetailNew() {
         {product.part_number && (
           <div style={{ marginTop: 8, color: '#444', fontWeight: 600 }}>Part #: {product.part_number}</div>
         )}
+        {/* subtle divider below the part number */}
+        <div style={{ marginTop: 12 }}>
+          <div className="pd-part-divider" aria-hidden="true" />
+        </div>
         {/* description placed under part number with extra spacing */}
         <div style={{ marginTop: 12 }}>
           <div className="pd-desc">
@@ -232,7 +236,7 @@ export default function ProductDetailNew() {
         <div className="pd-section">
           <h3 style={{ marginBottom: 8 }}>Part Attributes</h3>
           {attributes.length > 0 ? (
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <table className="compat-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
               <tbody>
                 {attributes.map((a, idx) => (
                   <tr key={a.attribute_name} style={{ borderBottom: idx < attributes.length - 1 ? '1px solid #f1f1f1' : 'none' }}>
@@ -250,10 +254,10 @@ export default function ProductDetailNew() {
           )}
         </div>
 
-        <div className="pd-section">
+  <div className="pd-section pd-compat-top">
           <h3 style={{ marginBottom: 8 }}>Machine Compatibility</h3>
           {compatibility.length > 0 ? (
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <table className="compat-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr style={{ textAlign: 'left', borderBottom: '2px solid #eee' }}>
                   <th style={{ padding: '8px 6px', width: '33%' }}>Manufacturer</th>
