@@ -168,7 +168,7 @@ function StripeCheckoutButton({ cart, disabled }) {
 
 function calculateShipping(cartItems) {
   const totalWeight = cartItems.reduce((sum, i) => sum + ((i.product.weight || 0) * i.quantity), 0);
-  const maxLength = Math.max(...cartItems.map(i => Math.max(i.product.length_mm || 0, i.product.width_mm || 0, i.product.height_mm || 0)));
+  const maxLength = Math.max(...cartItems.map(i => (Math.max(i.product.length_mm || 0, i.product.width_mm || 0, i.product.height_mm || 0))))/25.4;// convert mm to inches
   const orderTotal = cartItems.reduce((sum, i) => sum + (Number(i.product.price) * i.quantity), 0);
 
   let cost = 0;
