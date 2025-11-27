@@ -29,9 +29,9 @@ export default function CheckoutPage() {
   const [openBilling, setOpenBilling] = useState(false);
   const [openPayment, setOpenPayment] = useState(false);
 
-  const [shipping, setShipping] = useState({ name: '', street1: '', city: '', state: '', zip: '', country: 'US' });
+  const [shipping, setShipping] = useState({ name: '', street1: '', city: '', state: '', zip: '', country: 'US', phone: '' });
   const [shippingErrors, setShippingErrors] = useState([]);
-  const [billing, setBilling] = useState({ name: '', street1: '', city: '', state: '', zip: '', country: 'US' });
+  const [billing, setBilling] = useState({ name: '', street1: '', city: '', state: '', zip: '', country: 'US', phone: '' });
   // include email for checkout
   const [billingEmail, setBillingEmail] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('stripe');
@@ -187,6 +187,7 @@ export default function CheckoutPage() {
             </select>
             <input className="form-input form-col-zip" placeholder="ZIP" value={shipping.zip} onChange={e => handleShippingChange('zip', e.target.value)} />
           </div>
+          <input className="form-input" placeholder="Phone (optional but recommended)" value={shipping.phone} onChange={e => handleShippingChange('phone', e.target.value)} />
           <div style={{ marginTop: 8, display: 'flex', gap: 8, alignItems: 'center', marginLeft: 8 }}>
             {/* Use env-configured store origin when available, otherwise fallback to a reasonable default. */}
             {
@@ -252,6 +253,7 @@ export default function CheckoutPage() {
               <input className="form-input" placeholder="City" value={billing.city} onChange={e => handleBillingChange('city', e.target.value)} />
               <input className="form-input" placeholder="State" value={billing.state} onChange={e => handleBillingChange('state', e.target.value)} />
               <input className="form-input" placeholder="ZIP" value={billing.zip} onChange={e => handleBillingChange('zip', e.target.value)} />
+              <input className="form-input" placeholder="Phone" value={billing.phone} onChange={e => handleBillingChange('phone', e.target.value)} />
               <input className="form-input" placeholder="Email" value={billingEmail} onChange={e => setBillingEmail(e.target.value)} />
             </>
           )}

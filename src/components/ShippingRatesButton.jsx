@@ -6,13 +6,13 @@ export default function ShippingRatesButton({ cart, fromAddress, toAddress, onRa
   const [error, setError] = useState(null);
   const [rawResponse, setRawResponse] = useState(null);
 
-  // Helper to sum total weight in ounces (Shippo expects oz)
-  const getTotalWeightOz = () => {
+  // Helper to sum total weight in pounds
+  const getTotalWeightLb = () => {
     let total = 0;
     for (const item of cart.items) {
-      // Assume product.weight is in pounds, convert to ounces
-      const weight = item.product.weight || 1; // fallback to 1 lb if missing
-      total += weight * 16 * item.quantity;
+      // Assume product.weight is stored in pounds
+      const weight = Number(item.product.weight) || 1; // fallback to 1 lb if missing
+      total += weight * item.quantity;
     }
     return total;
   };
@@ -25,15 +25,26 @@ export default function ShippingRatesButton({ cart, fromAddress, toAddress, onRa
     try {
       const first = cart.items[0]?.product;
       const mmToIn = mm => mm ? (mm / 25.4) : undefined;
+      const totalWeightLb = getTotalWeightLb();
+
+      // If package is very heavy, avoid calling parcel carriers and show freight guidance
+      // Many parcel carriers have upper limits; treat > 100 lb as freight for this UI.
+      if (totalWeightLb > 100) {
+        setError('Package too heavy for parcel carriers (requires freight quote). Please use Freight Inquiry.');
+        setLoading(false);
+        return;
+      }
+
       const parcel = {
         length: mmToIn(first?.length_mm) || 10,
         width: mmToIn(first?.width_mm) || 8,
         height: mmToIn(first?.height_mm) || 4,
         distance_unit: "in",
-        weight: getTotalWeightOz(),
-        mass_unit: "oz"
+        weight: +(totalWeightLb.toFixed(2)),
+        mass_unit: "lb"
       };
-  const to_address = toAddress || cart.shippingAddress || {
+
+      const to_address = toAddress || cart.shippingAddress || {
         name: "Customer",
         street1: "1438 8th St",
         city: "Santa Monica",
@@ -41,6 +52,11 @@ export default function ShippingRatesButton({ cart, fromAddress, toAddress, onRa
         zip: "90405",
         country: "US"
       };
+
+      // If recipient phone exists on the to_address, include it (some carriers require it)
+      if (to_address && to_address.phone) {
+        to_address.phone = String(to_address.phone);
+      }
 
       console.debug('Shipping to:', to_address);
       console.debug('Parcel:', parcel);
