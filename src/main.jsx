@@ -23,6 +23,7 @@ const OrdersDashboard = lazy(() => import('./components/OrdersDashboard.jsx'));
 const RecoverPassword = lazy(() => import('./components/RecoverPassword.jsx'));
 const ResetPassword = lazy(() => import('./components/ResetPassword.jsx'));
 const FreightOrderConfirmation = lazy(() => import('./components/FreightOrderConfirmation.jsx'));
+const CheckoutPage = lazy(() => import('./components/CheckoutPage.jsx'));
 
 const stripePromise = loadStripe('pk_test_51S4XMHBpsFVjn5cM6uD1BRgbmhvLSnfeLPMZcp4EJNQYAQrQea122tUoOAF2exUh0Qu83i8uQj5Yp5zZXlCgj0Fc00LA6gZqpZ');
 
@@ -47,6 +48,7 @@ createRoot(document.getElementById('root')).render(
               <Route path="/catalog" element={<SimpleGallery />} />
               <Route path="/product/:id" element={<ProductDetail />} />
               <Route path="/cart" element={<CartPageWrapper />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/simple-gallery" element={<SimpleGallery />} />
               <Route path="/success" element={<OrderSuccess />} />
               <Route path="/cancel" element={<FailurePage />} />

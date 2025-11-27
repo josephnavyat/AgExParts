@@ -1,36 +1,39 @@
 // get-shipping-rates.js (Netlify function - CommonJS)
-'use strict';
+"use strict";
 
-const https = require('https');
+const https = require("https");
 
-const SHIPPO_API_KEY = process.env.SHIPPO_API_KEY || '';
+// Use EasyPost REST API (no SDK required here). Set EASYPOST_API_KEY in env.
+const EASYPOST_API_KEY = process.env.EASYPOST_API_KEY || '';
 
 /**
  * Fallback: create shipment by calling Shippo REST API directly.
  * Uses Basic auth with API token as username and empty password (Shippo style).
  */
-function createShipmentViaRest(apiKey, bodyPayload) {
+function createShipmentViaEasyPost(apiKey, shipmentPayload) {
   return new Promise((resolve, reject) => {
-    const postData = JSON.stringify(bodyPayload);
+    const postData = JSON.stringify({ shipment: shipmentPayload });
 
-    const auth = Buffer.from(`${apiKey}:`).toString('base64');
+    const auth = Buffer.from(`${apiKey}:`).toString("base64");
     const options = {
-      hostname: 'api.goshippo.com',
+      hostname: "api.easypost.com",
       port: 443,
-      path: '/shipments/',
-      method: 'POST',
+      path: "/v2/shipments",
+      method: "POST",
       headers: {
-        'Authorization': `Basic ${auth}`,
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(postData),
-        'Accept': 'application/json'
-      }
+        Authorization: `Basic ${auth}`,
+        "Content-Type": "application/json",
+        "Content-Length": Buffer.byteLength(postData),
+        Accept: "application/json",
+      },
     };
 
     const req = https.request(options, (res) => {
-      let data = '';
-      res.on('data', (chunk) => { data += chunk; });
-      res.on('end', () => {
+      let data = "";
+      res.on("data", (chunk) => {
+        data += chunk;
+      });
+      res.on("end", () => {
         try {
           const parsed = JSON.parse(data);
           if (res.statusCode && res.statusCode >= 400) {
@@ -38,12 +41,12 @@ function createShipmentViaRest(apiKey, bodyPayload) {
           }
           resolve(parsed);
         } catch (err) {
-          reject({ error: 'Invalid JSON from Shippo', raw: data, err });
+          reject({ error: "Invalid JSON from EasyPost", raw: data, err });
         }
       });
     });
 
-    req.on('error', (e) => reject({ error: 'request error', details: e }));
+    req.on("error", (e) => reject({ error: "request error", details: e }));
     req.write(postData);
     req.end();
   });
@@ -85,13 +88,11 @@ function initShippoClient() {
   }
 }
 
-const shippoClient = initShippoClient();
-
-module.exports.handler = async function(event, context) {
-  if (!SHIPPO_API_KEY) {
+module.exports.handler = async function (event, context) {
+  if (!EASYPOST_API_KEY) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'SHIPPO_API_KEY not set in environment' })
+      body: JSON.stringify({ error: "EASYPOST_API_KEY not set in environment" }),
     };
   }
 
@@ -112,72 +113,40 @@ module.exports.handler = async function(event, context) {
       })
     };
   }
-
-  // Build the shipment payload Shippo expects
-  const shipmentBody = {
-    address_from: from_address,
-    address_to: to_address,
-    parcels: [parcel],
-    async: false
+  // Build the shipment payload for EasyPost
+  // EasyPost expects a top-level `shipment` object; our helper wraps it.
+  const shipmentPayload = {
+    to_address: to_address,
+    from_address: from_address,
+    parcel: parcel
   };
 
   try {
-    // If we have a shippoClient, check for known method shapes
-    if (shippoClient) {
-      // Log keys available (helpful for Netlify logs when debugging)
-      try {
-        const keys = Object.keys(shippoClient).slice(0, 50);
-        console.log('Shippo client keys (sample):', keys);
-      } catch (e) {
-        console.log('Could not list shippo client keys:', e && e.message);
-      }
+    // Call EasyPost REST API
+    const resp = await createShipmentViaEasyPost(EASYPOST_API_KEY, shipmentPayload);
 
-      // Common SDK call shape: shippo.shipment.create(...)
-      if (shippoClient.shipment && typeof shippoClient.shipment.create === 'function') {
-        console.log('Using shippoClient.shipment.create');
-        const shipment = await shippoClient.shipment.create(shipmentBody);
-        if (!shipment || !shipment.rates) {
-          return { statusCode: 200, body: JSON.stringify({ error: 'No rates returned', details: shipment }) };
-        }
-        return { statusCode: 200, body: JSON.stringify({ rates: shipment.rates }) };
-      }
-
-      // Alternate names some packages may expose
-      if (typeof shippoClient.create_shipment === 'function') {
-        console.log('Using shippoClient.create_shipment');
-        const shipment = await shippoClient.create_shipment(shipmentBody);
-        if (!shipment || !shipment.rates) return { statusCode: 200, body: JSON.stringify({ error: 'No rates returned', details: shipment }) };
-        return { statusCode: 200, body: JSON.stringify({ rates: shipment.rates }) };
-      }
-
-      if (typeof shippoClient.createShipment === 'function') {
-        console.log('Using shippoClient.createShipment');
-        const shipment = await shippoClient.createShipment(shipmentBody);
-        if (!shipment || !shipment.rates) return { statusCode: 200, body: JSON.stringify({ error: 'No rates returned', details: shipment }) };
-        return { statusCode: 200, body: JSON.stringify({ rates: shipment.rates }) };
-      }
-
-      // If the shippo client is actually an object without helpers, fall back to REST.
-      console.log('Shippo client did not expose a shipment.create-like method — using REST fallback.');
-    } else {
-      console.log('No shippo SDK client initialized — using REST fallback.');
+    // EasyPost response contains `rates` as an array on the returned shipment object
+    const respRates = resp && resp.rates ? resp.rates : (resp?.shipment && resp.shipment.rates ? resp.shipment.rates : null);
+    if (!respRates || respRates.length === 0) {
+      return { statusCode: 200, body: JSON.stringify({ error: 'No shipping rates found', details: resp }) };
     }
 
-    // Fallback: call Shippo REST API directly
-    const restResp = await createShipmentViaRest(SHIPPO_API_KEY, shipmentBody);
+    // Normalize EasyPost rate shape to match the frontend's expectations (similar to Shippo)
+    const normalized = respRates.map((r) => ({
+      object_id: r.id || r.rate_id || r.object_id || null,
+      provider: r.carrier || r.provider || null,
+      servicelevel: { name: r.service || r.service_code || null },
+      amount: (typeof r.rate === 'string' ? parseFloat(r.rate) : r.rate) ?? null,
+      estimated_days: r.delivery_days || r.estimated_days || null,
+      raw: r
+    }));
 
-    // Shippo REST returns shipment JSON including .rates
-    if (!restResp || !restResp.rates || restResp.rates.length === 0) {
-      return { statusCode: 200, body: JSON.stringify({ error: 'No shipping rates found', details: restResp }) };
-    }
-
-    return { statusCode: 200, body: JSON.stringify({ rates: restResp.rates }) };
+    return { statusCode: 200, body: JSON.stringify({ rates: normalized }) };
 
   } catch (err) {
-    console.error('Error creating shipment:', err);
-    // Try to return any useful structure if present
+    console.error('Error creating shipment (EasyPost):', err);
     if (err && err.body) {
-      return { statusCode: 500, body: JSON.stringify({ error: 'Shippo API error', details: err.body }) };
+      return { statusCode: 500, body: JSON.stringify({ error: 'EasyPost API error', details: err.body }) };
     }
     return { statusCode: 500, body: JSON.stringify({ error: err && err.message ? err.message : String(err) }) };
   }

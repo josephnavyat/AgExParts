@@ -4,7 +4,10 @@ const CartContext = createContext();
 
 const initialState = {
   items: [], // { product, quantity }
+  shipping_cost: 0,
+  selected_shipping_rate: null,
 };
+
 
 function cartReducer(state, action) {
   switch (action.type) {
@@ -52,6 +55,12 @@ function cartReducer(state, action) {
       return {
         ...state,
         items: state.items.filter(i => i.product.id !== action.id),
+      };
+    case "SET_SHIPPING_COST":
+      return {
+        ...state,
+        shipping_cost: action.cost || 0,
+        selected_shipping_rate: action.rate || null,
       };
     case "CLEAR_CART":
       return initialState;

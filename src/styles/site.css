@@ -236,29 +236,27 @@ body.hero-active .hero .card .muted {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 16px 22px;
-  border-radius: 16px;
+  padding: 12px 18px;
+  border-radius: 6px;
   font-weight: 700;
-  border: 1px solid rgba(255,255,255,0.06);
+  border: 1px solid rgba(0,0,0,0.2);
   min-width: 48px;
-  min-height: 48px;
-  font-size: 1.1rem;
+  min-height: 40px;
+  font-size: 1rem;
   color: #ffffff;
-  background: rgba(0,0,0,0.4); /* match badges */
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  background: #3a3a3a; /* dark grey buttons */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
 }
 /* Brand and neutral button utilities */
 .btn.brand {
-  background: var(--brand) !important;
+  background: #3a3a3a !important;
   color: #fff !important;
-  box-shadow: 0 2px 8px rgba(25,169,116,0.13) !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12) !important;
 }
 .btn.neutral {
-  background: #6b6b6b !important;
+  background: #3a3a3a !important;
   color: #fff !important;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.12) !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12) !important;
 }
 /* Large button sizing utility */
 .btn-lg {
@@ -271,11 +269,11 @@ body.hero-active .hero .card .muted {
 
 /* Hover and focus states */
 .btn.brand:hover, .btn.brand:focus {
-  background: color-mix(in srgb, var(--brand) 85%, black 15%) !important;
+  background: #333 !important;
   transform: translateY(-1px);
 }
 .btn.neutral:hover, .btn.neutral:focus {
-  background: color-mix(in srgb, #6b6b6b 85%, black 15%) !important;
+  background: #333 !important;
   transform: translateY(-1px);
 }
 @media (max-width: 700px) {
@@ -301,19 +299,44 @@ body.hero-active .hero .card .muted {
   }
 }
 .btn.primary {
-  /* subtle branded tint on top of the dark translucent base */
-  /* fully match badge look */
-  background: 19a974;
-  border-color: rgba(255,255,255,0.06);
+  background: #3a3a3a;
+  border-color: rgba(0,0,0,0.2);
   color: white;
 }
 .btn.secondary {
-  /* fully match badge look */
-  background: rgba(0,0,0,0.4);
-  border-color: rgba(255,255,255,0.06);
-  color:white;
+  background: #3a3a3a;
+  border-color: rgba(0,0,0,0.2);
+  color: white;
 }
-.btn:hover { color: var(--brand); transform: translateY(-1px); }
+.btn:hover { transform: translateY(-1px); }
+
+/* Form utilities for consistent input layout */
+.form-input {
+  padding: 10px 12px;
+  height: 44px;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: calc(100% - 16px);
+  margin: 0 8px;
+  box-sizing: border-box;
+}
+.form-row { display: grid; gap: 8px; }
+.form-row--inline { display: flex; gap: 8px; align-items: center; }
+.form-col-state { width: 140px; }
+.form-col-zip { flex: 1; }
+
+@media (max-width: 700px) {
+  .form-col-state { width: 120px; }
+  .form-input { height: 48px; }
+}
+
+/* Disabled button state */
+.btn:disabled, .btn[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
 
 /* Product detail desktop layout tweaks */
 @media (min-width: 801px) {

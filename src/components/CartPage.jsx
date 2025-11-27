@@ -220,7 +220,8 @@ export default function CartPage() {
 
   // Cost breakdown calculations (used in the UI)
   const subtotal = total; // products subtotal (discounts already applied)
-  const shippingCost = (shipping && shipping.type !== 'freight') ? Number(shipping.cost || 0) : 0;
+  // prefer cart-level shipping_cost if set (from Checkout selection)
+  const shippingCost = (cart.shipping_cost && Number(cart.shipping_cost) > 0) ? Number(cart.shipping_cost) : ((shipping && shipping.type !== 'freight') ? Number(shipping.cost || 0) : 0);
   const isFreight = shipping?.type === 'freight' || totalWeight > 100;
   const tax = 0; // placeholder for tax calculation if needed
   const grandTotal = subtotal + (isFreight ? 0 : shippingCost) + tax;
@@ -323,7 +324,7 @@ export default function CartPage() {
             <div className="cart-summary" style={{ textAlign: 'right', marginTop: '2rem' }}>
               <div style={{ fontWeight: 700, fontSize: '1.2rem', wordBreak: 'break-word' }}>Subtotal: ${subtotal.toFixed(2)}</div>
               <div style={{ fontWeight: 500, fontSize: '1.05rem', color: '#555', marginTop: '0.5rem' }}>Total Weight: {totalWeight.toFixed(2)} lbs</div>
-              <div style={{ fontWeight: 500, fontSize: '1.05rem', color: '#555', marginTop: '0.5rem' }}>Shipping: {isFreight ? 'Need to Quote (Freight)' : `$${shippingCost.toFixed(2)}`}</div>
+              <div style={{ fontWeight: 500, fontSize: '1.05rem', color: '#555', marginTop: '0.5rem' }}>Shipping: {isFreight ? 'Need to Quote (Freight)' : `$${shippingCost.toFixed(2)}`}{cart.selected_shipping_rate ? ` — ${cart.selected_shipping_rate.provider} ${cart.selected_shipping_rate.servicelevel?.name || ''}` : ''}</div>
               <div style={{ fontWeight: 500, fontSize: '1.05rem', color: '#555', marginTop: '0.5rem' }}>Tax: ${tax.toFixed(2)}</div>
               <div style={{ fontWeight: 800, fontSize: '1.25rem', color: '#222', marginTop: '0.75rem' }}>Total: ${grandTotal.toFixed(2)}</div>
             </div>
@@ -351,7 +352,13 @@ export default function CartPage() {
                   Get Freight Quote
                 </button>
               ) : (
-                <StripeCheckoutButton cart={cart.items} disabled={false} />
+                <button
+                  className="btn brand btn-lg"
+                  style={{ fontWeight: 700, minWidth: 160 }}
+                  onClick={() => navigate('/checkout')}
+                >
+                  Proceed to Checkout
+                </button>
               )}
             </div>
           </div>
