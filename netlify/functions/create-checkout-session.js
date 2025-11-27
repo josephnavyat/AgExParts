@@ -391,8 +391,9 @@ exports.handler = async (event) => {
       session = await stripe.checkout.sessions.create(sessionParams);
     } else {
       // return structured error to caller
-      console.error('Stripe session creation error:', msg);
-      return { statusCode: 500, body: JSON.stringify({ error: 'Stripe session creation failed', details: msg }) };
+      console.error('Stripe session creation error:', err && err.stack ? err.stack : err);
+      const debugDetails = (process.env.NODE_ENV !== 'production' || process.env.TURNSTILE_BYPASS === '1') ? { message: msg, raw: err && err.raw ? err.raw : undefined } : undefined;
+      return { statusCode: 500, body: JSON.stringify({ error: 'Stripe session creation failed', details: msg, debug: debugDetails }) };
     }
   }
     return {
