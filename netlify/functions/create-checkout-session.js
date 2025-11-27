@@ -9,9 +9,16 @@ const EASYPOST_API_KEY = process.env.EASYPOST_API_KEY || '';
 const TURNSTILE_SECRET = process.env.TURNSTILE_SECRET;
 
 exports.handler = async (event) => {
-  const { cart, customer_name, customer_email, shippingCost, captchaToken, shipping, billing, selectedRate } = JSON.parse(event.body);
+  try {
+    const { cart, customer_name, customer_email, shippingCost, captchaToken, shipping, billing, selectedRate } = JSON.parse(event.body);
 
-  // Verify Turnstile token and ensure secret is configured
+    // Ensure Stripe secret key exists
+    if (!process.env.STRIPE_SECRET_KEY) {
+      console.error('STRIPE_SECRET_KEY not set in environment');
+      return { statusCode: 500, body: JSON.stringify({ error: 'Server misconfiguration: STRIPE_SECRET_KEY missing' }) };
+    }
+
+    // Verify Turnstile token and ensure secret is configured
   // Allow short-circuit via TURNSTILE_BYPASS=1 for urgent testing (disable in production after fix)
   if (process.env.TURNSTILE_BYPASS === '1') {
     console.warn('Turnstile bypass enabled via TURNSTILE_BYPASS=1 - skipping captcha verification');
@@ -36,40 +43,6 @@ exports.handler = async (event) => {
     } catch (err) {
       console.error('turnstile verify error', err && err.message ? err.message : err);
       return { statusCode: 500, body: JSON.stringify({ error: 'Captcha verification error' }) };
-    }
-  }
-
-  // If no customer_email provided but we do have shipping information, create a customer so
-  // Stripe Checkout can be pre-filled with the shipping address. This helps when users
-  // supply an address but did not enter an email on the form.
-  if (!customer_email && (!sessionParams.customer) && shipping && shipping.street1) {
-    try {
-      const address = {
-        line1: shipping.street1 || '',
-        city: shipping.city || '',
-        state: shipping.state || '',
-        postal_code: shipping.zip || '',
-        country: (shipping.country || 'US')
-      };
-      const createParams = {
-        name: shipping.name || undefined,
-      };
-      if (address) createParams.address = address;
-      if (shipping && shipping.street1) {
-        createParams.shipping = {
-          name: shipping.name || createParams.name,
-          address: address,
-        };
-        if (shipping.phone) createParams.shipping.phone = shipping.phone;
-      }
-      const newCustomer = await stripe.customers.create(createParams);
-      if (newCustomer && newCustomer.id) {
-        sessionParams.customer = newCustomer.id;
-        sessionParams.metadata = sessionParams.metadata || {};
-        sessionParams.metadata.stripe_customer_id = newCustomer.id;
-      }
-    } catch (createCustErr) {
-      console.warn('Failed to create Stripe customer from shipping data:', createCustErr && createCustErr.message ? createCustErr.message : createCustErr);
     }
   }
 
@@ -402,13 +375,17 @@ exports.handler = async (event) => {
       delete sessionParams.automatic_tax;
       session = await stripe.checkout.sessions.create(sessionParams);
     } else {
-      // rethrow unknown errors so caller can observe them
-      throw err;
+      // return structured error to caller
+      console.error('Stripe session creation error:', msg);
+      return { statusCode: 500, body: JSON.stringify({ error: 'Stripe session creation failed', details: msg }) };
     }
   }
-
-  return {
-    statusCode: 200,
-    body: JSON.stringify({ url: session.url, debug: (process.env.NODE_ENV !== 'production' || process.env.TURNSTILE_BYPASS === '1') ? { metadata: sessionParams.metadata, customer: sessionParams.customer || null } : undefined }),
-  };
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ url: session.url, debug: (process.env.NODE_ENV !== 'production' || process.env.TURNSTILE_BYPASS === '1') ? { metadata: sessionParams.metadata, customer: sessionParams.customer || null } : undefined }),
+    };
+  } catch (outerErr) {
+    console.error('create-checkout-session handler error:', outerErr && outerErr.stack ? outerErr.stack : outerErr);
+    return { statusCode: 500, body: JSON.stringify({ error: 'Internal server error', details: outerErr && outerErr.message ? outerErr.message : String(outerErr) }) };
+  }
 };
