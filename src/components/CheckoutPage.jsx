@@ -122,6 +122,49 @@ export default function CheckoutPage() {
     setOpenPayment(true);
   };
 
+  // Robust Turnstile token helper: ensures script is loaded and renders a transient widget that is executed.
+  const getTurnstileToken = async (siteKey) => {
+    if (!siteKey) return null;
+    if (!window.turnstile) {
+      await new Promise((resolve, reject) => {
+        const existing = document.querySelector('script[src*="challenges.cloudflare.com/turnstile"]');
+        if (existing) { existing.addEventListener('load', resolve); existing.addEventListener('error', reject); return; }
+        const s = document.createElement('script');
+        s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+        s.async = true;
+        s.onload = resolve;
+        s.onerror = reject;
+        document.head.appendChild(s);
+      });
+    }
+
+    return await new Promise((resolve, reject) => {
+      let finished = false;
+      const timeout = setTimeout(() => { if (!finished) { finished = true; reject(new Error('Turnstile timeout')); } }, 10000);
+      try {
+        const wrapper = document.createElement('div');
+        wrapper.style.position = 'absolute'; wrapper.style.left = '-9999px';
+        document.body.appendChild(wrapper);
+        const node = document.createElement('div');
+        wrapper.appendChild(node);
+        const widgetId = window.turnstile.render(node, {
+          sitekey: siteKey,
+          callback: (token) => {
+            if (finished) return;
+            finished = true;
+            clearTimeout(timeout);
+            try { document.body.removeChild(wrapper); } catch (e) {}
+            resolve(token);
+          }
+        });
+        setTimeout(() => {
+          try { if (window.turnstile && typeof window.turnstile.execute === 'function') window.turnstile.execute(widgetId); }
+          catch (e) { if (!finished) { finished = true; clearTimeout(timeout); try { document.body.removeChild(wrapper); } catch (er) {} reject(e); } }
+        }, 50);
+      } catch (e) { reject(e); }
+    });
+  };
+
   return (
     <div style={{ padding: 24, maxWidth: 840, margin: '0 auto' }}>
       <h2>Checkout</h2>
@@ -305,18 +348,9 @@ export default function CheckoutPage() {
               // Collect Turnstile token
               let captchaToken = null;
               try {
-                if (window.turnstile && typeof window.turnstile.execute === 'function') {
-                  // render and execute a transient widget
-                  captchaToken = await new Promise((res, rej) => {
-                    const wrapper = document.createElement('div');
-                    wrapper.style.position = 'absolute'; wrapper.style.left = '-9999px';
-                    document.body.appendChild(wrapper);
-                    const node = document.createElement('div');
-                    wrapper.appendChild(node);
-                    const widgetId = window.turnstile.render(node, { sitekey: import.meta.env.VITE_TURNSTILE_SITEKEY || '', callback: (t) => { try { document.body.removeChild(wrapper); } catch (e) {} res(t); } });
-                    setTimeout(() => { try { window.turnstile.execute(widgetId); } catch (e) { try { document.body.removeChild(wrapper); } catch (e2) {} rej(e); } }, 50);
-                  });
-                }
+                // Prefer the configured VITE_TURNSTILE_SITEKEY; fall back to a known test key if available.
+                const siteKey = import.meta.env.VITE_TURNSTILE_SITEKEY || '0x4AAAAAAB-d-eg5_99Hui2g';
+                captchaToken = await getTurnstileToken(siteKey);
               } catch (err) {
                 console.warn('Turnstile error', err);
               }

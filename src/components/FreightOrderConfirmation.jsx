@@ -15,8 +15,8 @@ export default function FreightOrderConfirmation() {
   const total = subtotal + Number(shipping);
 
   const handleCheckout = async () => {
-    const siteKey = '0x4AAAAAAB-d-eg5_99Hui2g';
-    const getTurnstileToken = async (siteKey) => {
+  const siteKey = import.meta.env.VITE_TURNSTILE_SITEKEY || '0x4AAAAAAB-d-eg5_99Hui2g';
+  const getTurnstileToken = async (siteKey) => {
       // Load script if needed
       if (!window.turnstile) {
         await new Promise((resolve, reject) => {

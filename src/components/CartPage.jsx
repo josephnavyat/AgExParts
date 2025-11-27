@@ -117,7 +117,7 @@ function StripeCheckoutButton({ cart, disabled }) {
     }
     if (disabled) return;
     // Obtain Turnstile token
-    const siteKey = '0x4AAAAAAB-d-eg5_99Hui2g';
+    const siteKey = import.meta.env.VITE_TURNSTILE_SITEKEY || '0x4AAAAAAB-d-eg5_99Hui2g';
     let captchaToken = null;
     try {
       captchaToken = await getTurnstileToken(siteKey);
