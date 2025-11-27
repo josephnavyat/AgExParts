@@ -10,7 +10,19 @@ const TURNSTILE_SECRET = process.env.TURNSTILE_SECRET;
 
 exports.handler = async (event) => {
   try {
-    const { cart, customer_name, customer_email, shippingCost, captchaToken, shipping, billing, selectedRate } = JSON.parse(event.body);
+    let parsedBody = {};
+    try {
+      parsedBody = event.body && typeof event.body === 'string' ? JSON.parse(event.body) : (event.body || {});
+    } catch (parseErr) {
+      console.error('Invalid JSON body for create-checkout-session:', event.body, parseErr && parseErr.message ? parseErr.message : parseErr);
+      return { statusCode: 400, body: JSON.stringify({ error: 'Invalid JSON body' }) };
+    }
+    const { cart, customer_name, customer_email, shippingCost, captchaToken, shipping, billing, selectedRate } = parsedBody;
+
+    if (!Array.isArray(cart) || cart.length === 0) {
+      console.warn('create-checkout-session called with empty or invalid cart:', cart);
+      return { statusCode: 400, body: JSON.stringify({ error: 'Cart is empty or invalid' }) };
+    }
 
     // Ensure Stripe secret key exists
     if (!process.env.STRIPE_SECRET_KEY) {
@@ -162,17 +174,20 @@ exports.handler = async (event) => {
 
   // Map cart items to Stripe line_items
   const getImageUrl = (img) => img && img.startsWith('http') ? img : (img ? `https://agexparts.netlify.app${img}` : '');
-  const line_items = cart.map(({ product, quantity }) => ({
-    price_data: {
-      currency: 'usd',
-      product_data: {
-        name: product.name,
-        images: product.image ? [getImageUrl(product.image)] : [],
+  const line_items = cart.map(({ product, quantity }) => {
+    const priceNum = Number(product && product.price) || 0;
+    return {
+      price_data: {
+        currency: 'usd',
+        product_data: {
+          name: product && product.name ? product.name : 'Item',
+          images: product && product.image ? [getImageUrl(product.image)] : [],
+        },
+        unit_amount: Math.round(priceNum * 100), // price in cents
       },
-      unit_amount: Math.round(product.price * 100), // price in cents
-    },
-    quantity,
-  }));
+      quantity: Number(quantity) || 1,
+    };
+  });
   if (shippingCost && shippingCost > 0) {
     line_items.push({
       price_data: {

@@ -324,7 +324,9 @@ export default function CartPage() {
             <div className="cart-summary" style={{ textAlign: 'right', marginTop: '2rem' }}>
               <div style={{ fontWeight: 700, fontSize: '1.2rem', wordBreak: 'break-word' }}>Subtotal: ${subtotal.toFixed(2)}</div>
               <div style={{ fontWeight: 500, fontSize: '1.05rem', color: '#555', marginTop: '0.5rem' }}>Total Weight: {totalWeight.toFixed(2)} lbs</div>
-              <div style={{ fontWeight: 500, fontSize: '1.05rem', color: '#555', marginTop: '0.5rem' }}>Shipping: {isFreight ? 'Need to Quote (Freight)' : `$${shippingCost.toFixed(2)}`}{cart.selected_shipping_rate ? ` — ${cart.selected_shipping_rate.provider} ${cart.selected_shipping_rate.servicelevel?.name || ''}` : ''}</div>
+              <div style={{ fontWeight: 500, fontSize: '1.05rem', color: '#555', marginTop: '0.5rem' }}>
+                Shipping: {isFreight ? 'Need to Quote (Freight)' : (cart.shipping_cost == null || cart.shipping_cost === '' ? 'To be calculated' : `$${shippingCost.toFixed(2)}`)}{cart.selected_shipping_rate ? ` — ${cart.selected_shipping_rate.provider} ${cart.selected_shipping_rate.servicelevel?.name || ''}` : ''}
+              </div>
               <div style={{ fontWeight: 500, fontSize: '1.05rem', color: '#555', marginTop: '0.5rem' }}>Tax: ${tax.toFixed(2)}</div>
               <div style={{ fontWeight: 800, fontSize: '1.25rem', color: '#222', marginTop: '0.75rem' }}>Total: ${grandTotal.toFixed(2)}</div>
             </div>
