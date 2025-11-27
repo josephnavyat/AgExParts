@@ -260,7 +260,14 @@ exports.handler = async (event) => {
   if (customer_email) sessionParams.customer_email = customer_email;
 
   // Prefer automatic tax unless explicitly disabled via env
-  if (!disableAutoTax) sessionParams.automatic_tax = { enabled: true };
+  if (!disableAutoTax) {
+    sessionParams.automatic_tax = { enabled: true };
+    // Instruct Checkout to save the shipping address back to the Customer so
+    // Stripe has the fields it needs for automatic tax calculation. This will
+    // create/update a Customer when possible and save shipping to it.
+    sessionParams.customer_update = sessionParams.customer_update || {};
+    sessionParams.customer_update.shipping = 'auto';
+  }
 
   // If a customer email was provided, try to find an existing customer or create one
   // and attach shipping/billing info so Stripe Checkout can pre-fill the fields.
