@@ -167,7 +167,7 @@ export default function CheckoutPage() {
 
   return (
     <div style={{ padding: 24, maxWidth: 840, margin: '0 auto' }}>
-      <h2>Checkout</h2>
+      <h2></h2>
       <Section title="Shipping Information" open={openShipping} onToggle={setOpenShipping}>
         <div className="form-row">
           <input className="form-input" placeholder="Full name" value={shipping.name} onChange={e => handleShippingChange('name', e.target.value)} />

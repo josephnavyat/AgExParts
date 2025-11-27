@@ -1,11 +1,15 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const fetch = require('node-fetch');
+const https = require('https');
+
+// EasyPost API key for server-side re-quote validation
+const EASYPOST_API_KEY = process.env.EASYPOST_API_KEY || '';
 
 // Cloudflare Turnstile secret must be set in environment
 const TURNSTILE_SECRET = process.env.TURNSTILE_SECRET;
 
 exports.handler = async (event) => {
-  const { cart, customer_name, customer_email, shippingCost, captchaToken, shipping, billing } = JSON.parse(event.body);
+  const { cart, customer_name, customer_email, shippingCost, captchaToken, shipping, billing, selectedRate } = JSON.parse(event.body);
 
   // Verify Turnstile token and ensure secret is configured
   // Allow short-circuit via TURNSTILE_BYPASS=1 for urgent testing (disable in production after fix)
@@ -32,6 +36,154 @@ exports.handler = async (event) => {
     } catch (err) {
       console.error('turnstile verify error', err && err.message ? err.message : err);
       return { statusCode: 500, body: JSON.stringify({ error: 'Captcha verification error' }) };
+    }
+  }
+
+  // If no customer_email provided but we do have shipping information, create a customer so
+  // Stripe Checkout can be pre-filled with the shipping address. This helps when users
+  // supply an address but did not enter an email on the form.
+  if (!customer_email && (!sessionParams.customer) && shipping && shipping.street1) {
+    try {
+      const address = {
+        line1: shipping.street1 || '',
+        city: shipping.city || '',
+        state: shipping.state || '',
+        postal_code: shipping.zip || '',
+        country: (shipping.country || 'US')
+      };
+      const createParams = {
+        name: shipping.name || undefined,
+      };
+      if (address) createParams.address = address;
+      if (shipping && shipping.street1) {
+        createParams.shipping = {
+          name: shipping.name || createParams.name,
+          address: address,
+        };
+        if (shipping.phone) createParams.shipping.phone = shipping.phone;
+      }
+      const newCustomer = await stripe.customers.create(createParams);
+      if (newCustomer && newCustomer.id) {
+        sessionParams.customer = newCustomer.id;
+        sessionParams.metadata = sessionParams.metadata || {};
+        sessionParams.metadata.stripe_customer_id = newCustomer.id;
+      }
+    } catch (createCustErr) {
+      console.warn('Failed to create Stripe customer from shipping data:', createCustErr && createCustErr.message ? createCustErr.message : createCustErr);
+    }
+  }
+
+  // Server-side verification of the selected shipping rate to prevent client tampering.
+  // If a selectedRate was provided, re-request rates from EasyPost with the same shipment
+  // payload and ensure the selected rate still exists and the amount hasn't changed.
+  if (selectedRate) {
+    if (!EASYPOST_API_KEY) {
+      console.warn('EASYPOST_API_KEY not set; skipping server-side shipping rate validation');
+    } else {
+      // build shipment payload similar to client
+      const mmToIn = mm => mm ? (mm / 25.4) : undefined;
+      const first = cart[0] && cart[0].product ? cart[0].product : null;
+      // compute total weight in pounds
+      let totalWeightLb = 0;
+      for (const it of cart) {
+        const w = Number(it.product.weight) || 1;
+        totalWeightLb += w * (Number(it.quantity) || 1);
+      }
+
+      const parcel = {
+        length: mmToIn(first?.length_mm) || 10,
+        width: mmToIn(first?.width_mm) || 8,
+        height: mmToIn(first?.height_mm) || 4,
+        distance_unit: 'in',
+        weight: +(totalWeightLb.toFixed(2)),
+        mass_unit: 'lb'
+      };
+
+      const from_address = {
+        name: process.env.VITE_STORE_NAME || 'Store',
+        street1: process.env.VITE_STORE_STREET || '123 Main St',
+        city: process.env.VITE_STORE_CITY || 'City',
+        state: process.env.VITE_STORE_STATE || 'CA',
+        zip: process.env.VITE_STORE_ZIP || '00000',
+        country: 'US',
+        phone: process.env.VITE_STORE_PHONE || ''
+      };
+
+      const to_address = shipping;
+
+      // helper to call EasyPost shipments endpoint
+      const createShipmentViaEasyPost = (apiKey, shipmentPayload) => {
+        return new Promise((resolve, reject) => {
+          const postData = JSON.stringify({ shipment: shipmentPayload });
+          const auth = Buffer.from(`${apiKey}:`).toString('base64');
+          const options = {
+            hostname: 'api.easypost.com',
+            port: 443,
+            path: '/v2/shipments',
+            method: 'POST',
+            headers: {
+              Authorization: `Basic ${auth}`,
+              'Content-Type': 'application/json',
+              'Content-Length': Buffer.byteLength(postData),
+              Accept: 'application/json'
+            }
+          };
+          const req = https.request(options, res => {
+            let data = '';
+            res.on('data', chunk => data += chunk);
+            res.on('end', () => {
+              try {
+                const parsed = JSON.parse(data);
+                if (res.statusCode && res.statusCode >= 400) return reject({ statusCode: res.statusCode, body: parsed });
+                resolve(parsed);
+              } catch (err) {
+                reject({ error: 'Invalid JSON from EasyPost', raw: data, err });
+              }
+            });
+          });
+          req.on('error', e => reject({ error: 'request error', details: e }));
+          req.write(postData);
+          req.end();
+        });
+      };
+
+      try {
+        const shipmentPayload = { to_address, from_address, parcel };
+        const resp = await createShipmentViaEasyPost(EASYPOST_API_KEY, shipmentPayload);
+        const respRates = resp && resp.rates ? resp.rates : (resp?.shipment && resp.shipment.rates ? resp.shipment.rates : null);
+        if (!respRates || respRates.length === 0) {
+          return { statusCode: 400, body: JSON.stringify({ error: 'Shipping rates could not be re-quoted. Please recalculate shipping.' }) };
+        }
+
+        // normalize and try to match
+        const normalized = respRates.map(r => ({
+          id: r.id || r.rate_id || null,
+          provider: r.carrier || r.provider || null,
+          service: r.service || r.service_code || (r.service_level && r.service_level.name) || null,
+          amount: (typeof r.rate === 'string' ? parseFloat(r.rate) : r.rate) ?? null,
+          raw: r
+        }));
+
+        const selId = selectedRate.id || selectedRate.object_id || selectedRate.raw?.id || null;
+        const selProvider = (selectedRate.provider || '').toLowerCase();
+        const selService = ((selectedRate.service || (selectedRate.servicelevel && selectedRate.servicelevel.name) || '')).toLowerCase();
+        const selAmount = parseFloat(selectedRate.amount || selectedRate.rate || 0);
+
+        const match = normalized.find(r => {
+          if (selId && r.id && String(r.id) === String(selId)) return true;
+          const prov = (r.provider || '').toLowerCase();
+          const serv = (r.service || '').toLowerCase();
+          if (prov === selProvider && serv === selService && Math.abs(Number(r.amount) - selAmount) <= 0.5) return true;
+          return false;
+        });
+
+        if (!match) {
+          return { statusCode: 400, body: JSON.stringify({ error: 'Selected shipping rate invalid or changed. Please re-calculate shipping and choose a new rate.', details: { requote: normalized } }) };
+        }
+      } catch (e) {
+        console.warn('Error re-quoting EasyPost for validation:', e);
+        return { statusCode: 400, body: JSON.stringify({ error: 'Failed to validate shipping rate. Please retry shipping calculation.' }) };
+      }
     }
   }
 
@@ -98,8 +250,8 @@ exports.handler = async (event) => {
       shipping_cost: shippingCost || 0,
     items: itemsJson,
     items_truncated: itemsTruncated ? '1' : '0',
-    shipping: shipping ? JSON.stringify({ name: shipping.name, street1: shipping.street1, city: shipping.city, state: shipping.state, zip: shipping.zip }) : '',
-    billing: billing ? JSON.stringify({ name: billing.name, street1: billing.street1, city: billing.city, state: billing.state, zip: billing.zip, email: customer_email || '' }) : ''
+  shipping: shipping ? JSON.stringify({ name: shipping.name, street1: shipping.street1, city: shipping.city, state: shipping.state, zip: shipping.zip, phone: shipping.phone || '' }) : '',
+  billing: billing ? JSON.stringify({ name: billing.name, street1: billing.street1, city: billing.city, state: billing.state, zip: billing.zip, email: customer_email || billing.email || '', phone: billing.phone || '' }) : ''
     }
   };
 
@@ -144,6 +296,9 @@ exports.handler = async (event) => {
           email: customer_email,
           name: customer_name || (billing && billing.name) || (shipping && shipping.name) || undefined,
         };
+    // include a top-level phone on the customer when available
+    const possiblePhone = (shipping && shipping.phone) || (billing && billing.phone) || undefined;
+    if (possiblePhone) createParams.phone = possiblePhone;
         if (address) createParams.address = address;
         if (shipping && shipping.street1) {
           createParams.shipping = {
@@ -168,6 +323,15 @@ exports.handler = async (event) => {
                 }
               }
             });
+            // Also update phone at the customer level when present
+            try {
+              const updatePhone = (shipping && shipping.phone) || (billing && billing.phone) || null;
+              if (updatePhone) {
+                await stripe.customers.update(customer.id, { phone: updatePhone });
+              }
+            } catch (phErr) {
+              console.warn('Failed to update customer phone:', phErr && phErr.message ? phErr.message : phErr);
+            }
           } catch (uErr) {
             // non-fatal: continue without blocking session creation
             console.warn('Failed to update Stripe customer shipping info:', uErr && uErr.message ? uErr.message : uErr);
@@ -187,8 +351,46 @@ exports.handler = async (event) => {
     }
   }
 
+  // If no customer_email provided but we do have shipping information, create a customer so
+  // Stripe Checkout can be pre-filled with the shipping address. This helps when users
+  // supply an address but did not enter an email on the form.
+  if (!customer_email && (!sessionParams.customer) && shipping && shipping.street1) {
+    try {
+      const address = {
+        line1: shipping.street1 || '',
+        city: shipping.city || '',
+        state: shipping.state || '',
+        postal_code: shipping.zip || '',
+        country: (shipping.country || 'US')
+      };
+      const createParams = {
+        name: shipping.name || undefined,
+      };
+      if (address) createParams.address = address;
+      if (shipping && shipping.street1) {
+        createParams.shipping = {
+          name: shipping.name || createParams.name,
+          address: address,
+        };
+        if (shipping.phone) createParams.shipping.phone = shipping.phone;
+      }
+      const newCustomer = await stripe.customers.create(createParams);
+      if (newCustomer && newCustomer.id) {
+        sessionParams.customer = newCustomer.id;
+        sessionParams.metadata = sessionParams.metadata || {};
+        sessionParams.metadata.stripe_customer_id = newCustomer.id;
+      }
+    } catch (createCustErr) {
+      console.warn('Failed to create Stripe customer from shipping data:', createCustErr && createCustErr.message ? createCustErr.message : createCustErr);
+    }
+  }
+
   let session;
   try {
+    // In dev or when TURNSTILE_BYPASS is enabled, print session params for debugging (non-sensitive fields only)
+    if (process.env.NODE_ENV !== 'production' || process.env.TURNSTILE_BYPASS === '1') {
+      try { console.debug('Checkout sessionParams (debug):', { ...sessionParams, metadata: sessionParams.metadata }); } catch (e) {}
+    }
     session = await stripe.checkout.sessions.create(sessionParams);
   } catch (err) {
     // If Stripe complains about a missing/invalid origin address in test mode, retry without automatic tax
@@ -207,6 +409,6 @@ exports.handler = async (event) => {
 
   return {
     statusCode: 200,
-    body: JSON.stringify({ url: session.url }),
+    body: JSON.stringify({ url: session.url, debug: (process.env.NODE_ENV !== 'production' || process.env.TURNSTILE_BYPASS === '1') ? { metadata: sessionParams.metadata, customer: sessionParams.customer || null } : undefined }),
   };
 };
