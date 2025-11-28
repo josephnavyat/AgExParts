@@ -378,6 +378,15 @@ body.hero-active .hero .card .muted {
     margin-top: 12px !important;
   }
 }
+/* Mobile tweaks: hide desktop OEM panel and show inline OEM in content */
+@media (max-width: 800px) {
+  .pd-oem--desktop { display: none !important; }
+  .pd-oem--mobile { display: block !important; }
+  .pd-oem--mobile { border-top: 1px solid #eef0f2; padding-top: 12px; margin-top: 12px; }
+}
+@media (min-width: 801px) {
+  .pd-oem--mobile { display: none !important; }
+}
 @media (max-width: 800px) {
   .pd-side-sections--desktop {
     display: none !important;

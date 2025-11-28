@@ -115,7 +115,7 @@ export default function ProductDetailNew() {
         <div style={{ width: 360, height: 360, borderRadius: 8, overflow: 'hidden', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 6px 18px rgba(0,0,0,0.06)' }}>
           <SmartImage src={images[selectedImageIndex] || getImageUrl(product.image || '')} alt={product.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
         </div>
-        <div className="pd-section">
+        <div className="pd-section pd-oem pd-oem--desktop">
           <h3 style={{ marginBottom: 8 }}>OEM Replacement</h3>
           <div style={{ color: '#444', fontSize: '1rem' }}>
             {process.env.NODE_ENV !== 'production' && console.log('ProductDetailNew OEM product:', product)}
@@ -261,6 +261,17 @@ export default function ProductDetailNew() {
         {/* divider between OEM Replacement and Part Attributes (content/mobile) */}
         <div style={{ marginTop: 12 }}>
           <div className="pd-part-divider" aria-hidden="true" style={{ height: 1, background: '#e6e6e6', width: '100%' }} />
+        </div>
+        {/* Mobile inline OEM (appears in content column on small screens) */}
+        <div className="pd-section pd-oem pd-oem--mobile" style={{ marginTop: 12, marginBottom: 12 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <div style={{ color: '#444', fontSize: '1rem' }}>
+              {product.oem_pn ? product.oem_pn : product.oem_part_number ? product.oem_part_number : <span style={{ color: '#888' }}>No OEM part number available.</span>}
+            </div>
+            {product.replaces && (
+              <div style={{ color: '#666', fontSize: '0.95rem' }}><strong>Replaces:</strong> {product.replaces}</div>
+            )}
+          </div>
         </div>
         <div className="pd-section">
           <h3 style={{ marginBottom: 8 }}>Part Attributes</h3>
