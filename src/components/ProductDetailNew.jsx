@@ -127,8 +127,8 @@ export default function ProductDetailNew() {
           </div>
         )}
         {/* Desktop-only: render description, attributes and compatibility under the picture */}
-      <div className="pd-side-sections pd-side-sections--desktop" style={{ width: '100%', marginTop: 12 }}>
-        {/* divider between OEM and Part Attributes - always show on desktop side */}
+  <div className="pd-side-sections pd-side-sections--desktop" style={{ width: '100%', marginTop: 12 }}>
+                {/* divider between OEM and Part Attributes - always show on desktop side */}
         <div style={{ marginBottom: 12 }}>
           <div className="pd-part-divider" aria-hidden="true" style={{ height: 1, background: '#e6e6e6', width: '100%' }} />
         </div>
@@ -152,8 +152,6 @@ export default function ProductDetailNew() {
             </div>
         )}
         </div>
-    </div>
-  <div className="pd-side-sections pd-side-sections--desktop" style={{ width: '100%', marginTop: 12 }}>
         {/* divider between OEM and Part Attributes - always show on desktop side */}
         <div style={{ marginBottom: 12 }}>
           <div className="pd-part-divider" aria-hidden="true" style={{ height: 1, background: '#e6e6e6', width: '100%' }} />
