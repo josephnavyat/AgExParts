@@ -310,7 +310,8 @@ export default function ProductDetail() {
             borderRadius: 0,
             boxShadow: 'none',
             padding: 0,
-            marginBottom: 18
+            marginBottom: 18,
+            outline: (process.env.NODE_ENV !== 'production') ? '2px dashed rgba(255,200,0,0.9)' : 'none'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', margin: '24px 0 14px 0' }}>
               <h3 style={{
@@ -345,6 +346,43 @@ export default function ProductDetail() {
                 )}
               </tbody>
             </table>
+          </section>
+          {/* OEM P/N Section */}
+          <section style={{
+            width: '100%',
+            margin: '0 0 18px 0',
+            background: 'none',
+            borderRadius: 0,
+            boxShadow: 'none',
+            padding: 0,
+            marginBottom: 18
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', margin: '24px 0 14px 0' }}>
+              <h3 style={{
+                fontSize: '1.25rem',
+                fontWeight: 700,
+                color: '#3b3b3bff',
+                letterSpacing: '0.01em',
+                textAlign: 'left',
+                textTransform: 'none',
+                margin: 0,
+                paddingRight: 16,
+                whiteSpace: 'nowrap'
+              }}>OEM Replacement</h3>
+              <div style={{ flex: 1, height: 6, background: '#3b3b3bff', borderRadius: 3 }} />
+            </div>
+            <div style={{ padding: '8px 0', color: '#444a58', fontSize: '1rem' }}>
+              {process.env.NODE_ENV !== 'production' && console.log('ProductDetail OEM section product:', product)}
+              {product.oem_pn ? (
+                product.oem_pn
+              ) : product.oem_part_number ? (
+                product.oem_part_number
+              ) : product.replaces ? (
+                product.replaces
+              ) : (
+                <span style={{ color: '#888' }}>No OEM part number available.</span>
+              )}
+            </div>
           </section>
           
           {/* Machine Compatibility Section */}

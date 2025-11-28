@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import getImageUrl from '../utils/getImageUrl.js';
 import SmartImage from './SmartImage.jsx';
 import { useCart, getProductQuantity } from './CartContext.jsx';
@@ -13,6 +13,7 @@ export default function ProductDetailNew() {
   const [images, setImages] = useState([]);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const { dispatch, cart } = useCart();
+  const navigate = useNavigate();
 
   useEffect(() => {
     let cancelled = false;
@@ -114,6 +115,28 @@ export default function ProductDetailNew() {
         <div style={{ width: 360, height: 360, borderRadius: 8, overflow: 'hidden', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 6px 18px rgba(0,0,0,0.06)' }}>
           <SmartImage src={images[selectedImageIndex] || getImageUrl(product.image || '')} alt={product.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
         </div>
+        <div className="pd-section">
+          <h3 style={{ marginBottom: 8 }}>OEM Replacement</h3>
+          <div style={{ color: '#444', fontSize: '1rem' }}>
+            {process.env.NODE_ENV !== 'production' && console.log('ProductDetailNew OEM product:', product)}
+            {/* Primary OEM value */}
+            <div style={{ marginBottom: 6 }}>
+              {product.oem_pn ? (
+                product.oem_pn
+              ) : product.oem_part_number ? (
+                product.oem_part_number
+              ) : (
+                <span style={{ color: '#888' }}>No OEM part number available.</span>
+              )}
+            </div>
+            {/* Optional 'Replaces' row */}
+            {product.replaces && (
+              <div style={{ color: '#666', fontSize: '0.95rem' }}>
+                <strong>Replaces:</strong> {product.replaces}
+              </div>
+            )}
+          </div>
+        </div>
 
         {images.length > 1 && (
           <div style={{ display: 'flex', gap: 8, marginTop: 6, flexWrap: 'wrap' }}>
@@ -126,6 +149,10 @@ export default function ProductDetailNew() {
         )}
         {/* Desktop-only: render description, attributes and compatibility under the picture */}
   <div className="pd-side-sections pd-side-sections--desktop" style={{ width: '100%', marginTop: 12 }}>
+        {/* divider between OEM and Part Attributes - always show on desktop side */}
+        <div style={{ marginBottom: 12 }}>
+          <div className="pd-part-divider" aria-hidden="true" style={{ height: 1, background: '#e6e6e6', width: '100%' }} />
+        </div>
           {/* description intentionally not duplicated here on desktop; rendered in content column */}
           <div className="pd-section" style={{ marginBottom: 12 }}>
             <h3 style={{ marginBottom: 8 }}>Part Attributes</h3>
@@ -178,9 +205,7 @@ export default function ProductDetailNew() {
 
       <div className="product-detail-new__content" style={{ flex: '1 1 auto', alignSelf: 'flex-start' }}>
         <div style={{ marginBottom: 10 }}>
-          <Link to="/" style={{ textDecoration: 'none' }}>
-            <button style={{ background: 'transparent', border: '1px solid #e6e6e6', padding: '6px 10px', borderRadius: 6, cursor: 'pointer' }}>← Back to catalog</button>
-          </Link>
+          <button onClick={() => navigate(-1) || navigate('/catalog')} style={{ background: 'transparent', border: '1px solid #e6e6e6', padding: '6px 10px', borderRadius: 6, cursor: 'pointer' }}>← Back</button>
         </div>
   <h1 style={{ fontSize: '1.75rem', margin: 0 }}>{product.name || 'Product Title'}</h1>
         {product.sku && (
@@ -233,6 +258,10 @@ export default function ProductDetailNew() {
         )}
 
   {/* description displayed under part number (duplicate removed) */}
+        {/* divider between OEM Replacement and Part Attributes (content/mobile) */}
+        <div style={{ marginTop: 12 }}>
+          <div className="pd-part-divider" aria-hidden="true" style={{ height: 1, background: '#e6e6e6', width: '100%' }} />
+        </div>
         <div className="pd-section">
           <h3 style={{ marginBottom: 8 }}>Part Attributes</h3>
           {attributes.length > 0 ? (
@@ -254,7 +283,13 @@ export default function ProductDetailNew() {
           )}
         </div>
 
-  <div className="pd-section pd-compat-top">
+        {/* divider between Part Attributes and Machine Compatibility (only when both exist) */}
+        {(attributes && attributes.length > 0 && compatibility && compatibility.length > 0) && (
+          <div style={{ marginTop: 12, marginBottom: 12 }}>
+            <div className="pd-part-divider" aria-hidden="true" style={{ height: 1, background: '#e6e6e6', width: '100%' }} />
+          </div>
+        )}
+        <div className="pd-section pd-compat-top">
           <h3 style={{ marginBottom: 8 }}>Machine Compatibility</h3>
           {compatibility.length > 0 ? (
             <table className="compat-table" style={{ width: '100%', borderCollapse: 'collapse' }}>

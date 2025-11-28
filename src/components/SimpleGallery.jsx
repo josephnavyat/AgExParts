@@ -65,8 +65,18 @@ export default function SimpleGallery() {
     return () => controller.abort();
   }, []);
 
-  // Pagination state
-  const [perPage, setPerPage] = useState(50);
+  // Pagination state (persist per-page choice in localStorage)
+  const STORAGE_KEY = 'agexp_gallery_per_page_v1';
+  const initialPerPage = (() => {
+    try {
+      const raw = window.localStorage.getItem(STORAGE_KEY);
+      const n = raw ? Number(raw) : NaN;
+      return Number.isFinite(n) && n > 0 ? n : 24;
+    } catch (e) {
+      return 24;
+    }
+  })();
+  const [perPage, setPerPage] = useState(initialPerPage);
   const [page, setPage] = useState(1);
   const { dispatch, cart } = useCart();
   const [compatLinks, setCompatLinks] = useState([]);
@@ -110,6 +120,89 @@ export default function SimpleGallery() {
     // Final fallback
     img.src = '/logo.png';
   };
+  // Derived pagination/filtering helpers
+  const hasCompatFilterSelected = Boolean(manufacturer || machineType || model);
+  const useCompatFiltering = compatibility.length && compatLinks.length && hasCompatFilterSelected;
+
+  // Build the filtered product list once per render to avoid duplicate work
+  const filtered = (() => {
+    if (useCompatFiltering) {
+      const map = {};
+      compatLinks.forEach(l => {
+        if (!l.machine_compatibility_id || !l.product_sku) return;
+        map[l.machine_compatibility_id] = map[l.machine_compatibility_id] || new Set();
+        map[l.machine_compatibility_id].add(l.product_sku);
+      });
+
+      const matchingCompatIds = compatibility
+        .filter(c => !manufacturer || c.manufacturer === manufacturer)
+        .filter(c => !machineType || c.machine_type === machineType)
+        .filter(c => !model || c.model === model)
+        .map(c => c.id);
+
+      const matchingSkus = new Set();
+      matchingCompatIds.forEach(id => { (map[id] || []).forEach(sku => matchingSkus.add(sku)); });
+      if (matchingSkus.size === 0) return [];
+      return products.filter(p => matchingSkus.has(p.sku));
+    }
+    return products;
+  })()
+    .filter(product => product.website_visible === true)
+    .filter(product => !category || product.category === category)
+    .filter(product => !subCategory || product.subcategory === subCategory)
+    .filter(product => useCompatFiltering ? true : (!manufacturer || product.manufacturer === manufacturer))
+    .filter(product => useCompatFiltering ? true : (!machineType || product.machine_type === machineType))
+    .filter(product => useCompatFiltering ? true : (!model || product.model === model))
+    .filter(product => !inStockOnly || product.quantity > 0)
+    .filter(product => {
+      if (!searchText.trim()) return true;
+      const lower = searchText.toLowerCase();
+      return Object.values(product).some(val => typeof val === 'string' && val.toLowerCase().includes(lower));
+    })
+    .sort((a, b) => {
+      if (sort === 'price-asc') return (a.price || 0) - (b.price || 0);
+      if (sort === 'price-desc') return (b.price || 0) - (a.price || 0);
+      return 0;
+    });
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
+  const start = (page - 1) * perPage;
+  const end = start + perPage;
+
+  // Keep page in valid range when filtered/size change
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages);
+  }, [totalPages]);
+
+  // Keyboard navigation: left/right arrows move pages unless focus is in an input
+  useEffect(() => {
+    const onKey = (e) => {
+      const active = document.activeElement;
+      const tag = active && active.tagName ? active.tagName.toLowerCase() : '';
+      if (tag === 'input' || tag === 'textarea' || active?.isContentEditable) return;
+      if (e.key === 'ArrowLeft') {
+        setPage(p => Math.max(1, p - 1));
+      } else if (e.key === 'ArrowRight') {
+        setPage(p => Math.min(totalPages, p + 1));
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [totalPages]);
+
+  // Helper: show a compact page range (with ellipses when needed)
+  const getPageRange = (current, last) => {
+    if (last <= 9) return Array.from({ length: last }, (_, i) => i + 1);
+    const range = [];
+    if (current <= 4) {
+      range.push(1,2,3,4,5,'...', last);
+    } else if (current >= last - 3) {
+      range.push(1, '...', last-4, last-3, last-2, last-1, last);
+    } else {
+      range.push(1, '...', current-1, current, current+1, '...', last);
+    }
+    return range;
+  };
   return (
   <div className="simple-gallery-root" role="main">
       <div className="simple-gallery-header">
@@ -121,7 +214,7 @@ export default function SimpleGallery() {
             id="perPageSelect"
             className="filter-select"
             value={perPage}
-            onChange={e => { setPerPage(Number(e.target.value)); setPage(1); }}
+            onChange={e => { const n = Number(e.target.value); setPerPage(n); try { window.localStorage.setItem(STORAGE_KEY, String(n)); } catch (e) {} setPage(1); }}
           >
             {[24, 48, 72, 96].map(n => (
               <option key={n} value={n}>{n} per page</option>
@@ -423,8 +516,6 @@ export default function SimpleGallery() {
                 if (sort === 'price-desc') return (b.price || 0) - (a.price || 0);
                 return 0;
               });
-            const start = (page - 1) * perPage;
-            const end = start + perPage;
             // If the user selected any compat-related filter and there are
             // zero products after strict compat filtering, render a friendly
             // message instead of the grid.
@@ -575,29 +666,43 @@ export default function SimpleGallery() {
             ));
           })()}
         {/* Pagination controls */}
-  <div className="simple-gallery-pagination">
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '2rem auto 0 auto', gap: 12, width: '100%' }}>
-          {page > 1 && (
-            <button className="simple-gallery-btn secondary" onClick={() => setPage(page - 1)}>&lt; Prev</button>
-          )}
-          <span style={{ color: '#c3c3c3', fontWeight: 500, fontSize: '1.05rem', margin: '0 1rem' }}>
-            Page {page}
-          </span>
-          {products.filter(product => !category || product.category === category)
-            .filter(product => !subCategory || product.subcategory === subCategory)
-            .filter(product => !manufacturer || product.manufacturer === manufacturer)
-            .filter(product => !machineType || product.machine_type === machineType)
-            .filter(product => !model || product.model === model)
-            .filter(product => !inStockOnly || product.quantity > 0)
-            .filter(product => {
-              if (!searchText.trim()) return true;
-              const lower = searchText.toLowerCase();
-              return Object.values(product).some(val =>
-                typeof val === 'string' && val.toLowerCase().includes(lower)
-              );
-            }).length > page * perPage && (
-            <button className="simple-gallery-btn secondary" onClick={() => setPage(page + 1)}>Next &gt;</button>
-          )}
+  <div className="simple-gallery-pagination" aria-label="Gallery pagination">
+  <div className="simple-gallery-pagination-inner" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '2rem auto 0', gap: 8, flexWrap: 'wrap' }}>
+      <button
+        className="simple-gallery-btn secondary simple-gallery-nav-btn"
+        onClick={() => setPage(p => Math.max(1, p - 1))}
+        disabled={page <= 1}
+        aria-label="Previous page"
+      >&lt;</button>
+
+      {/* numeric page buttons (compact) */}
+      <div style={{ display: 'flex', gap: 6, alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap' }}>
+        {getPageRange(page, totalPages).map((p, i) => (
+          <React.Fragment key={String(p) + '-' + i}>
+            {p === '...' ? (
+              <span style={{ padding: '6px 8px', color: '#999' }}>…</span>
+            ) : (
+              <button
+                className={`simple-gallery-page-btn ${p === page ? 'active' : ''}`}
+                onClick={() => setPage(Number(p))}
+                aria-current={p === page ? 'page' : undefined}
+                aria-label={p === page ? `Page ${p}, current` : `Go to page ${p}`}
+              >{p}</button>
+            )}
+          </React.Fragment>
+        ))}
+      </div>
+
+      <button
+        className="simple-gallery-btn secondary simple-gallery-nav-btn"
+        onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+        disabled={page >= totalPages}
+        aria-label="Next page"
+      >&gt;</button>
+
+      <div style={{ marginLeft: 12, color: '#666', fontSize: '0.95rem' }}>
+        Page {page} of {totalPages} — {filtered.length} items
+      </div>
     </div>
   </div>
       </div>
