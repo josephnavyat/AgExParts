@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom';
-import React, { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import React, { useEffect, useState, useRef } from 'react';
 import { useCart } from './CartContext.jsx';
 
 export default function Navbar() {
@@ -8,18 +8,58 @@ export default function Navbar() {
   const [searchValue, setSearchValue] = useState("");
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 10);
+    const onScroll = () => setScrolled(window.scrollY > 80);
     document.addEventListener('scroll', onScroll);
     onScroll();
     return () => document.removeEventListener('scroll', onScroll);
   }, []);
 
+  // Keep body class in sync with collapsed state so CSS can adjust layout
+  useEffect(() => {
+    try {
+      if (scrolled) document.body.classList.add('nav-collapsed');
+      else document.body.classList.remove('nav-collapsed');
+    } catch (e) {}
+  }, [scrolled]);
+
   const { cart } = useCart();
   const cartCount = cart.items.reduce((sum, i) => sum + i.quantity, 0);
+  const [secondaryOpen, setSecondaryOpen] = useState(false);
+  const secondaryRef = useRef(null);
+  const toggleRef = useRef(null);
+  const location = useLocation();
+
+  // Ensure the body knows a secondary nav exists so CSS can reserve space
+  useEffect(() => {
+    try {
+      document.body.classList.add('has-secondary-nav');
+      return () => document.body.classList.remove('has-secondary-nav');
+    } catch (e) {
+      // ignore
+    }
+  }, []);
+
+  // Close secondary nav on route change
+  useEffect(() => {
+    setSecondaryOpen(false);
+  }, [location.pathname]);
+
+  // Close on Escape and restore focus to toggle
+  useEffect(() => {
+    if (!secondaryOpen) return;
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        setSecondaryOpen(false);
+        try { toggleRef.current?.focus(); } catch (err) {}
+      }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [secondaryOpen]);
 
   return (
     <>
-  <nav id="nav" className={`nav ${scrolled ? 'scrolled' : ''}${showSearch ? ' nav--search-open' : ''}`} style={{ position: 'relative', zIndex: 60 }}> 
+      <nav id="nav" className={`nav ${scrolled ? 'scrolled' : ''}${showSearch ? ' nav--search-open' : ''}`}> 
         <div className="container nav-inner" style={{ flexWrap: 'wrap', alignItems: 'center' }}>
           <div className="brand">
             <img src="/logo.png" alt="AgEx Parts logo" style={{ height: '80px', width: 'auto' }} />
@@ -68,17 +108,15 @@ export default function Navbar() {
           <div
             className="search-bar-collapsible"
             style={{
-              position: 'absolute',
-              top: '100%',
-              left: 0,
               width: '100%',
-              background: 'rgba(10,10,10,0.55)',
-              boxShadow: '0 6px 24px rgba(0,0,0,0.25)',
+              background: 'rgba(30,30,30,0.55)',
+              boxShadow: '0 2px 12px rgba(0,0,0,0.10)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               padding: '1rem 0',
-              zIndex: 999,
+              position: 'static',
+              zIndex: 39,
             }}
           >
             <form
@@ -129,6 +167,16 @@ export default function Navbar() {
             </form>
           </div>
         )}
+        {/* Secondary nav row: browse links and mobile toggle */}
+        <div className={`nav-secondary ${secondaryOpen ? 'open' : ''}`} ref={secondaryRef}>
+          <div className="container">
+            <nav id="secondary-links" aria-label="Browse links">
+              <Link to="/categories" className="nav-secondary-link">Browse by Category</Link>
+              <Link to="/machines" className="nav-secondary-link">Browse by Machine</Link>
+              <Link to="/about" className="nav-secondary-link">About Us</Link>
+            </nav>
+          </div>
+        </div>
       </nav>
     </>
   );

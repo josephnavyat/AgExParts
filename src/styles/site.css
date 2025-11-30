@@ -74,16 +74,37 @@ img {
   --shadow: 0 6px 18px rgba(16,24,40,0.06);
   --categories-bg: #484848; /* beige sampled from attachment */
   --maxw: 1200px;
+  /* navbar combined height (main + secondary) */
+  --nav-main-height: 72px;
+  --nav-secondary-height: 44px;
+  --nav-total-height: calc(var(--nav-main-height) + var(--nav-secondary-height));
+}
+
+/* Collapsed sizes (used when body.nav-collapsed is present) */
+:root {
+  --nav-main-height-collapsed: 48px;
+  --nav-secondary-height-collapsed: 0px;
+  --nav-total-height-collapsed: calc(var(--nav-main-height-collapsed) + var(--nav-secondary-height-collapsed));
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; }
+
+/* Reserve vertical space for the fixed navbar so it does not cover content */
+body { padding-top: var(--nav-total-height); transition: padding-top 220ms ease; }
+body.nav-collapsed { padding-top: var(--nav-total-height-collapsed); }
+
+/* If the secondary nav is not present, allow smaller top padding via a modifier on the nav element */
+.nav--no-secondary ~ body { padding-top: var(--nav-main-height); }
+
+/* If there is no secondary nav, reduce space. We also set based on a body class */
+body:not(.has-secondary-nav) { padding-top: var(--nav-main-height); }
 a { color: inherit; text-decoration: none; }
 .container { align-items: center; max-width: var(--maxw); margin: 0 auto; padding: 0 20px; }
 
 /* NAV */
-.nav { position: fixed; top: 0; left: 0; right: 0; z-index: 40; transition: background .25s ease, box-shadow .25s ease; background: rgba(15,16,18,.35); backdrop-filter: saturate(140%) blur(6px); }
+.nav { position: fixed; top: 0; left: 0; right: 0; z-index: 40; transition: background .25s ease, box-shadow .25s ease; background: rgba(15,16,18,.35); backdrop-filter: saturate(140%) blur(6px); padding: 0; }
 .nav.scrolled { background: rgba(15,16,18,0.45); /* keep translucent on scroll */ box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
-.nav-inner { display: flex; align-items: center; justify-content: space-between; height: 72px; }
+.nav-inner { display: flex; align-items: center; justify-content: space-between; height: var(--nav-main-height); margin: 0; padding: 0; }
 .brand { display: flex; align-items: center; gap: 12px; }
 .brand img { height: 60px; width: auto; border-radius: 8px; filter: drop-shadow(0 2px 4px rgba(0,0,0,.6)); } /* larger + prominent */
 .brand h1 {
@@ -247,6 +268,110 @@ body.hero-active .hero .card .muted {
   background: #3a3a3a; /* dark grey buttons */
   box-shadow: 0 2px 6px rgba(0,0,0,0.12);
 }
+
+.nav-secondary {
+  /* slightly lighter than the main nav to create a subtle separation */
+  background: rgba(255,255,255,0.03);
+  padding: 4px 0; /* reduced vertical padding so it sits flush under nav */
+  margin-top: 0;
+}
+.nav-secondary .container {
+  display: flex;
+  justify-content: center; /* center links horizontally */
+  align-items: center;
+  gap: 12px;
+}
+.nav-secondary .container nav {
+  display: inline-flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 0; /* remove extra top gap */
+}
+.nav-secondary .nav-secondary-link {
+  color: rgba(255,255,255,0.9);
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+.nav-secondary .nav-secondary-link:hover {
+  color: #19a974;
+  text-decoration: underline;
+}
+
+@media (max-width: 700px) {
+  .nav-secondary { padding: 8px 12px; }
+  .nav-secondary .container { padding: 0 8px; justify-content: space-between; }
+  .nav-secondary nav { gap: 12px; }
+}
+
+/* Mobile: show toggle and collapse secondary links */
+@media (max-width: 700px) {
+  .nav-secondary { padding: 8px 12px; }
+  .nav-secondary .nav-secondary-toggle { display: inline-flex !important; background: transparent; border: none; color: #fff; font-size: 20px; cursor: pointer; }
+  .nav-secondary nav { display: none; flex-direction: column; gap: 8px; align-items: flex-start; width: 100%; }
+  .nav-secondary.open nav { display: flex; }
+}
+
+/* Active link styling */
+.nav-secondary .nav-secondary-link.active {
+  color: #19a974;
+  text-decoration: none;
+  box-shadow: inset 0 -3px 0 rgba(25,169,116,0.18);
+}
+
+/* screen-reader only */
+.sr-only { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0,0,0,0) !important; white-space: nowrap !important; border: 0 !important; }
+
+/* Slide animation for secondary nav on mobile */
+.nav-secondary { overflow: visible; transition: max-height 260ms ease, opacity 220ms ease; }
+.nav-secondary nav { transition: transform 260ms ease, opacity 220ms ease; }
+@media (max-width: 700px) {
+  .nav-secondary { max-height: 0; opacity: 0; overflow: hidden; }
+  .nav-secondary.open { max-height: 320px; opacity: 1; }
+  .nav-secondary nav { transform: translateY(-6px); opacity: 0; }
+  .nav-secondary.open nav { transform: translateY(0); opacity: 1; }
+}
+
+/* Collapsed navbar state: smaller height, hide large logo text, collapse secondary */
+.nav.scrolled .nav-inner { height: var(--nav-main-height); }
+.nav.scrolled .brand img { height: 44px !important; }
+.nav.scrolled .brand h1 { display: none !important; }
+/* When collapsed, reduce space but don't forcibly remove the element from layout on desktop.
+  We use max-height and opacity to animate the collapse so it can be shown/hidden smoothly. */
+body.nav-collapsed .nav-secondary { max-height: 0 !important; opacity: 0 !important; overflow: hidden !important; }
+.nav.scrolled .nav-secondary { max-height: 0 !important; opacity: 0 !important; overflow: hidden; }
+
+/* When the body has nav-collapsed we switch to compact sizes */
+body.nav-collapsed .nav-inner { height: var(--nav-main-height-collapsed) !important; }
+body.nav-collapsed .brand img { height: 36px !important; }
+body.nav-collapsed .nav-icon { width: 34px !important; height: 34px !important; }
+body.nav-collapsed .brand h1 { display: none !important; }
+/* secondary visibility controlled via max-height/opacity rules above */
+
+/* Smooth transitions for nav changes */
+.nav-inner, .brand img, .brand h1 { transition: height 200ms ease, opacity 200ms ease, transform 200ms ease; }
+
+/* We rely on body padding-top (see above) to push content below the fixed nav.
+   Remove per-component top margins to avoid double spacing. If a specific
+   page needs extra offset, add the `.page-top` helper with padding-top instead. */
+.page-top { padding-top: calc(var(--nav-total-height) + 8px); }
+
+/* Responsive nav heights: smaller on small screens */
+@media (max-width: 480px) {
+  :root {
+    --nav-main-height: 56px;
+    --nav-secondary-height: 36px;
+    --nav-total-height: calc(var(--nav-main-height) + var(--nav-secondary-height));
+  }
+}
+
+@media (max-width: 360px) {
+  :root {
+    --nav-main-height: 52px;
+    --nav-secondary-height: 32px;
+    --nav-total-height: calc(var(--nav-main-height) + var(--nav-secondary-height));
+  }
+}
 /* Brand and neutral button utilities */
 .btn.brand {
   background: #3a3a3a !important;
@@ -377,15 +502,6 @@ body.hero-active .hero .card .muted {
     padding-top: 16px !important;
     margin-top: 12px !important;
   }
-}
-/* Mobile tweaks: hide desktop OEM panel and show inline OEM in content */
-@media (max-width: 800px) {
-  .pd-oem--desktop { display: none !important; }
-  .pd-oem--mobile { display: block !important; }
-  .pd-oem--mobile { border-top: 1px solid #eef0f2; padding-top: 12px; margin-top: 12px; }
-}
-@media (min-width: 801px) {
-  .pd-oem--mobile { display: none !important; }
 }
 @media (max-width: 800px) {
   .pd-side-sections--desktop {
