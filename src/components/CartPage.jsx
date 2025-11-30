@@ -78,7 +78,19 @@ const getImageUrl = (img) => img && img.startsWith('http') ? img : (img ? img : 
 
 function calculateShipping(cartItems) {
   const totalWeight = cartItems.reduce((sum, i) => sum + ((i.product.weight || 0) * i.quantity), 0);
-  const maxLength = Math.max(...cartItems.map(i => Math.max(i.product.length_mm || 0, i.product.width_mm || 0, i.product.height_mm || 0)));
+  // Products may store dimensions in mm (length_mm/width_mm/height_mm) or in inches (length/width/height).
+  // Normalize to inches for threshold comparisons. Prefer explicit mm fields when present.
+  const toInches = (mm) => (typeof mm === 'number' ? mm / 25.4 : 0);
+  const getMaxDimInInches = (p) => {
+    // Prefer *_mm fields if they exist and are > 0
+    const mmFields = [p.length_mm, p.width_mm, p.height_mm].filter(v => typeof v === 'number' && v > 0);
+    if (mmFields.length) return Math.max(...mmFields.map(toInches));
+    // Fallback to inch fields
+    const inFields = [p.length, p.width, p.height].filter(v => typeof v === 'number' && v > 0);
+    if (inFields.length) return Math.max(...inFields);
+    return 0;
+  };
+  const maxLength = Math.max(...cartItems.map(i => getMaxDimInInches(i.product)));
   const orderTotal = cartItems.reduce((sum, i) => sum + (Number(i.product.price) * i.quantity), 0);
 
   let cost = 0;
@@ -89,6 +101,7 @@ function calculateShipping(cartItems) {
   else if (totalWeight <= 50) cost = 60;
   else cost = 150; // freight
 
+  // maxLength is in inches now
   if (maxLength > 48) return { type: 'freight', cost: 150 };
   if (maxLength > 36) cost += 25;
   else if (maxLength > 24) cost += 10;
