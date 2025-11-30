@@ -7,89 +7,10 @@ import { useStripe } from '@stripe/react-stripe-js';
 import ShippingRatesButton from './ShippingRatesButton.jsx';
 import { useNavigate } from 'react-router-dom';
 import FreightInquiryPage from './FreightInquiryPage';
-import getImageUrl from '../utils/getImageUrl.js';
 
 function StripeCheckoutButton({ cart, disabled }) {
   const stripe = useStripe();
   const navigate = useNavigate();
-  // Helper to load Turnstile and get a token. Falls back to rendering an invisible widget if execute not available.
-  const getTurnstileToken = async (siteKey) => {
-    // If execute is available, try it first
-  // We must render a widget and call execute(widgetId). Calling execute(siteKey, ...) is invalid.
-
-    // Load script if not present and wait for ready
-    if (!window.turnstile) {
-      await new Promise((resolve, reject) => {
-        const existing = document.querySelector('script[src*="challenges.cloudflare.com/turnstile"]');
-        if (existing) {
-          existing.addEventListener('load', resolve);
-          existing.addEventListener('error', reject);
-          return;
-        }
-        const s = document.createElement('script');
-        s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
-        s.async = true;
-        s.onload = resolve;
-        s.onerror = reject;
-        document.head.appendChild(s);
-      });
-    }
-
-  // After load, proceed to render a fresh invisible widget and execute it.
-
-    // Render an invisible widget and execute it, with timeout.
-    return await new Promise((resolve, reject) => {
-      let finished = false;
-      const timeout = setTimeout(() => {
-        if (!finished) {
-          finished = true;
-          reject(new Error('Turnstile widget timeout'));
-        }
-      }, 10000); // 10s
-
-      try {
-        const wrapper = document.createElement('div');
-        wrapper.style.position = 'absolute';
-        wrapper.style.left = '-9999px';
-        document.body.appendChild(wrapper);
-        const widget = document.createElement('div');
-        wrapper.appendChild(widget);
-        // Render with valid size; 'invisible' is not a supported value per Turnstile API.
-        const widgetId = window.turnstile.render(widget, {
-          sitekey: siteKey,
-          size: 'compact',
-          callback: (t) => {
-            if (finished) return;
-            finished = true;
-            clearTimeout(timeout);
-            try { document.body.removeChild(wrapper); } catch (e) {}
-            resolve(t);
-          }
-        });
-        // execute the rendered widget id
-        setTimeout(() => {
-          try {
-            // debug: log widgetId and type to catch misuse (e.g. siteKey passed here)
-            try { console.debug('turnstile.execute -> widgetId:', widgetId, 'type:', typeof widgetId); } catch (e) {}
-            // Some older versions may require reset before execute if already running
-            if (window.turnstile && typeof window.turnstile.reset === 'function') {
-              try { window.turnstile.reset(widgetId); } catch (e) {}
-            }
-            window.turnstile.execute(widgetId);
-          } catch (e) {
-            if (!finished) {
-              finished = true;
-              clearTimeout(timeout);
-              try { document.body.removeChild(wrapper); } catch (e) {}
-              reject(e);
-            }
-          }
-        }, 50);
-      } catch (e) {
-        reject(e);
-      }
-    });
-  };
   // Map cart items to use discounted price if sale is active
   const getStripeCart = () => {
     return cart.map(({ product, quantity }) => {
@@ -116,46 +37,35 @@ function StripeCheckoutButton({ cart, disabled }) {
       return;
     }
     if (disabled) return;
-    // Obtain Turnstile token
-    const siteKey = import.meta.env.VITE_TURNSTILE_SITEKEY || '0x4AAAAAAB-d-eg5_99Hui2g';
-    let captchaToken = null;
     try {
-      captchaToken = await getTurnstileToken(siteKey);
+      const res = await fetch('/.netlify/functions/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cart: getStripeCart(), shippingCost: shipping.cost }),
+      });
+      if (!res.ok) {
+        const payload = await res.json().catch(() => ({}));
+        const msg = payload && payload.error ? payload.error : `Checkout failed (status ${res.status})`;
+        window.alert(msg);
+        return;
+      }
+      const data = await res.json().catch(() => null);
+      if (!data || !data.url) {
+        window.alert('Checkout failed: invalid response from server.');
+        return;
+      }
+      // navigate to Stripe checkout
+      window.location = data.url;
     } catch (err) {
-      console.warn('Turnstile error', err);
+      console.error('Checkout error', err);
+      window.alert('Checkout failed — network error. Please try again later.');
     }
-
-    if (!captchaToken) {
-      window.alert('Captcha failed — please try again.');
-      return;
-    }
-
-    const res = await fetch('/.netlify/functions/create-checkout-session', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ cart: getStripeCart(), shippingCost: shipping.cost, captchaToken }),
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({ error: 'Unknown error' }));
-      window.alert(err.error || 'Checkout failed');
-      return;
-    }
-    const { url } = await res.json();
-    window.location = url;
   };
 
   return (
     <button
-      className="btn brand"
-      style={{
-        fontWeight: 700,
-        fontSize: '1.1rem',
-        borderRadius: 8,
-        padding: '0.7rem 2rem',
-        marginLeft: '1rem',
-        opacity: disabled ? 0.5 : 1,
-        pointerEvents: disabled ? 'none' : 'auto'
-      }}
+      className="btn primary"
+      style={{ fontWeight: 700, fontSize: '1.1rem', borderRadius: 8, padding: '0.7rem 2rem', marginLeft: '1rem', opacity: disabled ? 0.5 : 1, pointerEvents: disabled ? 'none' : 'auto' }}
       onClick={handleCheckout}
       disabled={disabled}
     >
@@ -164,11 +74,11 @@ function StripeCheckoutButton({ cart, disabled }) {
   );
 }
 
-// ...existing code...
+const getImageUrl = (img) => img && img.startsWith('http') ? img : (img ? img : '/logo.png');
 
 function calculateShipping(cartItems) {
   const totalWeight = cartItems.reduce((sum, i) => sum + ((i.product.weight || 0) * i.quantity), 0);
-  const maxLength = Math.max(...cartItems.map(i => (Math.max(i.product.length_mm || 0, i.product.width_mm || 0, i.product.height_mm || 0))))/25.4;// convert mm to inches
+  const maxLength = Math.max(...cartItems.map(i => Math.max(i.product.length_mm || 0, i.product.width_mm || 0, i.product.height_mm || 0)));
   const orderTotal = cartItems.reduce((sum, i) => sum + (Number(i.product.price) * i.quantity), 0);
 
   let cost = 0;
@@ -220,24 +130,24 @@ export default function CartPage() {
 
   // Cost breakdown calculations (used in the UI)
   const subtotal = total; // products subtotal (discounts already applied)
-  // prefer cart-level shipping_cost if set (from Checkout selection)
-  const shippingCost = (cart.shipping_cost && Number(cart.shipping_cost) > 0) ? Number(cart.shipping_cost) : ((shipping && shipping.type !== 'freight') ? Number(shipping.cost || 0) : 0);
+  const shippingCost = (shipping && shipping.type !== 'freight') ? Number(shipping.cost || 0) : 0;
   const isFreight = shipping?.type === 'freight' || totalWeight > 100;
   const tax = 0; // placeholder for tax calculation if needed
   const grandTotal = subtotal + (isFreight ? 0 : shippingCost) + tax;
 
   return (
     <>
+      <Navbar />
       <div style={{ minHeight: '80vh', padding: '2rem', background: 'var(--bg)', boxSizing: 'border-box' }}>
         <h2
           className="distressed gallery-title"
           style={{
             textAlign: 'center',
             marginBottom: '2rem',
-            marginTop: '2rem', // reduced top spacing
-            color: '#f3f4f6', // very light grey
-            textShadow: 'none',
-            fontSize: '1.9rem',
+            marginTop: '7rem', // Increased to ensure visibility below navbar
+            color: '#222',
+            textShadow: '0 1px 4px #fff, 0 0px 1px #bbb',
+            fontSize: '2rem',
             wordBreak: 'break-word',
           }}
         >
@@ -324,18 +234,23 @@ export default function CartPage() {
             <div className="cart-summary" style={{ textAlign: 'right', marginTop: '2rem' }}>
               <div style={{ fontWeight: 700, fontSize: '1.2rem', wordBreak: 'break-word' }}>Subtotal: ${subtotal.toFixed(2)}</div>
               <div style={{ fontWeight: 500, fontSize: '1.05rem', color: '#555', marginTop: '0.5rem' }}>Total Weight: {totalWeight.toFixed(2)} lbs</div>
-              <div style={{ fontWeight: 500, fontSize: '1.05rem', color: '#555', marginTop: '0.5rem' }}>
-                Shipping: {isFreight ? 'Need to Quote (Freight)' : (cart.shipping_cost == null || cart.shipping_cost === '' ? 'To be calculated' : `$${shippingCost.toFixed(2)}`)}{cart.selected_shipping_rate ? ` — ${cart.selected_shipping_rate.provider} ${cart.selected_shipping_rate.servicelevel?.name || ''}` : ''}
-              </div>
+              <div style={{ fontWeight: 500, fontSize: '1.05rem', color: '#555', marginTop: '0.5rem' }}>Shipping: {isFreight ? 'Need to Quote (Freight)' : `$${shippingCost.toFixed(2)}`}</div>
               <div style={{ fontWeight: 500, fontSize: '1.05rem', color: '#555', marginTop: '0.5rem' }}>Tax: ${tax.toFixed(2)}</div>
               <div style={{ fontWeight: 800, fontSize: '1.25rem', color: '#222', marginTop: '0.75rem' }}>Total: ${grandTotal.toFixed(2)}</div>
             </div>
             <div style={{ textAlign: 'right', marginTop: '1rem', display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'flex-end' }}>
               <button
-                className="btn btn-lg danger"
+                className="btn danger"
                 style={{
                   fontWeight: 700,
+                  fontSize: '1.1rem',
+                  borderRadius: 8,
+                  padding: '0.7rem 2rem',
                   minWidth: 120,
+                  background: '#d32f2f',
+                  color: '#fff',
+                  border: 'none',
+                  boxShadow: '0 2px 8px rgba(211,47,47,0.10)',
                 }}
                 onClick={() => { dispatch({ type: 'CLEAR_CART' }); }}
               >
@@ -343,10 +258,17 @@ export default function CartPage() {
               </button>
               { (shipping?.type === 'freight' || totalWeight > 100) ? (
                 <button
-                  className="btn btn-lg neutral freight"
+                  className="btn freight"
                   style={{
                     fontWeight: 700,
+                    fontSize: '1.1rem',
+                    borderRadius: 8,
+                    padding: '0.7rem 2rem',
                     minWidth: 180,
+                    background: '#557a2cff',
+                    color: '#fff',
+                    border: 'none',
+                    boxShadow: '0 2px 8px rgba(139,195,74,0.10)',
                     cursor: 'pointer',
                   }}
                   onClick={() => navigate('/freight-inquiry', { state: { cart } })}
@@ -354,13 +276,7 @@ export default function CartPage() {
                   Get Freight Quote
                 </button>
               ) : (
-                <button
-                  className="btn brand btn-lg"
-                  style={{ fontWeight: 700, minWidth: 160 }}
-                  onClick={() => navigate('/checkout')}
-                >
-                  Proceed to Checkout
-                </button>
+                <StripeCheckoutButton cart={cart.items} disabled={false} />
               )}
             </div>
           </div>
