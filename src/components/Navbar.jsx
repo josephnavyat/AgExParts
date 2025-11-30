@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import React, { useEffect, useState, useRef } from 'react';
 import { useCart } from './CartContext.jsx';
 
@@ -28,6 +28,48 @@ export default function Navbar() {
   const secondaryRef = useRef(null);
   const toggleRef = useRef(null);
   const location = useLocation();
+  const navigate = useNavigate();
+  const [categories, setCategories] = useState([]);
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
+  const [categoriesLoading, setCategoriesLoading] = useState(false);
+  const [catsLoaded, setCatsLoaded] = useState(false);
+  const [activeCategory, setActiveCategory] = useState('');
+
+  const loadCategories = async () => {
+    if (catsLoaded || categoriesLoading) return;
+    setCategoriesLoading(true);
+    try {
+      const res = await fetch('/.netlify/functions/get-data');
+      if (!res.ok) throw new Error('fetch failed');
+      const json = await res.json();
+      let products = [];
+      if (Array.isArray(json)) products = json;
+      else if (json && Array.isArray(json.products)) products = json.products;
+
+      const map = new Map();
+      for (const p of products) {
+        const cat = (p.category || '').trim();
+        const sub = (p.subcategory || '').trim();
+        if (!cat) continue;
+        if (!map.has(cat)) map.set(cat, new Set());
+        if (sub) map.get(cat).add(sub);
+      }
+
+      const grouped = Array.from(map.entries()).map(([category, subs]) => ({
+        category,
+        subcategories: Array.from(subs).sort((a, b) => a.localeCompare(b)),
+      })).sort((a, b) => a.category.localeCompare(b.category));
+
+      setCategories(grouped);
+  // initialize active category to first if not already set
+  setActiveCategory((prev) => prev || (grouped[0] ? grouped[0].category : ''));
+      setCatsLoaded(true);
+    } catch (err) {
+      console.error('Failed to load categories', err);
+    } finally {
+      setCategoriesLoading(false);
+    }
+  };
 
   // Ensure the body knows a secondary nav exists so CSS can reserve space
   useEffect(() => {
@@ -171,7 +213,44 @@ export default function Navbar() {
         <div className={`nav-secondary ${secondaryOpen ? 'open' : ''}`} ref={secondaryRef}>
           <div className="container">
             <nav id="secondary-links" aria-label="Browse links">
-              <Link to="/categories" className="nav-secondary-link">Browse by Category</Link>
+              {/* Browse by Category shows an expanded panel on hover or click */}
+              <div
+                className="nav-categories-wrapper"
+                onMouseEnter={() => { if (!catsLoaded) loadCategories(); setCategoriesOpen(true); if (categories && categories.length && !activeCategory) setActiveCategory(categories[0].category); }}
+                onMouseLeave={() => { setCategoriesOpen(false); setActiveCategory(''); }}
+              >
+                <Link
+                  to="/categories"
+                  className="nav-secondary-link nav-categories-toggle"
+                  aria-expanded={categoriesOpen}
+                  onClick={(e) => { e.preventDefault(); if (!catsLoaded) loadCategories(); setCategoriesOpen(s => { const next = !s; if (next && categories && categories.length) setActiveCategory(categories[0].category); return next; }); }}
+                >
+                  Browse by Category
+                </Link>
+
+                <div className={`nav-categories-panel ${categoriesOpen ? 'open' : ''}`} role="menu" aria-hidden={!categoriesOpen}>
+                    {categoriesLoading && <div className="muted">Loading…</div>}
+
+                    <div className="categories-panel-columns">
+                      {/* Left: list of categories */}
+                      <div className="categories-left" role="list">
+                        {categories.map((cat) => (
+                          <button
+                            key={cat.category}
+                            className={`cat-col-item`}
+                            role="menuitem"
+                            onClick={() => {
+                              try { navigate(`/categories/${encodeURIComponent(cat.category)}`); } catch (e) { window.location.href = `/categories/${encodeURIComponent(cat.category)}`; }
+                            }}
+                          >
+                            {cat.category}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                </div>
+              </div>
+
               <Link to="/machines" className="nav-secondary-link">Browse by Machine</Link>
               <Link to="/about" className="nav-secondary-link">About Us</Link>
             </nav>

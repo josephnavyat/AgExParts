@@ -1,17 +1,14 @@
 import React from 'react'
-
-const Card = ({ title, tag, note }) => (
-  <a className="card" href="#">
-    <span className="pill">{tag}</span>
-    <h3>{title}</h3>
-    <p className="muted">{note}</p>
-  </a>
-)
+import CategoriesAccordion from './CategoriesAccordion'
 
 export default function Categories() {
   return (
-    
     <section id="catalog">
+      <div style={{ maxWidth: 980, margin: '28px auto', padding: '0 20px' }}>
+        <h2 style={{ textAlign: 'center', marginBottom: 16 }}>Browse Categories</h2>
+        <CategoriesAccordion />
+      </div>
+
       <div className="badges">
         <div className="badge">
           <h3>Order with confidence</h3>

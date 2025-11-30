@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import Navbar from "./Navbar.jsx";
 import "../styles/simple-gallery.css";
 
 export default function SearchResults() {
   const location = useLocation();
-  const query = new URLSearchParams(location.search).get("q") || "";
+  const params = new URLSearchParams(location.search);
+  const query = params.get("q") || "";
+  const category = params.get("category") || "";
+  const subcategory = params.get("subcategory") || "";
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -16,7 +20,10 @@ export default function SearchResults() {
         const res = await fetch('/.netlify/functions/get-data', { signal: controller.signal });
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         const data = await res.json();
-        setProducts(data);
+  // API may return either an array or an object with a `products` array
+  if (Array.isArray(data)) setProducts(data);
+  else if (data && Array.isArray(data.products)) setProducts(data.products);
+  else setProducts([]);
       } catch (error) {
         if (error.name !== 'AbortError') {
           setError(error.message);
@@ -29,16 +36,48 @@ export default function SearchResults() {
     return () => controller.abort();
   }, []);
 
-  const filtered = products.filter(product =>
-    product.website_visible === true &&
-    product.name &&
-    product.name.toLowerCase().includes(query.toLowerCase())
-  );
+  const filtered = products.filter(product => {
+    if (product.website_visible !== true) return false;
+    if (category) {
+      if (!product.category || String(product.category).trim() !== category) return false;
+    }
+    if (subcategory) {
+      if (!product.subcategory || String(product.subcategory).trim() !== subcategory) return false;
+    }
+    if (query) {
+      return product.name && product.name.toLowerCase().includes(query.toLowerCase());
+    }
+    return true;
+  });
 
   return (
-  <div className="simple-gallery-root">
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 32, marginBottom: 16 }}>
-        <h2 className="simple-gallery-title" style={{ flex: 1, textAlign: 'center', margin: 0 }}>Search Results</h2>
+    <div className="simple-gallery-root">
+      <Navbar />
+      <div style={{ display: 'flex', alignItems: 'center', marginTop: 32, marginBottom: 16 }}>
+        <div style={{ flex: 1, textAlign: 'left' }}>
+          {category || subcategory ? (
+            <div style={{ fontSize: '0.95rem', color: '#d9d9d9' }}>
+              <Link to="/categories" style={{ color: '#d9d9d9', textDecoration: 'underline' }}>Categories</Link>
+              {category ? (
+                <>
+                  &nbsp;&gt;&nbsp;
+                  <Link to={`/categories/${encodeURIComponent(category)}`} style={{ color: '#d9d9d9', textDecoration: 'underline' }}>{category}</Link>
+                </>
+              ) : null}
+              {subcategory ? (
+                <>
+                  &nbsp;&gt;&nbsp;
+                  {/* Navigate to the category page anchored to the subcategory so user can see/choose other subcategories */}
+                  <Link to={`/categories/${encodeURIComponent(category)}#${encodeURIComponent(subcategory)}`} style={{ color: '#d9d9d9', textDecoration: 'underline' }}>{subcategory}</Link>
+                </>
+              ) : null}
+            </div>
+          ) : null}
+        </div>
+        <div style={{ flex: 1, textAlign: 'center' }}>
+          <h2 className="simple-gallery-title" style={{ margin: 0 }}>Search Results</h2>
+        </div>
+        <div style={{ flex: 1 }} />
       </div>
       <hr className="simple-gallery-divider" />
       <div className="simple-gallery-layout" style={{ position: 'relative' }}>
