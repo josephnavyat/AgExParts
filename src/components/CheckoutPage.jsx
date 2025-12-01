@@ -167,7 +167,7 @@ export default function CheckoutPage() {
 
   return (
     <div style={{ padding: 24, maxWidth: 840, margin: '0 auto' }}>
-      <h2></h2>
+      <h2>Checkout</h2>
       <Section title="Shipping Information" open={openShipping} onToggle={setOpenShipping}>
         <div className="form-row">
           <input className="form-input" placeholder="Full name" value={shipping.name} onChange={e => handleShippingChange('name', e.target.value)} />
@@ -348,9 +348,18 @@ export default function CheckoutPage() {
               // Collect Turnstile token
               let captchaToken = null;
               try {
-                // Prefer the configured VITE_TURNSTILE_SITEKEY; fall back to a known test key if available.
-                const siteKey = import.meta.env.VITE_TURNSTILE_SITEKEY || '0x4AAAAAAB-d-eg5_99Hui2g';
-                captchaToken = await getTurnstileToken(siteKey);
+                if (window.turnstile && typeof window.turnstile.execute === 'function') {
+                  // render and execute a transient widget
+                  captchaToken = await new Promise((res, rej) => {
+                    const wrapper = document.createElement('div');
+                    wrapper.style.position = 'absolute'; wrapper.style.left = '-9999px';
+                    document.body.appendChild(wrapper);
+                    const node = document.createElement('div');
+                    wrapper.appendChild(node);
+                    const widgetId = window.turnstile.render(node, { sitekey: import.meta.env.VITE_TURNSTILE_SITEKEY || '', callback: (t) => { try { document.body.removeChild(wrapper); } catch (e) {} res(t); } });
+                    setTimeout(() => { try { window.turnstile.execute(widgetId); } catch (e) { try { document.body.removeChild(wrapper); } catch (e2) {} rej(e); } }, 50);
+                  });
+                }
               } catch (err) {
                 console.warn('Turnstile error', err);
               }

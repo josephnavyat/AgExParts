@@ -37,20 +37,44 @@ function StripeCheckoutButton({ cart, disabled }) {
       return;
     }
     if (disabled) return;
+    // Client-side validation: ensure all items have valid positive prices before calling server
+    const stripeCart = getStripeCart();
+    const invalid = stripeCart.find(({ product }) => typeof product.price !== 'number' || !isFinite(product.price) || product.price <= 0);
+    if (invalid) {
+      console.error('Checkout blocked: invalid product price in cart', invalid.product);
+      window.alert('Cannot checkout: one or more items have invalid or missing prices. Please remove them from your cart.');
+      return;
+    }
     try {
       const res = await fetch('/.netlify/functions/create-checkout-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cart: getStripeCart(), shippingCost: shipping.cost }),
+        body: JSON.stringify({ cart: stripeCart, shippingCost: shipping.cost, customer_email: '' }),
       });
       if (!res.ok) {
-        const payload = await res.json().catch(() => ({}));
-        const msg = payload && payload.error ? payload.error : `Checkout failed (status ${res.status})`;
-        window.alert(msg);
+        // Try to read response body (JSON or text) to show a helpful message
+        let payloadText = '';
+        try {
+          const txt = await res.text();
+          // Try parse JSON first
+          try {
+            const j = JSON.parse(txt);
+            payloadText = j && j.error ? j.error : JSON.stringify(j);
+          } catch (e) {
+            payloadText = txt;
+          }
+        } catch (e) {
+          payloadText = `Status ${res.status}`;
+        }
+        console.error('Checkout failed response:', res.status, payloadText);
+        window.alert(`Checkout failed: ${payloadText}`);
         return;
       }
-      const data = await res.json().catch(() => null);
+      const dataText = await res.text().catch(() => null);
+      let data = null;
+      try { data = dataText ? JSON.parse(dataText) : null; } catch (e) { data = null; }
       if (!data || !data.url) {
+        console.error('Checkout invalid payload:', dataText);
         window.alert('Checkout failed: invalid response from server.');
         return;
       }
@@ -74,7 +98,19 @@ function StripeCheckoutButton({ cart, disabled }) {
   );
 }
 
-const getImageUrl = (img) => img && img.startsWith('http') ? img : (img ? img : '/logo.png');
+// Normalize image URLs: prefer absolute URLs; if given a filename, prefix with VITE_IMAGE_BASE_URL or CDN.
+const getImageUrl = (img) => {
+  if (!img) return '/logo.png';
+  if (typeof img === 'string') {
+    const s = img.trim();
+    if (!s) return '/logo.png';
+    if (/^https?:\/\//i.test(s)) return s;
+    const base = (import.meta && import.meta.env && import.meta.env.VITE_IMAGE_BASE_URL) || 'https://cdn.agexparts.com';
+    const name = s.replace(/^\/+/, '');
+    return `${String(base).replace(/\/$/, '')}/${encodeURI(name)}`;
+  }
+  return '/logo.png';
+};
 
 function calculateShipping(cartItems) {
   const totalWeight = cartItems.reduce((sum, i) => sum + ((i.product.weight || 0) * i.quantity), 0);
@@ -143,10 +179,11 @@ export default function CartPage() {
 
   // Cost breakdown calculations (used in the UI)
   const subtotal = total; // products subtotal (discounts already applied)
-  const shippingCost = (shipping && shipping.type !== 'freight') ? Number(shipping.cost || 0) : 0;
+  // We will display shipping as 'TBD' and not add it to the grand total here.
+  const shippingCost = (shipping && shipping.type !== 'freight') ? Number(shipping.cost || 0) : 0; // still computed for reference but not added
   const isFreight = shipping?.type === 'freight' || totalWeight > 100;
   const tax = 0; // placeholder for tax calculation if needed
-  const grandTotal = subtotal + (isFreight ? 0 : shippingCost) + tax;
+  const grandTotal = subtotal + tax; // shipping intentionally excluded (TBD)
 
   return (
     <>
@@ -247,7 +284,7 @@ export default function CartPage() {
             <div className="cart-summary" style={{ textAlign: 'right', marginTop: '2rem' }}>
               <div style={{ fontWeight: 700, fontSize: '1.2rem', wordBreak: 'break-word' }}>Subtotal: ${subtotal.toFixed(2)}</div>
               <div style={{ fontWeight: 500, fontSize: '1.05rem', color: '#555', marginTop: '0.5rem' }}>Total Weight: {totalWeight.toFixed(2)} lbs</div>
-              <div style={{ fontWeight: 500, fontSize: '1.05rem', color: '#555', marginTop: '0.5rem' }}>Shipping: {isFreight ? 'Need to Quote (Freight)' : `$${shippingCost.toFixed(2)}`}</div>
+              <div style={{ fontWeight: 500, fontSize: '1.05rem', color: '#555', marginTop: '0.5rem' }}>Shipping: {isFreight ? 'Need to Quote (Freight)' : 'TBD'}</div>
               <div style={{ fontWeight: 500, fontSize: '1.05rem', color: '#555', marginTop: '0.5rem' }}>Tax: ${tax.toFixed(2)}</div>
               <div style={{ fontWeight: 800, fontSize: '1.25rem', color: '#222', marginTop: '0.75rem' }}>Total: ${grandTotal.toFixed(2)}</div>
             </div>
@@ -289,7 +326,13 @@ export default function CartPage() {
                   Get Freight Quote
                 </button>
               ) : (
-                <StripeCheckoutButton cart={cart.items} disabled={false} />
+                <button
+                  className="btn primary"
+                  style={{ fontWeight: 700, fontSize: '1.1rem', borderRadius: 8, padding: '0.7rem 2rem', marginLeft: '1rem' }}
+                  onClick={() => navigate('/checkout')}
+                >
+                  Checkout
+                </button>
               )}
             </div>
           </div>
