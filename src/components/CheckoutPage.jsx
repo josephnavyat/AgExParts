@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from './CartContext.jsx';
 import ShippingRatesButton from './ShippingRatesButton.jsx';
@@ -22,8 +22,7 @@ function Section({ title, open, onToggle, children, disabled }) {
 }
 
 export default function CheckoutPage() {
-  const { cart } = useCart();
-  const { dispatch } = useCart();
+  const { cart, dispatch } = useCart();
   const navigate = useNavigate();
   const [openShipping, setOpenShipping] = useState(true);
   const [openBilling, setOpenBilling] = useState(false);
@@ -90,6 +89,41 @@ export default function CheckoutPage() {
     }
   };
 
+  // Keep selectedRate in sync with cart.shipping if the cart has a selection
+  useEffect(() => {
+    if (!selectedRate && cart && cart.shipping) {
+      // try to match with lastRates first
+      const rateId = cart.shipping.rateId || cart.shipping.rate_id || cart.shipping.rateId;
+      if (lastRates && Array.isArray(lastRates)) {
+        const match = lastRates.find(r => (r.object_id === rateId) || (r.raw && r.raw.id === rateId));
+        if (match) {
+          setSelectedRate(match);
+          setShippingCalculated(true);
+          return;
+        }
+      }
+      // Fallback: create a minimal selectedRate object from cart.shipping
+      setSelectedRate({ object_id: rateId || (cart.shipping && cart.shipping.rateId) || null, amount: cart.shipping.cost, provider: cart.shipping.label });
+      setShippingCalculated(true);
+    }
+  }, [cart.shipping, lastRates]);
+
+  // When lastRates arrive, auto-select the cheapest (first after sorting) if nothing selected
+  useEffect(() => {
+    if (lastRates && Array.isArray(lastRates) && lastRates.length > 0) {
+      // ensure sorted ascending
+      const sorted = lastRates.slice().sort((a,b) => Number(a.amount||0) - Number(b.amount||0));
+      const cheapest = sorted[0];
+      if (!selectedRate || selectedRate.object_id !== cheapest.object_id) {
+        setSelectedRate(cheapest);
+        setShippingCalculated(true);
+        try { dispatch({ type: 'SET_SHIPPING_COST', cost: Number(cheapest.amount), shipping: { cost: Number(cheapest.amount), label: `${cheapest.provider} ${cheapest.servicelevel?.name || cheapest.servicelevel?.token || ''}`, rateId: cheapest.object_id } }); } catch (e) {}
+      }
+    }
+  }, [lastRates]);
+
+  // NOTE: do not auto-accept cart.shipping here; require an explicit selection in the checkout flow.
+
   const openNextIfReady = () => {
     if (!openShipping && !openBilling && !openPayment) return;
     // Ensure shipping completed before billing can open
@@ -100,8 +134,14 @@ export default function CheckoutPage() {
   };
 
   const handleContinueFromShipping = () => {
-    if (!validateAddress(shipping)) return alert('Please complete the shipping address');
-    if (!shippingCalculated) return alert('Please calculate shipping cost before continuing');
+    const addrErrs = getAddressErrors(shipping);
+    const errs = [];
+    if (addrErrs.length) errs.push(...addrErrs);
+    if (!selectedRate) errs.push('Please select a shipping rate');
+    if (errs.length) {
+      alert('Cannot continue:\n' + errs.map(e => `- ${e}`).join('\n'));
+      return;
+    }
     setOpenShipping(false);
     setOpenBilling(true);
   };
@@ -244,7 +284,7 @@ export default function CheckoutPage() {
                   country: 'US',
                   phone: import.meta.env.VITE_STORE_PHONE || '3105551212'
                 };
-                return <ShippingRatesButton compact disabled={shippingErrors.length>0} cart={cart} toAddress={shipping} fromAddress={fromAddress} onRates={onRatesFound} onResponse={onRatesResponse} showResults={false} />;
+                return <ShippingRatesButton compact inlineResults={false} disabled={shippingErrors.length>0} cart={cart} toAddress={shipping} fromAddress={fromAddress} onRates={onRatesFound} onResponse={onRatesResponse} onSelect={(r) => { setSelectedRate(r); setShippingCalculated(true); setLastRates(prev => prev || [r]); }} showResults={true} />;
               })()
             }
             <div>
@@ -259,27 +299,33 @@ export default function CheckoutPage() {
             </div>
           )}
           {/* Render rates/debug below the inputs so buttons don't shift */}
-          {lastRates && lastRates.length > 0 && (
-            <div style={{ marginTop: 12 }}>
-              <b>Shipping Rates (select)</b>
-              <ul style={{ margin: 6, padding: 0, listStyle: 'none' }}>
-                {lastRates.map((r, idx) => (
-                  <li key={r.object_id || r.raw?.id || idx} style={{ margin: '8px 0', display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <input type="radio" name="selectedRate" checked={selectedRate && (selectedRate.object_id === r.object_id)} onChange={() => { setSelectedRate(r); setShippingCalculated(true); setLastRates(lastRates); try { dispatch({ type: 'SET_SHIPPING_COST', cost: Number(r.amount), rate: r }); } catch(e){} }} />
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 700 }}>{r.provider} {r.servicelevel?.name || ''}</div>
-                      <div style={{ color: '#444' }}>${r.amount} · {r.estimated_days || '?'} days</div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
           {lastRawResponse && !lastRates && (
             <details style={{ marginTop: 12 }}>
               <summary style={{ cursor: 'pointer' }}>Debug: raw response</summary>
               <pre style={{ whiteSpace: 'pre-wrap', maxHeight: 240, overflow: 'auto' }}>{JSON.stringify(lastRawResponse, null, 2)}</pre>
             </details>
+          )}
+          {/* Render the returned rates here so the Calculate button and Continue button sit on the same line. */}
+          {lastRates && Array.isArray(lastRates) && (
+            <div style={{ marginTop: 12 }}>
+              <b>Shipping Rates (select)</b>
+              <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+                {lastRates.slice().sort((a,b) => Number(a.amount||0) - Number(b.amount||0)).map((rate, idx, arr) => (
+                  <li key={rate.object_id} style={{ margin: '6px 0', display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <input type="radio" name="checkoutShippingRate" value={rate.object_id} checked={(selectedRate && (selectedRate.object_id === rate.object_id || selectedRate.raw?.id === rate.object_id)) || (!selectedRate && arr[0] && arr[0].object_id === rate.object_id)} onChange={() => {
+                      setSelectedRate(rate);
+                      setShippingCalculated(true);
+                      try { dispatch({ type: 'SET_SHIPPING_COST', cost: Number(rate.amount), shipping: { cost: Number(rate.amount), label: `${rate.provider} ${rate.servicelevel?.name || rate.servicelevel?.token || ''}`, rateId: rate.object_id } }); } catch (e) {}
+                    }} />
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontWeight: 700 }}>{rate.provider} {rate.servicelevel?.name || rate.servicelevel?.token}</div>
+                      <div style={{ color: '#555' }}>{rate.estimated_days || '?'} days</div>
+                    </div>
+                    <div style={{ minWidth: 90, textAlign: 'right', fontWeight: 700 }}>${rate.amount}</div>
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
         </div>
       </Section>
@@ -310,7 +356,7 @@ export default function CheckoutPage() {
         <div style={{ display: 'grid', gap: 12 }}>
           {/* Order summary */}
           {(() => {
-            const subtotal = cart.items.reduce((s, i) => {
+                const subtotal = cart.items.reduce((s, i) => {
               const price = Number(i.product.price);
               const discountPerc = Number(i.product.discount_perc) || 0;
               const endDate = i.product.discount_end_date ? new Date(i.product.discount_end_date) : null;
@@ -320,7 +366,7 @@ export default function CheckoutPage() {
               return s + finalPrice * i.quantity;
             }, 0);
             // Prefer state-specific tax rate based on shipping address; fall back to env VITE_TAX_RATE or 7%.
-            const shippingCost = cart.shipping_cost ? Number(cart.shipping_cost) : 0;
+            const shippingCost = cart.shipping ? Number(cart.shipping.cost || 0) : 0;
             const taxRate = Number(taxRateForState(shipping?.state));
             const tax = +(subtotal * taxRate).toFixed(2);
             const total = +(subtotal + tax + shippingCost).toFixed(2);
@@ -374,7 +420,7 @@ export default function CheckoutPage() {
                 const finalPrice = saleActive && !isNaN(price) ? price * (1 - discountPerc) : price;
                 return s + finalPrice * i.quantity;
               }, 0);
-              const shippingCost = cart.shipping_cost ? Number(cart.shipping_cost) : 0;
+              const shippingCost = (cart && cart.shipping) ? Number(cart.shipping.cost || 0) : (cart && cart.shipping_cost ? Number(cart.shipping_cost) : 0);
               const taxRate = Number(taxRateForState(shipping?.state));
               const tax = +(subtotal * taxRate).toFixed(2);
               const total = +(subtotal + tax + shippingCost).toFixed(2);

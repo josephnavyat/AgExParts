@@ -5,8 +5,7 @@ import Footer from "./Footer.jsx";
 import { useCart } from "./CartContext.jsx";
 import { getProductQuantity } from "./CartContext.jsx";
 import "../styles/site.css";
-import getImageUrl from '../utils/getImageUrl.js';
-import SmartImage from './SmartImage.jsx';
+import { getImageUrl as resolveImageUrl } from '../utils/imageUrl.js';
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -14,42 +13,7 @@ export default function ProductDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { cart, dispatch } = useCart();
-  // image helper provided by shared utility
-  // Retry logic for image onError (lowercase, origin-prefixed, relative), then fallback
-  const handleImgError = (e) => {
-    const img = e.currentTarget;
-    const attempts = Number(img.dataset.attempts || 0);
-    img.dataset.attempts = attempts + 1;
-    const src = img.getAttribute('src') || '';
-    const path = src.startsWith(window.location.origin) ? src.slice(window.location.origin.length) : src;
-    const filename = path.split('/').pop() || '';
-
-    if (attempts === 0) {
-      const lower = filename.toLowerCase();
-      if (lower !== filename) {
-        const candidate = path.replace(new RegExp(filename + '$'), lower);
-        // If candidate is an absolute URL, use as-is. If it's root-relative, keep it.
-        if (/^https?:\/\//i.test(candidate) || /^\/\//.test(candidate) || candidate.startsWith('/')) {
-          img.src = candidate;
-        } else {
-          img.src = `/${candidate}`;
-        }
-        return;
-      }
-    }
-    if (attempts === 1) {
-      if (path && path.startsWith('/')) {
-        img.src = window.location.origin + path;
-        return;
-      }
-    }
-    if (attempts === 2) {
-      const noSlash = path.startsWith('/') ? path.slice(1) : path;
-      img.src = noSlash || '/logo.png';
-      return;
-    }
-    img.src = '/logo.png';
-  };
+  const getImageUrl = (img) => resolveImageUrl(img);
   // Helper for available inventory
   const availableStock = product && Number(product.inventory ?? product.quantity ?? 0);
 
@@ -60,7 +24,6 @@ export default function ProductDetail() {
   // Product attributes state
   const [attributes, setAttributes] = useState([]);
   const [compatibility, setCompatibility] = useState([]);
-  const [compatLinks, setCompatLinks] = useState([]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -70,22 +33,31 @@ export default function ProductDetail() {
           signal: controller.signal,
         });
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-  const data = await res.json();
-  // Support prior shape (array) and new shape { products, compatibility }
-  let products = [];
-  if (Array.isArray(data)) products = data;
-  else if (data && Array.isArray(data.products)) products = data.products;
-  const found = products.find((p) => String(p.id) === String(id));
-  setProduct(found);
-  // set compatLinks if present in payload
-  if (data && Array.isArray(data.compat_links)) {
-    setCompatLinks(data.compat_links);
-  } else {
-    setCompatLinks([]);
-  }
+        const data = await res.json();
+
+        // Normalize different possible response shapes into an array we can search
+        let productsArray = [];
+        if (Array.isArray(data)) productsArray = data;
+        else if (data && Array.isArray(data.products)) productsArray = data.products;
+        else if (data && Array.isArray(data.items)) productsArray = data.items;
+        else if (data && typeof data === 'object') {
+          const firstArray = Object.values(data).find(v => Array.isArray(v));
+          productsArray = firstArray || [];
+        }
+
+        const found = productsArray.find((p) => String(p.id) === String(id) || String(p._id) === String(id) || String(p.sku || p.part_number || '') === String(id));
+        if (found) {
+          setProduct(found);
+          setError(null);
+        } else {
+          setProduct(null);
+          setError('Product not found');
+          console.warn('ProductDetail: product not found for id', id, 'response shape:', Array.isArray(data) ? 'array' : typeof data);
+        }
       } catch (error) {
         if (error.name !== 'AbortError') {
           console.error('Failed to fetch products:', error);
+          setError('Failed to load product');
         }
       } finally {
         setLoading(false);
@@ -95,70 +67,49 @@ export default function ProductDetail() {
     return () => controller.abort();
   }, [id]);
 
-  // When a product is set, fetch strict compatibility rows for its SKU
-  useEffect(() => {
-    if (!product || !product.sku) return;
-    const controller = new AbortController();
-    const sku = product.sku;
-    fetch(`/.netlify/functions/get-compatibility-by-sku?sku=${encodeURIComponent(sku)}`, { signal: controller.signal })
-      .then(res => res.ok ? res.json() : { compatibility: [] })
-      .then(data => {
-        if (data && Array.isArray(data.compatibility)) setCompatibility(data.compatibility);
-        else setCompatibility([]);
-      })
-      .catch(() => setCompatibility([]));
-    return () => controller.abort();
-  }, [product]);
-
   useEffect(() => {
     if (!product) return;
-    // Build image list robustly: extract filename (basename) from whatever
-    // `product.image` contains (it may be '/DN125005.png', 'DN125005.png', or
-    // a full URL). Then generate variant keys like basename_2.png and resolve
-    // them via getImageUrl so the helper normalizes to the CDN/origin.
+    // Build image list: main image, then _2, _3, _4, _5
     const base = product.image;
     if (!base) return setImages([]);
-    // Normalize the incoming value: strip querystring/fragment and ensure we
-    // only operate on the pathname so we don't accidentally include
-    // ?v=... or #hash parts in constructed variant names.
-    let pathname = String(base).trim();
-    try {
-      if (/^https?:\/\//i.test(pathname) || /^\/\//.test(pathname)) {
-        const tmp = pathname.startsWith('//') ? (window.location.protocol + pathname) : pathname;
-        pathname = new URL(tmp).pathname;
-      } else {
-        pathname = pathname.split('?')[0].split('#')[0];
-      }
-    } catch (e) {
-      // Fallback: best-effort strip of query/fragment
-      pathname = pathname.split('?')[0].split('#')[0];
+    const extIdx = base.lastIndexOf('.');
+    const baseName = extIdx !== -1 ? base.slice(0, extIdx) : base;
+    const ext = extIdx !== -1 ? base.slice(extIdx) : '';
+    const imgList = [base];
+    for (let i = 2; i <= 5; i++) {
+      imgList.push(`${baseName}_${i}${ext}`);
     }
-
-    const filename = pathname.split('/').pop() || '';
-    const extIdx = filename.lastIndexOf('.');
-    const baseName = extIdx !== -1 ? filename.slice(0, extIdx) : filename;
-    const ext = extIdx !== -1 ? filename.slice(extIdx) : '';
-
-  // Short-term: avoid performing HEAD/fetch probes that may be blocked by
-  // CORS and cause Safari to reject requests. Immediately use the
-  // normalized base image so the <img> can load it directly. When the
-  // Worker with proper CORS headers is deployed and cached, we can re-enable
-  // quiet variant probing.
-  const primaryUrl = getImageUrl(filename);
-  setImages([primaryUrl]);
-  setImgIndex(0);
+    // Resolve image URLs (use CDN or env-configured base) before preloading
+    const urlList = imgList.map(s => getImageUrl(s));
+    // Check which images exist by attempting to load them
+    Promise.all(urlList.map(src =>
+      new Promise(resolve => {
+        const img = new window.Image();
+        img.src = src;
+        img.onload = () => resolve(src);
+        img.onerror = () => resolve(null);
+      })
+    )).then(arr => setImages(arr.filter(Boolean)));
+    setImgIndex(0);
   }, [product]);
 
   useEffect(() => {
     if (!product || !product.sku) return;
     fetch(`/.netlify/functions/get-product-attributes?sku=${encodeURIComponent(product.sku)}`)
-      .then(res => res.json())
-      .then(data => setAttributes(data))
+      .then(res => res.ok ? res.json() : [])
+      .then(data => setAttributes(Array.isArray(data) ? data : []))
       .catch(() => setAttributes([]));
+
+    // Fetch compatibility list (returns { compatibility: [...] })
+    fetch(`/.netlify/functions/get-compatibility-by-sku?sku=${encodeURIComponent(product.sku)}`)
+      .then(res => res.ok ? res.json() : { compatibility: [] })
+      .then(data => setCompatibility(Array.isArray(data.compatibility) ? data.compatibility : []))
+      .catch(() => setCompatibility([]));
   }, [product]);
 
   return (
     <>
+      <Navbar />
       {loading ? (
         <div style={{ textAlign: 'center', color: '#888' }}>Loading product...</div>
       ) : error ? (
@@ -194,8 +145,8 @@ export default function ProductDetail() {
             {/* Image carousel */}
             {images.length > 0 && (
               <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-                <SmartImage
-                  src={images[imgIndex]}
+                <img
+                  src={getImageUrl(images[imgIndex])}
                   alt={product.name}
                   style={{
                     maxWidth: '100%',
@@ -209,6 +160,7 @@ export default function ProductDetail() {
                     borderRadius: 0
                   }}
                   loading="lazy"
+                  onError={e => { e.currentTarget.src = '/logo.png'; }}
                 />
                 {imgIndex > 0 && (
                   <button
@@ -230,17 +182,12 @@ export default function ProductDetail() {
               </div>
             )}
           </div>
-          <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-start', marginBottom: 8 }}>
-            <Link to="/" style={{ textDecoration: 'none' }}>
-              <button style={{ background: 'transparent', border: '1px solid #e6e6e6', padding: '6px 10px', borderRadius: 6, cursor: 'pointer' }}>← Back to catalog</button>
-            </Link>
-          </div>
           {product.sku && (
             <div style={{ textAlign: 'center', color: '#444a58', fontWeight: 500, fontSize: '0.95rem', margin: '6px 0 4px 0' }}>
               {product.sku}
             </div>
           )}
-          <h2 className="distressed" style={{ fontSize: '1.35rem', marginBottom: 6, color: '#333' }}>{product.name}</h2>
+          <h2 className="distressed" style={{ fontSize: '1.5rem', marginBottom: 6, color: '#333' }}>{product.name}</h2>
           <div style={{ color: '#888', fontSize: '0.98rem', marginBottom: 12 }}>{product.part_number}</div>
           <div style={{ color: '#444a58', fontWeight: 700, fontSize: '1.05rem', marginBottom: 10 }}>
             {(() => {
@@ -310,8 +257,7 @@ export default function ProductDetail() {
             borderRadius: 0,
             boxShadow: 'none',
             padding: 0,
-            marginBottom: 18,
-            outline: (process.env.NODE_ENV !== 'production') ? '2px dashed rgba(255,200,0,0.9)' : 'none'
+            marginBottom: 18
           }}>
             <div style={{ display: 'flex', alignItems: 'center', margin: '24px 0 14px 0' }}>
               <h3 style={{
@@ -347,216 +293,108 @@ export default function ProductDetail() {
               </tbody>
             </table>
           </section>
-          {/* OEM P/N Section */}
-          <section style={{
-            width: '100%',
-            margin: '0 0 18px 0',
-            background: 'none',
-            borderRadius: 0,
-            boxShadow: 'none',
-            padding: 0,
-            marginBottom: 18
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', margin: '24px 0 14px 0' }}>
-              <h3 style={{
-                fontSize: '1.25rem',
-                fontWeight: 700,
-                color: '#3b3b3bff',
-                letterSpacing: '0.01em',
-                textAlign: 'left',
-                textTransform: 'none',
-                margin: 0,
-                paddingRight: 16,
-                whiteSpace: 'nowrap'
-              }}>OEM Replacement</h3>
-              <div style={{ flex: 1, height: 6, background: '#3b3b3bff', borderRadius: 3 }} />
-            </div>
-            <div style={{ padding: '8px 0', color: '#444a58', fontSize: '1rem' }}>
-              {process.env.NODE_ENV !== 'production' && console.log('ProductDetail OEM section product:', product)}
-              {product.oem_pn ? (
-                product.oem_pn
-              ) : product.oem_part_number ? (
-                product.oem_part_number
-              ) : product.replaces ? (
-                product.replaces
-              ) : (
-                <span style={{ color: '#888' }}>No OEM part number available.</span>
-              )}
-            </div>
-          </section>
-          
+
+          <div style={{ color: '#888', fontSize: '1rem', marginBottom: 8, width: '100%' }}>
+            Category: {product.category} | Manufacturer: {product.manufacturer}
+          </div>
+
           {/* Machine Compatibility Section */}
-          <section style={{
-            width: '100%',
-            margin: '0 0 18px 0',
-            background: 'none',
-            borderRadius: 0,
-            boxShadow: 'none',
-            padding: 0,
-            marginBottom: 18
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', margin: '24px 0 14px 0' }}>
-              <h3 style={{
-                fontSize: '1.25rem',
-                fontWeight: 700,
-                color: '#3b3b3bff',
-                letterSpacing: '0.01em',
-                textAlign: 'left',
-                textTransform: 'none',
-                margin: 0,
-                paddingRight: 16,
-                whiteSpace: 'nowrap'
-              }}>Machine Compatibility</h3>
-              <div style={{ flex: 1, height: 6, background: '#3b3b3bff', borderRadius: 3 }} />
-            </div>
-            {/* build a list of compatibility rows that apply to this product's SKU using compatLinks */}
-            {(() => {
-              if (!product) return null;
-              // Prefer direct compatibility rows fetched by SKU endpoint
-              if (compatibility && compatibility.length > 0) {
-                const matched = compatibility;
-                return (
-                  <table className="compat-table" style={{ width: '100%', background: 'none' }}>
+          {(compatibility && compatibility.length > 0) || (product.compatibility && product.compatibility.length > 0) || (product.compat_links && product.compat_links.length > 0) ? (
+            <section style={{ width: '100%', marginTop: 12, background: '#fff', borderRadius: 8, padding: 12, boxShadow: '0 1px 6px rgba(0,0,0,0.04)' }}>
+              <h3 style={{ margin: '0 0 8px 0' }}>Machine Compatibility</h3>
+              <div style={{ color: '#444' }}>
+                {compatibility && compatibility.length > 0 ? (
+                  <table className="compat-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
                     <thead>
-                      <tr style={{ textAlign: 'left', borderBottom: '2px solid #ececec' }}>
-                        <th style={{ padding: '8px 0', fontWeight: 700, width: '33%' }}>Manufacturer</th>
-                        <th style={{ padding: '8px 0', fontWeight: 700, width: '33%' }}>Machine Type</th>
-                        <th style={{ padding: '8px 0', fontWeight: 700, width: '34%' }}>Model</th>
+                      <tr style={{ textAlign: 'left', borderBottom: '2px solid #eee' }}>
+                        <th style={{ padding: '8px 6px', width: '33%' }}>Manufacturer</th>
+                        <th style={{ padding: '8px 6px', width: '33%' }}>Machine Type</th>
+                        <th style={{ padding: '8px 6px', width: '34%' }}>Model</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {matched.map((row, idx) => (
-                        <tr key={idx} style={{ borderBottom: idx < matched.length - 1 ? '1px solid #ececec' : 'none', background: idx % 2 === 1 ? '#fafbfc' : 'none' }}>
-                          <td style={{ padding: '8px 0' }}>{row.manufacturer || row.manufactur || '-'}</td>
-                          <td style={{ padding: '8px 0' }}>{row.machine_type || row.machine || '-'}</td>
-                          <td style={{ padding: '8px 0' }}>{row.model || row.models || '-'}</td>
+                      {compatibility.map((row, i) => (
+                        <tr key={i} style={{ borderBottom: '1px solid #f1f1f1' }}>
+                          <td style={{ padding: '8px 6px' }}>{row.manufacturer || '-'}</td>
+                          <td style={{ padding: '8px 6px' }}>{row.machine_type || '-'}</td>
+                          <td style={{ padding: '8px 6px' }}>{row.model || '-'}</td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
-                );
-              }
+                ) : Array.isArray(product.compatibility) && product.compatibility.length > 0 ? (
+                  <ul style={{ margin: 0, paddingLeft: 18 }}>
+                    {product.compatibility.map((c, i) => <li key={i}>{c}</li>)}
+                  </ul>
+                ) : Array.isArray(product.compat_links) && product.compat_links.length > 0 ? (
+                  <ul style={{ margin: 0, paddingLeft: 18 }}>
+                    {product.compat_links.map((c, i) => <li key={i}><a href={c} target="_blank" rel="noreferrer">{c}</a></li>)}
+                  </ul>
+                ) : (
+                  <div style={{ color: '#888' }}>No compatibility data available.</div>
+                )}
+              </div>
+            </section>
+          ) : null}
 
-              // Fallback: build map compatId -> set of product_skus from compatLinks
-              const compatMap = {};
-              for (const link of compatLinks || []) {
-                if (!link || !link.machine_compatibility_id) continue;
-                const id = String(link.machine_compatibility_id);
-                compatMap[id] = compatMap[id] || new Set();
-                if (link.product_sku) compatMap[id].add(String(link.product_sku));
-              }
-              // Find compat rows that reference this product.sku
-              const sku = product.sku ? String(product.sku) : null;
-              let matched = [];
-              if (sku && Object.keys(compatMap).length > 0 && compatibility && compatibility.length > 0) {
-                const matchedIds = new Set();
-                for (const [id, skuSet] of Object.entries(compatMap)) {
-                  if (skuSet.has(sku)) matchedIds.add(id);
-                }
-                if (matchedIds.size > 0) {
-                  matched = compatibility.filter(c => matchedIds.has(String(c.id)));
-                }
-              }
-              // Strict mode: only show rows explicitly linked via compat_links
+          {/* OEM Replacements Section */}
+          {(product.oem_replacement || product.oem_replacements || product.oem) && (
+            <section style={{ width: '100%', marginTop: 12, background: '#fff', borderRadius: 8, padding: 12, boxShadow: '0 1px 6px rgba(0,0,0,0.04)' }}>
+              <h3 style={{ margin: '0 0 8px 0' }}>OEM Replacements</h3>
+              <div style={{ color: '#444' }}>
+                {Array.isArray(product.oem_replacements) && product.oem_replacements.length > 0 ? (
+                  <ul style={{ margin: 0, paddingLeft: 18 }}>
+                    {product.oem_replacements.map((o, i) => <li key={i}>{o}</li>)}
+                  </ul>
+                ) : product.oem_replacement ? (
+                  <div>{product.oem_replacement}</div>
+                ) : product.oem ? (
+                  <div>{product.oem}</div>
+                ) : (
+                  <div style={{ color: '#888' }}>No OEM replacement data.</div>
+                )}
+              </div>
+            </section>
+          )}
 
-              return (
-                <table className="compat-table" style={{ width: '100%', background: 'none' }}>
-                  <thead>
-                    <tr style={{ textAlign: 'left', borderBottom: '2px solid #ececec' }}>
-                      <th style={{ padding: '8px 0', fontWeight: 700, width: '33%' }}>Manufacturer</th>
-                      <th style={{ padding: '8px 0', fontWeight: 700, width: '33%' }}>Machine Type</th>
-                      <th style={{ padding: '8px 0', fontWeight: 700, width: '34%' }}>Model</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {matched && matched.length > 0 ? matched.map((row, idx) => (
-                      <tr key={idx} style={{ borderBottom: idx < matched.length - 1 ? '1px solid #ececec' : 'none', background: idx % 2 === 1 ? '#fafbfc' : 'none' }}>
-                        <td style={{ padding: '8px 0' }}>{row.manufacturer || row.manufactur || '-'}</td>
-                        <td style={{ padding: '8px 0' }}>{row.machine_type || row.machine || '-'}</td>
-                        <td style={{ padding: '8px 0' }}>{row.model || row.models || '-'}</td>
-                      </tr>
-                    )) : (
-                      <tr><td colSpan={3} style={{ padding: '8px 0', color: '#888' }}>No compatibility information available for this part.</td></tr>
-                    )}
-                  </tbody>
-                </table>
-              );
-            })()}
-          </section>
-          {/*
-          OEM Parts Section
-          <section style={{
-            width: '100%',
-            margin: '0 0 18px 0',
-            background: 'none',
-            borderRadius: 0,
-            boxShadow: 'none',
-            padding: 0,
-            marginBottom: 18
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', margin: '24px 0 14px 0' }}>
-              <h3 style={{
-                fontSize: '1.25rem',
-                fontWeight: 700,
-                color: '#3b3b3bff',
-                letterSpacing: '0.01em',
-                textAlign: 'left',
-                textTransform: 'none',
-                margin: 0,
-                paddingRight: 16,
-                whiteSpace: 'nowrap',
-                textShadow: '0 2px 8px 0 rgba(68,74,88,0.18)'
-              }}>OEM Parts</h3>
-              <div style={{
-                flex: 1,
-                height: 6,
-                background: '#3b3b3bff',
-                borderRadius: 3,
-                boxShadow: '0 4px 16px 0 rgba(68,74,88,0.18)'
-              }} />
-            </div>
-            <table style={{ width: '100%', background: 'none', fontSize: '1rem', borderCollapse: 'collapse', color: '#444a58' }}>
-              <tbody>
-                <tr style={{ borderBottom: '1px solid #ececec' }}><td style={{ padding: '8px 0', fontWeight: 600, width: '40%' }}>OEM Part Number</td><td style={{ padding: '8px 0' }}>{product.oem_part_number || 'SH143557'}</td></tr>
-                <tr style={{ background: '#fafbfc' }}><td style={{ padding: '8px 0', fontWeight: 600 }}>Replaces</td><td style={{ padding: '8px 0' }}>{product.replaces || 'Degelman No 143557'}</td></tr>
-              </tbody>
-            </table>
-          </section>
-          */}
-          {/* Actions */}
-          <div style={{ display: 'flex', gap: '1.5rem', marginTop: 32 }}>
+          {/* Actions (moved below price) */}
+          <div style={{ display: 'flex', gap: '1.5rem', marginTop: 18 }}>
             <Link
               to="/catalog"
-              className="btn btn-lg secondary"
+              className="btn secondary"
               style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '0.5rem',
+                padding: '0.7rem 1.6rem',
                 fontWeight: 700,
-                letterSpacing: '0.04em',
-                transition: 'background 0.2s',
+                fontSize: '1rem',
+                borderRadius: '8px',
+                background: '#f0f0f0',
+                color: '#222',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
                 textDecoration: 'none',
+                letterSpacing: '0.02em',
+                transition: 'background 0.15s',
                 border: 'none',
+                textAlign: 'center',
+                display: 'inline-block',
                 cursor: 'pointer',
               }}
-              onMouseOver={e => (e.currentTarget.style.background = '#e0e0e0')}
+              onMouseOver={e => (e.currentTarget.style.background = '#eaeaea')}
               onMouseOut={e => (e.currentTarget.style.background = '#f0f0f0')}
             >
               Back to Catalog
             </Link>
             {getProductQuantity(cart, product.id) > 0 ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#eafbe7', borderRadius: 8, padding: '0.5rem 1.2rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#eafbe7', borderRadius: 8, padding: '0.45rem 0.9rem' }}>
                 <button
                   style={{
                     background: '#28a745',
                     color: '#fff',
                     border: 'none',
                     borderRadius: 6,
-                    width: 32,
-                    height: 32,
+                    width: 30,
+                    height: 30,
                     fontWeight: 700,
-                    fontSize: '1.2rem',
+                    fontSize: '1.1rem',
                     cursor: 'pointer',
                   }}
                   onClick={() => dispatch({ type: 'SUBTRACT_FROM_CART', product })}
@@ -564,17 +402,17 @@ export default function ProductDetail() {
                 >
                   -
                 </button>
-                <span style={{ minWidth: 28, textAlign: 'center', fontWeight: 600, color: '#222', fontSize: '1.1rem' }}>{getProductQuantity(cart, product.id)}</span>
+                <span style={{ minWidth: 28, textAlign: 'center', fontWeight: 600, color: '#222', fontSize: '1.05rem' }}>{getProductQuantity(cart, product.id)}</span>
                 <button
                   style={{
                     background: '#28a745',
                     color: '#fff',
                     border: 'none',
                     borderRadius: 6,
-                    width: 32,
-                    height: 32,
+                    width: 30,
+                    height: 30,
                     fontWeight: 700,
-                    fontSize: '1.2rem',
+                    fontSize: '1.1rem',
                     cursor: 'pointer',
                   }}
                   onClick={() => dispatch({ type: 'ADD_TO_CART', product })}
@@ -586,13 +424,21 @@ export default function ProductDetail() {
               </div>
             ) : (
               <button
-                className="btn btn-lg brand"
+                className="btn primary"
                 style={{
+                  padding: '0.7rem 1.6rem',
                   fontWeight: 700,
-                  letterSpacing: '0.04em',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
+                  fontSize: '1rem',
+                  borderRadius: '8px',
+                  background: '#19a974',
+                  color: '#fff',
+                  boxShadow: '0 2px 8px rgba(25,169,116,0.10)',
+                  border: 'none',
+                  letterSpacing: '0.02em',
+                  textAlign: 'center',
+                  display: 'inline-block',
+                  cursor: 'pointer',
+                  transition: 'background 0.15s',
                 }}
                 onMouseOver={e => (e.currentTarget.style.background = '#12895c')}
                 onMouseOut={e => (e.currentTarget.style.background = '#19a974')}

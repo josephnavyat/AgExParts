@@ -2,12 +2,15 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Navbar from "./Navbar.jsx";
 import "../styles/simple-gallery.css";
+import { getImageUrl as resolveImageUrl } from '../utils/imageUrl.js';
 import { useCart, getProductQuantity } from "./CartContext.jsx";
 
 export default function SearchResults() {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const query = params.get("q") || "";
+  const category = params.get("category") || '';
+  const subcategory = params.get("subcategory") || '';
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -45,7 +48,22 @@ export default function SearchResults() {
     return () => controller.abort();
   }, []);
 
-  const getImageUrl = (img) => img && img.startsWith('http') ? img : (img ? img : '/logo.png');
+  const getImageUrl = (img) => resolveImageUrl(img);
+
+  const uniqueOptions = (key) => {
+    const seen = new Map();
+    for (const p of products) {
+      if (!p) continue;
+      let v = p[key];
+      if (v == null) continue;
+      if (typeof v === 'string') v = v.trim();
+      else v = String(v).trim();
+      if (!v) continue;
+      const norm = v.toLowerCase();
+      if (!seen.has(norm)) seen.set(norm, v);
+    }
+    return Array.from(seen.values()).sort((a,b) => a.localeCompare(b));
+  };
 
   // Robust image picker: prefer `image`, then first item of `images`, `gallery`, `photos`, or nested objects with src/url
   const pickImage = (prod) => {
@@ -83,6 +101,9 @@ export default function SearchResults() {
 
   // Build filtered list (no category/subcategory filtering per request)
   const filteredAll = products
+  // Filter by category/subcategory when provided in URL
+  .filter(p => !category || (p.category && String(p.category) === String(category)))
+  .filter(p => !subcategory || (p.subcategory && String(p.subcategory) === String(subcategory)))
     .filter(p => p.website_visible === true)
     .filter(p => !manufacturer || p.manufacturer === manufacturer)
     .filter(p => !machineType || p.machine_type === machineType)
@@ -142,7 +163,7 @@ export default function SearchResults() {
               <label className="filter-label">Manufacturer</label>
               <select value={manufacturer} onChange={e => setManufacturer(e.target.value)} className="filter-select">
                 <option value="">All Manufacturers</option>
-                {[...new Set(products.map(p => p.manufacturer).filter(Boolean))].map(m => <option key={m} value={m}>{m}</option>)}
+                {uniqueOptions('manufacturer').map(m => <option key={m} value={m}>{m}</option>)}
               </select>
             </div>
 
@@ -150,7 +171,7 @@ export default function SearchResults() {
               <label className="filter-label">Machine Type</label>
               <select value={machineType} onChange={e => setMachineType(e.target.value)} className="filter-select">
                 <option value="">All Machine Types</option>
-                {[...new Set(products.map(p => p.machine_type).filter(Boolean))].map(m => <option key={m} value={m}>{m}</option>)}
+                {uniqueOptions('machine_type').map(m => <option key={m} value={m}>{m}</option>)}
               </select>
             </div>
 
@@ -158,7 +179,7 @@ export default function SearchResults() {
               <label className="filter-label">Model</label>
               <select value={model} onChange={e => setModel(e.target.value)} className="filter-select">
                 <option value="">All Models</option>
-                {[...new Set(products.map(p => p.model).filter(Boolean))].map(m => <option key={m} value={m}>{m}</option>)}
+                {uniqueOptions('model').map(m => <option key={m} value={m}>{m}</option>)}
               </select>
             </div>
 
@@ -183,7 +204,7 @@ export default function SearchResults() {
                 <Link key={product.id} to={`/product/${product.id}`} className="simple-gallery-card" style={{ textDecoration: 'none' }}>
                   <div className="simple-gallery-image-wrapper">
                     <img
-                      src={normalizeImageUrl(pickImage(product) || product.image)}
+                      src={getImageUrl(pickImage(product) || product.image)}
                       alt={product.name}
                       loading="lazy"
                       onError={e => { e.currentTarget.src = '/logo.png'; }}
@@ -205,12 +226,12 @@ export default function SearchResults() {
                       const availableStock = Number(product.inventory ?? product.quantity ?? 0);
                       if (qty > 0) {
                         return (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#eafbe7', borderRadius: 8, padding: '0.25rem 0.6rem' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#f6f6f6', borderRadius: 8, padding: '0.2rem 0.5rem' }}>
                             <button
                               style={{
-                                background: '#28a745',
-                                color: '#fff',
-                                border: 'none',
+                                background: '#fff',
+                                color: '#333',
+                                border: '1px solid #d6d6d6',
                                 borderRadius: 6,
                                 width: 32,
                                 height: 32,
@@ -226,9 +247,9 @@ export default function SearchResults() {
                             <span style={{ minWidth: 28, textAlign: 'center', fontWeight: 600, color: '#222', fontSize: '1rem' }}>{qty}</span>
                             <button
                               style={{
-                                background: '#28a745',
-                                color: '#fff',
-                                border: 'none',
+                                background: '#fff',
+                                color: '#333',
+                                border: '1px solid #d6d6d6',
                                 borderRadius: 6,
                                 width: 32,
                                 height: 32,

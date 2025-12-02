@@ -1,6 +1,8 @@
 
 import React, { useEffect, useState } from "react";
-import getImageUrl from '../utils/getImageUrl.js';
+// Unify image path logic with CartPage
+import { getImageUrl as resolveImageUrl } from '../utils/imageUrl.js';
+const getImageUrl = (img) => resolveImageUrl(img);
 // Simple cart SVG icon
 const CartIcon = ({ size = 18, color = '#28a745', style = {} }) => (
   <svg
@@ -389,28 +391,29 @@ useEffect(() => {
                   </Link>
                 {getProductQuantity(cart, product.id) > 0 ? (
                   <div style={{
-                    background: '#eafbe7',
+                    background: '#f6f6f6',
                     borderBottomRightRadius: '12px',
                     borderLeft: '1px solid #e0e0e0',
-                    padding: '0.5rem 0',
+                    padding: '0.4rem 0.35rem',
                     gap: 8,
+                    display: 'flex',
+                    alignItems: 'center'
                   }}>
                     <button
                       style={{
-                        background: '#28a745',
-                        color: '#fff',
-                        border: 'none',
+                        background: '#fff',
+                        color: '#333',
+                        border: '1px solid #d6d6d6',
                         borderRadius: 6,
                         width: 28,
                         height: 28,
                         fontWeight: 700,
-                        fontSize: '1.2rem',
+                        fontSize: '1.1rem',
                         cursor: 'pointer',
                         marginRight: 4,
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center',
-                        position: 'relative',
+                        justifyContent: 'center'
                       }}
                       onClick={() => dispatch({ type: 'SUBTRACT_FROM_CART', product })}
                       aria-label="Decrease quantity"
@@ -420,57 +423,54 @@ useEffect(() => {
                     <span style={{ minWidth: 24, textAlign: 'center', fontWeight: 600, color: '#222' }}>{getProductQuantity(cart, product.id)}</span>
                     <button
                       style={{
-                        background: '#28a745',
-                        color: '#fff',
-                        border: 'none',
+                        background: '#fff',
+                        color: '#333',
+                        border: '1px solid #d6d6d6',
                         borderRadius: 6,
                         width: 28,
                         height: 28,
                         fontWeight: 700,
-                        fontSize: '1.2rem',
+                        fontSize: '1.1rem',
                         cursor: 'pointer',
                         marginLeft: 4,
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center',
-                        position: 'relative',
+                        justifyContent: 'center'
                       }}
                       onClick={() => dispatch({ type: 'ADD_TO_CART', product })}
                       aria-label="Increase quantity"
                     >
-                      <CartIcon size={16} color="#fff" style={{ position: 'absolute', left: 3, top: 3 }} />
-                      <span style={{ marginLeft: 10 }}>+</span>
+                      <span style={{ fontWeight: 700 }}>+</span>
                     </button>
                   </div>
                 ) : (
                   <button
                     style={{
                       padding: '0.75rem 0',
-                      border: 'none',
-                      background: '#28a745',
-                      color: '#fff',
+                      border: '1px solid #d6d6d6',
+                      background: '#fff',
+                      color: '#333',
                       fontWeight: 600,
                       cursor: 'pointer',
                       borderBottomRightRadius: '12px',
-                      transition: 'background 0.2s, box-shadow 0.2s',
-                      boxShadow: '0 2px 8px rgba(40,167,69,0.18)',
+                      transition: 'background 0.12s, box-shadow 0.12s',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: 8,
                     }}
                     onMouseOver={e => {
-                      e.currentTarget.style.background = '#1e7e34';
-                      e.currentTarget.style.boxShadow = '0 4px 16px rgba(40,167,69,0.22)';
+                      e.currentTarget.style.background = '#f2f2f2';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.06)';
                     }}
                     onMouseOut={e => {
-                      e.currentTarget.style.background = '#28a745';
-                      e.currentTarget.style.boxShadow = '0 2px 8px rgba(40,167,69,0.18)';
+                      e.currentTarget.style.background = '#fff';
+                      e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.04)';
                     }}
                     onClick={() => handleAddToCart(product)}
                   >
-                    <CartIcon size={18} color="#fff" />
-                    <span>Add to Cart</span>
+                    <CartIcon size={18} color="#333" />
+                    <span style={{ color: '#333' }}>Add to Cart</span>
                   </button>
                 )}
               </div>

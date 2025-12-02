@@ -5,6 +5,7 @@ import { useCart } from "./CartContext.jsx";
 import { getProductQuantity } from "./CartContext.jsx";
 import { useStripe } from '@stripe/react-stripe-js';
 import ShippingRatesButton from './ShippingRatesButton.jsx';
+import { getImageUrl as resolveImageUrl } from '../utils/imageUrl.js';
 import { useNavigate } from 'react-router-dom';
 import FreightInquiryPage from './FreightInquiryPage';
 
@@ -99,18 +100,7 @@ function StripeCheckoutButton({ cart, disabled }) {
 }
 
 // Normalize image URLs: prefer absolute URLs; if given a filename, prefix with VITE_IMAGE_BASE_URL or CDN.
-const getImageUrl = (img) => {
-  if (!img) return '/logo.png';
-  if (typeof img === 'string') {
-    const s = img.trim();
-    if (!s) return '/logo.png';
-    if (/^https?:\/\//i.test(s)) return s;
-    const base = (import.meta && import.meta.env && import.meta.env.VITE_IMAGE_BASE_URL) || 'https://cdn.agexparts.com';
-    const name = s.replace(/^\/+/, '');
-    return `${String(base).replace(/\/$/, '')}/${encodeURI(name)}`;
-  }
-  return '/logo.png';
-};
+const getImageUrl = (img) => resolveImageUrl(img);
 
 function calculateShipping(cartItems) {
   const totalWeight = cartItems.reduce((sum, i) => sum + ((i.product.weight || 0) * i.quantity), 0);
@@ -179,11 +169,12 @@ export default function CartPage() {
 
   // Cost breakdown calculations (used in the UI)
   const subtotal = total; // products subtotal (discounts already applied)
-  // We will display shipping as 'TBD' and not add it to the grand total here.
-  const shippingCost = (shipping && shipping.type !== 'freight') ? Number(shipping.cost || 0) : 0; // still computed for reference but not added
-  const isFreight = shipping?.type === 'freight' || totalWeight > 100;
+  // Respect selected shipping in cart if present
+  const selectedShipping = cart.shipping || null; // { cost, label }
+  const shippingCost = selectedShipping ? Number(selectedShipping.cost || 0) : (shipping && shipping.type !== 'freight' ? Number(shipping.cost || 0) : 0);
+  const isFreight = shipping?.type === 'freight' || totalWeight > 100 || (selectedShipping && selectedShipping.rateId && selectedShipping.cost > 0 && false);
   const tax = 0; // placeholder for tax calculation if needed
-  const grandTotal = subtotal + tax; // shipping intentionally excluded (TBD)
+  const grandTotal = subtotal + tax + (selectedShipping ? Number(selectedShipping.cost || 0) : 0);
 
   return (
     <>
@@ -207,76 +198,102 @@ export default function CartPage() {
           <div style={{ textAlign: 'center', color: '#444', fontSize: '1.2rem', fontWeight: 500 }}>Your cart is empty.</div>
         ) : (
           <div className="cart-page-content" style={{ maxWidth: 800, margin: '0 auto', background: '#fff', borderRadius: 16, boxShadow: '0 2px 12px rgba(0,0,0,0.10)', padding: '2rem', color: '#222', boxSizing: 'border-box', width: '100%' }}>
+            {/* Header row for columns: Item (left) and Price | Qty | Total (right) */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', maxWidth: 800, margin: '0 auto', padding: '0 0.5rem 0.5rem 0.5rem', color: '#666', fontSize: '0.95rem', boxSizing: 'border-box' }}>
+              <div style={{ flex: 1 }} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{ minWidth: 100, textAlign: 'right' }}>Price</div>
+                <div style={{ width: 120, textAlign: 'center' }}>Qty</div>
+                <div style={{ minWidth: 110, textAlign: 'right' }}>Total</div>
+              </div>
+            </div>
+
             <div className="cart-cards" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {cart.items.map(({ product, quantity }) => (
                 <div key={product.id} className="cart-card" style={{ display: 'flex', flexDirection: 'column', background: '#f8f8f8', borderRadius: 12, padding: '1rem', boxShadow: '0 1px 4px #eee', width: '100%' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, width: '100%' }}>
                     {product.image && (
-                      <>
-                        <img 
-                          src={getImageUrl(product.image)} 
-                          alt={product.name} 
-                          style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 8, boxShadow: '0 1px 4px #ccc' }} 
-                          loading="lazy"
-                          onError={e => { console.log('Image error:', product.image, getImageUrl(product.image)); e.currentTarget.src = '/logo.png'; }}
-                        />
-                      </>
+                      <img
+                        src={getImageUrl(product.image)}
+                        alt={product.name}
+                        style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 8, boxShadow: '0 1px 4px #ccc' }}
+                        loading="lazy"
+                        onError={e => { console.log('Image error:', product.image, getImageUrl(product.image)); e.currentTarget.src = '/logo.png'; }}
+                      />
                     )}
-                    <div style={{ flex: 1 }}>
-                      <span className="cart-product-name" style={{ fontWeight: 700, fontSize: '1.05rem', display: 'block', marginBottom: 2 }}>
-                        {product.name.length > 100 ? product.name.slice(0, 100) + '…' : product.name}
-                      </span>
-                      {product.sku && (
-                        <span className="cart-product-sku" style={{ fontSize: '0.95rem', color: '#666', display: 'block', marginBottom: 2 }}>SKU: {product.sku}</span>
-                      )}
-                      <span className="cart-product-weight" style={{ fontSize: '0.95rem', color: '#388e3c', display: 'block', marginTop: 2 }}>
-                        Weight: {product.weight ? product.weight + ' lbs' : 'N/A'}
-                      </span>
-                    </div>
-                    <div style={{ textAlign: 'right', minWidth: 90, fontWeight: 700, fontSize: '1.05rem' }}>
-                      {(() => {
-                        const price = Number(product.price);
-                        const discountPerc = Number(product.discount_perc) || 0;
-                        const endDate = product.discount_end_date ? new Date(product.discount_end_date) : null;
-                        const now = new Date();
-                        const saleActive = discountPerc > 0 && (!endDate || now <= endDate);
-                        if (saleActive && !isNaN(price)) {
-                          const salePrice = (price * (1 - discountPerc)).toFixed(2);
-                          return (
-                            <>
-                              <span style={{ textDecoration: 'line-through', color: '#888', marginRight: 8 }}>
-                                ${price.toFixed(2)}
-                              </span>
-                              <span style={{ color: '#d32f2f', fontWeight: 700 }}>
-                                ${salePrice}
-                              </span>
-                            </>
-                          );
-                        } else if (!isNaN(price)) {
-                          return `$${price.toFixed(2)}`;
-                        } else {
-                          return 'Price N/A';
-                        }
-                      })()}
+
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+                        <div style={{ minWidth: 0 }}>
+                          <span className="cart-product-name" style={{ fontWeight: 700, fontSize: '1.05rem', display: 'block', marginBottom: 2 }}>
+                            {product.name.length > 100 ? product.name.slice(0, 100) + '…' : product.name}
+                          </span>
+                          {product.sku && (
+                            <span className="cart-product-sku" style={{ fontSize: '0.95rem', color: '#666', display: 'block', marginBottom: 2 }}>SKU: {product.sku}</span>
+                          )}
+                          <span className="cart-product-weight" style={{ fontSize: '0.95rem', color: '#388e3c', display: 'block', marginTop: 2 }}>
+                            Weight: {product.weight ? product.weight + ' lbs' : 'N/A'}
+                          </span>
+                        </div>
+
+                        {/* Right side: unit price | qty controls | line total */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginLeft: 12 }}>
+                          <div style={{ textAlign: 'right', minWidth: 100, fontWeight: 700, fontSize: '1.05rem' }}>
+                            {(() => {
+                              const price = Number(product.price);
+                              const discountPerc = Number(product.discount_perc) || 0;
+                              const endDate = product.discount_end_date ? new Date(product.discount_end_date) : null;
+                              const now = new Date();
+                              const saleActive = discountPerc > 0 && (!endDate || now <= endDate);
+                              const unitPrice = (saleActive && !isNaN(price)) ? Number((price * (1 - discountPerc)).toFixed(2)) : price;
+                              return (
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                                  <div style={{ fontSize: '0.95rem', color: saleActive ? '#d32f2f' : '#222' }}>
+                                    {isNaN(unitPrice) ? 'N/A' : `$${unitPrice.toFixed(2)}`}
+                                  </div>
+                                  {saleActive && !isNaN(price) && (
+                                    <div style={{ fontSize: '0.85rem', color: '#888', textDecoration: 'line-through' }}>${price.toFixed(2)}</div>
+                                  )}
+                                </div>
+                              );
+                            })()}
+                          </div>
+
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <button
+                              style={{ background: '#fff', color: '#333', border: '1px solid #d6d6d6', borderRadius: 6, width: 32, height: 32, fontWeight: 700, fontSize: '1.2rem', cursor: 'pointer' }}
+                              onClick={() => { dispatch({ type: 'SUBTRACT_FROM_CART', product }); }}
+                              aria-label="Decrease quantity"
+                            >
+                              -
+                            </button>
+                            <span style={{ minWidth: 28, textAlign: 'center', fontWeight: 600, color: '#222', fontSize: '1.1rem' }}>{quantity}</span>
+                            <button
+                              style={{ background: '#fff', color: '#333', border: '1px solid #d6d6d6', borderRadius: 6, width: 32, height: 32, fontWeight: 700, fontSize: '1.2rem', cursor: 'pointer' }}
+                              onClick={() => { dispatch({ type: 'ADD_TO_CART', product }); }}
+                              aria-label="Increase quantity"
+                            >
+                              +
+                            </button>
+                          </div>
+
+                          <div style={{ textAlign: 'right', minWidth: 110, fontWeight: 800, fontSize: '1.05rem' }}>
+                            {(() => {
+                              const price = Number(product.price);
+                              const discountPerc = Number(product.discount_perc) || 0;
+                              const endDate = product.discount_end_date ? new Date(product.discount_end_date) : null;
+                              const now = new Date();
+                              const saleActive = discountPerc > 0 && (!endDate || now <= endDate);
+                              const unitPrice = (saleActive && !isNaN(price)) ? Number((price * (1 - discountPerc)).toFixed(2)) : price;
+                              const lineTotal = (!isNaN(unitPrice) ? (unitPrice * quantity) : 0);
+                              return isNaN(lineTotal) ? 'Total N/A' : `$${lineTotal.toFixed(2)}`;
+                            })()}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: 12, marginTop: 8 }}>
-                    <button
-                      style={{ background: '#28a745', color: '#fff', border: 'none', borderRadius: 6, width: 32, height: 32, fontWeight: 700, fontSize: '1.2rem', cursor: 'pointer' }}
-                      onClick={() => { dispatch({ type: 'SUBTRACT_FROM_CART', product }); }}
-                      aria-label="Decrease quantity"
-                    >
-                      -
-                    </button>
-                    <span style={{ minWidth: 28, textAlign: 'center', fontWeight: 600, color: '#222', fontSize: '1.1rem' }}>{quantity}</span>
-                    <button
-                      style={{ background: '#28a745', color: '#fff', border: 'none', borderRadius: 6, width: 32, height: 32, fontWeight: 700, fontSize: '1.2rem', cursor: 'pointer' }}
-                      onClick={() => { dispatch({ type: 'ADD_TO_CART', product }); }}
-                      aria-label="Increase quantity"
-                    >
-                      +
-                    </button>
-                  </div>
+                  {/* Qty controls moved into the header-aligned row; removed redundant controls here */}
                 </div>
               ))}
             </div>
@@ -284,7 +301,9 @@ export default function CartPage() {
             <div className="cart-summary" style={{ textAlign: 'right', marginTop: '2rem' }}>
               <div style={{ fontWeight: 700, fontSize: '1.2rem', wordBreak: 'break-word' }}>Subtotal: ${subtotal.toFixed(2)}</div>
               <div style={{ fontWeight: 500, fontSize: '1.05rem', color: '#555', marginTop: '0.5rem' }}>Total Weight: {totalWeight.toFixed(2)} lbs</div>
-              <div style={{ fontWeight: 500, fontSize: '1.05rem', color: '#555', marginTop: '0.5rem' }}>Shipping: {isFreight ? 'Need to Quote (Freight)' : 'TBD'}</div>
+              <div style={{ fontWeight: 500, fontSize: '1.05rem', color: '#555', marginTop: '0.5rem' }}>
+                Shipping: {isFreight ? 'Need to Quote (Freight)' : (selectedShipping ? `${selectedShipping.label} — $${shippingCost.toFixed(2)}` : 'TBD')}
+              </div>
               <div style={{ fontWeight: 500, fontSize: '1.05rem', color: '#555', marginTop: '0.5rem' }}>Tax: ${tax.toFixed(2)}</div>
               <div style={{ fontWeight: 800, fontSize: '1.25rem', color: '#222', marginTop: '0.75rem' }}>Total: ${grandTotal.toFixed(2)}</div>
             </div>

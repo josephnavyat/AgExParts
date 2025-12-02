@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Navbar from './Navbar.jsx';
+import { getImageUrl as resolveImageUrl } from '../utils/imageUrl.js';
 import { useLocation } from 'react-router-dom';
-import getImageUrl from '../utils/getImageUrl.js';
 
 export default function FreightInquiryPage() {
   const location = useLocation();
@@ -35,10 +35,11 @@ export default function FreightInquiryPage() {
     setSubmitted(true);
   };
 
-  // shared getImageUrl used for consistent image path handling
+  const getImageUrl = (img) => resolveImageUrl(img);
 
   return (
     <>
+      <Navbar />
       <div style={{ maxWidth: 700, margin: '2rem auto', background: '#fff', borderRadius: 16, boxShadow: '0 2px 12px rgba(0,0,0,0.10)', padding: '2rem', color: '#222' }}>
         <h2 style={{ marginBottom: '1.5rem', fontWeight: 700 }}>Freight Inquiry</h2>
         <h3 style={{ marginBottom: '1rem', fontWeight: 600 }}>Cart Summary</h3>

@@ -10,7 +10,7 @@ import { loadStripe } from '@stripe/stripe-js';
 const App = lazy(() => import('./App.jsx'));
 const Layout = lazy(() => import('./components/Layout.jsx'));
 const SimpleGallery = lazy(() => import('./components/SimpleGallery.jsx'));
-const ProductDetail = lazy(() => import('./components/ProductDetail.jsx'));
+const ProductDetail = lazy(() => import('./components/ProductDetailNew.jsx'));
 const CartPage = lazy(() => import('./components/CartPage.jsx'));
 const OrderSuccess = lazy(() => import('./components/OrderSuccess.jsx'));
 const SuccessPage = lazy(() => import('./components/SuccessPage.jsx'));

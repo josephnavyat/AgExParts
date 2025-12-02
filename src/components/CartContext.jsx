@@ -4,6 +4,7 @@ const CartContext = createContext();
 
 const initialState = {
   items: [], // { product, quantity }
+  shipping: null, // { cost: number, label: string, rateId: string }
 };
 
 function cartReducer(state, action) {
@@ -68,6 +69,23 @@ function cartReducer(state, action) {
         ...state,
         items: state.items.filter(i => i.product.id !== action.id),
       };
+    case 'SET_SHIPPING':
+      return {
+        ...state,
+        shipping: action.shipping || null,
+      };
+    case 'SET_SHIPPING_COST':
+      // backward compatibility: accept cost and rate
+      {
+        const shippingObj = action.shipping || (action.cost != null ? { cost: Number(action.cost), label: action.rate ? (action.rate.provider + ' ' + (action.rate.servicelevel?.name || '')) : '', rateId: action.rate?.object_id || null } : state.shipping);
+        const shippingCostNumber = shippingObj && shippingObj.cost != null ? Number(shippingObj.cost) : (action.cost != null ? Number(action.cost) : (state.shipping ? Number(state.shipping.cost || 0) : 0));
+        return {
+          ...state,
+          shipping: shippingObj,
+          // keep older code paths working by providing a top-level numeric shipping_cost
+          shipping_cost: shippingCostNumber,
+        };
+      }
     case "CLEAR_CART":
       return initialState;
     default:
@@ -82,8 +100,29 @@ const CartProvider = ({ children }) => {
     () => {
       try {
         const stored = localStorage.getItem('cart');
-        return stored ? JSON.parse(stored) : initialState;
-      } catch {
+        if (!stored) return initialState;
+        const parsed = JSON.parse(stored);
+        if (!parsed || !Array.isArray(parsed.items)) return initialState;
+        // Sanitize items: coerce price to number and drop invalid-priced items
+        const sanitizedItems = [];
+        for (const it of parsed.items) {
+          const prod = it && it.product ? { ...it.product } : null;
+          const qty = it && typeof it.quantity === 'number' ? it.quantity : 1;
+          if (!prod) continue;
+          let price = prod.price;
+          if (typeof price === 'string') price = price.trim() === '' ? NaN : Number(price);
+          else price = Number(price);
+          if (isNaN(price) || price <= 0) {
+            console.warn('Removing invalid-priced product from persisted cart:', prod && (prod.id || prod.name));
+            continue; // skip invalid price
+          }
+          prod.price = price;
+          sanitizedItems.push({ product: prod, quantity: qty });
+        }
+        return { items: sanitizedItems };
+      } catch (e) {
+        console.error('Failed to parse persisted cart, clearing:', e);
+        try { localStorage.removeItem('cart'); } catch {};
         return initialState;
       }
     }

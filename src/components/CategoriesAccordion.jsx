@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
 
 function Chevron({ open }) {
   return (
@@ -70,14 +71,14 @@ export default function CategoriesAccordion() {
           <div id={`cat-${i}`} className={`sub-list ${openIndex === i ? 'open' : ''}`} role="group" aria-hidden={openIndex !== i}>
             {g.subcategories.length === 0 && <div className="sub-item muted">(no subcategories)</div>}
             {g.subcategories.map(sub => (
-              <a
+              <Link
                 key={sub}
                 className="sub-item"
-                href={`/search-results?category=${encodeURIComponent(g.category)}&subcategory=${encodeURIComponent(sub)}`}
+                to={`/search-results?category=${encodeURIComponent(g.category)}&subcategory=${encodeURIComponent(sub)}`}
                 onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.click(); }}
               >
                 {sub}
-              </a>
+              </Link>
             ))}
           </div>
         </div>
