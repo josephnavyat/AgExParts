@@ -13,6 +13,8 @@ export default function SearchResults() {
   const subcategory = params.get("subcategory") || '';
 
   const [products, setProducts] = useState([]);
+  const [compatOptions, setCompatOptions] = useState({ manufacturers: [], machine_types: [], models: [] });
+  const [compatibleSkus, setCompatibleSkus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -45,8 +47,53 @@ export default function SearchResults() {
       }
     };
     fetchProducts();
+    (async () => {
+      try {
+        const res = await fetch('/.netlify/functions/get-compatibility-options');
+        if (!res.ok) return;
+        const json = await res.json();
+        if (json) setCompatOptions({ manufacturers: json.manufacturers || [], machine_types: json.machine_types || [], models: json.models || [] });
+      } catch (e) {}
+    })();
     return () => controller.abort();
   }, []);
+
+  // When manufacturer/machineType/model change, prefer server-provided list of matching SKUs
+  useEffect(() => {
+    const controller = new AbortController();
+    const manuf = manufacturer || '';
+    const mtype = machineType || '';
+    const mdl = model || '';
+
+    // If no filters selected, clear SKU-based filter so we fall back to product fields
+    if (!manuf && !mtype && !mdl) {
+      setCompatibleSkus(null);
+      return () => controller.abort();
+    }
+
+    (async () => {
+      try {
+        const params = new URLSearchParams();
+        if (manuf) params.append('manufacturer', manuf);
+        if (mtype) params.append('machine_type', mtype);
+        if (mdl) params.append('model', mdl);
+        const url = '/.netlify/functions/get-compatible-skus?' + params.toString();
+        const res = await fetch(url, { signal: controller.signal });
+        if (!res.ok) {
+          setCompatibleSkus(null);
+          return;
+        }
+        const json = await res.json();
+        if (json && Array.isArray(json.skus)) {
+          setCompatibleSkus(json.skus.map(s => String(s || '').trim().toLowerCase()));
+        } else setCompatibleSkus([]);
+      } catch (e) {
+        if (e.name !== 'AbortError') setCompatibleSkus(null);
+      }
+    })();
+
+    return () => controller.abort();
+  }, [manufacturer, machineType, model]);
 
   const getImageUrl = (img) => resolveImageUrl(img);
 
@@ -105,9 +152,20 @@ export default function SearchResults() {
   .filter(p => !category || (p.category && String(p.category) === String(category)))
   .filter(p => !subcategory || (p.subcategory && String(p.subcategory) === String(subcategory)))
     .filter(p => p.website_visible === true)
-    .filter(p => !manufacturer || p.manufacturer === manufacturer)
-    .filter(p => !machineType || p.machine_type === machineType)
-    .filter(p => !model || p.model === model)
+    .filter(p => {
+      // If server returned a SKU list (array), use it as the authoritative filter
+      if (Array.isArray(compatibleSkus)) {
+        if (compatibleSkus.length === 0) return false;
+  const key = (p.sku || p.part_number || p.id);
+  if (key == null) return false;
+  return compatibleSkus.includes(String(key).trim().toLowerCase());
+      }
+      // Fallback: filter by product fields when SKU list not available
+      if (manufacturer && p.manufacturer !== manufacturer) return false;
+      if (machineType && p.machine_type !== machineType) return false;
+      if (model && p.model !== model) return false;
+      return true;
+    })
     .filter(p => !inStockOnly || (Number(p.inventory ?? p.quantity ?? 0) > 0))
     .filter(p => {
       if (searchText && searchText.trim()) {
@@ -163,7 +221,7 @@ export default function SearchResults() {
               <label className="filter-label">Manufacturer</label>
               <select value={manufacturer} onChange={e => setManufacturer(e.target.value)} className="filter-select">
                 <option value="">All Manufacturers</option>
-                {uniqueOptions('manufacturer').map(m => <option key={m} value={m}>{m}</option>)}
+                {(compatOptions.manufacturers && compatOptions.manufacturers.length > 0 ? compatOptions.manufacturers : uniqueOptions('manufacturer')).map(m => <option key={m} value={m}>{m}</option>)}
               </select>
             </div>
 
@@ -171,7 +229,7 @@ export default function SearchResults() {
               <label className="filter-label">Machine Type</label>
               <select value={machineType} onChange={e => setMachineType(e.target.value)} className="filter-select">
                 <option value="">All Machine Types</option>
-                {uniqueOptions('machine_type').map(m => <option key={m} value={m}>{m}</option>)}
+                {(compatOptions.machine_types && compatOptions.machine_types.length > 0 ? compatOptions.machine_types : uniqueOptions('machine_type')).map(m => <option key={m} value={m}>{m}</option>)}
               </select>
             </div>
 
@@ -179,7 +237,7 @@ export default function SearchResults() {
               <label className="filter-label">Model</label>
               <select value={model} onChange={e => setModel(e.target.value)} className="filter-select">
                 <option value="">All Models</option>
-                {uniqueOptions('model').map(m => <option key={m} value={m}>{m}</option>)}
+                {(compatOptions.models && compatOptions.models.length > 0 ? compatOptions.models : uniqueOptions('model')).map(m => <option key={m} value={m}>{m}</option>)}
               </select>
             </div>
 
@@ -207,7 +265,7 @@ export default function SearchResults() {
                       src={getImageUrl(pickImage(product) || product.image)}
                       alt={product.name}
                       loading="lazy"
-                      onError={e => { e.currentTarget.src = '/logo.png'; }}
+                      onError={e => { console.log('Image error:', pickImage(product) || product.image, getImageUrl(pickImage(product) || product.image)); e.currentTarget.src = '/logo.png'; }}
                     />
                   </div>
                   {product.sku && (

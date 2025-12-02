@@ -20,7 +20,7 @@ exports.handler = async function(event) {
       SELECT m.manufacturer, m.machine_type, m.model
       FROM machine_compatibility_link l
       JOIN machine_compatibility m ON l.machine_compatibility_id = m.id
-      WHERE l.sku = ${sku}
+      WHERE (l.sku = ${sku} OR l.product_sku = ${sku})
       ORDER BY m.manufacturer, m.machine_type, m.model;
     `;
     return { statusCode: 200, body: JSON.stringify(rows) };

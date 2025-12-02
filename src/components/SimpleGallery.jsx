@@ -9,6 +9,8 @@ import { getImageUrl as resolveImageUrl } from '../utils/imageUrl.js';
 export default function SimpleGallery() {
   const isMobile = window.matchMedia('(max-width: 700px)').matches;
   const [products, setProducts] = useState([]);
+  const [compatOptions, setCompatOptions] = useState({ manufacturers: [], machine_types: [], models: [] });
+  const [compatibleSkus, setCompatibleSkus] = useState(null); // null = no server filter applied
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   // Filter pane is hidden by default on all devices (mobile and desktop)
@@ -52,8 +54,52 @@ export default function SimpleGallery() {
       }
     };
     fetchProducts();
+    // fetch compatibility options (non-blocking)
+    (async () => {
+      try {
+        const res = await fetch('/.netlify/functions/get-compatibility-options');
+        if (!res.ok) return;
+        const json = await res.json();
+        if (json) setCompatOptions({ manufacturers: json.manufacturers || [], machine_types: json.machine_types || [], models: json.models || [] });
+      } catch (e) {
+        // ignore
+      }
+    })();
     return () => controller.abort();
   }, []);
+
+  // Fetch compatible SKUs when compatibility filters change
+  useEffect(() => {
+    // If no filters selected, clear server-side SKU filter (client will use product fields)
+    if (!manufacturer && !machineType && !model) {
+      setCompatibleSkus(null);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const params = new URLSearchParams();
+        if (manufacturer) params.set('manufacturer', manufacturer);
+        if (machineType) params.set('machine_type', machineType);
+        if (model) params.set('model', model);
+        const res = await fetch('/.netlify/functions/get-compatible-skus?' + params.toString());
+        if (!res.ok) { setCompatibleSkus(null); return; }
+        const json = await res.json();
+        // If server indicates no DB connection (skus === null), fall back to product-field filtering
+        if (!cancelled) {
+          if (json && json.skus === null) {
+            setCompatibleSkus(null);
+          } else {
+            const skus = Array.isArray(json.skus) ? json.skus.map(s => String(s || '').trim().toLowerCase()) : [];
+            setCompatibleSkus(skus);
+          }
+        }
+      } catch (e) {
+        setCompatibleSkus(null);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [manufacturer, machineType, model]);
 
   // Pagination state
   const [perPage, setPerPage] = useState(50);
@@ -170,16 +216,16 @@ export default function SimpleGallery() {
               <label className="filter-label">Manufacturer</label>
                 <select value={manufacturer} onChange={e => setManufacturer(e.target.value)} className="filter-select">
                   <option value="">All Manufacturers</option>
-                  {[...new Set(products.map(p => p.manufacturer).filter(Boolean))].map(m => (
-                    <option key={m} value={m}>{m}</option>
-                  ))}
+                  {(compatOptions.manufacturers && compatOptions.manufacturers.length > 0 ? compatOptions.manufacturers : [...new Set(products.map(p => p.manufacturer).filter(Boolean))]).map(m => (
+                      <option key={m} value={m}>{m}</option>
+                    ))}
                 </select>
             </div>
             <div className="filter-section">
               <label className="filter-label">Machine Type</label>
               <select value={machineType} onChange={e => setMachineType(e.target.value)} className="filter-select">
                 <option value="">All Machine Types</option>
-                {uniqueOptions('machine_type').map(m => (
+                {(compatOptions.machine_types && compatOptions.machine_types.length > 0 ? compatOptions.machine_types : uniqueOptions('machine_type')).map(m => (
                   <option key={m} value={m}>{m}</option>
                 ))}
               </select>
@@ -188,7 +234,7 @@ export default function SimpleGallery() {
               <label className="filter-label">Model</label>
               <select value={model} onChange={e => setModel(e.target.value)} className="filter-select">
                 <option value="">All Models</option>
-                {uniqueOptions('model').map(m => (
+                {(compatOptions.models && compatOptions.models.length > 0 ? compatOptions.models : uniqueOptions('model')).map(m => (
                   <option key={m} value={m}>{m}</option>
                 ))}
               </select>
@@ -214,9 +260,24 @@ export default function SimpleGallery() {
           {(() => {
               const filtered = products
               .filter(product => product.website_visible === true)
-              .filter(product => !manufacturer || product.manufacturer === manufacturer)
-              .filter(product => !machineType || product.machine_type === machineType)
-              .filter(product => !model || product.model === model)
+              // If server returned compatible SKUs, filter by those SKUs (only show linked products)
+              .filter(product => {
+                if (Array.isArray(compatibleSkus)) {
+                  // if compatibleSkus is empty array, no products match
+                  return compatibleSkus.length ? compatibleSkus.includes(String(product.sku || product.part_number || product.id)) : false;
+                }
+                // fallback to original product-field filtering when no server filter
+                if (!manufacturer || product.manufacturer === manufacturer) return true;
+                return false;
+              })
+              .filter(product => {
+                if (Array.isArray(compatibleSkus)) return true; // already filtered by SKU
+                return !machineType || product.machine_type === machineType;
+              })
+              .filter(product => {
+                if (Array.isArray(compatibleSkus)) return true;
+                return !model || product.model === model;
+              })
               .filter(product => !inStockOnly || product.quantity > 0)
               .filter(product => {
                 if (!searchText.trim()) return true;
@@ -239,7 +300,7 @@ export default function SimpleGallery() {
                   src={getImageUrl(product.image)} 
                   alt={product.name} 
                   loading="lazy"
-                  onError={e => { e.currentTarget.src = '/logo.png'; }}
+                  onError={e => { console.log('Image error:', product.image, getImageUrl(product.image)); e.currentTarget.src = '/logo.png'; }}
                 />
               </div>
               {product.sku && (

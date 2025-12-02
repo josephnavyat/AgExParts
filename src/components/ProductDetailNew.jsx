@@ -132,7 +132,10 @@ export default function ProductDetailNew() {
         <div style={{ marginBottom: 12 }}>
           <div className="pd-part-divider" aria-hidden="true" style={{ height: 1, background: '#e6e6e6', width: '100%' }} />
         </div>
-        <h3 style={{ marginBottom: 8 }}>OEM Replacement</h3>
+        <div style={{ display: 'flex', alignItems: 'center', margin: '8px 0 12px 0' }}>
+          <h3 style={{ margin: 0 }}>OEM Replacement</h3>
+          <div style={{ flex: 1, height: 6, background: '#3b3b3b', borderRadius: 3, boxShadow: '0 4px 16px rgba(122,133,153,0.08)', marginLeft: 12 }} />
+        </div>
         <div style={{ color: '#444', fontSize: '1rem' }}>
         {process.env.NODE_ENV !== 'production' && console.log('ProductDetailNew OEM product:', product)}
         {/* Primary OEM value */}
@@ -158,7 +161,10 @@ export default function ProductDetailNew() {
         </div>
           {/* description intentionally not duplicated here on desktop; rendered in content column */}
           <div className="pd-section" style={{ marginBottom: 12 }}>
-            <h3 style={{ marginBottom: 8 }}>Part Attributes</h3>
+            <div style={{ display: 'flex', alignItems: 'center', margin: '8px 0 12px 0' }}>
+              <h3 style={{ margin: 0 }}>Part Attributes</h3>
+              <div style={{ flex: 1, height: 6, background: '#3b3b3b', borderRadius: 3, boxShadow: '0 4px 16px rgba(122,133,153,0.08)', marginLeft: 12 }} />
+            </div>
             {attributes.length > 0 ? (
               <table className="compat-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <tbody>
@@ -179,7 +185,10 @@ export default function ProductDetailNew() {
           </div>
 
           <div className="pd-section">
-            <h3 style={{ marginBottom: 8 }}>Machine Compatibility</h3>
+            <div style={{ display: 'flex', alignItems: 'center', margin: '8px 0 12px 0' }}>
+              <h3 style={{ margin: 0 }}>Machine Compatibility</h3>
+              <div style={{ flex: 1, height: 6, background: '#3b3b3b', borderRadius: 3, boxShadow: '0 4px 16px rgba(122,133,153,0.08)', marginLeft: 12 }} />
+            </div>
             {compatibility.length > 0 ? (
               <table className="compat-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
@@ -217,9 +226,9 @@ export default function ProductDetailNew() {
         {product.part_number && (
           <div style={{ marginTop: 8, color: '#444', fontWeight: 600 }}>Part #: {product.part_number}</div>
         )}
-        {/* subtle divider below the part number */}
-        <div style={{ marginTop: 12 }}>
-          <div className="pd-part-divider" aria-hidden="true" style={{ height: 1, background: '#e6e6e6', width: '100%' }} />
+        {/* decorative bar across the content column (replaces multiple thin dividers) */}
+        <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ flex: 1, height: 6, background: '#3b3b3b', borderRadius: 3, boxShadow: '0 4px 16px rgba(122,133,153,0.08)' }} />
         </div>
         {/* description placed under part number with extra spacing */}
         <div style={{ marginTop: 12 }}>
@@ -261,12 +270,11 @@ export default function ProductDetailNew() {
         )}
 
   {/* description displayed under part number (duplicate removed) */}
-        {/* divider between OEM Replacement and Part Attributes (content/mobile) */}
-        <div style={{ marginTop: 12 }}>
-          <div className="pd-part-divider" aria-hidden="true" style={{ height: 1, background: '#e6e6e6', width: '100%' }} />
-        </div>
         <div className="pd-section">
-          <h3 style={{ marginBottom: 8 }}>Part Attributes</h3>
+          <div style={{ display: 'flex', alignItems: 'center', margin: '8px 0 12px 0' }}>
+            <h3 style={{ margin: 0 }}>Part Attributes</h3>
+            <div style={{ flex: 1, height: 6, background: '#3b3b3b', borderRadius: 3, boxShadow: '0 4px 16px rgba(122,133,153,0.08)', marginLeft: 12 }} />
+          </div>
           {attributes.length > 0 ? (
             <table className="compat-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
               <tbody>
@@ -286,14 +294,15 @@ export default function ProductDetailNew() {
           )}
         </div>
 
-        {/* divider between Part Attributes and Machine Compatibility (only when both exist) */}
+        {/* spacing between Part Attributes and Machine Compatibility when both exist */}
         {(attributes && attributes.length > 0 && compatibility && compatibility.length > 0) && (
-          <div style={{ marginTop: 12, marginBottom: 12 }}>
-            <div className="pd-part-divider" aria-hidden="true" style={{ height: 1, background: '#e6e6e6', width: '100%' }} />
-          </div>
+          <div style={{ marginTop: 12, marginBottom: 12 }} />
         )}
         <div className="pd-section pd-compat-top">
-          <h3 style={{ marginBottom: 8 }}>Machine Compatibility</h3>
+          <div style={{ display: 'flex', alignItems: 'center', margin: '8px 0 12px 0' }}>
+            <h3 style={{ margin: 0 }}>Machine Compatibility</h3>
+            <div style={{ flex: 1, height: 6, background: '#3b3b3b', borderRadius: 3, boxShadow: '0 4px 16px rgba(122,133,153,0.08)', marginLeft: 12 }} />
+          </div>
           {compatibility.length > 0 ? (
             <table className="compat-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>

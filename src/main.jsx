@@ -37,6 +37,39 @@ function CartPageWrapper() {
   );
 }
 
+// Warm categories cache in background on app startup (non-blocking)
+try {
+  (async () => {
+    const CACHE_KEY = 'agx_categories_v1';
+    const CACHE_TTL = 1000 * 60 * 60 * 24; // 24h
+    try {
+      const raw = localStorage.getItem(CACHE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && parsed.timestamp && (Date.now() - parsed.timestamp) < CACHE_TTL) return; // fresh
+      }
+    } catch (e) {}
+    try {
+      const res = await fetch('/.netlify/functions/get-data');
+      if (!res.ok) return;
+      const json = await res.json();
+      const products = Array.isArray(json) ? json : (json && Array.isArray(json.products) ? json.products : []);
+      const map = new Map();
+      for (const p of products) {
+        const cat = (p.category || '').trim();
+        const sub = (p.subcategory || '').trim();
+        if (!cat) continue;
+        if (!map.has(cat)) map.set(cat, new Set());
+        if (sub) map.get(cat).add(sub);
+      }
+      const grouped = Array.from(map.entries()).map(([category, subs]) => ({ category, subcategories: Array.from(subs).sort((a,b)=>a.localeCompare(b)) })).sort((a,b)=>a.category.localeCompare(b));
+      try { localStorage.setItem(CACHE_KEY, JSON.stringify({ timestamp: Date.now(), groups: grouped })); } catch (e) {}
+    } catch (e) {
+      // ignore prefetch failures
+    }
+  })();
+} catch (e) {}
+
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
