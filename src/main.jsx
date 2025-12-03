@@ -17,7 +17,7 @@ const SuccessPage = lazy(() => import('./components/SuccessPage.jsx'));
 const FailurePage = lazy(() => import('./components/FailurePage.jsx'));
 const SearchResults = lazy(() => import('./components/SearchResults.jsx'));
 const CategoryPage = lazy(() => import('./components/CategoryPage.jsx'));
-const Categories = lazy(() => import('./components/Categories.jsx'));
+const Categories = lazy(() => import('./components/CategoriesPage.jsx'));
 const FreightInquiryPage = lazy(() => import('./components/FreightInquiryPage.jsx'));
 const ContactPartsSpecialist = lazy(() => import('./components/ContactPartsSpecialist.jsx'));
 const ProfilePage = lazy(() => import('./components/ProfilePage.jsx'));

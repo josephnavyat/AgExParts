@@ -223,7 +223,7 @@ export default function Navbar() {
                   to="/categories"
                   className="nav-secondary-link nav-categories-toggle"
                   aria-expanded={categoriesOpen}
-                  onClick={(e) => { e.preventDefault(); if (!catsLoaded) loadCategories(); setCategoriesOpen(s => { const next = !s; if (next && categories && categories.length) setActiveCategory(categories[0].category); return next; }); }}
+                  onClick={(e) => { e.preventDefault(); try { navigate('/categories'); } catch (err) { window.location.href = '/categories'; } }}
                 >
                   Browse by Category
                 </Link>
