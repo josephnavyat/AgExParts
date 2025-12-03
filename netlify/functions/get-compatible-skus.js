@@ -22,15 +22,29 @@ exports.handler = async function (event) {
     // If no filters provided, return empty so client falls back to product-derived filtering
     if (conditions.length === 0) return { statusCode: 200, body: JSON.stringify({ skus: [] }) };
 
+    // Determine which SKU column exists in the link table to avoid SQL errors
+    const cols = await sql`
+      SELECT column_name
+      FROM information_schema.columns
+      WHERE table_name = 'machine_compatibility_link' AND column_name IN ('product_sku', 'sku')
+    `;
+    const found = Array.isArray(cols) ? cols.map(r => r.column_name) : [];
+    const skuCol = found.includes('product_sku') ? 'product_sku' : (found.includes('sku') ? 'sku' : null);
+
+    if (!skuCol) {
+      // No SKU-like column; return empty authoritative result
+      return { statusCode: 200, body: JSON.stringify({ skus: [], db: true }) };
+    }
+
     const rows = await sql`
-      SELECT DISTINCT COALESCE(mcl.product_sku, mcl.sku) AS product_sku
+      SELECT DISTINCT mcl.${sql.raw(skuCol)} AS product_sku
       FROM machine_compatibility mc
       JOIN machine_compatibility_link mcl ON mcl.machine_compatibility_id = mc.id
       WHERE ${sql.join(conditions, sql` AND `)}
     `;
 
-  const skus = Array.isArray(rows) ? rows.map(r => r.product_sku).filter(Boolean) : [];
-  return { statusCode: 200, body: JSON.stringify({ skus, db: true }) };
+    const skus = Array.isArray(rows) ? rows.map(r => r.product_sku).filter(Boolean) : [];
+    return { statusCode: 200, body: JSON.stringify({ skus, db: true }) };
   } catch (err) {
     console.error('get-compatible-skus error', err && err.message);
     return { statusCode: 500, body: JSON.stringify({ error: 'Query failed' }) };

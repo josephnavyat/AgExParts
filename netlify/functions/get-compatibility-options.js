@@ -16,25 +16,27 @@ exports.handler = async function (event) {
 
   try {
     // Only include compatibility rows that are linked to products via machine_compatibility_link
+    // Join to the link table to ensure we only return compatibility rows that are linked to at least one product.
+    // Avoid referencing specific SKU columns here because some deployments use `product_sku` while others use `sku`.
     const mans = await sql`
       SELECT DISTINCT mc.manufacturer
       FROM machine_compatibility mc
       JOIN machine_compatibility_link mcl ON mcl.machine_compatibility_id = mc.id
-  WHERE mc.manufacturer IS NOT NULL AND (mcl.product_sku IS NOT NULL OR mcl.sku IS NOT NULL)
+      WHERE mc.manufacturer IS NOT NULL
       ORDER BY mc.manufacturer
     `;
     const mts = await sql`
       SELECT DISTINCT mc.machine_type
       FROM machine_compatibility mc
       JOIN machine_compatibility_link mcl ON mcl.machine_compatibility_id = mc.id
-  WHERE mc.machine_type IS NOT NULL AND (mcl.product_sku IS NOT NULL OR mcl.sku IS NOT NULL)
+      WHERE mc.machine_type IS NOT NULL
       ORDER BY mc.machine_type
     `;
     const mods = await sql`
       SELECT DISTINCT mc.model
       FROM machine_compatibility mc
       JOIN machine_compatibility_link mcl ON mcl.machine_compatibility_id = mc.id
-  WHERE mc.model IS NOT NULL AND (mcl.product_sku IS NOT NULL OR mcl.sku IS NOT NULL)
+      WHERE mc.model IS NOT NULL
       ORDER BY mc.model
     `;
 

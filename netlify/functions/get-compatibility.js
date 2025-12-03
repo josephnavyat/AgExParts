@@ -16,11 +16,22 @@ exports.handler = async function(event) {
   }
 
   try {
+    // Detect which column stores the SKU (product_sku or sku)
+    const cols = await sql`
+      SELECT column_name
+      FROM information_schema.columns
+      WHERE table_name = 'machine_compatibility_link' AND column_name IN ('product_sku', 'sku')
+    `;
+    const found = Array.isArray(cols) ? cols.map(r => r.column_name) : [];
+    const skuCol = found.includes('product_sku') ? 'product_sku' : (found.includes('sku') ? 'sku' : null);
+
+    if (!skuCol) return { statusCode: 200, body: JSON.stringify([]) };
+
     const rows = await sql`
       SELECT m.manufacturer, m.machine_type, m.model
       FROM machine_compatibility_link l
       JOIN machine_compatibility m ON l.machine_compatibility_id = m.id
-      WHERE (l.sku = ${sku} OR l.product_sku = ${sku})
+      WHERE l.${sql.raw(skuCol)} = ${sku}
       ORDER BY m.manufacturer, m.machine_type, m.model;
     `;
     return { statusCode: 200, body: JSON.stringify(rows) };
