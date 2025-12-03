@@ -816,17 +816,16 @@ footer {
     margin-bottom: 1rem !important;
   }
   .cart-page-content {
-    width: 100% !important;
-    box-sizing: border-box;
-    padding: 0.5rem !important;
-    border-radius: 10px !important;
-    margin: 0.5rem auto !important;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    zoom: 0.95;
-    max-width: 420px;
+  width: 100% !important;
+  box-sizing: border-box;
+  padding: 0.75rem !important;
+  border-radius: 8px !important;
+  margin: 0.75rem auto !important;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  max-width: 100%;
   }
   .cart-page-content .cart-actions {
     display: flex;
@@ -862,19 +861,19 @@ footer {
     margin-right: 0;
   }
   .cart-cards {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
   }
   .cart-card {
-    width: 100% !important;
-    max-width: 400px;
-    margin: 0.5rem auto !important;
+  width: 100% !important;
+  max-width: 100%;
+  margin: 0.5rem 0 !important;
   }
   .cart-page-content > * {
-    align-self: center;
+  align-self: stretch;
   }
   table {
     font-size: 0.92rem !important;
