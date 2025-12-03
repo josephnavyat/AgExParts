@@ -334,7 +334,7 @@ export default function CartPage() {
                                   })()}
                                 </div>
                               </div>
-                              <div style={{ fontWeight: 800 }}>
+                              <div className="line-total" style={{ fontWeight: 800 }}>
                                 {(() => {
                                   const price = Number(product.price);
                                   const discountPerc = Number(product.discount_perc) || 0;

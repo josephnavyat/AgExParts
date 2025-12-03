@@ -358,6 +358,14 @@ body.hero-active .hero .card .muted {
   .cart-card img { margin-right: 10px !important; }
 }
 
+/* Even stronger: for very narrow widths, stack the qty block above the price */
+@media (max-width:480px) {
+  .cart-header-row { display: none !important; }
+  .cart-mobile-summary > div { flex-direction: column !important; align-items: flex-start !important; gap: 6px !important; }
+  .cart-mobile-summary .line-total { display: block !important; margin-top: 6px !important; font-weight: 800 !important; }
+  .cart-mobile-summary { font-size: 0.98rem !important; }
+}
+
 /* Mobile: show toggle and collapse secondary links */
 @media (max-width: 700px) {
   .nav-secondary { padding: 8px 12px; }
