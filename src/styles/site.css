@@ -366,6 +366,11 @@ body.hero-active .hero .card .muted {
   .cart-mobile-summary { font-size: 0.98rem !important; }
 }
 
+/* Hide per-row totals on small mobile screens (mobile summary should show qty only) */
+@media (max-width:700px) {
+  .cart-mobile-summary .line-total { display: none !important; }
+}
+
 /* Mobile: show toggle and collapse secondary links */
 @media (max-width: 700px) {
   .nav-secondary { padding: 8px 12px; }
