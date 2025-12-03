@@ -198,7 +198,7 @@ export default function CartPage() {
         ) : (
           <div className="cart-page-content" style={{ maxWidth: 800, margin: '0 auto', background: '#fff', borderRadius: 16, boxShadow: '0 2px 12px rgba(0,0,0,0.10)', padding: '2rem', color: '#222', boxSizing: 'border-box', width: '100%' }}>
             {/* Header row for columns: Item (left) and Price | Qty | Total (right) */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', maxWidth: 800, margin: '0 auto', padding: '0 0.5rem 0.5rem 0.5rem', color: '#666', fontSize: '0.95rem', boxSizing: 'border-box' }}>
+            <div className="cart-header-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', maxWidth: 800, margin: '0 auto', padding: '0 0.5rem 0.5rem 0.5rem', color: '#666', fontSize: '0.95rem', boxSizing: 'border-box' }}>
               <div style={{ flex: 1 }} />
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <div style={{ minWidth: 100, textAlign: 'right' }}>Price</div>
