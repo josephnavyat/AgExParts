@@ -64,7 +64,15 @@ export default function CategoriesPage() {
     if (typeof img === 'string') {
       const s = img.trim();
       if (!s) return '/logo.png';
-      if (/^https?:\/\//i.test(s)) return s;
+      if (/^https?:\/\//i.test(s)) {
+        try {
+          const u = new URL(s);
+          if (u.hostname && u.hostname.endsWith('cdn.agexparts.com')) return `/.netlify/functions/image-proxy?url=${encodeURIComponent(s)}`;
+        } catch (e) {
+          return s;
+        }
+        return s;
+      }
       const base = (import.meta && import.meta.env && import.meta.env.VITE_IMAGE_BASE_URL) || 'https://cdn.agexparts.com';
       const name = s.replace(/^\/+/, '');
       const abs = `${String(base).replace(/\/$/, '')}/${encodeURI(name)}`;
