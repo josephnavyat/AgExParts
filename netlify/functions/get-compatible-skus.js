@@ -40,12 +40,19 @@ exports.handler = async function (event) {
 
     // Build query choosing the correct SKU column name in the SELECT clause
     let rows;
-  if (skuCol === 'product_sku') {
+
+    // combine condition fragments into a single sql fragment (avoid sql.join which may not exist)
+    let whereClause = null;
+    if (conditions.length === 1) whereClause = conditions[0];
+    else if (conditions.length === 2) whereClause = sql`${conditions[0]} AND ${conditions[1]}`;
+    else if (conditions.length === 3) whereClause = sql`${conditions[0]} AND ${conditions[1]} AND ${conditions[2]}`;
+
+    if (skuCol === 'product_sku') {
       rows = await sql`
         SELECT DISTINCT mcl.product_sku AS product_sku
         FROM machine_compatibility mc
         JOIN machine_compatibility_link mcl ON mcl.machine_compatibility_id = mc.id
-        WHERE ${sql.join(conditions, sql` AND `)}
+        WHERE ${whereClause}
       `;
     } else {
       // sku
@@ -53,7 +60,7 @@ exports.handler = async function (event) {
         SELECT DISTINCT mcl.sku AS product_sku
         FROM machine_compatibility mc
         JOIN machine_compatibility_link mcl ON mcl.machine_compatibility_id = mc.id
-        WHERE ${sql.join(conditions, sql` AND `)}
+        WHERE ${whereClause}
       `;
     }
 
