@@ -236,7 +236,7 @@ export default function CartPage() {
                         </div>
 
                         {/* Right side: unit price | qty controls | line total */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginLeft: 12 }}>
+                        <div className="cart-desktop-controls" style={{ display: 'flex', alignItems: 'center', gap: 12, marginLeft: 12 }}>
                           <div style={{ textAlign: 'right', minWidth: 100, fontWeight: 700, fontSize: '1.05rem' }}>
                             {(() => {
                               const price = Number(product.price);
@@ -288,7 +288,55 @@ export default function CartPage() {
                               return isNaN(lineTotal) ? 'Total N/A' : `$${lineTotal.toFixed(2)}`;
                             })()}
                           </div>
-                        </div>
+                          </div>
+
+                          {/* Mobile compact summary: qty × unit price = line total (shown only on small screens) */}
+                          <div className="cart-mobile-summary" style={{ display: 'none', marginTop: 8, paddingTop: 8, borderTop: '1px solid rgba(0,0,0,0.04)' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                <button
+                                  className="mobile-qty-btn"
+                                  aria-label="Decrease quantity"
+                                  onClick={() => { dispatch({ type: 'SUBTRACT_FROM_CART', product }); }}
+                                  style={{ width: 36, height: 36, borderRadius: 8, border: '1px solid #ddd', background: '#fff', fontWeight: 700 }}
+                                >
+                                  −
+                                </button>
+                                <div style={{ fontWeight: 700, minWidth: 28, textAlign: 'center' }}>{quantity}</div>
+                                <button
+                                  className="mobile-qty-btn"
+                                  aria-label="Increase quantity"
+                                  onClick={() => { dispatch({ type: 'ADD_TO_CART', product }); }}
+                                  style={{ width: 36, height: 36, borderRadius: 8, border: '1px solid #ddd', background: '#fff', fontWeight: 700 }}
+                                >
+                                  +
+                                </button>
+                                <div style={{ marginLeft: 12, color: '#666' }}>
+                                  {(() => {
+                                    const price = Number(product.price);
+                                    const discountPerc = Number(product.discount_perc) || 0;
+                                    const endDate = product.discount_end_date ? new Date(product.discount_end_date) : null;
+                                    const now = new Date();
+                                    const saleActive = discountPerc > 0 && (!endDate || now <= endDate);
+                                    const unitPrice = (saleActive && !isNaN(price)) ? Number((price * (1 - discountPerc)).toFixed(2)) : price;
+                                    return `× $${isNaN(unitPrice) ? 'N/A' : unitPrice.toFixed(2)}`;
+                                  })()}
+                                </div>
+                              </div>
+                              <div style={{ fontWeight: 800 }}>
+                                {(() => {
+                                  const price = Number(product.price);
+                                  const discountPerc = Number(product.discount_perc) || 0;
+                                  const endDate = product.discount_end_date ? new Date(product.discount_end_date) : null;
+                                  const now = new Date();
+                                  const saleActive = discountPerc > 0 && (!endDate || now <= endDate);
+                                  const unitPrice = (saleActive && !isNaN(price)) ? Number((price * (1 - discountPerc)).toFixed(2)) : price;
+                                  const lineTotal = (!isNaN(unitPrice) ? (unitPrice * quantity) : 0);
+                                  return isNaN(lineTotal) ? 'Total N/A' : `$${lineTotal.toFixed(2)}`;
+                                })()}
+                              </div>
+                            </div>
+                          </div>
                       </div>
                     </div>
                   </div>

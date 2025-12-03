@@ -1043,3 +1043,24 @@ footer {
     color: #222 !important;
   }
 }
+
+/* Mobile compact cart summary visibility */
+@media (max-width: 700px) {
+  /* hide the desktop controls area */
+  .cart-desktop-controls { display: none !important; }
+  /* show the mobile summary that includes qty buttons and compact price text */
+  .cart-mobile-summary { display: block !important; }
+  .mobile-qty-btn {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 8px !important;
+    font-size: 1.1rem !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff !important;
+    border: 1px solid #d6d6d6 !important;
+    color: #222 !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04) !important;
+  }
+}
