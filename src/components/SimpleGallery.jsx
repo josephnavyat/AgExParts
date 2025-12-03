@@ -264,7 +264,10 @@ export default function SimpleGallery() {
               .filter(product => {
                 if (Array.isArray(compatibleSkus)) {
                   // if compatibleSkus is empty array, no products match
-                  return compatibleSkus.length ? compatibleSkus.includes(String(product.sku || product.part_number || product.id)) : false;
+                  if (!compatibleSkus.length) return false;
+                  const key = product.sku || product.part_number || product.id;
+                  if (key == null) return false;
+                  return compatibleSkus.includes(String(key).trim().toLowerCase());
                 }
                 // fallback to original product-field filtering when no server filter
                 if (!manufacturer || product.manufacturer === manufacturer) return true;
