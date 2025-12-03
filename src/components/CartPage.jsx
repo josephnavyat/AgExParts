@@ -139,6 +139,15 @@ function calculateShipping(cartItems) {
 
 export default function CartPage() {
   const { cart, dispatch } = useCart();
+  // detect portrait orientation on narrow screens to avoid CSS specificity wars
+  const [isPortrait, setIsPortrait] = React.useState(() => (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width:420px) and (orientation: portrait)').matches) || false);
+  React.useEffect(() => {
+    if (!window || !window.matchMedia) return;
+    const mq = window.matchMedia('(max-width:420px) and (orientation: portrait)');
+    const onChange = (e) => setIsPortrait(e.matches);
+    try { mq.addEventListener('change', onChange); } catch (e) { mq.addListener(onChange); }
+    return () => { try { mq.removeEventListener('change', onChange); } catch (e) { mq.removeListener(onChange); } };
+  }, []);
   const navigate = useNavigate();
   // Calculate total using discounted price if sale is active
   const total = cart.items.reduce((sum, i) => {
@@ -198,14 +207,16 @@ export default function CartPage() {
         ) : (
           <div className="cart-page-content" style={{ maxWidth: 800, margin: '0 auto', background: '#fff', borderRadius: 16, boxShadow: '0 2px 12px rgba(0,0,0,0.10)', padding: '2rem', color: '#222', boxSizing: 'border-box', width: '100%' }}>
             {/* Header row for columns: Item (left) and Price | Qty | Total (right) */}
-            <div className="cart-header-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', maxWidth: 800, margin: '0 auto', padding: '0 0.5rem 0.5rem 0.5rem', color: '#666', fontSize: '0.95rem', boxSizing: 'border-box' }}>
-              <div style={{ flex: 1 }} />
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{ minWidth: 100, textAlign: 'right' }}>Price</div>
-                <div style={{ width: 120, textAlign: 'center' }}>Qty</div>
-                <div style={{ minWidth: 110, textAlign: 'right' }}>Total</div>
+            {!isPortrait && (
+              <div className="cart-header-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', maxWidth: 800, margin: '0 auto', padding: '0 0.5rem 0.5rem 0.5rem', color: '#666', fontSize: '0.95rem', boxSizing: 'border-box' }}>
+                <div style={{ flex: 1 }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div style={{ minWidth: 100, textAlign: 'right' }}>Price</div>
+                  <div style={{ width: 120, textAlign: 'center' }}>Qty</div>
+                  <div style={{ minWidth: 110, textAlign: 'right' }}>Total</div>
+                </div>
               </div>
-            </div>
+            )}
 
             <div className="cart-cards" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {cart.items.map(({ product, quantity }) => (
