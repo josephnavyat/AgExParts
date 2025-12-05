@@ -139,8 +139,6 @@ exports.handler = async (event) => {
       for (const item of itemsRows) {
         console.log('Inserting order item:', item);
         try {
-          // Ensure we don't insert an empty string for vendor_name (causes FK violation)
-          let vendorName = (typeof item.vendor_name === 'string' && item.vendor_name.trim().length > 0) ? item.vendor_name.trim() : null;
           const result = await client.query(itemQuery, [
             orderRow.id,
             item.part_id || null,
@@ -148,7 +146,7 @@ exports.handler = async (event) => {
             item.unit_price || 0,
             item.line_total || 0,
             item.name || '',
-            vendorName
+            item.vendor || ''
           ]);
           console.log('Order item insert result:', result);
           // Decrement inventory for the purchased item if part_id is present
@@ -162,25 +160,7 @@ exports.handler = async (event) => {
             console.log('No part_id provided, skipping inventory update for item:', item.name);
           }
         } catch (itemErr) {
-          // If vendor FK caused the failure, retry inserting the item with vendor_name = NULL
           console.error('Error inserting single order item or updating inventory:', item, itemErr);
-          try {
-            if (itemErr && itemErr.code === '23503' && String(itemErr.constraint).includes('order_items_vendor_name_fkey')) {
-              console.log('Retrying order item insert with vendor_name = NULL due to FK constraint');
-              const retryRes = await client.query(itemQuery, [
-                orderRow.id,
-                item.part_id || null,
-                item.qty || 1,
-                item.unit_price || 0,
-                item.line_total || 0,
-                item.name || '',
-                null
-              ]);
-              console.log('Order item insert retry result:', retryRes);
-            }
-          } catch (retryErr) {
-            console.error('Retry insert failed for item:', item, retryErr);
-          }
         }
       }
     } catch (err) {
