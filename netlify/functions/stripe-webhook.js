@@ -126,9 +126,9 @@ exports.handler = async (event) => {
     // Only insert columns that are expected to exist in the order_items table
     const itemQuery = `
       INSERT INTO order_items (
-        order_id, part_id, qty, unit_price, line_total, name, vendor_name
+        order_id, part_id, qty, unit_price, line_total, name
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7
+        $1, $2, $3, $4, $5, $6
       )
     `;
     console.log('Order items to insert:', itemsRows);
@@ -145,8 +145,7 @@ exports.handler = async (event) => {
             item.qty || 1,
             item.unit_price || 0,
             item.line_total || 0,
-            item.name || '',
-            item.vendor || ''
+            item.name || ''
           ]);
           console.log('Order item insert result:', result);
           // Decrement inventory for the purchased item if part_id is present
