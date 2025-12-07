@@ -19,14 +19,27 @@ exports.handler = async (event) => {
     return { statusCode: 400, body: JSON.stringify({ error: 'Cart is empty or invalid' }) };
   }
 
-  // Map cart items to Stripe line_items
+  // Map cart items to Stripe line_items — compute sale-final price server-side.
   const getImageUrl = (img) => {
     if (!img) return '';
     if (typeof img === 'string' && img.startsWith('http')) return img;
     if (typeof img === 'string') return `https://agexparts.netlify.app/${img.replace(/^\/+/, '')}`;
     return '';
   };
-  const line_items = cart.map(({ product, quantity }) => ({
+  // Preprocess cart items to apply discounts reliably server-side
+  const processed = cart.map(({ product, quantity }) => {
+    let price = product && product.price != null ? Number(product.price) : NaN;
+    if (typeof product.price === 'string') price = product.price.trim() === '' ? NaN : Number(product.price);
+    const discountPerc = Number(product.discount_perc) || 0;
+    const endDate = product && product.discount_end_date ? new Date(product.discount_end_date) : null;
+    const now = new Date();
+    const saleActive = discountPerc > 0 && (!endDate || now <= endDate);
+    const finalPrice = saleActive && !isNaN(price) ? Number((price * (1 - discountPerc)).toFixed(2)) : price;
+    const validPrice = !isNaN(finalPrice) && finalPrice > 0 ? finalPrice : null;
+    return { product: { ...product, price: validPrice }, quantity, finalPrice: validPrice };
+  });
+
+  const line_items = processed.map(({ product, quantity, finalPrice }) => ({
     price_data: {
       currency: 'usd',
       product_data: {
@@ -34,7 +47,7 @@ exports.handler = async (event) => {
         images: product.image ? [getImageUrl(product.image)] : [],
       },
       // Validate price is numeric and positive
-      unit_amount: (typeof product.price === 'number' && !isNaN(product.price) && product.price > 0) ? Math.round(product.price * 100) : null,
+      unit_amount: (typeof finalPrice === 'number' && !isNaN(finalPrice) && finalPrice > 0) ? Math.round(finalPrice * 100) : null,
     },
     quantity,
   }));
@@ -67,12 +80,12 @@ exports.handler = async (event) => {
 
   // Build truncated items JSON for metadata. Include line_total and ensure we stay within Stripe metadata size limits (~500 chars).
   const itemsArr = [];
-  for (const { product, quantity } of cart) {
+  for (const { product, quantity } of processed) {
     const item = {
       part_id: product.id,
       qty: quantity,
       unit_price: Number(product.price),
-      line_total: Number((product.price * quantity).toFixed(2)),
+      line_total: Number(((Number(product.price) || 0) * quantity).toFixed(2)),
       name: product.name
     };
     const testItems = [...itemsArr, item];
@@ -105,6 +118,23 @@ exports.handler = async (event) => {
       items_truncated: itemsTruncated ? '1' : '0'
     }
   };
+
+  // Attach compact shipping and billing payloads if provided by the frontend (keep them short)
+  try {
+    const shippingObj = body.shipping || null;
+    const billingObj = body.billing || null;
+    const maxLen = 380; // conservative size for metadata entries
+    if (shippingObj) {
+      const sStr = JSON.stringify(shippingObj);
+      sessionParams.metadata.shipping = sStr.length > maxLen ? sStr.slice(0, maxLen) : sStr;
+    }
+    if (billingObj) {
+      const bStr = JSON.stringify(billingObj);
+      sessionParams.metadata.billing = bStr.length > maxLen ? bStr.slice(0, maxLen) : bStr;
+    }
+  } catch (e) {
+    // ignore serialization errors
+  }
 
   // Do not enable Stripe automatic_tax here; shipping/tax are calculated on the site and
   // we only want Stripe to collect payment information. Also do not set session.customer_email.

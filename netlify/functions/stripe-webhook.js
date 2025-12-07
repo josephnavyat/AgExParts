@@ -15,9 +15,27 @@ exports.handler = async (event) => {
 
   if (stripeEvent.type === 'checkout.session.completed') {
     const session = stripeEvent.data.object;
-    // Example: extract info from session
-    // Always use shipping_details from collected_information if present
-    const shipping = session.collected_information?.shipping_details;
+    // Prefer shipping/billing/tax data from session.metadata (set by the checkout page)
+    // Fall back to Stripe-collected fields if metadata not present
+    let shipping = null;
+    let billing = null;
+    try {
+      if (session.metadata && session.metadata.shipping) {
+        shipping = JSON.parse(session.metadata.shipping);
+      }
+    } catch (e) {
+      shipping = null;
+    }
+    try {
+      if (session.metadata && session.metadata.billing) {
+        billing = JSON.parse(session.metadata.billing);
+      }
+    } catch (e) {
+      billing = null;
+    }
+    if (!shipping) {
+      shipping = session.collected_information?.shipping_details || null;
+    }
 
     // Parse items metadata early so we can compute a true subtotal (exclude shipping/tax)
     let items = [];
@@ -45,27 +63,27 @@ exports.handler = async (event) => {
   // grand total comes from Stripe (includes tax & shipping)
   const stripeGrandTotal = session.amount_total ? session.amount_total / 100 : (computedSubtotal + (Number(shippingTotal) || 0) + stripeTaxTotal);
 
-    const order = {
-      order_no: session.id,
-      status: 'paid',
-      customer_name: shipping?.name || session.customer_details?.name,
-      customer_email: session.customer_details?.email,
-      ship_address1: shipping?.address?.line1 || session.customer_details?.address?.line1,
-      ship_address2: shipping?.address?.line2 || session.customer_details?.address?.line2,
-      ship_city: shipping?.address?.city || session.customer_details?.address?.city,
-      ship_state: shipping?.address?.state || session.customer_details?.address?.state,
-      ship_postal_code: shipping?.address?.postal_code || session.customer_details?.address?.postal_code,
-      ship_country: shipping?.address?.country || session.customer_details?.address?.country,
+  const order = {
+    order_no: session.id,
+    status: 'paid',
+    customer_name: (billing && billing.name) || (shipping && shipping.name) || session.customer_details?.name,
+    customer_email: (billing && billing.email) || session.customer_details?.email,
+    ship_address1: (shipping && (shipping.street1 || shipping.address1 || shipping.line1)) || session.customer_details?.address?.line1,
+    ship_address2: (shipping && (shipping.street2 || shipping.address2 || shipping.line2)) || session.customer_details?.address?.line2,
+    ship_city: (shipping && (shipping.city)) || session.customer_details?.address?.city,
+    ship_state: (shipping && (shipping.state)) || session.customer_details?.address?.state,
+    ship_postal_code: (shipping && (shipping.zip || shipping.postal_code || shipping.postal)) || session.customer_details?.address?.postal_code,
+    ship_country: (shipping && (shipping.country)) || session.customer_details?.address?.country,
   subtotal: computedSubtotal,
-      discount_total: 0,
-      shipping_total: shippingTotal,
-  // persist Stripe-calculated tax into tax_total
-  tax_total: stripeTaxTotal,
+    discount_total: 0,
+    shipping_total: shippingTotal,
+  // persist Stripe-calculated tax into tax_total (prefer metadata tax_cost)
+  tax_total: session.metadata?.tax_cost ? Number(session.metadata.tax_cost) : stripeTaxTotal,
   // store grand_total from Stripe
   grand_total: stripeGrandTotal,
-      currency: session.currency,
-      payment_ref: session.payment_intent,
-    };
+    currency: session.currency,
+    payment_ref: session.payment_intent,
+  };
 
     const client = new Client({ connectionString: process.env.DATABASE_URL });
     await client.connect();
