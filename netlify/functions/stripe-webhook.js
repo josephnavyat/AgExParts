@@ -122,13 +122,32 @@ exports.handler = async (event) => {
   // Items were parsed earlier into `itemsRows`; log for debug and reuse that for inserts
   console.log('Using parsed items for insertion:', itemsRows);
 
-    // Insert each item into order_items table with logging and error handling
-    // Only insert columns that are expected to exist in the order_items table
-    const itemQuery = `
+    // Detect whether order_items has a vendor_name column so we can be defensive
+    let hasVendorNameColumn = false;
+    try {
+      const colRes = await client.query(`
+        SELECT column_name FROM information_schema.columns
+        WHERE table_name = 'order_items' AND column_name = 'vendor_name' LIMIT 1
+      `);
+      hasVendorNameColumn = Boolean(colRes && colRes.rows && colRes.rows.length > 0);
+    } catch (colErr) {
+      console.warn('Could not detect order_items.vendor_name column, proceeding defensively:', colErr && colErr.message ? colErr.message : colErr);
+      hasVendorNameColumn = false;
+    }
+
+    // Build item insert queries depending on presence of vendor_name column
+    const itemQueryWithVendor = `
       INSERT INTO order_items (
         order_id, part_id, qty, unit_price, manu_price, line_total, name, vendor_name
       ) VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8
+      )
+    `;
+    const itemQueryNoVendor = `
+      INSERT INTO order_items (
+        order_id, part_id, qty, unit_price, manu_price, line_total, name
+      ) VALUES (
+        $1, $2, $3, $4, $5, $6, $7
       )
     `;
     console.log('Order items to insert:', itemsRows);
@@ -148,30 +167,67 @@ exports.handler = async (event) => {
               const prodRes = await client.query('SELECT manu_price, sku, vendor, vendor_name, manufacturer FROM products WHERE id = $1 LIMIT 1', [item.part_id]);
               if (prodRes && prodRes.rows && prodRes.rows[0]) {
                 const p = prodRes.rows[0];
-                manuPrice = p.manu_price;
+                // coerce manu_price to a number when possible to ensure DB receives numeric or null
+                manuPrice = p.manu_price != null ? Number(p.manu_price) : null;
+                if (manuPrice !== null && isNaN(manuPrice)) manuPrice = null;
                 // attach sku back onto the item so email builder can use it
                 item.sku = p.sku;
                 // resolve vendor name from possible columns
                 vendorName = p.vendor || p.vendor_name || p.manufacturer || null;
                 // normalize empty-string to null to avoid FK violations
                 if (typeof vendorName === 'string' && vendorName.trim() === '') vendorName = null;
+                console.log('Fetched product row for part_id', item.part_id, 'product:', p, 'resolved manuPrice:', manuPrice, 'vendorName:', vendorName);
               }
             } catch (prodErr) {
               console.error('Failed to fetch manu_price/sku/vendor for part_id', item.part_id, prodErr);
             }
           }
 
-          const result = await client.query(itemQuery, [
-            orderRow.id,
-            item.part_id || null,
-            item.qty || 1,
-            item.unit_price || 0,
-            manuPrice,
-            item.line_total || 0,
-            item.name || '',
-            vendorName
-          ]);
-          console.log('Order item insert result:', result);
+          let insertResult = null;
+            try {
+              console.log('Attempting insert for item', item, 'with params manuPrice=', manuPrice, 'vendorName=', vendorName);
+            if (hasVendorNameColumn) {
+              // try inserting with vendor_name first
+              insertResult = await client.query(itemQueryWithVendor, [
+                orderRow.id,
+                item.part_id || null,
+                item.qty || 1,
+                item.unit_price || 0,
+                manuPrice,
+                item.line_total || 0,
+                item.name || '',
+                vendorName
+              ]);
+            } else {
+              insertResult = await client.query(itemQueryNoVendor, [
+                orderRow.id,
+                item.part_id || null,
+                item.qty || 1,
+                item.unit_price || 0,
+                manuPrice,
+                item.line_total || 0,
+                item.name || ''
+              ]);
+            }
+            console.log('Order item insert result:', insertResult);
+          } catch (insErr) {
+            // If insertion failed due to vendor FK, try again without vendor_name to preserve other data
+            console.error('Order item insert failed, attempting fallback without vendor_name:', insErr && insErr.message ? insErr.message : insErr);
+            try {
+              insertResult = await client.query(itemQueryNoVendor, [
+                orderRow.id,
+                item.part_id || null,
+                item.qty || 1,
+                item.unit_price || 0,
+                manuPrice,
+                item.line_total || 0,
+                item.name || ''
+              ]);
+              console.log('Fallback order item insert result (no vendor):', insertResult);
+            } catch (fallbackErr) {
+              console.error('Fallback insert also failed for item:', item, fallbackErr && fallbackErr.message ? fallbackErr.message : fallbackErr);
+            }
+          }
           // Decrement inventory for the purchased item if part_id is present
           if (item.part_id) {
             const invResult = await client.query(
