@@ -229,8 +229,13 @@ exports.handler = async (event) => {
             const vendorHtml = `
               <div style="font-family:Arial,Helvetica,sans-serif;color:#222">
                 <h2>Order Notification — ${displayOrderRef}</h2>
-                <p>Hi ${vendorDisplay},</p>
-                <p>We received a successful payment containing items for your products. Summary below:</p>
+                <p><b>${vendorDisplay},</b></p>
+                <p>We would like to place an order for the items below. Summary below:</p>
+                <h4>Ship to</h4>
+                <p style="margin:0;">${order.customer_name || ''}</p>
+                <p style="margin:0;">${order.ship_address1 || ''}${order.ship_address2 ? ', ' + order.ship_address2 : ''}</p>
+                <p style="margin:0;">${order.ship_city || ''}${order.ship_state ? ', ' + order.ship_state : ''} ${order.ship_postal_code || ''}</p>
+                <p style="margin:0 0 8px 0;">${order.ship_country || ''}</p>
                 <table style="border-collapse:collapse;width:100%;max-width:700px">
                   <thead>
                     <tr>
@@ -245,10 +250,10 @@ exports.handler = async (event) => {
                     ${vendorItemsHtml}
                   </tbody>
                 </table>
-                <p>Vendor subtotal (based on manufacturer price): <strong>$${vendorSubtotal}</strong></p>
+                <p>Total: <strong>$${vendorSubtotal}</strong></p>
                 <p>Order reference: <strong>${displayOrderRef}</strong></p>
                 <hr/>
-                <p style="font-size:13px;color:#666">If you have questions, reply to this email or contact support@agexparts.com.</p>
+                <p style="font-size:13px;color:#666">Please let us know, when you have a confirmation and shipping information. If you have questions, reply to this email or contact support@agexparts.com.</p>
               </div>
             `;
 
@@ -313,6 +318,11 @@ exports.handler = async (event) => {
           <div style="font-family:Arial,Helvetica,sans-serif;color:#222">
             <h2>Order Confirmation — ${displayOrderRef}</h2>
             <p>Thank you for your order, <strong>${order.customer_name || ''}</strong> — we received payment and are processing your order.</p>
+            <h4>Ship to</h4>
+            <p style="margin:0;">${order.customer_name || ''}</p>
+            <p style="margin:0;">${order.ship_address1 || ''}${order.ship_address2 ? ', ' + order.ship_address2 : ''}</p>
+            <p style="margin:0;">${order.ship_city || ''}${order.ship_state ? ', ' + order.ship_state : ''} ${order.ship_postal_code || ''}</p>
+            <p style="margin:0 0 8px 0;">${order.ship_country || ''}</p>
             <h3>Order summary</h3>
             <table style="border-collapse:collapse;width:100%;max-width:700px">
               <thead>
