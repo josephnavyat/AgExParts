@@ -82,12 +82,11 @@ exports.handler = async (event) => {
     line_items,
     // automatic_tax will be added conditionally below
     mode: 'payment',
-  billing_address_collection: 'required',
     success_url: 'https://agexparts.netlify.app/success?session_id={CHECKOUT_SESSION_ID}',
     cancel_url: 'https://agexparts.netlify.app/cancel',
-    shipping_address_collection: {
-      allowed_countries: ['US', 'CA', 'GB', 'AU'] // Add more countries as needed
-    },
+  // NOTE: Do not request billing or shipping address from Stripe — the checkout page
+  // collects customer/shipping data and writes it to our DB. Stripe will be used only
+  // to collect payment (card) information.
     metadata: {
       cart_summary: cart.map(({ product, quantity }) => `${product.name.slice(0, 30)} x${quantity}`).join(', '),
       shipping_cost: shippingCost || 0,
@@ -99,7 +98,7 @@ exports.handler = async (event) => {
   // Prefer automatic tax unless explicitly disabled via env
   if (!disableAutoTax) sessionParams.automatic_tax = { enabled: true };
 
-  if (customer_email && typeof customer_email === 'string') sessionParams.customer_email = customer_email;
+  // Do not set session.customer_email so Stripe does not collect/store customer contact info.
 
   let session;
   try {
