@@ -13,7 +13,7 @@ exports.handler = async (event) => {
   } catch (err) {
     return { statusCode: 400, body: JSON.stringify({ error: 'Invalid JSON body' }) };
   }
-  const { cart, customer_name, customer_email, shippingCost } = body;
+  const { cart, customer_name, customer_email, shippingCost, taxCost } = body;
 
   if (!Array.isArray(cart) || cart.length === 0) {
     return { statusCode: 400, body: JSON.stringify({ error: 'Cart is empty or invalid' }) };
@@ -42,8 +42,28 @@ exports.handler = async (event) => {
   if (line_items.some(li => !li.price_data.unit_amount || li.price_data.unit_amount <= 0)) {
     return { statusCode: 400, body: JSON.stringify({ error: 'Invalid product price detected' }) };
   }
-  // Do not add a shipping line_item to Stripe; shipping is calculated and stored
-  // on the site. Keep shipping cost in metadata for webhook and order records.
+  // Add shipping and tax line items (if provided) but do NOT enable Stripe automatic_tax
+  // or request billing/shipping collection — we only want Stripe to collect payment info.
+  if (shippingCost && Number(shippingCost) > 0) {
+    line_items.push({
+      price_data: {
+        currency: 'usd',
+        product_data: { name: 'Shipping' },
+        unit_amount: Math.round(Number(shippingCost) * 100)
+      },
+      quantity: 1
+    });
+  }
+  if (taxCost && Number(taxCost) > 0) {
+    line_items.push({
+      price_data: {
+        currency: 'usd',
+        product_data: { name: 'Tax' },
+        unit_amount: Math.round(Number(taxCost) * 100)
+      },
+      quantity: 1
+    });
+  }
 
   // Build truncated items JSON for metadata. Include line_total and ensure we stay within Stripe metadata size limits (~500 chars).
   const itemsArr = [];
@@ -80,6 +100,7 @@ exports.handler = async (event) => {
     metadata: {
       cart_summary: cart.map(({ product, quantity }) => `${product.name.slice(0, 30)} x${quantity}`).join(', '),
       shipping_cost: shippingCost || 0,
+      tax_cost: taxCost || 0,
       items: itemsJson,
       items_truncated: itemsTruncated ? '1' : '0'
     }
