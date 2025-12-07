@@ -126,7 +126,7 @@ exports.handler = async (event) => {
     // Only insert columns that are expected to exist in the order_items table
     const itemQuery = `
       INSERT INTO order_items (
-        order_id, part_id, qty, unit_price, manu_price, line_total, name
+        order_id, part_id, qty, unit_price, manu_price, vendor_name, line_total, name
       ) VALUES (
         $1, $2, $3, $4, $5, $6, $7
       )
@@ -141,11 +141,13 @@ exports.handler = async (event) => {
         try {
           // fetch manu_price and sku from products if part_id provided
           let manuPrice = null;
+          let vendorName = null; 
           if (item.part_id) {
             try {
-              const prodRes = await client.query('SELECT manu_price, sku FROM products WHERE id = $1 LIMIT 1', [item.part_id]);
+              const prodRes = await client.query('SELECT manu_price, vendor, sku FROM products WHERE id = $1 LIMIT 1', [item.part_id]);
               if (prodRes && prodRes.rows && prodRes.rows[0]) {
                 manuPrice = prodRes.rows[0].manu_price;
+                vendorName = prodRes.rows[0].vendor;
                 // attach sku back onto the item so email builder can use it
                 item.sku = prodRes.rows[0].sku;
               }
@@ -160,6 +162,7 @@ exports.handler = async (event) => {
             item.qty || 1,
             item.unit_price || 0,
             manuPrice,
+            vendorName,
             item.line_total || 0,
             item.name || ''
           ]);
