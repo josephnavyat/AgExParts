@@ -126,9 +126,9 @@ exports.handler = async (event) => {
     // Only insert columns that are expected to exist in the order_items table
     const itemQuery = `
       INSERT INTO order_items (
-        order_id, part_id, qty, unit_price, manu_price, line_total, name
+        order_id, part_id, qty, unit_price, manu_price, line_total, name, vendor_name
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7
+        $1, $2, $3, $4, $5, $6, $7, $8
       )
     `;
     console.log('Order items to insert:', itemsRows);
@@ -139,18 +139,25 @@ exports.handler = async (event) => {
       for (const item of itemsRows) {
         console.log('Inserting order item:', item);
         try {
-          // fetch manu_price and sku from products if part_id provided
+          // fetch manu_price, sku and vendor info from products if part_id provided
           let manuPrice = null;
+          let vendorName = null;
           if (item.part_id) {
             try {
-              const prodRes = await client.query('SELECT manu_price, sku FROM products WHERE id = $1 LIMIT 1', [item.part_id]);
+              // select common possible vendor columns to be resilient across schema differences
+              const prodRes = await client.query('SELECT manu_price, sku, vendor, vendor_name, manufacturer FROM products WHERE id = $1 LIMIT 1', [item.part_id]);
               if (prodRes && prodRes.rows && prodRes.rows[0]) {
-                manuPrice = prodRes.rows[0].manu_price;
+                const p = prodRes.rows[0];
+                manuPrice = p.manu_price;
                 // attach sku back onto the item so email builder can use it
-                item.sku = prodRes.rows[0].sku;
+                item.sku = p.sku;
+                // resolve vendor name from possible columns
+                vendorName = p.vendor || p.vendor_name || p.manufacturer || null;
+                // normalize empty-string to null to avoid FK violations
+                if (typeof vendorName === 'string' && vendorName.trim() === '') vendorName = null;
               }
             } catch (prodErr) {
-              console.error('Failed to fetch manu_price/sku for part_id', item.part_id, prodErr);
+              console.error('Failed to fetch manu_price/sku/vendor for part_id', item.part_id, prodErr);
             }
           }
 
@@ -161,7 +168,8 @@ exports.handler = async (event) => {
             item.unit_price || 0,
             manuPrice,
             item.line_total || 0,
-            item.name || ''
+            item.name || '',
+            vendorName
           ]);
           console.log('Order item insert result:', result);
           // Decrement inventory for the purchased item if part_id is present
