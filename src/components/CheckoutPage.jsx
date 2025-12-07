@@ -433,6 +433,7 @@ export default function CheckoutPage() {
                 customer_name: billing.name || shipping.name,
                 customer_email: billingEmail || '',
                 shippingCost: shippingCost,
+                taxCost: tax,
                 captchaToken: captchaToken,
                 shipping, billing,
                 selectedRate: selectedRate ? {
