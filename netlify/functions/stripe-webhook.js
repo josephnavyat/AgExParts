@@ -126,9 +126,9 @@ exports.handler = async (event) => {
     // Only insert columns that are expected to exist in the order_items table
     const itemQuery = `
       INSERT INTO order_items (
-        order_id, part_id, qty, unit_price, line_total, name
+        order_id, part_id, qty, unit_price, manu_price, line_total, name
       ) VALUES (
-        $1, $2, $3, $4, $5, $6
+        $1, $2, $3, $4, $5, $6, $7
       )
     `;
     console.log('Order items to insert:', itemsRows);
@@ -139,11 +139,27 @@ exports.handler = async (event) => {
       for (const item of itemsRows) {
         console.log('Inserting order item:', item);
         try {
+          // fetch manu_price and sku from products if part_id provided
+          let manuPrice = null;
+          if (item.part_id) {
+            try {
+              const prodRes = await client.query('SELECT manu_price, sku FROM products WHERE id = $1 LIMIT 1', [item.part_id]);
+              if (prodRes && prodRes.rows && prodRes.rows[0]) {
+                manuPrice = prodRes.rows[0].manu_price;
+                // attach sku back onto the item so email builder can use it
+                item.sku = prodRes.rows[0].sku;
+              }
+            } catch (prodErr) {
+              console.error('Failed to fetch manu_price/sku for part_id', item.part_id, prodErr);
+            }
+          }
+
           const result = await client.query(itemQuery, [
             orderRow.id,
             item.part_id || null,
             item.qty || 1,
             item.unit_price || 0,
+            manuPrice,
             item.line_total || 0,
             item.name || ''
           ]);
@@ -181,10 +197,11 @@ exports.handler = async (event) => {
 
   const itemsHtml = itemsRows.map(it => {
           const name = it.name || '';
+          const sku = it.sku || '';
           const qty = Number(it.qty || 1);
           const unit = Number(it.unit_price || 0).toFixed(2);
           const line = Number(it.line_total || (qty * Number(it.unit_price || 0))).toFixed(2);
-          return `<tr><td style="padding:6px 8px;border:1px solid #eee">${name}</td><td style="padding:6px 8px;border:1px solid #eee;text-align:center">${qty}</td><td style="padding:6px 8px;border:1px solid #eee;text-align:right">$${unit}</td><td style="padding:6px 8px;border:1px solid #eee;text-align:right">$${line}</td></tr>`;
+          return `<tr><td style="padding:6px 8px;border:1px solid #eee">${name}</td><td style="padding:6px 8px;border:1px solid #eee">${sku}</td><td style="padding:6px 8px;border:1px solid #eee;text-align:center">${qty}</td><td style="padding:6px 8px;border:1px solid #eee;text-align:right">$${unit}</td><td style="padding:6px 8px;border:1px solid #eee;text-align:right">$${line}</td></tr>`;
         }).join('');
 
   // displaySubtotal: reuse earlier computed itemsSubtotal (products subtotal)
