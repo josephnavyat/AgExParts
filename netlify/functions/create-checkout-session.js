@@ -42,18 +42,8 @@ exports.handler = async (event) => {
   if (line_items.some(li => !li.price_data.unit_amount || li.price_data.unit_amount <= 0)) {
     return { statusCode: 400, body: JSON.stringify({ error: 'Invalid product price detected' }) };
   }
-  if (shippingCost && shippingCost > 0) {
-    line_items.push({
-      price_data: {
-        currency: 'usd',
-        product_data: {
-          name: 'Shipping',
-        },
-        unit_amount: Math.round(shippingCost * 100),
-      },
-      quantity: 1,
-    });
-  }
+  // Do not add a shipping line_item to Stripe; shipping is calculated and stored
+  // on the site. Keep shipping cost in metadata for webhook and order records.
 
   // Build truncated items JSON for metadata. Include line_total and ensure we stay within Stripe metadata size limits (~500 chars).
   const itemsArr = [];
@@ -95,11 +85,12 @@ exports.handler = async (event) => {
     }
   };
 
-  // Prefer automatic tax unless explicitly disabled via env
-  if (!disableAutoTax) sessionParams.automatic_tax = { enabled: true };
-
-  // Do not set session.customer_email so Stripe does not collect/store customer contact info.
-
+  // Do not enable Stripe automatic_tax here; shipping/tax are calculated on the site and
+  // we only want Stripe to collect payment information. Also do not set session.customer_email.
+  if (customer_email && typeof customer_email === 'string') {
+    // Pass the collected customer email to Stripe so Checkout does not prompt for it.
+    sessionParams.customer_email = customer_email;
+  }
   let session;
   try {
     if (!stripe) {
@@ -108,21 +99,9 @@ exports.handler = async (event) => {
     session = await stripe.checkout.sessions.create(sessionParams);
   } catch (err) {
     // Sanitize error returned to client; log full error server-side for debugging.
-    const msg = (err && err.raw && err.raw.message) || (err && err.message) || 'Unknown error from payment provider';
-    console.error('Stripe checkout error:', err);
-    const isOriginError = typeof msg === 'string' && (msg.toLowerCase().includes('valid origin address') || msg.toLowerCase().includes('origin address'));
-    if (isOriginError && sessionParams.automatic_tax) {
-      console.warn('Stripe automatic tax failed (test origin address). Retrying checkout session creation without automatic_tax.');
-      try {
-        delete sessionParams.automatic_tax;
-        session = await stripe.checkout.sessions.create(sessionParams);
-      } catch (retryErr) {
-        console.error('Retry stripe error:', retryErr);
-        return { statusCode: 502, body: JSON.stringify({ error: 'Payment provider error' }) };
-      }
-    } else {
-      return { statusCode: 502, body: JSON.stringify({ error: 'Payment provider error' }) };
-    }
+  const msg = (err && err.raw && err.raw.message) || (err && err.message) || 'Unknown error from payment provider';
+  console.error('Stripe checkout error:', err);
+  return { statusCode: 502, body: JSON.stringify({ error: 'Payment provider error' }) };
   }
 
   return {
