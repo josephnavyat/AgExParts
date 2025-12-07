@@ -128,7 +128,7 @@ exports.handler = async (event) => {
       INSERT INTO order_items (
         order_id, part_id, qty, unit_price, manu_price, vendor_name, line_total, name
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7
+        $1, $2, $3, $4, $5, $6, $7, $8
       )
     `;
     console.log('Order items to insert:', itemsRows);
@@ -223,6 +223,7 @@ exports.handler = async (event) => {
               <thead>
                 <tr>
                   <th style="text-align:left;padding:6px 8px;border:1px solid #eee">Item</th>
+                  <th style="text-align:center;padding:6px 8px;border:1px solid #eee">SKU</th>
                   <th style="text-align:center;padding:6px 8px;border:1px solid #eee">Qty</th>
                   <th style="text-align:right;padding:6px 8px;border:1px solid #eee">Unit</th>
                   <th style="text-align:right;padding:6px 8px;border:1px solid #eee">Line</th>
