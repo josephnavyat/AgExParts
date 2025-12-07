@@ -148,8 +148,10 @@ exports.handler = async (event) => {
               if (prodRes && prodRes.rows && prodRes.rows[0]) {
                 manuPrice = prodRes.rows[0].manu_price;
                 vendorName = prodRes.rows[0].vendor;
-                // attach sku back onto the item so email builder can use it
+                // attach sku, manu_price and vendor back onto the item so email builder can use them
                 item.sku = prodRes.rows[0].sku;
+                item.manu_price = prodRes.rows[0].manu_price;
+                item.vendor = prodRes.rows[0].vendor;
               }
             } catch (prodErr) {
               console.error('Failed to fetch manu_price/sku for part_id', item.part_id, prodErr);
@@ -184,6 +186,99 @@ exports.handler = async (event) => {
     } catch (err) {
       console.error('Error inserting order items:', err);
     }
+    // Send notification emails to vendors for items they sell (group by vendor name)
+    try {
+      const mailgunApiKey = process.env.MAILGUN_API_KEY;
+      const mailgunDomain = process.env.MAILGUN_DOMAIN;
+      const mailFrom = process.env.MAILGUN_FROM || `support@${mailgunDomain || 'agexparts.com'}`;
+      const mgUrl = mailgunApiKey && mailgunDomain ? `https://api.mailgun.net/v3/${mailgunDomain}/messages` : null;
+
+      if (mgUrl) {
+        // build map vendor_name -> items
+        const vendorMap = new Map();
+        for (const it of itemsRows) {
+          const vn = (it.vendor || it.vendor_name || '').toString().trim();
+          if (!vn) continue;
+          if (!vendorMap.has(vn)) vendorMap.set(vn, []);
+          vendorMap.get(vn).push(it);
+        }
+
+        const displayOrderRef = orderRow.order_ref || order.order_no;
+
+        for (const [vendorNameKey, itemsForVendor] of vendorMap.entries()) {
+          try {
+            const vRes = await client.query('SELECT email, name FROM vendors WHERE name = $1 LIMIT 1', [vendorNameKey]);
+            if (!vRes || !vRes.rows || !vRes.rows[0] || !vRes.rows[0].email) {
+              console.log('No vendor email found for', vendorNameKey, 'skipping vendor notification');
+              continue;
+            }
+            const vendorEmail = vRes.rows[0].email;
+            const vendorDisplay = vRes.rows[0].name || vendorNameKey;
+
+            const vendorItemsHtml = itemsForVendor.map(it => {
+              const name = it.name || '';
+              const sku = it.sku || '';
+              const qty = Number(it.qty || 1);
+              const manu = Number(it.manu_price || 0).toFixed(2);
+              const line = (Number(it.manu_price || 0) * qty).toFixed(2);
+              return `<tr><td style="padding:6px 8px;border:1px solid #eee">${name}</td><td style="padding:6px 8px;border:1px solid #eee">${sku}</td><td style="padding:6px 8px;border:1px solid #eee;text-align:center">${qty}</td><td style="padding:6px 8px;border:1px solid #eee;text-align:right">$${manu}</td><td style="padding:6px 8px;border:1px solid #eee;text-align:right">$${line}</td></tr>`;
+            }).join('');
+
+            const vendorSubtotal = itemsForVendor.reduce((sum, it) => sum + (Number(it.manu_price || it.unit_price || 0) * Number(it.qty || 1)), 0).toFixed(2);
+
+            const vendorHtml = `
+              <div style="font-family:Arial,Helvetica,sans-serif;color:#222">
+                <h2>Order Notification — ${displayOrderRef}</h2>
+                <p>Hi ${vendorDisplay},</p>
+                <p>We received a successful payment containing items for your products. Summary below:</p>
+                <table style="border-collapse:collapse;width:100%;max-width:700px">
+                  <thead>
+                    <tr>
+                      <th style="text-align:left;padding:6px 8px;border:1px solid #eee">Item</th>
+                      <th style="text-align:left;padding:6px 8px;border:1px solid #eee">SKU</th>
+                      <th style="text-align:center;padding:6px 8px;border:1px solid #eee">Qty</th>
+                      <th style="text-align:right;padding:6px 8px;border:1px solid #eee">Manu Price</th>
+                      <th style="text-align:right;padding:6px 8px;border:1px solid #eee">Line</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${vendorItemsHtml}
+                  </tbody>
+                </table>
+                <p>Vendor subtotal (based on manufacturer price): <strong>$${vendorSubtotal}</strong></p>
+                <p>Order reference: <strong>${displayOrderRef}</strong></p>
+                <hr/>
+                <p style="font-size:13px;color:#666">If you have questions, reply to this email or contact support@agexparts.com.</p>
+              </div>
+            `;
+
+            const vParams = new URLSearchParams();
+            vParams.append('from', mailFrom);
+            vParams.append('to', vendorEmail);
+            vParams.append('subject', `Order Notification — ${displayOrderRef}`);
+            vParams.append('html', vendorHtml);
+
+            const vResp = await fetch(mgUrl, {
+              method: 'POST',
+              headers: {
+                'Authorization': 'Basic ' + Buffer.from('api:' + mailgunApiKey).toString('base64'),
+                'Content-Type': 'application/x-www-form-urlencoded'
+              },
+              body: vParams.toString()
+            });
+            const vText = await vResp.text();
+            if (!vResp.ok) console.error('Mailgun vendor email error for', vendorEmail, vResp.status, vText);
+            else console.log('Mailgun vendor email sent to', vendorEmail);
+
+          } catch (vendErr) {
+            console.error('Error building/sending vendor email for', vendorNameKey, vendErr);
+          }
+        }
+      }
+    } catch (ve) {
+      console.error('Error sending vendor notifications', ve);
+    }
+
     await client.end();
 
     // Send order confirmation email via Mailgun if configured
