@@ -228,7 +228,7 @@ exports.handler = async (event) => {
 
             const vendorHtml = `
               <div style="font-family:Arial,Helvetica,sans-serif;color:#222">
-                <h2>Order Notification — ${displayOrderRef}</h2>
+                <h2>AgEx Parts - Order Request — ${displayOrderRef}</h2>
                 <p><b>${vendorDisplay},</b></p>
                 <p>We would like to place an order for the items below. Summary below:</p>
                 <h4>Ship to</h4>
@@ -316,7 +316,7 @@ exports.handler = async (event) => {
         const displayOrderRef = orderRow.order_ref || order.order_no;
         const html = `
           <div style="font-family:Arial,Helvetica,sans-serif;color:#222">
-            <h2>Order Confirmation — ${displayOrderRef}</h2>
+            <h2>AgEx Parts - Order Confirmation — ${displayOrderRef}</h2>
             <p>Thank you for your order, <strong>${order.customer_name || ''}</strong> — we received payment and are processing your order.</p>
             <h4>Ship to</h4>
             <p style="margin:0;">${order.customer_name || ''}</p>
@@ -338,6 +338,11 @@ exports.handler = async (event) => {
                 ${itemsHtml}
               </tbody>
             </table>
+            <h4><Bill to:</h4>
+            <p style="margin:0;">AgEx Parts</p>
+            <p style="margin:0;">xxxx Dunkerton Road</p>
+            <p style="margin:0;">Cedar Falls, Iowa 50613</p>
+            <h3>Order summary</h3>
             <p style="max-width:700px">Subtotal: <strong>$${displaySubtotal.toFixed(2)}</strong><br/>Shipping: <strong>$${displayShipping.toFixed(2)}</strong><br/>Tax: <strong>$${displayTax.toFixed(2)}</strong><br/>Total: <strong>$${displayGrand.toFixed(2)}</strong></p>
             <p><a href="${orderUrl}">View your order</a></p>
             <hr/>
