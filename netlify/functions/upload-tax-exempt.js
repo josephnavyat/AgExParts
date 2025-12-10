@@ -1,26 +1,19 @@
 const Busboy = require('busboy');
-const { S3Client } = require('@aws-sdk/client-s3');
-const { Upload } = require('@aws-sdk/lib-storage');
+// Removed S3 dependency: will email attachments instead
 const { Client } = require('pg');
 const fetch = require('node-fetch');
 const crypto = require('crypto');
-
-const s3Client = new S3Client({
-  region: process.env.AWS_REGION,
-  credentials: process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY ? {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
-  } : undefined
-});
 
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: JSON.stringify({ error: 'Method not allowed' }) };
   }
 
-  // Basic env validation
-  if (!process.env.AWS_S3_BUCKET) {
-    return { statusCode: 500, body: JSON.stringify({ error: 'AWS_S3_BUCKET not configured' }) };
+  // Basic env validation: Mailgun must be configured to send attachments
+  const mailgunApiKey = process.env.MAILGUN_API_KEY;
+  const mailgunDomain = process.env.MAILGUN_DOMAIN;
+  if (!mailgunApiKey || !mailgunDomain) {
+    return { statusCode: 500, body: JSON.stringify({ error: 'Mail server not configured (MAILGUN_API_KEY / MAILGUN_DOMAIN required)' }) };
   }
 
   // Netlify provides body as base64 when content-type is multipart
@@ -32,8 +25,8 @@ exports.handler = async (event) => {
   // Parse multipart using Busboy; provide full headers so Busboy can read boundary
   const bb = Busboy({ headers: event.headers });
 
-  // We'll collect fields and upload the file stream to S3
-  let uploadResult = null;
+  // We'll collect fields and file bytes to attach to an email
+  let uploadResult = null; // { filename, mimeType, buffer }
   const fields = {};
 
   try {
@@ -45,31 +38,22 @@ exports.handler = async (event) => {
         // Basic mime/type check
         const allowed = ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg'];
         if (!allowed.includes(mimeType)) return reject(new Error('Invalid file type'));
-        // enforce 8MB size limit
+        // enforce 5MB size limit for email attachments
+        const MAX_BYTES = (process.env.TAX_UPLOAD_MAX_MB ? parseInt(process.env.TAX_UPLOAD_MAX_MB, 10) : 5) * 1024 * 1024;
         let totalBytes = 0;
+        const chunks = [];
         file.on('data', chunk => {
           totalBytes += chunk.length;
-          if (totalBytes > 8 * 1024 * 1024) { // 8MB
+          if (totalBytes > MAX_BYTES) {
             file.resume();
             return reject(new Error('File too large'));
           }
+          chunks.push(chunk);
         });
-
-        const key = `tax-exempt/${Date.now()}-${crypto.randomBytes(6).toString('hex')}-${filename.replace(/[^a-zA-Z0-9.\-_]/g, '')}`;
-        const uploadParams = {
-          Bucket: process.env.AWS_S3_BUCKET,
-          Key: key,
-          Body: file,
-          ContentType: mimeType
-        };
-        const parallelUpload = new Upload({ client: s3Client, params: uploadParams });
-        const p = parallelUpload.done().then(data => {
-          // AWS SDK v3 does not return Location; construct URL if region and bucket known
-          const url = `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
-          uploadResult = { url, key, filename };
-          return uploadResult;
+        file.on('end', () => {
+          const buffer = Buffer.concat(chunks);
+          uploadResult = { filename, mimeType, buffer };
         });
-        uploadPromises.push(p);
       });
 
       bb.on('field', (name, val) => {
@@ -83,10 +67,7 @@ exports.handler = async (event) => {
       bb.end(body);
     });
 
-    // wait for any S3 uploads to complete
-    if (uploadPromises.length > 0) {
-      await Promise.all(uploadPromises);
-    }
+  // nothing else to wait for; file is captured into uploadResult in 'end' handler
   } catch (err) {
     console.error('Upload parse/upload error', err && err.message ? err.message : err);
     return { statusCode: 500, body: JSON.stringify({ error: 'Failed to parse or upload file', detail: (err && err.message) || String(err) }) };
@@ -98,8 +79,8 @@ exports.handler = async (event) => {
 
   // Placeholder: virus scan hook. Integrate your scanning service here.
   async function maybeVirusScan(upload) {
-    // Example: call a scanning service with S3 key or stream. For now, just log.
-    console.log('Skipping virus scan for', upload.key);
+    // For now, just log.
+    console.log('Skipping virus scan for', upload.filename);
     return { ok: true };
   }
 
@@ -112,7 +93,7 @@ exports.handler = async (event) => {
   const client = new Client({ connectionString: process.env.DATABASE_URL });
   await client.connect();
   try {
-    const username = fields.username || null;
+  const username = fields.username || null;
     // Ensure table exists
     await client.query(`
       CREATE TABLE IF NOT EXISTS tax_exempt_uploads (
@@ -133,34 +114,72 @@ exports.handler = async (event) => {
       if (u.rows && u.rows[0]) userId = u.rows[0].id;
     }
 
+    // Insert DB record noting file was emailed (no S3 keys)
     const insertRes = await client.query(
       `INSERT INTO tax_exempt_uploads (user_id, file_url, file_key, filename, status, uploaded_at)
        VALUES ($1, $2, $3, $4, $5, NOW()) RETURNING id`,
-      [userId, uploadResult.url, uploadResult.key, uploadResult.filename, 'pending']
+      [userId, null, null, uploadResult.filename, 'emailed']
     );
     const record = insertRes.rows[0];
 
-    // Notify admins via Mailgun if configured
+    // Send the file as an attachment to support via Mailgun
     try {
-      if (process.env.MAILGUN_API_KEY && process.env.MAILGUN_DOMAIN && process.env.TAX_ADMIN_EMAILS) {
+      if (process.env.MAILGUN_API_KEY && process.env.MAILGUN_DOMAIN) {
         const mgUrl = `https://api.mailgun.net/v3/${process.env.MAILGUN_DOMAIN}/messages`;
         const subject = 'New tax exemption upload received';
         const html = `<p>A new tax exemption document was uploaded by ${username || 'unknown user'}.</p>
           <p>Filename: ${uploadResult.filename}</p>
-          <p>Preview: ${uploadResult.url}</p>
           <p>Record ID: ${record.id}</p>`;
-        const form = new URLSearchParams();
-        form.append('from', process.env.MAILGUN_FROM || `no-reply@${process.env.MAILGUN_DOMAIN}`);
-        form.append('to', process.env.TAX_ADMIN_EMAILS);
-        form.append('subject', subject);
-        form.append('html', html);
-        await fetch(mgUrl, { method: 'POST', headers: { Authorization: `Basic ${Buffer.from(`api:${process.env.MAILGUN_API_KEY}`).toString('base64')}`, 'Content-Type': 'application/x-www-form-urlencoded' }, body: form.toString() });
+
+        const boundary = '----agexparts' + Date.now();
+        const lines = [];
+        function addField(name, value) {
+          lines.push(`--${boundary}`);
+          lines.push(`Content-Disposition: form-data; name="${name}"`);
+          lines.push('');
+          lines.push(value);
+        }
+        addField('from', process.env.MAILGUN_FROM || `no-reply@${process.env.MAILGUN_DOMAIN}`);
+        addField('to', process.env.TAX_ADMIN_EMAILS || 'support@agexparts.com');
+        addField('subject', subject);
+        addField('html', html);
+
+        // Attachment part
+        lines.push(`--${boundary}`);
+        lines.push(`Content-Disposition: form-data; name="attachment"; filename="${uploadResult.filename}"`);
+        lines.push(`Content-Type: ${uploadResult.mimeType || 'application/octet-stream'}`);
+        lines.push('');
+        const pre = lines.join('\r\n') + '\r\n';
+        const post = `\r\n--${boundary}--\r\n`;
+        const multipartBody = Buffer.concat([Buffer.from(pre, 'utf8'), uploadResult.buffer, Buffer.from(post, 'utf8')]);
+
+        const resp = await fetch(mgUrl, {
+          method: 'POST',
+          headers: {
+            Authorization: 'Basic ' + Buffer.from('api:' + process.env.MAILGUN_API_KEY).toString('base64'),
+            'Content-Type': `multipart/form-data; boundary=${boundary}`
+          },
+          body: multipartBody
+        });
+        const text = await resp.text();
+        if (!resp.ok) {
+          console.error('Mailgun send error:', resp.status, text);
+          // Update DB record to 'email_failed'
+          await client.query('UPDATE tax_exempt_uploads SET status = $1 WHERE id = $2', ['email_failed', record.id]);
+          return { statusCode: 502, body: JSON.stringify({ error: 'Mailgun send failed', detail: text }) };
+        }
+      } else {
+        console.error('Mailgun not configured');
+        await client.query('UPDATE tax_exempt_uploads SET status = $1 WHERE id = $2', ['email_failed', record.id]);
+        return { statusCode: 500, body: JSON.stringify({ error: 'Mailgun not configured' }) };
       }
     } catch (err) {
-      console.error('Failed to notify admins:', err);
+      console.error('Failed to send email to admins:', err);
+      await client.query('UPDATE tax_exempt_uploads SET status = $1 WHERE id = $2', ['email_failed', record.id]);
+      return { statusCode: 500, body: JSON.stringify({ error: 'Failed to send email' }) };
     }
 
-    return { statusCode: 200, body: JSON.stringify({ ok: true, upload: uploadResult, recordId: record.id }) };
+    return { statusCode: 200, body: JSON.stringify({ ok: true, upload: { filename: uploadResult.filename }, recordId: record.id }) };
   } catch (err) {
     console.error('DB insert error', err);
     return { statusCode: 500, body: JSON.stringify({ error: 'Failed to record upload' }) };

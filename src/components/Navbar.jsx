@@ -39,6 +39,18 @@ export default function Navbar() {
   const [categoriesLoading, setCategoriesLoading] = useState(false);
   const [catsLoaded, setCatsLoaded] = useState(false);
   const [activeCategory, setActiveCategory] = useState('');
+  // Manufacturer -> machine_type -> model dropdown state
+  // inline manufacturer/machine panel open is controlled via DOM class on `.nav-manufacturer-inline`
+  const [manufacturers, setManufacturers] = useState([]);
+  // machineTypes will hold nested mapping: { manufacturer: { machineType: [models...] } }
+  const [machineTypes, setMachineTypes] = useState({});
+  const [modelsList, setModelsList] = useState([]);
+  const [compatMachineTypes, setCompatMachineTypes] = useState([]);
+  const [compatProducts, setCompatProducts] = useState([]);
+  const [selManufacturer, setSelManufacturer] = useState('');
+  const [selMachineType, setSelMachineType] = useState('');
+  const [selModel, setSelModel] = useState('');
+  const [machinePanelOpen, setMachinePanelOpen] = useState(false);
 
   const loadCategories = async () => {
     if (catsLoaded || categoriesLoading) return;
@@ -75,6 +87,130 @@ export default function Navbar() {
       setCategoriesLoading(false);
     }
   };
+
+  // Load manufacturer/machine_type/model lists
+  const loadManufacturers = async () => {
+      try {
+        // first try compatibility options endpoint (flat lists)
+        try {
+          const res = await fetch('/.netlify/functions/get-compatibility-options');
+          if (res && res.ok) {
+            const json = await res.json();
+            if (json) {
+              if (Array.isArray(json.manufacturers)) setManufacturers(json.manufacturers.slice().sort((a,b)=>a.localeCompare(b)));
+              if (Array.isArray(json.machine_types)) setCompatMachineTypes(json.machine_types.slice().sort((a,b)=>a.localeCompare(b)));
+              if (Array.isArray(json.models)) setModelsList(json.models.slice().sort((a,b)=>a.localeCompare(b)));
+            }
+          }
+        } catch (err) {
+          // ignore and fall back to get-data
+        }
+
+      // build nested mapping from product data for cascading per-manufacturer machine types and models
+      const res2 = await fetch('/.netlify/functions/get-data');
+      if (!res2.ok) throw new Error('fetch failed');
+      const json2 = await res2.json();
+      let products = Array.isArray(json2) ? json2 : (json2 && Array.isArray(json2.products) ? json2.products : []);
+  console.info('Navbar: fetched products for manufacturers', { rawType: typeof json2, productsLength: Array.isArray(products) ? products.length : 0, sampleKeys: products && products[0] ? Object.keys(products[0]).slice(0,12) : null });
+      // keep a copy of products for fallback option generation (used by navbar cascading)
+      setCompatProducts(products);
+      // compute flat machine types and models from product fields as a fallback
+      try {
+        const flatMachineTypes = Array.from(new Set(products.map(p => (p.machine_type || p.machineType || '').trim()).filter(Boolean))).sort((a,b)=>a.localeCompare(b));
+        const flatModels = Array.from(new Set(products.map(p => (p.model || '').trim()).filter(Boolean))).sort((a,b)=>a.localeCompare(b));
+        if ((!compatMachineTypes || compatMachineTypes.length === 0) && flatMachineTypes.length) setCompatMachineTypes(flatMachineTypes);
+        if ((!modelsList || modelsList.length === 0) && flatModels.length) setModelsList(flatModels);
+      } catch (e) { /* ignore */ }
+      const manuMap = new Map();
+      for (const p of products) {
+        const manu = (p.manufacturer || p.manufacturer_name || '').trim();
+        const mtype = (p.machine_type || p.machineType || '').trim();
+        const model = (p.model || '').trim();
+        if (!manu) continue;
+        if (!manuMap.has(manu)) manuMap.set(manu, new Map());
+        const mtMap = manuMap.get(manu);
+        if (mtype) {
+          if (!mtMap.has(mtype)) mtMap.set(mtype, new Set());
+          if (model) mtMap.get(mtype).add(model);
+        }
+      }
+      const manuArr = Array.from(manuMap.keys()).sort((a,b)=>a.localeCompare(b));
+      if (manuArr.length) setManufacturers(manuArr);
+      const nested = {};
+      for (const [m, mtMap] of manuMap.entries()) {
+        nested[m] = {};
+        for (const [mt, models] of mtMap.entries()) nested[m][mt] = Array.from(models).sort((a,b)=>a.localeCompare(b));
+      }
+      setMachineTypes(nested);
+      // if modelsList was empty, try to populate from nested map
+      if (!modelsList || modelsList.length === 0) {
+        const allModels = new Set();
+        for (const mt of Object.values(nested)) for (const mdlArr of Object.values(mt)) for (const mo of mdlArr) allModels.add(mo);
+        setModelsList(Array.from(allModels).sort((a,b)=>a.localeCompare(b)));
+      }
+      console.info('Navbar: loadManufacturers complete', {
+        manufacturersCount: (manufacturers || []).length,
+        compatMachineTypesCount: (compatMachineTypes || []).length,
+        nestedManufacturerCount: Object.keys(nested || {}).length,
+        modelsCount: (modelsList || []).length,
+      });
+    } catch (err) {
+      console.error('Failed to load manufacturers', err);
+    }
+  };
+
+  // when manufacturer selection changes, set available machine types
+  useEffect(() => {
+    try {
+      if (!selManufacturer) { setModelsList([]); setSelMachineType(''); return; }
+      const nested = machineTypes[selManufacturer] || {};
+      // reset machine type selection and populate models list for this manufacturer
+      setSelMachineType('');
+      const allModels = new Set();
+      if (Object.keys(nested).length > 0) {
+        for (const mtArr of Object.values(nested)) for (const mo of mtArr) allModels.add(mo);
+      } else if (compatProducts && compatProducts.length > 0) {
+        for (const p of compatProducts) {
+          if ((p.manufacturer || '').trim() === (selManufacturer || '').trim()) {
+            const mo = (p.model || '').trim(); if (mo) allModels.add(mo);
+          }
+        }
+      }
+      setModelsList(Array.from(allModels).sort((a,b)=>a.localeCompare(b)));
+  console.info('Navbar: selManufacturer changed', { selManufacturer, modelsCount: (Array.from(allModels) || []).length, nestedForManufacturer: Object.keys(nested || {}).length });
+    } catch (e) { /* ignore */ }
+  }, [selManufacturer, machineTypes]);
+
+  // when machine type changes, populate model list
+  useEffect(() => {
+    try {
+      if (!selMachineType) { setModelsList([]); setSelModel(''); return; }
+      let models = [];
+      if (selManufacturer) {
+        models = (machineTypes[selManufacturer] || {})[selMachineType] || [];
+      } else {
+        // aggregate models for this machine type across all manufacturers
+        const setModels = new Set();
+        for (const manu of Object.keys(machineTypes || {})) {
+          const arr = (machineTypes[manu] || {})[selMachineType] || [];
+          for (const m of arr) setModels.add(m);
+        }
+        // fallback to product list scanning
+        if (setModels.size === 0 && compatProducts && compatProducts.length > 0) {
+          for (const p of compatProducts) {
+            const mt = (p.machine_type || p.machineType || '').trim();
+            if (mt === selMachineType) {
+              const mo = (p.model || '').trim(); if (mo) setModels.add(mo);
+            }
+          }
+        }
+        models = Array.from(setModels).sort((a,b)=>a.localeCompare(b));
+      }
+      setModelsList(models);
+      setSelModel('');
+      console.info('Navbar: selMachineType changed', { selManufacturer, selMachineType, modelsForSelection: models.length });
+    } catch (e) { setModelsList([]); }
+  }, [selMachineType, selManufacturer, machineTypes]);
 
   // Ensure the body knows a secondary nav exists so CSS can reserve space
   useEffect(() => {
@@ -274,10 +410,8 @@ export default function Navbar() {
                   onClick={(e) => {
                     e.preventDefault();
                     try {
-                      // ensure any open secondary panels are closed so height/animation won't interfere
                       try { setSecondaryOpen(false); } catch (err) {}
                       try { setCategoriesOpen(false); } catch (err) {}
-                      // navigate and then perform a delayed scrollIntoView (longer delay to handle animations)
                       navigate('/categories');
                       requestAnimationFrame(() => setTimeout(() => {
                         try {
@@ -300,7 +434,53 @@ export default function Navbar() {
                 </Link>
               </div>
 
-              <Link to="/machines" className="nav-secondary-link">Browse by Machine</Link>
+              {/* Browse by Machine (integrated manufacturer / machine type / model) */}
+              <div className="nav-manufacturers-wrapper" style={{ position: 'relative' }}>
+                <a
+                  href="/machines"
+                  className="nav-secondary-link nav-manufacturers-toggle"
+                  onClick={async (e) => {
+                    e.preventDefault();
+                    setSecondaryOpen(true);
+                    // ensure nested mapping exists; reload if only flat lists present
+                    if (manufacturers.length === 0 || Object.keys(machineTypes || {}).length === 0) await loadManufacturers();
+                    setCategoriesOpen(false);
+                    setMachinePanelOpen((s) => !s);
+                  }}
+                >
+                  Browse by Machine
+                </a>
+                <div className={`nav-manufacturer-inline${machinePanelOpen ? ' open' : ''}`} style={{ position: 'absolute', left: 0, top: '100%', zIndex: 45, minWidth: 360, display: machinePanelOpen ? 'block' : 'none' }}>
+                  <div className="simple-gallery-filter-header" style={{ padding: '10px 12px 6px' }}>Browse Machines</div>
+                  <div className="nav-manufacturer-row" style={{ padding: '12px' }}>
+                    <select className="filter-select" value={selManufacturer} onChange={(e) => { const v = e.target.value; setSelManufacturer(v); setSelMachineType(''); setSelModel(''); }}>
+                      <option value="">All Manufacturers</option>
+                      {manufacturers.map(m => <option key={m} value={m}>{m}</option>)}
+                    </select>
+                    <select className="filter-select" value={selMachineType} onChange={(e) => { const v = e.target.value; setSelMachineType(v); }}>
+                      <option value="">All Machine Types</option>
+                      {(() => {
+                        if (!selManufacturer) {
+                          if (compatMachineTypes && compatMachineTypes.length) return compatMachineTypes;
+                          return Object.keys(machineTypes || {}).flatMap(m=>Object.keys(machineTypes[m]||{})).filter((v,i,a)=>a.indexOf(v)===i).sort((a,b)=>a.localeCompare(b));
+                        }
+                        const nested = machineTypes[selManufacturer] || {};
+                        return Object.keys(nested).sort((a,b)=>a.localeCompare(b));
+                      })().map(mt => <option key={mt} value={mt}>{mt}</option>)}
+                    </select>
+                    <select className="filter-select" value={selModel} onChange={(e) => setSelModel(e.target.value)}>
+                      <option value="">All Models</option>
+                      {(modelsList || []).map(mo => <option key={mo} value={mo}>{mo}</option>)}
+                    </select>
+                    <a className="nav-secondary-link nav-manufacturer-search" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 14px', borderRadius: 8 }} onClick={() => {
+                      const params = new URLSearchParams(); if (selManufacturer) params.set('manufacturer', selManufacturer); if (selMachineType) params.set('machine_type', selMachineType); if (selModel) params.set('model', selModel); const url = `/search-results?${params.toString()}`; navigate(url);
+                    }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 21l-4.35-4.35"/><path d="M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16z"/></svg>
+                      <span>Search</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
               <Link to="/about" className="nav-secondary-link">About Us</Link>
             </nav>
           </div>

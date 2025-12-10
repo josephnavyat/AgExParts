@@ -749,6 +749,28 @@ body.nav-collapsed .brand h1 { display: none !important; }
   -webkit-backdrop-filter: blur(6px);
   box-shadow: 0 6px 18px rgba(0,0,0,0.12);
 }
+/* Manufacturer dropdown panel in secondary nav */
+.nav-manufacturer-panel { border-radius: 8px; }
+.nav-manufacturer-panel select { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ddd; }
+.nav-manufacturer-panel label { color: #222; }
+.btn { background: #19a974; color: #fff; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
+.btn--muted { background: #f4f4f4; color: #333; }
+/* Inline manufacturer panel styling (gallery-style) */
+.nav-manufacturer-inline { display: none; }
+.nav-manufacturer-inline.open { display: block; }
+.nav-manufacturer-inline { font-size: 1rem; background: #fff; border: 1px solid rgba(16,24,40,0.06); color: #222; border-radius: 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.08); min-width: 460px; }
+.nav-manufacturer-inline .nav-manufacturer-row { display: flex; gap: 12px; align-items: stretch; flex-direction: column; padding: 12px; }
+.nav-manufacturer-inline select { padding: 12px 14px; font-size: 1.05rem; width: 100%; border-radius: 8px; border: 1px solid rgba(16,24,40,0.08); background: #fff; color: #222; }
+.nav-manufacturer-inline .nav-secondary-link { padding: 8px 12px; font-size: 1rem; background: var(--gallery-btn-bg); color: var(--gallery-btn-text); border-radius: 8px; }
+.nav-manufacturer-inline .nav-secondary-link:hover { background: #128e59; color: #fff; }
+.nav-manufacturer-inline .nav-secondary-link:focus { outline: 2px solid rgba(25,169,116,0.18); }
+@media (max-width: 880px) {
+  .nav-manufacturer-inline { min-width: 320px; width: 92vw; }
+}
+
+/* Search button variant: light background, dark text */
+.nav-manufacturer-search { background: var(--gallery-btn-secondary-bg); color: var(--gallery-btn-secondary-text); border: 1px solid rgba(16,24,40,0.06); }
+.nav-manufacturer-search:hover { background: #f1f1f1; }
 .badge h3 { margin: 0 0 8px; font-size: 22px; }
 .badge p { margin: 0 0 14px; color: rgb(200, 200, 200); }
 @media (max-width: 900px) { .badges { grid-template-columns: 1fr; } }
