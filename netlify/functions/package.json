@@ -1,7 +1,6 @@
 {
   "type": "commonjs",
   "dependencies": {
-  "shippo": "^2.15.0",
-  "@easypost/api": "^1.2.0"
+  "shippo": "^2.15.0"
   }
 }

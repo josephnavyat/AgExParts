@@ -130,30 +130,15 @@ module.exports.handler = async function(event, context) {
     return { statusCode: 200, body: JSON.stringify({ rates: mocked }) };
   }
 
-  // Build EasyPost payload and call SDK or REST
+  // Build EasyPost payload and call REST endpoint
   const shipmentPayload = buildEasyPostShipment(to_address, from_address, parcel);
-
   try {
-    // Try to use the EasyPost SDK if available
-    try {
-      const EasyPost = require('@easypost/api');
-      const client = new EasyPost(EASYPOST_API_KEY);
-      console.log('Using EasyPost SDK');
-      // SDK call: client.Shipment.create(shipmentPayload.shipment)
-      const created = await client.Shipment.create(shipmentPayload.shipment);
-      const normalized = normalizeEasyPostRates(created);
-      if (!normalized || normalized.length === 0) return { statusCode: 200, body: JSON.stringify({ error: 'No rates returned', details: created }) };
-      return { statusCode: 200, body: JSON.stringify({ rates: normalized }) };
-    } catch (sdkErr) {
-      // SDK not installed or failed — fall back to REST
-      console.log('EasyPost SDK not available or failed, falling back to REST:', sdkErr && sdkErr.message);
-      const restResp = await callEasyPostRest(EASYPOST_API_KEY, shipmentPayload);
-      const normalized = normalizeEasyPostRates(restResp);
-      if (!normalized || normalized.length === 0) return { statusCode: 200, body: JSON.stringify({ error: 'No rates returned', details: restResp }) };
-      return { statusCode: 200, body: JSON.stringify({ rates: normalized }) };
-    }
+    const restResp = await callEasyPostRest(EASYPOST_API_KEY, shipmentPayload);
+    const normalized = normalizeEasyPostRates(restResp);
+    if (!normalized || normalized.length === 0) return { statusCode: 200, body: JSON.stringify({ error: 'No rates returned', details: restResp }) };
+    return { statusCode: 200, body: JSON.stringify({ rates: normalized }) };
   } catch (err) {
-    console.error('Error creating EasyPost shipment:', err);
+    console.error('Error creating EasyPost shipment (REST):', err);
     if (err && err.body) return { statusCode: 500, body: JSON.stringify({ error: 'EasyPost API error', details: err.body }) };
     return { statusCode: 500, body: JSON.stringify({ error: err && err.message ? err.message : String(err) }) };
   }
