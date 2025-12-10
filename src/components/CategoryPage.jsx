@@ -105,6 +105,7 @@ export default function CategoryPage() {
                 <img
                   src={getImageUrl(g.sampleImage || (g.sample && g.sample.image))}
                   alt={g.subcategory}
+                  data-orig={JSON.stringify(g.sampleImage || (g.sample && g.sample.image))}
                   loading="lazy"
                   onError={(e) => {
                     try {

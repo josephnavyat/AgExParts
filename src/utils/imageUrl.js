@@ -1,5 +1,23 @@
 export function getImageUrl(img) {
   if (!img) return '/logo.png';
+  // Accept arrays or objects as well (many product records use arrays or
+  // objects like { src } or { url }). Normalize to a string when possible.
+  if (Array.isArray(img)) {
+    // pick the first string-like entry or first object's src/url
+    for (const item of img) {
+      if (!item) continue;
+      if (typeof item === 'string') { img = item; break; }
+      if (typeof item === 'object') {
+        if (item.src) { img = item.src; break; }
+        if (item.url) { img = item.url; break; }
+      }
+    }
+  }
+  if (img && typeof img === 'object') {
+    if (img.src) img = img.src;
+    else if (img.url) img = img.url;
+    else img = String(img);
+  }
   if (typeof img === 'string') {
     const s = img.trim();
     if (!s) return '/logo.png';
