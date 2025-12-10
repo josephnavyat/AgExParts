@@ -7,15 +7,25 @@ exports.handler = async function (event) {
     const url = (event.queryStringParameters && event.queryStringParameters.url) || null;
     if (!url) return { statusCode: 400, body: 'missing url query parameter' };
 
-    // Basic safety: only allow cdn.agexparts.com (adjust as needed)
-    const allowedHost = 'cdn.agexparts.com';
+  // Basic safety: allow a small set of known image hosts (adjust as needed)
+  // You may set IMAGE_PROXY_ALLOWED_HOSTS in production as a comma-separated list
+  // of hostnames (e.g. "cdn.agexparts.com,assets.example.com"). If not set,
+  // we default to the canonical AgEx hosts.
+  const envAllowed = (process.env.IMAGE_PROXY_ALLOWED_HOSTS || '').split(',').map(s => s.trim()).filter(Boolean);
+  const allowedHosts = envAllowed.length ? envAllowed : ['cdn.agexparts.com', 'agexparts.com', 'www.agexparts.com'];
     let parsed;
     try {
       parsed = new URL(url);
     } catch (e) {
       return { statusCode: 400, body: 'invalid url' };
     }
-    if (!parsed.hostname.endsWith(allowedHost)) {
+    const host = parsed.hostname || '';
+    const ok = allowedHosts.some(h => {
+      if (!h) return false;
+      return host === h || host.endsWith('.' + h) || host.endsWith(h);
+    });
+    if (!ok) {
+      console.warn('image-proxy: forbidden host attempted:', host);
       return { statusCode: 403, body: 'forbidden host' };
     }
 

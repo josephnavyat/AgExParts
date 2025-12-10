@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { getImageUrl as resolveImageUrl } from '../utils/imageUrl.js';
 
 // CategoriesPage: lists unique categories (from products) with a sample image.
 export default function CategoriesPage() {
@@ -58,34 +59,7 @@ export default function CategoriesPage() {
     return () => { mounted = false; };
   }, []);
 
-  // reuse the same image normalization as CategoryPage
-  const getImageUrl = (img) => {
-    if (!img) return '/logo.png';
-    if (typeof img === 'string') {
-      const s = img.trim();
-      if (!s) return '/logo.png';
-      if (/^https?:\/\//i.test(s)) {
-        try {
-          const u = new URL(s);
-          if (u.hostname && u.hostname.endsWith('cdn.agexparts.com')) return `/.netlify/functions/image-proxy?url=${encodeURIComponent(s)}`;
-        } catch (e) {
-          return s;
-        }
-        return s;
-      }
-      const base = (import.meta && import.meta.env && import.meta.env.VITE_IMAGE_BASE_URL) || 'https://cdn.agexparts.com';
-      const name = s.replace(/^\/+/, '');
-      const abs = `${String(base).replace(/\/$/, '')}/${encodeURI(name)}`;
-      try {
-        const u = new URL(abs);
-        if (u.hostname && u.hostname.endsWith('cdn.agexparts.com')) {
-          return `/.netlify/functions/image-proxy?url=${encodeURIComponent(abs)}`;
-        }
-      } catch (e) {}
-      return abs;
-    }
-    return '/logo.png';
-  };
+  const getImageUrl = (img) => resolveImageUrl(img);
 
   return (
     <section style={{ padding: '28px 20px', maxWidth: 1200, margin: '0 auto' }}>

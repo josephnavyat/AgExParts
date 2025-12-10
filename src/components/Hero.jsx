@@ -22,11 +22,10 @@ export default function Hero() {
         </div>
         <div className="container">
           <div className="card-grid">
-            <Card title="Discs & Tines" tag="Tillage" note="Blades, shanks, sweeps" />
-            <Card title="Belts & Chains" tag="Drive" note="V‑belts, roller chain" />
-            <Card title="Hoses & Fittings" tag="Hydraulics" note="Quick‑connects, cylinders" />
-            <Card title="Bearings & Seals" tag="Bearings" note="Pillow blocks, seals" />
-            <Card title="Lighting & Harness" tag="Electrical" note="LEDs, connectors" />
+            <Card title="Tillage" tag="Tillage" note="Blades, shanks, sweeps" />
+            <Card title="Harvest" tag="Drive" note="V‑belts, roller chain" />
+            <Card title="Hay and Forage" tag="Hydraulics" note="Quick‑connects, cylinders" />
+            <Card title="Mowing" tag="Bearings" note="Pillow blocks, seals" />
           </div>
         </div>
       </div>

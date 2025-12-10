@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { getImageUrl as resolveImageUrl } from '../utils/imageUrl.js';
 import { useLocation } from 'react-router-dom';
 import { useParams, Link } from 'react-router-dom';
 
@@ -76,40 +77,8 @@ export default function CategoryPage() {
     }
   }, [hash, groups]);
 
-  // Normalize image URLs: if a product image is a plain filename, prefix the CDN base.
-  const getImageUrl = (img) => {
-    if (!img) return '/logo.png';
-    if (typeof img === 'string') {
-      const s = img.trim();
-      if (!s) return '/logo.png';
-      if (/^https?:\/\//i.test(s)) {
-        try {
-          const u = new URL(s);
-          if (u.hostname && u.hostname.endsWith('cdn.agexparts.com')) {
-            return `/.netlify/functions/image-proxy?url=${encodeURIComponent(s)}`;
-          }
-        } catch (e) {
-          return s;
-        }
-        return s;
-      }
-      // prefer VITE_IMAGE_BASE_URL if available (Vite exposes it on import.meta.env)
-      const base = (import.meta && import.meta.env && import.meta.env.VITE_IMAGE_BASE_URL) || 'https://cdn.agexparts.com';
-      const name = s.replace(/^\/+/, '');
-      const abs = `${String(base).replace(/\/$/, '')}/${encodeURI(name)}`;
-      try {
-        const u = new URL(abs);
-        // if image is on the configured CDN, route through our proxy to avoid CORS issues
-        if (u.hostname && u.hostname.endsWith('cdn.agexparts.com')) {
-          return `/.netlify/functions/image-proxy?url=${encodeURIComponent(abs)}`;
-        }
-      } catch (e) {
-        // fall back to absolute
-      }
-      return abs;
-    }
-    return '/logo.png';
-  };
+  // Use shared helper so behavior is consistent across components
+  const getImageUrl = (img) => resolveImageUrl(img);
 
   return (
     <section style={{ padding: '28px 20px', maxWidth: 1200, margin: '0 auto' }}>
@@ -137,7 +106,14 @@ export default function CategoryPage() {
                   src={getImageUrl(g.sampleImage || (g.sample && g.sample.image))}
                   alt={g.subcategory}
                   loading="lazy"
-                  onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/logo.png'; }}
+                  onError={(e) => {
+                    try {
+                      const orig = g.sampleImage || (g.sample && g.sample.image);
+                      console.error('CategoryPage image load error - orig:', orig, 'resolved:', e.currentTarget.src);
+                    } catch (err) {}
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = '/logo.png';
+                  }}
                   style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }}
                 />
               ) : (

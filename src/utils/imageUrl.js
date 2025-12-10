@@ -3,12 +3,16 @@ export function getImageUrl(img) {
   if (typeof img === 'string') {
     const s = img.trim();
     if (!s) return '/logo.png';
-    // If the value is already an absolute URL, return it — but if it's on our CDN,
-    // route it through the image-proxy to avoid CORS problems.
+    // If the value is already an absolute URL, return it — but if it's on our
+    // known image hosts, route it through the image-proxy to avoid CORS problems.
     if (/^https?:\/\//i.test(s)) {
       try {
         const u = new URL(s);
-        if (u.hostname && u.hostname.endsWith('cdn.agexparts.com')) {
+        const host = (u.hostname || '').toLowerCase();
+        const envAllowed = (import.meta && import.meta.env && import.meta.env.VITE_IMAGE_PROXY_ALLOWED_HOSTS) ? String(import.meta.env.VITE_IMAGE_PROXY_ALLOWED_HOSTS).split(',').map(x => x.trim()).filter(Boolean) : [];
+        const allowed = envAllowed.length ? envAllowed : ['cdn.agexparts.com', 'agexparts.com', 'www.agexparts.com'];
+        const ok = allowed.some(h => host === h || host.endsWith('.' + h) || host.endsWith(h));
+        if (ok) {
           return `/.netlify/functions/image-proxy?url=${encodeURIComponent(s)}`;
         }
       } catch (e) {
