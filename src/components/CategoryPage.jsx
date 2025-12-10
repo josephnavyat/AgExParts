@@ -80,8 +80,25 @@ export default function CategoryPage() {
   // Use shared helper so behavior is consistent across components
   const getImageUrl = (img) => resolveImageUrl(img);
 
+  // Ensure main content is visible below the fixed navbar when navigating via Links.
+  useEffect(() => {
+    const doScroll = () => {
+      try {
+        const root = document.querySelector('.main-content');
+        if (!root) return;
+        const navEl = document.querySelector('.nav');
+        const navHeight = navEl ? Math.ceil(navEl.getBoundingClientRect().height) : 140;
+        const top = root.getBoundingClientRect().top + window.scrollY - navHeight + 6;
+        window.scrollTo({ top, behavior: 'auto' });
+      } catch (e) {}
+    };
+    requestAnimationFrame(() => setTimeout(doScroll, 40));
+    const tid = setTimeout(doScroll, 300);
+    return () => clearTimeout(tid);
+  }, []);
+
   return (
-    <section style={{ padding: '28px 20px', maxWidth: 1200, margin: '0 auto' }}>
+    <section className="main-content" style={{ padding: '28px 20px', maxWidth: 1200, margin: '0 auto' }}>
   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
     <Link to="/categories" style={{ fontSize: '0.95rem', color: '#19a974', textDecoration: 'none' }}>← Back to Categories</Link>
     <h2 className="category-page__title" style={{ margin: 0 }}>Subcategories for "{category}"</h2>

@@ -60,9 +60,24 @@ export default function CategoriesPage() {
   }, []);
 
   const getImageUrl = (img) => resolveImageUrl(img);
+  // Ensure main content is visible below the fixed navbar when navigating via Links.
+  // Use the actual nav element height (more reliable than reading CSS calc() custom prop)
+  useEffect(() => {
+    const doScroll = () => {
+      try {
+        const heading = document.querySelector('.main-content > h2');
+        if (heading && heading.scrollIntoView) heading.scrollIntoView({ block: 'start' });
+      } catch (e) {}
+    };
+    // Wait for layout to settle
+    requestAnimationFrame(() => setTimeout(doScroll, 40));
+    // also try once more after a short delay in case fonts/images shift layout
+    const tid = setTimeout(doScroll, 300);
+    return () => clearTimeout(tid);
+  }, []);
 
   return (
-    <section style={{ padding: '28px 20px', maxWidth: 1200, margin: '0 auto' }}>
+    <section className="main-content" style={{ padding: '28px 20px', maxWidth: 1200, margin: '0 auto' }}>
       <h2 className="category-page__title" style={{ marginBottom: 12 }}>Categories</h2>
       {loading && <div className="muted">Loading…</div>}
       {!loading && groups.length === 0 && (

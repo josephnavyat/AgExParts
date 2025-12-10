@@ -271,7 +271,30 @@ export default function Navbar() {
                 <Link
                   to="/categories"
                   className="nav-secondary-link nav-categories-toggle"
-                  onClick={(e) => { e.preventDefault(); try { navigate('/categories'); } catch (err) { window.location.href = '/categories'; } }}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    try {
+                      // ensure any open secondary panels are closed so height/animation won't interfere
+                      try { setSecondaryOpen(false); } catch (err) {}
+                      try { setCategoriesOpen(false); } catch (err) {}
+                      // navigate and then perform a delayed scrollIntoView (longer delay to handle animations)
+                      navigate('/categories');
+                      requestAnimationFrame(() => setTimeout(() => {
+                        try {
+                          const heading = document.querySelector('.main-content > h2');
+                          if (heading && heading.scrollIntoView) {
+                            console.info('Navbar: scrolling to category heading via scrollIntoView');
+                            heading.scrollIntoView({ block: 'start' });
+                            return;
+                          }
+                          const navEl = document.querySelector('.nav');
+                          const navHeight = navEl ? Math.ceil(navEl.getBoundingClientRect().height) : 140;
+                          console.info('Navbar: falling back to scrollBy', navHeight);
+                          window.scrollBy(0, -navHeight + 6);
+                        } catch (e) {}
+                      }, 400));
+                    } catch (err) { window.location.href = '/categories'; }
+                  }}
                 >
                   Browse by Category
                 </Link>

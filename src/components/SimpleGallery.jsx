@@ -102,7 +102,7 @@ export default function SimpleGallery() {
   }, [manufacturer, machineType, model]);
 
   // Pagination state
-  const [perPage, setPerPage] = useState(50);
+  const [perPage, setPerPage] = useState(24);
   const [page, setPage] = useState(1);
   const { dispatch, cart } = useCart();
   const getImageUrl = (img) => resolveImageUrl(img);

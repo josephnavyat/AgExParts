@@ -97,6 +97,33 @@ body:not(.has-secondary-nav) { padding-top: var(--nav-main-height); }
 .main-content, main, .page, .simple-gallery-root, .product-page, .category-page {
   padding-top: calc(var(--nav-total-height) - 4px);
 }
+
+/* Ensure any normal <section> (non-hero) also begins below the fixed navbar.
+   The homepage hero intentionally overlaps earlier, so we exclude .hero. */
+section:not(.hero) {
+  padding-top: calc(var(--nav-total-height) + 6px);
+}
+
+/* Anchor-offset for main content headings: prevents fixed navbar from covering the H2 when navigating */
+.main-content > h2::before {
+  content: '';
+  display: block;
+  height: var(--nav-total-height);
+  margin-top: calc(-1 * var(--nav-total-height));
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Use scroll-margin-top for scrollIntoView to respect nav height */
+.main-content > h2 {
+  scroll-margin-top: calc(var(--nav-total-height) + 6px);
+}
+
+@media (max-width: 680px) {
+  section:not(.hero) {
+    padding-top: calc(var(--nav-main-height) + var(--nav-secondary-height) + 6px);
+  }
+}
 a { color: inherit; text-decoration: none; }
 .container { align-items: center; max-width: var(--maxw); margin: 0 auto; padding: 0 20px; }
 
@@ -222,10 +249,9 @@ body.hero-active .categories .category-item {
 }
 
 /* Also make the cards that appear inside the hero container more translucent while hero is active */
-body.hero-active .hero .card,
-body.hero-active .hero .card .pill {
-  background: rgba(255,255,255,0.75);
-}
+/* Make the cards inside the hero container more translucent while hero is active. Use a more specific selector to override later rules. */
+body.hero-active .hero .card.card--with-image { background: rgba(255,255,255,0.58); }
+body.hero-active .hero .card.card--with-image .pill { background: rgba(255,255,255,0.62); }
 /* Keep the muted note text transparent so the card translucency shows through */
 body.hero-active .hero .card .muted {
   background: transparent !important;
@@ -739,7 +765,7 @@ body.nav-collapsed .brand h1 { display: none !important; }
 .card-grid {
   display: flex;
   flex-wrap: nowrap;
-  gap: 16px;
+  gap: 10px;
   justify-content: center;
   align-items: stretch;
   margin: 0 auto;
@@ -759,12 +785,12 @@ body.nav-collapsed .brand h1 { display: none !important; }
 
 /* Force uniform card sizes when inside the hero/container */
 .card-grid .card {
-  --card-w: 220px;
-  --card-h: 200px;
+  --card-w: 170px;
+  --card-h: 100px;
   width: var(--card-w);
   /* allow height to grow on mobile to avoid clipping */
   height: auto;
-  min-height: 160px;
+  min-height: 120px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -772,8 +798,38 @@ body.nav-collapsed .brand h1 { display: none !important; }
   text-align: center;
 }
 
+/* Card variant with image: place a low-opacity image behind content and a translucent overlay */
+.card--with-image {
+  background: rgba(255,255,255,0.3);
+  color: #0f1720;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+.card--with-image .card-content {
+  padding: 8px 8px 6px 8px;
+  text-align: center;
+}
+.card--with-image .card-image {
+  display: block;
+  width: 100%;
+  height: 64px;
+  object-fit: contain;
+  opacity: 1;
+  margin-top: 6px;
+  background: transparent;
+}
+.card--with-image .card-footer {
+  padding: 4px 8px 8px 8px;
+  text-align: center;
+}
+.card--with-image .card-content h3 { text-shadow: 0 2px 6px rgba(0,0,0,0.6); font-weight: 800; }
+.card--with-image .card-content .muted { text-shadow: 0 1px 3px rgba(0,0,0,0.45); }
+.card--with-image .pill { padding: 8px 12px; font-size: 13px; font-weight: 700; }
+
 @media (max-width: 1200px) {
-  .card-grid .card { --card-w: 200px; --card-h: 190px; }
+  .card-grid .card { --card-w: 180px; --card-h: 100px; }
 }
 @media (max-width: 680px) {
   .card-grid { flex-wrap: wrap; justify-content: center; }

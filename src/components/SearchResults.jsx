@@ -26,7 +26,7 @@ export default function SearchResults() {
   const [model, setModel] = useState('');
   const [sort, setSort] = useState('');
   const [inStockOnly, setInStockOnly] = useState(false);
-  const [perPage, setPerPage] = useState(50);
+  const [perPage, setPerPage] = useState(24);
   const [page, setPage] = useState(1);
   const { dispatch, cart } = useCart();
 
