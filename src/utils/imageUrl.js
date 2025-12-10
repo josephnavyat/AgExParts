@@ -18,7 +18,17 @@ export function getImageUrl(img) {
       return s;
     }
 
-    let base = (import.meta && import.meta.env && import.meta.env.VITE_IMAGE_BASE_URL) || 'https://cdn.agexparts.com';
+    let base = (import.meta && import.meta.env && import.meta.env.VITE_IMAGE_BASE_URL) || '';
+    // If the environment variable contains a placeholder or obvious example text,
+    // treat it as unset and fall back to the canonical CDN.
+    const placeholderRe = /your[-_.]?cdn|image[-_.]?base[-_.]?url|your[-_.]?domain|example\.com|your-cdn-or-image-base-url/i;
+    if (!base || placeholderRe.test(String(base))) {
+      if (typeof console !== 'undefined' && console.warn) {
+        // Friendly dev warning when running locally with a placeholder env var
+        console.warn('VITE_IMAGE_BASE_URL is missing or looks like a placeholder — falling back to https://cdn.agexparts.com');
+      }
+      base = 'https://cdn.agexparts.com';
+    }
     // Ensure base includes protocol. If user provided 'cdn.agexparts.com' or '//cdn...', prefix https://
     base = String(base).trim();
     if (!/^https?:\/\//i.test(base)) {

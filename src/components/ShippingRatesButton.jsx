@@ -63,9 +63,12 @@ export default function ShippingRatesButton({ cart, fromAddress, toAddress, onRa
         const ratesArr = Array.isArray(data.rates) ? data.rates.slice() : [];
         // pick cheapest by numeric amount
         ratesArr.sort((a, b) => Number(a.amount || 0) - Number(b.amount || 0));
-        const cheapest = ratesArr[0];
-  // use the sorted array for UI and callbacks so cheapest is first
-  setRates(ratesArr);
+        // Limit client-side to top N cheapest to avoid overwhelming the UI
+        const CLIENT_MAX_OPTIONS = 3; // change here or expose via config if needed
+        const limitedRates = ratesArr.slice(0, CLIENT_MAX_OPTIONS);
+        const cheapest = limitedRates[0];
+  // use the limited array for UI and callbacks so cheapest is first
+  setRates(limitedRates);
   if (cheapest) {
           // auto-select cheapest
           setSelectedRateId(cheapest.object_id);
@@ -79,8 +82,8 @@ export default function ShippingRatesButton({ cart, fromAddress, toAddress, onRa
             try { onSelect(cheapest); } catch (e) { console.warn('onSelect handler failed', e); }
           }
         }
-  if (typeof onResponse === 'function') onResponse({ rates: ratesArr, selected: cheapest });
-  if (typeof onRates === 'function') onRates(ratesArr);
+  if (typeof onResponse === 'function') onResponse({ rates: limitedRates, selected: cheapest });
+  if (typeof onRates === 'function') onRates(limitedRates);
       } else setError(data.error || "No rates found");
     } catch (err) {
       setError(err.message);
