@@ -1,6 +1,5 @@
 
 import { Link } from 'react-router-dom';
-import { useEffect } from 'react';
 
 const Card = ({ title, tag, note }) => (
   <a className="card" href="#">
@@ -11,10 +10,6 @@ const Card = ({ title, tag, note }) => (
 )
 
 export default function Hero() {
-  useEffect(() => {
-    document.body.classList.add('hero-active');
-    return () => document.body.classList.remove('hero-active');
-  }, []);
   return (
     <header className="hero" role="banner" style={{ '--hero': 'url(/hero-16x9.png)' }}>
       <div className="hero-content container">
@@ -31,6 +26,7 @@ export default function Hero() {
             <Card title="Belts & Chains" tag="Drive" note="V‑belts, roller chain" />
             <Card title="Hoses & Fittings" tag="Hydraulics" note="Quick‑connects, cylinders" />
             <Card title="Bearings & Seals" tag="Bearings" note="Pillow blocks, seals" />
+            <Card title="Lighting & Harness" tag="Electrical" note="LEDs, connectors" />
           </div>
         </div>
       </div>

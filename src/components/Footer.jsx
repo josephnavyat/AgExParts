@@ -13,9 +13,8 @@ export default function Footer() {
         </div>
         <div>
           <h4>Contact</h4>
-          <p>Email: hello@agexparts.example</p>
-          <p>Phone: (555) 123‑4567</p>
-          <p>Mon‑Sat 7:00–6:00</p>
+          <p>Email: support@agexparts.com</p>
+          <p>Phone: </p>
         </div>
         <div>
           <h4>Company</h4>

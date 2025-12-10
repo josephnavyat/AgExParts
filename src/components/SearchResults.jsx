@@ -169,8 +169,10 @@ export default function SearchResults() {
     .filter(p => !inStockOnly || (Number(p.inventory ?? p.quantity ?? 0) > 0))
     .filter(p => {
       if (searchText && searchText.trim()) {
-        const q = searchText.toLowerCase();
-        return (p.name && p.name.toLowerCase().includes(q)) || (p.part_number && String(p.part_number).toLowerCase().includes(q));
+  const q = searchText.toLowerCase();
+  return (p.name && p.name.toLowerCase().includes(q)) ||
+         (p.part_number && String(p.part_number).toLowerCase().includes(q)) ||
+         (p.sku && String(p.sku).toLowerCase().includes(q));
       }
       return true;
     })

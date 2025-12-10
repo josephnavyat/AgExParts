@@ -1,11 +1,8 @@
 @media (max-width: 480px) {
-  .brand h1 {
-    display: none;
-  }
-img {
-  max-width: 100%;
-  height: auto;
+  .brand h1 { display: none; }
 }
+
+img { max-width: 100%; height: auto; }
 
 @media (max-width: 680px) {
   section { padding: 32px 0; }
@@ -14,14 +11,10 @@ img {
 
 @media (max-width: 480px) {
   .card-grid { grid-template-columns: 1fr; }
-  .gallery-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 12px !important;
-  }
-  .gallery-grid img {
-    height: 100px !important;
-  }
+  .gallery-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
+  .gallery-grid img { height: 100px !important; }
 }
+
 /* Desktop styles */
 .card-grid { grid-template-columns: 1fr; }
 .gallery-grid {
@@ -56,10 +49,9 @@ img {
   max-width: 95vw;
   min-width: 0;
 }
-  .product-detail-card { padding: 1rem !important; }
-  .product-gallery { padding: 1rem !important; }
-  .feature .panel { padding: 12px !important; }
-}
+.product-detail-card { padding: 1rem !important; }
+.product-gallery { padding: 1rem !important; }
+.feature .panel { padding: 12px !important; }
 
 :root {
   /* Lighter site theme */
@@ -76,8 +68,9 @@ img {
   --maxw: 1200px;
   /* navbar combined height (main + secondary) */
   --nav-main-height: 72px;
-  --nav-secondary-height: 44px;
-  --nav-total-height: calc(var(--nav-main-height) + var(--nav-secondary-height));
+  --nav-secondary-height: 64px; /* taller browse bar */
+  /* Add a small safety gap (8px) to ensure content isn't obscured by the navbar */
+  --nav-total-height: calc(var(--nav-main-height) + var(--nav-secondary-height) + 8px);
 }
 
 /* Collapsed sizes (used when body.nav-collapsed is present) */
@@ -98,6 +91,12 @@ body.nav-collapsed { padding-top: var(--nav-total-height-collapsed); }
 
 /* If there is no secondary nav, reduce space. We also set based on a body class */
 body:not(.has-secondary-nav) { padding-top: var(--nav-main-height); }
+
+/* Some pages use a wrapper/main element instead of relying on body padding.
+   Apply a defensive padding to common main containers so content sits below the nav. */
+.main-content, main, .page, .simple-gallery-root, .product-page, .category-page {
+  padding-top: calc(var(--nav-total-height) - 4px);
+}
 a { color: inherit; text-decoration: none; }
 .container { align-items: center; max-width: var(--maxw); margin: 0 auto; padding: 0 20px; }
 
@@ -167,14 +166,15 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* HERO */
-.hero { position: relative; height: 90vh; min-height: 540px; display: grid; place-items: center; }
+.hero { position: relative; height: 90vh; min-height: 540px; display: grid; place-items: center; transform: translateY(-18px); }
 /* You can override the image via inline style: style={{ '--hero': 'url(/hero-16x9.png)' }} */
 .hero { --hero: url('/hero-16x9.png'); }
 .hero::before {
   content: "";
   position: absolute; inset: 0;
   background-image: var(--hero);
-  background-position: center center;
+  /* move the background up slightly so focal point sits higher */
+  background-position: center calc(50% - 12px);
   background-size: cover;
   filter: saturate(105%) contrast(105%);
   opacity: .95;
@@ -191,6 +191,11 @@ a { color: inherit; text-decoration: none; }
     var(--categories-bg) 100%
   );
   pointer-events: none;
+}
+
+@media (max-width: 680px) {
+  .hero { transform: translateY(-8px); }
+  .hero::before { background-position: center calc(50% - 8px); }
 }
 
 /* Categories section background to visually blend with the hero */
@@ -272,7 +277,10 @@ body.hero-active .hero .card .muted {
 .nav-secondary {
   /* slightly lighter than the main nav to create a subtle separation */
   background: rgba(255,255,255,0.03);
-  padding: 4px 0; /* reduced vertical padding so it sits flush under nav */
+  padding: 8px 0; /* more vertical space to match increased nav-secondary height */
+  min-height: var(--nav-secondary-height);
+  display: flex;
+  align-items: center;
   margin-top: 0;
 }
 .nav-secondary .container {
@@ -294,9 +302,17 @@ body.hero-active .hero .card .muted {
   font-weight: 600;
   display: inline-block;
 }
-.nav-secondary .nav-secondary-link:hover {
+.nav-secondary .nav-secondary-link {
+  transition: background-color 160ms ease, color 160ms ease;
+}
+.nav-secondary .nav-secondary-link:hover,
+.nav-secondary .nav-secondary-link:focus {
   color: #19a974;
-  text-decoration: underline;
+  background-color: rgba(25,169,116,0.12);
+  text-decoration: none;
+}
+.nav-secondary .nav-secondary-link:active {
+  background-color: rgba(25,169,116,0.18);
 }
 
 @media (max-width: 700px) {
@@ -304,6 +320,60 @@ body.hero-active .hero .card .muted {
   .nav-secondary .container { padding: 0 8px; justify-content: space-between; }
   .nav-secondary nav { gap: 12px; }
 }
+
+/* Search suggestions dropdown */
+.nav-search-suggestions {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 420px;
+  max-width: calc(100% - 32px);
+  background: #fff;
+  color: #222;
+  border-radius: 8px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.15);
+  z-index: 60;
+  padding: 8px;
+}
+.search-bar-collapsible {
+  padding: 1.25rem 0 !important; /* slightly taller */
+}
+
+#nav-search-input {
+  padding: 0.9rem 1rem !important;
+  font-size: 1.12rem !important;
+  border-radius: 10px !important;
+  height: auto;
+  min-height: 44px;
+}
+
+@media (max-width: 680px) {
+  .search-bar-collapsible {
+    padding: 1rem 0 !important;
+  }
+  #nav-search-input {
+    padding: 0.85rem 0.9rem !important;
+    min-height: 44px;
+    font-size: 1rem !important;
+  }
+}
+.nav-suggestion-item {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px;
+  border-radius: 6px;
+  width: 100%;
+  background: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+}
+.nav-suggestion-item:hover { background: rgba(25,169,116,0.06); }
+.nav-suggestion-thumb { width: 40px; height: 28px; object-fit: cover; border-radius: 4px; background: #f6f6f6; }
+.nav-suggestion-thumb.empty { display:inline-block; width:40px; height:28px; background:#eee; border-radius:4px }
+.nav-suggestion-text { font-size: 0.95rem; color: #222; }
 
 /* Portrait-specific fixes: allow title full width and prevent price overflow on narrow screens */
 @media (max-width: 420px) {

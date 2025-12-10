@@ -1,11 +1,16 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import React, { useEffect, useState, useRef } from 'react';
+import { getImageUrl as resolveImageUrl } from '../utils/imageUrl.js';
 import { useCart } from './CartContext.jsx';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [searchValue, setSearchValue] = useState("");
+  const [productsIndex, setProductsIndex] = useState(null);
+  const [suggestions, setSuggestions] = useState([]);
+  const [suggestOpen, setSuggestOpen] = useState(false);
+  const searchDebounce = useRef(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 80);
@@ -171,10 +176,30 @@ export default function Navbar() {
               }}
             >
               <input
+                id="nav-search-input"
                 type="text"
                 placeholder="Search for parts..."
                 value={searchValue}
-                onChange={e => setSearchValue(e.target.value)}
+                onChange={e => {
+                  const v = e.target.value;
+                  setSearchValue(v);
+                  // debounce suggestions
+                  clearTimeout(searchDebounce.current);
+                  if (!v || v.trim().length < 2) {
+                    setSuggestions([]); setSuggestOpen(false); return;
+                  }
+                  searchDebounce.current = setTimeout(() => {
+                    const q = v.trim().toLowerCase();
+                    if (!productsIndex) return;
+                    const results = productsIndex.filter(p => {
+                      const name = (p.name || '').toLowerCase();
+                      const sku = (p.sku || '').toLowerCase();
+                      return name.includes(q) || sku.includes(q);
+                    }).slice(0,6);
+                    setSuggestions(results);
+                    setSuggestOpen(results.length > 0);
+                  }, 180);
+                }}
                 style={{
                   padding: '0.75rem 1rem',
                   fontSize: '1.1rem',
@@ -185,7 +210,35 @@ export default function Navbar() {
                   boxShadow: '0 1px 4px rgba(0,0,0,0.07)',
                   flex: 1
                 }}
+                onFocus={async () => {
+                  if (!productsIndex) {
+                    try {
+                      const res = await fetch('/.netlify/functions/get-data');
+                      const json = await res.json();
+                      let products = Array.isArray(json) ? json : (json && Array.isArray(json.products) ? json.products : []);
+                      // keep only id, name, image, and sku/part_number for better matching
+                      products = products.map(p => ({ id: p.id, name: p.name, image: p.image, sku: p.sku || p.part_number || '' }));
+                      setProductsIndex(products);
+                    } catch (e) {
+                      // ignore
+                    }
+                  }
+                }}
+                onBlur={() => setTimeout(() => setSuggestOpen(false), 150)}
               />
+              {suggestOpen && suggestions && suggestions.length > 0 && (
+                <div className="nav-search-suggestions" role="listbox">
+                  {suggestions.map(s => (
+                    <button key={s.id} className="nav-suggestion-item" onMouseDown={(e) => { e.preventDefault(); const q = s.sku && String(s.sku).trim() ? s.sku : s.name; window.location.href = `/search-results?q=${encodeURIComponent(q)}`; }}>
+                      {s.image ? <img src={resolveImageUrl(s.image)} alt="" className="nav-suggestion-thumb"/> : <span className="nav-suggestion-thumb empty"/>}
+                      <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                        <span className="nav-suggestion-text">{s.name}</span>
+                        {s.sku && <small style={{ color: '#666', marginTop: 4 }}>{s.sku}</small>}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
               <button
                 type="submit"
                 style={{
@@ -214,41 +267,14 @@ export default function Navbar() {
           <div className="container">
             <nav id="secondary-links" aria-label="Browse links">
               {/* Browse by Category shows an expanded panel on hover or click */}
-              <div
-                className="nav-categories-wrapper"
-                onMouseEnter={() => { if (!catsLoaded) loadCategories(); setCategoriesOpen(true); if (categories && categories.length && !activeCategory) setActiveCategory(categories[0].category); }}
-                onMouseLeave={() => { setCategoriesOpen(false); setActiveCategory(''); }}
-              >
+              <div className="nav-categories-wrapper">
                 <Link
                   to="/categories"
                   className="nav-secondary-link nav-categories-toggle"
-                  aria-expanded={categoriesOpen}
                   onClick={(e) => { e.preventDefault(); try { navigate('/categories'); } catch (err) { window.location.href = '/categories'; } }}
                 >
                   Browse by Category
                 </Link>
-
-                <div className={`nav-categories-panel ${categoriesOpen ? 'open' : ''}`} role="menu" aria-hidden={!categoriesOpen}>
-                    {categoriesLoading && <div className="muted">Loading…</div>}
-
-                    <div className="categories-panel-columns">
-                      {/* Left: list of categories */}
-                      <div className="categories-left" role="list">
-                        {categories.map((cat) => (
-                          <button
-                            key={cat.category}
-                            className={`cat-col-item`}
-                            role="menuitem"
-                            onClick={() => {
-                              try { navigate(`/categories/${encodeURIComponent(cat.category)}`); } catch (e) { window.location.href = `/categories/${encodeURIComponent(cat.category)}`; }
-                            }}
-                          >
-                            {cat.category}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                </div>
               </div>
 
               <Link to="/machines" className="nav-secondary-link">Browse by Machine</Link>
