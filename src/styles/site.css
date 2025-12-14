@@ -86,6 +86,10 @@ html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); f
 body { padding-top: var(--nav-total-height); transition: padding-top 220ms ease; }
 body.nav-collapsed { padding-top: var(--nav-total-height-collapsed); }
 
+/* Checkout page needs slightly less top padding because its sections already use internal spacing.
+  Add a hook class `.checkout-page` to reduce the reserved navbar space for that route. */
+body.checkout-page { padding-top: var(--nav-main-height); }
+
 /* If the secondary nav is not present, allow smaller top padding via a modifier on the nav element */
 .nav--no-secondary ~ body { padding-top: var(--nav-main-height); }
 
@@ -102,6 +106,12 @@ body:not(.has-secondary-nav) { padding-top: var(--nav-main-height); }
    The homepage hero intentionally overlaps earlier, so we exclude .hero. */
 section:not(.hero) {
   padding-top: calc(var(--nav-total-height) + 6px);
+}
+
+/* On checkout we already show the form inside a white card; remove the extra
+   section padding so the dark section header aligns to the top of that card. */
+body.checkout-page section:not(.hero) {
+  padding-top: 0; /* remove large gap inside the light-gray card */
 }
 
 /* Anchor-offset for main content headings: prevents fixed navbar from covering the H2 when navigating */

@@ -22,6 +22,10 @@ function Section({ title, open, onToggle, children, disabled }) {
 }
 
 export default function CheckoutPage() {
+  // Add a body class so CSS can apply a smaller top padding on this page
+  useEffect(() => {
+    try { document.body.classList.add('checkout-page'); return () => document.body.classList.remove('checkout-page'); } catch (e) {}
+  }, []);
   const { cart, dispatch } = useCart();
   const navigate = useNavigate();
   const [openShipping, setOpenShipping] = useState(true);

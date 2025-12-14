@@ -94,18 +94,26 @@ exports.handler = async (event) => {
   await client.connect();
   try {
   const username = fields.username || null;
-    // Ensure table exists
+    // Ensure table exists; allow file_url/file_key to be NULL because files are emailed (not uploaded to S3)
     await client.query(`
       CREATE TABLE IF NOT EXISTS tax_exempt_uploads (
         id SERIAL PRIMARY KEY,
         user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
-        file_url TEXT NOT NULL,
-        file_key TEXT NOT NULL,
+        file_url TEXT,
+        file_key TEXT,
         filename TEXT,
         status VARCHAR(32) DEFAULT 'pending',
         uploaded_at TIMESTAMP WITH TIME ZONE DEFAULT now()
       );
     `);
+    // If an older schema had NOT NULL constraints, drop them so we can insert NULLs
+    try {
+      await client.query('ALTER TABLE tax_exempt_uploads ALTER COLUMN file_url DROP NOT NULL');
+      await client.query('ALTER TABLE tax_exempt_uploads ALTER COLUMN file_key DROP NOT NULL');
+    } catch (e) {
+      // Ignore errors here; if alter fails (column absent), proceed — table likely newly created or already nullable
+      console.info('tax_exempt_uploads alter-not-null skipped or failed:', e && e.message ? e.message : e);
+    }
 
     // Try to find user id by username
     let userId = null;

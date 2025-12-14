@@ -8,6 +8,7 @@
 
 const https = require('https');
 const EASYPOST_API_KEY = process.env.EASYPOST_API_KEY || '';
+const SHIPPING_ALLOWED_CARRIERS = process.env.SHIPPING_ALLOWED_CARRIERS || '';
 
 function callEasyPostRest(apiKey, bodyPayload) {
   return new Promise((resolve, reject) => {
@@ -123,10 +124,23 @@ module.exports.handler = async function(event, context) {
   // If no EasyPost key is configured, return mocked rates to keep local UI working.
   if (!EASYPOST_API_KEY) {
     console.log('EASYPOST_API_KEY not set — returning mocked shipping rates for local development');
-    const mocked = [
-      { amount: '12.00', object_id: 'mock-ground-12', provider: 'MockCarrier', servicelevel: { name: 'Ground', token: 'Ground' }, estimated_days: 5, currency: 'USD', raw: { id: 'mock-ground-12' } },
-      { amount: '24.00', object_id: 'mock-express-24', provider: 'MockCarrier', servicelevel: { name: 'Express', token: 'Express' }, estimated_days: 2, currency: 'USD', raw: { id: 'mock-express-24' } }
+    // Provide a few realistic mocked carriers; later we'll filter by SHIPPING_ALLOWED_CARRIERS if set
+    const mockedAll = [
+      { amount: '10.00', object_id: 'mock-ups-ground-10', provider: 'UPS', servicelevel: { name: 'Ground', token: 'ground' }, estimated_days: 4, currency: 'USD', raw: { id: 'mock-ups-ground-10', carrier: 'UPS' } },
+      { amount: '18.00', object_id: 'mock-fedex-18', provider: 'FedEx', servicelevel: { name: 'Express', token: 'express' }, estimated_days: 2, currency: 'USD', raw: { id: 'mock-fedex-18', carrier: 'FedEx' } },
+      { amount: '8.50', object_id: 'mock-usps-8', provider: 'USPS', servicelevel: { name: 'Priority', token: 'priority' }, estimated_days: 5, currency: 'USD', raw: { id: 'mock-usps-8', carrier: 'USPS' } }
     ];
+    let mocked = mockedAll;
+    if (SHIPPING_ALLOWED_CARRIERS && SHIPPING_ALLOWED_CARRIERS.trim().length > 0) {
+      const allowed = SHIPPING_ALLOWED_CARRIERS.split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+      mocked = mockedAll.filter(r => {
+        const p = (r.provider || r.raw && (r.raw.carrier || r.raw.provider) || '').toString().toLowerCase();
+        return allowed.some(a => p.includes(a));
+      });
+    } else {
+      // default: exclude USPS
+      mocked = mockedAll.filter(r => !(r.provider || '').toString().toLowerCase().includes('usps'));
+    }
     return { statusCode: 200, body: JSON.stringify({ rates: mocked }) };
   }
 
@@ -136,7 +150,32 @@ module.exports.handler = async function(event, context) {
     const restResp = await callEasyPostRest(EASYPOST_API_KEY, shipmentPayload);
     const normalized = normalizeEasyPostRates(restResp);
     if (!normalized || normalized.length === 0) return { statusCode: 200, body: JSON.stringify({ error: 'No rates returned', details: restResp }) };
-    return { statusCode: 200, body: JSON.stringify({ rates: normalized }) };
+    // If SHIPPING_ALLOWED_CARRIERS is set, use it as a whitelist (comma-separated).
+    // Otherwise default to excluding USPS/Postal carriers.
+    const providerName = (r) => {
+      if (!r) return '';
+      if (r.provider) return String(r.provider).toLowerCase();
+      if (r.raw && (r.raw.carrier || r.raw.provider)) return String(r.raw.carrier || r.raw.provider).toLowerCase();
+      return '';
+    };
+
+    let filtered = normalized;
+    if (SHIPPING_ALLOWED_CARRIERS && SHIPPING_ALLOWED_CARRIERS.trim().length > 0) {
+      const allowed = SHIPPING_ALLOWED_CARRIERS.split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+      console.info('Shipping allowed carriers whitelist:', allowed);
+      filtered = normalized.filter(r => {
+        const p = providerName(r);
+        return allowed.some(a => p.includes(a));
+      });
+    } else {
+      // Default behavior: exclude USPS / United States Postal Service carriers from results
+      filtered = normalized.filter(r => {
+        const p = providerName(r);
+        return !(p.includes('usps') || p.includes('postal') || p.includes('united states postal') || p.includes('united states post'));
+      });
+    }
+    console.info('Shipping rates: original', normalized.length, 'filtered', filtered.length);
+    return { statusCode: 200, body: JSON.stringify({ rates: filtered }) };
   } catch (err) {
     console.error('Error creating EasyPost shipment (REST):', err);
     if (err && err.body) return { statusCode: 500, body: JSON.stringify({ error: 'EasyPost API error', details: err.body }) };
