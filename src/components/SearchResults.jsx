@@ -11,6 +11,10 @@ export default function SearchResults() {
   const query = params.get("q") || "";
   const category = params.get("category") || '';
   const subcategory = params.get("subcategory") || '';
+  // URL compatibility params (may be set by navbar Browse-by-Machine)
+  const urlManufacturer = params.get('manufacturer') || '';
+  const urlMachineType = params.get('machine_type') || '';
+  const urlModel = params.get('model') || '';
 
   const [products, setProducts] = useState([]);
   const [compatOptions, setCompatOptions] = useState({ manufacturers: [], machine_types: [], models: [] });
@@ -47,7 +51,6 @@ export default function SearchResults() {
       }
     };
     fetchProducts();
-    // fetch compatibility options (manufacturers/machine types/models) — same as SimpleGallery
     (async () => {
       try {
         const res = await fetch('/.netlify/functions/get-compatibility-options');
@@ -58,6 +61,22 @@ export default function SearchResults() {
     })();
     return () => controller.abort();
   }, []);
+
+  // Keep filters in sync with URL params (so navbar Browse-by-Machine works)
+  useEffect(() => {
+    const p = new URLSearchParams(location.search);
+    const m = p.get('manufacturer') || '';
+    const mt = p.get('machine_type') || '';
+    const md = p.get('model') || '';
+    setManufacturer(m);
+    setMachineType(mt);
+    setModel(md);
+    // reset pagination when filters change via URL
+    setPage(1);
+    // update search text if q param present
+    const q = p.get('q') || '';
+    setSearchText(q);
+  }, [location.search]);
 
   // When manufacturer/machineType/model change, prefer server-provided list of matching SKUs
   useEffect(() => {
@@ -112,26 +131,6 @@ export default function SearchResults() {
     }
     return Array.from(seen.values()).sort((a,b) => a.localeCompare(b));
   };
-
-  // cascading lists for manufacturer -> machine type -> model (mirror SimpleGallery)
-  const manufacturersList = (compatOptions.manufacturers && compatOptions.manufacturers.length > 0) ? compatOptions.manufacturers : uniqueOptions('manufacturer');
-  const machineTypesListAll = (compatOptions.machine_types && compatOptions.machine_types.length > 0) ? compatOptions.machine_types : uniqueOptions('machine_type');
-  const modelsListAll = (compatOptions.models && compatOptions.models.length > 0) ? compatOptions.models : uniqueOptions('model');
-
-  const machineTypesForManufacturer = () => {
-    if (!selExists(manufacturer)) return machineTypesListAll;
-    return [...new Set(products.filter(p => !manufacturer || p.manufacturer === manufacturer).map(p => p.machine_type).filter(Boolean))].sort((a,b)=>String(a).localeCompare(b));
-  };
-
-  const modelsForSelection = () => {
-    // if machineType selected, filter by both
-    if (machineType) return [...new Set(products.filter(p => (!manufacturer || p.manufacturer === manufacturer) && (!machineType || p.machine_type === machineType)).map(p => p.model).filter(Boolean))].sort((a,b)=>String(a).localeCompare(b));
-    // otherwise, if only manufacturer selected, models available for that manufacturer
-    if (manufacturer) return [...new Set(products.filter(p => p.manufacturer === manufacturer).map(p => p.model).filter(Boolean))].sort((a,b)=>String(a).localeCompare(b));
-    return modelsListAll;
-  };
-
-  function selExists(v) { return v && String(v).trim().length > 0; }
 
   // Robust image picker: prefer `image`, then first item of `images`, `gallery`, `photos`, or nested objects with src/url
   const pickImage = (prod) => {
@@ -230,29 +229,26 @@ export default function SearchResults() {
 
             <div className="filter-section">
               <label className="filter-label">Manufacturer</label>
-              <select value={manufacturer} onChange={e => { setManufacturer(e.target.value); setMachineType(''); setModel(''); }} className="filter-select">
+              <select value={manufacturer} onChange={e => setManufacturer(e.target.value)} className="filter-select">
                 <option value="">All Manufacturers</option>
-                {manufacturersList.map(m => <option key={m} value={m}>{m}</option>)}
+                {(compatOptions.manufacturers && compatOptions.manufacturers.length > 0 ? compatOptions.manufacturers : uniqueOptions('manufacturer')).map(m => <option key={m} value={m}>{m}</option>)}
               </select>
             </div>
 
             <div className="filter-section">
               <label className="filter-label">Machine Type</label>
-              <select value={machineType} onChange={e => { setMachineType(e.target.value); setModel(''); }} className="filter-select" disabled={!manufacturer && manufacturersList.length === 0} title={!manufacturer ? (manufacturersList.length === 0 ? 'No machine types available' : 'Select a manufacturer to see machine types') : ''}>
+              <select value={machineType} onChange={e => setMachineType(e.target.value)} className="filter-select">
                 <option value="">All Machine Types</option>
-                {machineTypesForManufacturer().map(m => <option key={m} value={m}>{m}</option>)}
+                {(compatOptions.machine_types && compatOptions.machine_types.length > 0 ? compatOptions.machine_types : uniqueOptions('machine_type')).map(m => <option key={m} value={m}>{m}</option>)}
               </select>
-              {!manufacturer && manufacturersList.length === 0 && <div className="filter-hint">No manufacturers available</div>}
-              {!manufacturer && manufacturersList.length > 0 && <div className="filter-hint">Select a manufacturer to enable machine types</div>}
             </div>
 
             <div className="filter-section">
               <label className="filter-label">Model</label>
-              <select value={model} onChange={e => setModel(e.target.value)} className="filter-select" disabled={!machineType && !manufacturer} title={!machineType ? (manufacturer ? 'Select a machine type to see models' : 'Select a manufacturer/machine type to see models') : ''}>
+              <select value={model} onChange={e => setModel(e.target.value)} className="filter-select">
                 <option value="">All Models</option>
-                {modelsForSelection().map(m => <option key={m} value={m}>{m}</option>)}
+                {(compatOptions.models && compatOptions.models.length > 0 ? compatOptions.models : uniqueOptions('model')).map(m => <option key={m} value={m}>{m}</option>)}
               </select>
-              {!machineType && !manufacturer && <div className="filter-hint">Select a machine type to see models</div>}
             </div>
 
             <div className="filter-section">

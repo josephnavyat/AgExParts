@@ -110,8 +110,8 @@ export default function ProductDetailNew() {
   if (!product) return <div style={{ textAlign: 'center', padding: 24 }}>Product not found.</div>;
 
   return (
-    <div className="product-detail-new" style={{ display: 'flex', maxWidth: 1100, margin: '2rem auto', padding: '1rem', background: '#fff', borderRadius: 8, gap: 32, alignItems: 'flex-start' }}>
-      <div className="product-detail-new__media" style={{ flex: '0 0 420px', display: 'flex', alignItems: 'flex-start', flexDirection: 'column', gap: 12 }}>
+    <div className="product-detail-new" style={{ display: 'flex', maxWidth: 1100, margin: '2rem auto', padding: '1rem', background: '#fff', borderRadius: 8, gap: 32, alignItems: 'center' }}>
+      <div className="product-detail-new__media" style={{ flex: '0 0 420px', display: 'flex', alignItems: 'center', flexDirection: 'column', gap: 12, textAlign: 'center' }}>
         <div style={{ width: 360, height: 360, borderRadius: 8, overflow: 'hidden', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 6px 18px rgba(0,0,0,0.06)' }}>
           <SmartImage src={images[selectedImageIndex] || getImageUrl(product.image || '')} alt={product.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
         </div>

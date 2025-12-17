@@ -114,18 +114,28 @@ export default function Navbar() {
   console.info('Navbar: fetched products for manufacturers', { rawType: typeof json2, productsLength: Array.isArray(products) ? products.length : 0, sampleKeys: products && products[0] ? Object.keys(products[0]).slice(0,12) : null });
       // keep a copy of products for fallback option generation (used by navbar cascading)
       setCompatProducts(products);
+      // tolerant access helpers - try multiple possible property names
+      const read = (obj, ...keys) => {
+        for (const k of keys) {
+          if (!obj) continue;
+          const v = obj[k];
+          if (v !== undefined && v !== null) return v;
+        }
+        return undefined;
+      };
+
       // compute flat machine types and models from product fields as a fallback
       try {
-        const flatMachineTypes = Array.from(new Set(products.map(p => (p.machine_type || p.machineType || '').trim()).filter(Boolean))).sort((a,b)=>a.localeCompare(b));
-        const flatModels = Array.from(new Set(products.map(p => (p.model || '').trim()).filter(Boolean))).sort((a,b)=>a.localeCompare(b));
+        const flatMachineTypes = Array.from(new Set(products.map(p => String((read(p, 'machine_type', 'machineType', 'machine') || '')).trim()).filter(Boolean))).sort((a,b)=>a.localeCompare(b));
+        const flatModels = Array.from(new Set(products.map(p => String((read(p, 'model', 'models') || '')).trim()).filter(Boolean))).sort((a,b)=>a.localeCompare(b));
         if ((!compatMachineTypes || compatMachineTypes.length === 0) && flatMachineTypes.length) setCompatMachineTypes(flatMachineTypes);
         if ((!modelsList || modelsList.length === 0) && flatModels.length) setModelsList(flatModels);
       } catch (e) { /* ignore */ }
       const manuMap = new Map();
       for (const p of products) {
-        const manu = (p.manufacturer || p.manufacturer_name || '').trim();
-        const mtype = (p.machine_type || p.machineType || '').trim();
-        const model = (p.model || '').trim();
+        const manu = String((read(p, 'manufacturer', 'manufacturer_name', 'make') || '')).trim();
+        const mtype = String((read(p, 'machine_type', 'machineType', 'machine') || '')).trim();
+        const model = String((read(p, 'model', 'models', 'model_number') || '')).trim();
         if (!manu) continue;
         if (!manuMap.has(manu)) manuMap.set(manu, new Map());
         const mtMap = manuMap.get(manu);
@@ -146,7 +156,7 @@ export default function Navbar() {
       if (!modelsList || modelsList.length === 0) {
         const allModels = new Set();
         for (const mt of Object.values(nested)) for (const mdlArr of Object.values(mt)) for (const mo of mdlArr) allModels.add(mo);
-        setModelsList(Array.from(allModels).sort((a,b)=>a.localeCompare(b)));
+        if (allModels.size > 0) setModelsList(Array.from(allModels).sort((a,b)=>a.localeCompare(b)));
       }
       console.info('Navbar: loadManufacturers complete', {
         manufacturersCount: (manufacturers || []).length,
@@ -170,9 +180,20 @@ export default function Navbar() {
       if (Object.keys(nested).length > 0) {
         for (const mtArr of Object.values(nested)) for (const mo of mtArr) allModels.add(mo);
       } else if (compatProducts && compatProducts.length > 0) {
+        // tolerant read helper (local copy)
+        const read = (obj, ...keys) => {
+          for (const k of keys) {
+            if (!obj) continue;
+            const v = obj[k];
+            if (v !== undefined && v !== null) return v;
+          }
+          return undefined;
+        };
         for (const p of compatProducts) {
-          if ((p.manufacturer || '').trim() === (selManufacturer || '').trim()) {
-            const mo = (p.model || '').trim(); if (mo) allModels.add(mo);
+          const manuVal = String((read(p, 'manufacturer', 'manufacturer_name', 'make') || '')).trim();
+          if (manuVal === (selManufacturer || '').trim()) {
+            const mo = String((read(p, 'model', 'models', 'model_number') || '')).trim();
+            if (mo) allModels.add(mo);
           }
         }
       }
@@ -246,7 +267,7 @@ export default function Navbar() {
         <div className="container nav-inner" style={{ flexWrap: 'wrap', alignItems: 'center' }}>
           <div className="brand">
             <img src="/logo.png" alt="AgEx Parts logo" style={{ height: '80px', width: 'auto' }} />
-            <h1 className="distressed" style={{ color: 'white' }}>For your ideal PART</h1>
+            <h1 className="distressed" style={{ color: 'dark grey' }}>For your ideal PART</h1>
           </div>
           <div className="nav-cta" style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
             <Link to="/" className="nav-icon" aria-label="Home" title="Home">
@@ -460,17 +481,46 @@ export default function Navbar() {
                     <select className="filter-select" value={selMachineType} onChange={(e) => { const v = e.target.value; setSelMachineType(v); }}>
                       <option value="">All Machine Types</option>
                       {(() => {
+                        // If nothing selected, prefer flat compatibility list or aggregated nested
                         if (!selManufacturer) {
                           if (compatMachineTypes && compatMachineTypes.length) return compatMachineTypes;
                           return Object.keys(machineTypes || {}).flatMap(m=>Object.keys(machineTypes[m]||{})).filter((v,i,a)=>a.indexOf(v)===i).sort((a,b)=>a.localeCompare(b));
                         }
+                        // Try nested map first
                         const nested = machineTypes[selManufacturer] || {};
-                        return Object.keys(nested).sort((a,b)=>a.localeCompare(b));
+                        const nestedKeys = Object.keys(nested || {}).sort((a,b)=>a.localeCompare(b));
+                        if (nestedKeys.length) return nestedKeys;
+                        // Fallback: scan compatProducts for this manufacturer and collect machine_type values
+                        if (compatProducts && compatProducts.length) {
+                          const set = new Set();
+                          for (const p of compatProducts) {
+                            try {
+                              if (((p.manufacturer || '').trim()) === (selManufacturer || '').trim()) {
+                                const mt = (p.machine_type || p.machineType || '').toString().trim();
+                                if (mt) set.add(mt);
+                              }
+                            } catch (e) { /* ignore malformed product rows */ }
+                          }
+                          return Array.from(set).sort((a,b)=>a.localeCompare(b));
+                        }
+                        return [];
                       })().map(mt => <option key={mt} value={mt}>{mt}</option>)}
                     </select>
                     <select className="filter-select" value={selModel} onChange={(e) => setSelModel(e.target.value)}>
                       <option value="">All Models</option>
                       {(modelsList || []).map(mo => <option key={mo} value={mo}>{mo}</option>)}
+                      {/* If modelsList empty and a manufacturer is selected, attempt to populate from compatProducts */}
+                      {(!(modelsList && modelsList.length) && selManufacturer && compatProducts && compatProducts.length) && (() => {
+                        const s = new Set();
+                        for (const p of compatProducts) {
+                          try {
+                            if (((p.manufacturer || '').trim()) === (selManufacturer || '').trim()) {
+                              const mo = (p.model || '').toString().trim(); if (mo) s.add(mo);
+                            }
+                          } catch (e) {}
+                        }
+                        return Array.from(s).sort((a,b)=>a.localeCompare(b)).map(mo => <option key={`fb-${mo}`} value={mo}>{mo}</option>);
+                      })()}
                     </select>
                     <a className="nav-secondary-link nav-manufacturer-search" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 14px', borderRadius: 8 }} onClick={() => {
                       const params = new URLSearchParams(); if (selManufacturer) params.set('manufacturer', selManufacturer); if (selMachineType) params.set('machine_type', selMachineType); if (selModel) params.set('model', selModel); const url = `/search-results?${params.toString()}`; navigate(url);

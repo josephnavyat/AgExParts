@@ -10,6 +10,9 @@ export default function SimpleGallery() {
   const isMobile = window.matchMedia('(max-width: 700px)').matches;
   const [products, setProducts] = useState([]);
   const [compatOptions, setCompatOptions] = useState({ manufacturers: [], machine_types: [], models: [] });
+  const [machineTypesMap, setMachineTypesMap] = useState({}); // nested mapping { manufacturer: { machineType: [models...] } }
+  const [machineTypesList, setMachineTypesList] = useState([]);
+  const [modelsList, setModelsList] = useState([]);
   const [compatibleSkus, setCompatibleSkus] = useState(null); // null = no server filter applied
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -45,6 +48,41 @@ export default function SimpleGallery() {
           if (Array.isArray(maybe)) list = maybe;
         }
         setProducts(list);
+        // build nested mapping from product rows (fallback when compatibility endpoint is sparse)
+        try {
+          const read = (obj, ...keys) => {
+            for (const k of keys) {
+              if (!obj) continue;
+              const v = obj[k];
+              if (v !== undefined && v !== null) return v;
+            }
+            return undefined;
+          };
+          const manuMap = new Map();
+          for (const p of list) {
+            const manu = String((read(p, 'manufacturer', 'manufacturer_name', 'make') || '')).trim();
+            const mtype = String((read(p, 'machine_type', 'machineType', 'machine') || '')).trim();
+            const mdl = String((read(p, 'model', 'models', 'model_number') || '')).trim();
+            if (!manu) continue;
+            if (!manuMap.has(manu)) manuMap.set(manu, new Map());
+            const mtMap = manuMap.get(manu);
+            if (mtype) {
+              if (!mtMap.has(mtype)) mtMap.set(mtype, new Set());
+              if (mdl) mtMap.get(mtype).add(mdl);
+            }
+          }
+          const nested = {};
+          for (const [m, mtMap] of manuMap.entries()) {
+            nested[m] = {};
+            for (const [mt, models] of mtMap.entries()) nested[m][mt] = Array.from(models).sort((a,b)=>a.localeCompare(b));
+          }
+          setMachineTypesMap(nested);
+          // populate flat lists as fallback
+          const flatMTypes = Array.from(new Set(list.map(p => String((read(p, 'machine_type', 'machineType', 'machine') || '')).trim()).filter(Boolean))).sort((a,b)=>a.localeCompare(b));
+          const flatModels = Array.from(new Set(list.map(p => String((read(p, 'model', 'models', 'model_number') || '')).trim()).filter(Boolean))).sort((a,b)=>a.localeCompare(b));
+          setMachineTypesList(flatMTypes);
+          setModelsList(flatModels);
+        } catch (e) { /* ignore mapping errors */ }
       } catch (error) {
         if (error.name !== 'AbortError') {
           setError(error.message);
@@ -67,6 +105,48 @@ export default function SimpleGallery() {
     })();
     return () => controller.abort();
   }, []);
+
+  // When manufacturer changes, populate machine types and models for that manufacturer
+  useEffect(() => {
+    try {
+      if (!manufacturer) {
+        // reset to global lists
+        setMachineTypesList(compatOptions.machine_types && compatOptions.machine_types.length ? compatOptions.machine_types : machineTypesList);
+        setModelsList(compatOptions.models && compatOptions.models.length ? compatOptions.models : modelsList);
+        setMachineType(''); setModel('');
+        return;
+      }
+      const nested = machineTypesMap[manufacturer] || {};
+      const mts = Object.keys(nested).sort((a,b)=>a.localeCompare(b));
+      if (mts.length) setMachineTypesList(mts);
+      // aggregate all models under this manufacturer
+      const allModels = new Set();
+      for (const arr of Object.values(nested)) for (const m of arr) allModels.add(m);
+      if (allModels.size) setModelsList(Array.from(allModels).sort((a,b)=>a.localeCompare(b)));
+      else setModelsList([]);
+      setMachineType(''); setModel('');
+    } catch (e) {}
+  }, [manufacturer, machineTypesMap, compatOptions]);
+
+  // When machineType changes, refine models list
+  useEffect(() => {
+    try {
+      if (!machineType) { setModel(''); return; }
+      if (manufacturer) {
+        const modelsFor = (machineTypesMap[manufacturer] || {})[machineType] || [];
+        setModelsList(modelsFor);
+      } else {
+        // aggregate across manufacturers
+        const setModels = new Set();
+        for (const manu of Object.keys(machineTypesMap || {})) {
+          const arr = (machineTypesMap[manu] || {})[machineType] || [];
+          for (const m of arr) setModels.add(m);
+        }
+        setModelsList(Array.from(setModels).sort((a,b)=>a.localeCompare(b)));
+      }
+      setModel('');
+    } catch (e) { setModelsList([]); }
+  }, [machineType, manufacturer, machineTypesMap]);
 
   // Fetch compatible SKUs when compatibility filters change
   useEffect(() => {
