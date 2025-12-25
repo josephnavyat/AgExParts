@@ -434,7 +434,7 @@ export default function CartPage() {
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
                               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                                 <button className="mobile-qty-btn" aria-label="Decrease quantity" onClick={() => { dispatch({ type: 'SUBTRACT_FROM_CART', product }); }} style={{ width: 36, height: 36, borderRadius: 8, border: '1px solid #ddd', background: '#fff', fontWeight: 700 }}>−</button>
-                                <QuantityInput initialValue={quantity} product={product} dispatch={dispatch} immediateDispatch={true} />
+                                <QuantityInput initialValue={quantity} product={product} dispatch={dispatch} />
                                 <button className="mobile-qty-btn" aria-label="Increase quantity" onClick={() => {
                                   const available = Number(product.inventory ?? product.quantity ?? 0);
                                   const existing = cart.items.find(i => i.product.id === product.id);
