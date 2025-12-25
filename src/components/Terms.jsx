@@ -13,11 +13,22 @@ export default function Terms() {
       
       <h2>Payment</h2>
       <p>We gladly accept Visa, MasterCard, Discover, American Express, personal checks, and money orders. When ordering by mail include your payment. Fax orders must pay by credit card only.</p>
-      <p>Sales Tax - AgEx Parts is required to collect sales tax according with State and Federal Rules. Sales tax will be charged for deliveries within each states laws. In order to be tax exempt, we must have a valid tax exemption form on file before the order is placed. You can provide your tax exempt certificate via email at support@agexparts.com</p>
+      <p>Sales Tax - AgEx Parts is required to collect sales tax according with State and Federal Rules. Sales tax will be charged for deliveries within each states laws. In order to be tax exempt, we must have a valid tax exemption form on file before the order is placed. You can provide your tax exempt certificate via email at support@agexparts.com
+        or upload it directly to our Site by creating a user account.
+      </p>
       <p>
-        If you need the official Iowa Sales & Use Tax Exemption Certificate, you can download it here:
+        Link to Iowa Tax Exempt Form:
         {' '}
-        <a href={getR2Url('TaxExemptIowa.pdf')} target="_blank" rel="noopener noreferrer">31-014 Iowa Sales Use Excise Tax Exemption Certificate (PDF)</a>
+        <a
+  href={getR2Url('TaxExemptIowa.pdf')}
+  target="_blank"
+  rel="noopener noreferrer"
+  style={{ fontWeight: 'bold', color: 'blue' }}
+>
+  31-014 Iowa Sales Use Excise Tax Exemption Certificate (PDF)
+</a>
+
+
       </p>
 
       <h2>Shipping</h2>
