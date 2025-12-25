@@ -64,6 +64,17 @@ function cartReducer(state, action) {
         };
       }
     }
+    case "SET_QUANTITY": {
+      const productId = action.product && action.product.id || action.id;
+      const qty = Number(action.quantity || 0);
+      if (qty <= 0) {
+        return { ...state, items: state.items.filter(i => i.product.id !== productId) };
+      }
+      return {
+        ...state,
+        items: state.items.map(i => i.product.id === productId ? { ...i, quantity: qty } : i)
+      };
+    }
     case "REMOVE_FROM_CART":
       return {
         ...state,

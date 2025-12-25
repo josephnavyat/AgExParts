@@ -7,8 +7,14 @@
 // to function.
 
 const https = require('https');
+// SOAP client for Estes v4 WSDL
+let soap; try { soap = require('soap'); } catch (e) { soap = null; }
 const EASYPOST_API_KEY = process.env.EASYPOST_API_KEY || '';
 const SHIPPING_ALLOWED_CARRIERS = process.env.SHIPPING_ALLOWED_CARRIERS || '';
+// (Estes integration removed — starting fresh)
+
+// In-memory token cache for client-credentials flow
+// Estes integration removed: token helpers and SOAP client omitted
 
 function callEasyPostRest(apiKey, bodyPayload) {
   return new Promise((resolve, reject) => {
@@ -54,18 +60,53 @@ function callEasyPostRest(apiKey, bodyPayload) {
  * and map them to EasyPost's expected nested structure.
  */
 function buildEasyPostShipment(to_address, from_address, parcel) {
-  // EasyPost expects parcel weight in ounces or grams depending on units; the
-  // client currently sends mass_unit and distance_unit. We'll forward parcel
-  // as-is and let the API handle units. For minimal change, we place the
-  // parcel under 'parcel' key.
+  // Normalize incoming address & parcel into the shape EasyPost expects.
+  const norm = (addr) => ({
+    street1: addr && (addr.address1 || addr.street || addr.street1) || '',
+    street2: addr && (addr.address2 || addr.street2) || '',
+    city: addr && (addr.city || '') || '',
+    state: addr && (addr.state || addr.stateProvince || '') || '',
+    zip: addr && (addr.postalCode || addr.zip || '') || '',
+    country: addr && (addr.country || 'US') || 'US',
+    name: addr && (addr.name || '') || '',
+    phone: addr && (addr.phone || '') || ''
+  });
+
+  // Normalize parcel: convert weight to ounces (EasyPost expects ounces for weight)
+  const normalizeParcel = (p) => {
+    if (!p) return {};
+    const out = {};
+    // numeric dims as integers
+    out.length = Math.max(1, Math.round(Number(p.length) || Number(p.l) || 0));
+    out.width = Math.max(1, Math.round(Number(p.width) || Number(p.w) || 0));
+    out.height = Math.max(1, Math.round(Number(p.height) || Number(p.h) || 0));
+    // weight conversion to ounces
+    let raw = Number(p.weight) || Number(p.mass) || Number(p.oz) || 0;
+    const mu = (p.mass_unit || p.weight_unit || '').toString().toLowerCase();
+    if (mu === 'oz' || mu === 'ounces') raw = raw;
+    else if (mu === 'lb' || mu === 'pounds' || mu === 'lbs') raw = raw * 16;
+    else if (mu === 'kg' || mu === 'kilograms') raw = raw * 2.2046226218 * 16;
+    else if (mu === 'g' || mu === 'grams') raw = raw / 28.34952;
+    // default: if client sent large integer weight in lbs (unlikely) assume oz if very big; otherwise keep
+    out.weight = Math.max(1, Math.round(raw));
+    out.predefined_package = null;
+    return out;
+  };
+
   return {
     shipment: {
-      to_address,
-      from_address,
-      parcel
+      to_address: norm(to_address),
+      from_address: norm(from_address),
+      parcel: normalizeParcel(parcel)
     }
   };
 }
+
+/**
+ * Call Estes RateQuote v4 SOAP service using the WSDL.
+ * Uses ESTES_API_KEY if present (sent as Authorization header) or falls back to Basic auth when client id/secret provided.
+ */
+// Estes SOAP helper removed
 
 /**
  * Convert EasyPost rates to a generic { rates: [...] } shape the client expects.
@@ -122,6 +163,47 @@ module.exports.handler = async function(event, context) {
   }
 
   // If no EasyPost key is configured, return mocked rates to keep local UI working.
+  // Compute a simple total weight heuristic (lbs) from parcel or commodity shapes.
+  // The frontend sends `parcel` for EasyPost; some callers may supply commodity.handlingUnits.
+  function computePayloadWeight(pl) {
+    let w = 0;
+    try {
+      if (pl && typeof pl.weight === 'number') return pl.weight;
+      // fallback: sum handlingUnits
+      if (pl && pl.commodity && Array.isArray(pl.commodity.handlingUnits)) {
+        for (const hu of pl.commodity.handlingUnits) {
+          if (typeof hu.weight === 'number') w += hu.weight;
+          else if (Array.isArray(hu.lineItems)) {
+            for (const li of hu.lineItems) if (typeof li.weight === 'number') w += li.weight;
+          }
+        }
+      }
+      // fallback to parcel.weight (string or number)
+      if (pl && pl.parcel && pl.parcel.weight) {
+        // try to interpret units: if client provided mass_unit (e.g., 'oz'), convert to pounds
+        let raw = Number(pl.parcel.weight) || 0;
+        const mu = (pl.parcel.mass_unit || pl.parcel.weight_unit || '').toString().toLowerCase();
+        if (mu === 'oz' || mu === 'ounces') {
+          raw = raw / 16; // ounces -> pounds
+        } else if (mu === 'kg' || mu === 'kilograms') {
+          raw = raw * 2.2046226218; // kg -> pounds
+        } else if (mu === 'g' || mu === 'grams') {
+          raw = raw / 453.59237; // grams -> pounds
+        }
+        w += raw;
+      }
+  // Note: do not re-add raw payload.parcel.weight here (already handled above with unit conversion)
+    } catch (e) {
+      console.warn('Weight compute error', e && e.message);
+    }
+    return w;
+  }
+
+  const totalWeight = computePayloadWeight(payload);
+  console.info('Computed totalWeight (lbs):', totalWeight);
+
+  // Estes integration removed — proceed to EasyPost/mock flow
+
   if (!EASYPOST_API_KEY) {
     console.log('EASYPOST_API_KEY not set — returning mocked shipping rates for local development');
     // Provide a few realistic mocked carriers; later we'll filter by SHIPPING_ALLOWED_CARRIERS if set
@@ -147,6 +229,26 @@ module.exports.handler = async function(event, context) {
   // Build EasyPost payload and call REST endpoint
   const shipmentPayload = buildEasyPostShipment(to_address, from_address, parcel);
   try {
+    // If heavy (>100 lbs) or oversized by common carriers, skip EasyPost and return Estes result (if any)
+    const skipEasyPost = totalWeight > 100 || (shipmentPayload && shipmentPayload.shipment && shipmentPayload.shipment.parcel && (() => {
+      const p = shipmentPayload.shipment.parcel; const L = Number(p.length||0); const W = Number(p.width||0); const H = Number(p.height||0);
+      const girth = 2*(W+H); return (L + girth) > 165; // UPS common max
+    })());
+    if (skipEasyPost) {
+      console.info('Skipping EasyPost call due to heavy/oversize; returning placeholder freight rate');
+      // Provide a minimal placeholder freight rate so the UI shows an option for heavy shipments.
+      const freightPlaceholder = {
+        amount: '250.00',
+        object_id: 'freight-placeholder-250',
+        provider: 'Freight',
+        servicelevel: { name: 'Freight (estimate)', token: 'freight_estimate' },
+        estimated_days: 5,
+        currency: 'USD',
+        raw: { note: 'Placeholder freight rate — replace with real carrier quote when available' }
+      };
+      const bodyOut = { rates: [freightPlaceholder] };
+      return { statusCode: 200, body: JSON.stringify(bodyOut) };
+    }
     const restResp = await callEasyPostRest(EASYPOST_API_KEY, shipmentPayload);
     const normalized = normalizeEasyPostRates(restResp);
     if (!normalized || normalized.length === 0) return { statusCode: 200, body: JSON.stringify({ error: 'No rates returned', details: restResp }) };
@@ -175,7 +277,10 @@ module.exports.handler = async function(event, context) {
       });
     }
     console.info('Shipping rates: original', normalized.length, 'filtered', filtered.length);
-    return { statusCode: 200, body: JSON.stringify({ rates: filtered }) };
+  const respBody = { rates: filtered };
+  if (context && context.estes_quote) respBody.estes_quote = context.estes_quote;
+  if (context && context.estes_error) respBody.estes_error = context.estes_error;
+  return { statusCode: 200, body: JSON.stringify(respBody) };
   } catch (err) {
     console.error('Error creating EasyPost shipment (REST):', err);
     if (err && err.body) return { statusCode: 500, body: JSON.stringify({ error: 'EasyPost API error', details: err.body }) };

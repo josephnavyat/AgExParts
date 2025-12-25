@@ -398,6 +398,61 @@ body.hero-active .hero .card .muted {
   max-width: calc(100% - 32px);
   background: var(--surface);
   color: var(--text);
+
+/* Remove native number input spinners across browsers */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+/* Stronger, class-scoped rules to hide number input spinners for quantity inputs */
+.qty-input {
+  appearance: textfield !important;
+  -webkit-appearance: textfield !important;
+  -moz-appearance: textfield !important;
+  min-width: 1ch !important;
+  width: auto !important;
+}
+.qty-input::-webkit-outer-spin-button,
+.qty-input::-webkit-inner-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0 !important;
+}
+.qty-input::-moz-focus-inner {
+  border: 0 !important;
+}
+
+/* transient inventory limit message */
+/* qty-limit-msg removed in favor of tooltip */
+
+/* transient tooltip overlay for inventory limit */
+.qty-tooltip {
+  position: absolute;
+  top: -34px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #d32f2f !important;
+  border: 1px solid #b71c1c !important;
+  color: #ffffff !important;
+  padding: 6px 8px !important;
+  border-radius: 6px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12) !important;
+  white-space: nowrap;
+  opacity: 0;
+  animation: qt-fade 0.2s ease-in forwards !important;
+  z-index: 9999 !important;
+  pointer-events: none !important;
+}
+
+@keyframes qt-fade {
+  from { opacity: 0; transform: translateX(-50%) translateY(4px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
   border-radius: 8px;
   box-shadow: 0 6px 24px rgba(0,0,0,0.15);
   z-index: 60;

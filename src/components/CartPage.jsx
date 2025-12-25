@@ -32,10 +32,9 @@ function StripeCheckoutButton({ cart, disabled }) {
   const shipping = calculateShipping(cart);
   const handleCheckout = async () => {
     if (totalWeight > 100) {
-      if (window.confirm('Heavy Items. Freight quote will be needed. Proceeding to page.')) {
-        navigate('/freight-inquiry', { state: { cart } });
-      }
-      return;
+      // Warn user but allow proceeding to checkout if they confirm
+      const ok = window.confirm('Warning: Cart total weight exceeds 100 lbs. Freight may be required. Do you want to continue to checkout?');
+      if (!ok) return;
     }
     if (disabled) return;
     // Client-side validation: ensure all items have valid positive prices before calling server
@@ -138,6 +137,60 @@ function calculateShipping(cartItems) {
 }
 
 export default function CartPage() {
+  // transient per-product limit messages when user tries to go past inventory
+  const [limitMap, setLimitMap] = React.useState({});
+  const showLimit = (productId, msg = 'Reached inventory limit') => {
+    setLimitMap(m => ({ ...m, [productId]: msg }));
+    setTimeout(() => setLimitMap(m => { const copy = { ...m }; delete copy[productId]; return copy; }), 1800);
+  };
+
+  // Controlled quantity input component: syncs initialValue with local state,
+  // dispatches SET_QUANTITY on blur or Enter, and keeps the input responsive.
+  function QuantityInput({ initialValue, product, dispatch }) {
+    // Use a text input with numeric-only sanitization so browsers don't show native spinners.
+    const [val, setVal] = React.useState(() => String(Number(initialValue || 0)));
+    // Keep in sync if external cart updates the quantity
+    React.useEffect(() => { setVal(String(Number(initialValue || 0))); }, [initialValue]);
+    return (
+      <input
+        aria-label={`Quantity for ${product.name}`}
+        type="text"
+        inputMode="numeric"
+        pattern="[0-9]*"
+        maxLength={4}
+        value={val}
+        className="qty-input"
+        onChange={(e) => {
+          // keep only digits to avoid non-numeric characters and prevent spinners
+          const cleaned = (e.target.value || '').replace(/\D/g, '');
+          setVal(cleaned);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            const desired = Number(val || 0);
+            const available = Number(product.inventory ?? product.quantity ?? 0);
+            if (Number.isFinite(available) && available > 0 && desired > available) {
+              showLimit(product.id);
+              dispatch({ type: 'SET_QUANTITY', product, quantity: available });
+            } else {
+              dispatch({ type: 'SET_QUANTITY', product, quantity: desired });
+            }
+          }
+        }}
+        onBlur={() => {
+          const desired = Number(val || 0);
+          const available = Number(product.inventory ?? product.quantity ?? 0);
+          if (Number.isFinite(available) && available > 0 && desired > available) {
+            showLimit(product.id);
+            dispatch({ type: 'SET_QUANTITY', product, quantity: available });
+          } else {
+            dispatch({ type: 'SET_QUANTITY', product, quantity: desired });
+          }
+        }}
+        style={{ width: `${Math.max(1, Math.min(((val || '').length || 0), 4))}ch`, textAlign: 'center', fontWeight: 600, color: '#222', fontSize: '1.1rem', padding: '6px 8px', borderRadius: 6, border: '1px solid #d6d6d6', boxSizing: 'content-box' }}
+      />
+    );
+  }
   const { cart, dispatch } = useCart();
   // detect portrait orientation on narrow screens to avoid CSS specificity wars
   const [isPortrait, setIsPortrait] = React.useState(() => (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width:420px) and (orientation: portrait)').matches) || false);
@@ -181,7 +234,7 @@ export default function CartPage() {
   // Respect selected shipping in cart if present
   const selectedShipping = cart.shipping || null; // { cost, label }
   const shippingCost = selectedShipping ? Number(selectedShipping.cost || 0) : (shipping && shipping.type !== 'freight' ? Number(shipping.cost || 0) : 0);
-  const isFreight = shipping?.type === 'freight' || totalWeight > 100 || (selectedShipping && selectedShipping.rateId && selectedShipping.cost > 0 && false);
+  const isFreight = shipping?.type === 'freight' || (selectedShipping && selectedShipping.rateId && selectedShipping.cost > 0 && false);
   const tax = 0; // placeholder for tax calculation if needed
   const grandTotal = subtotal + tax + (selectedShipping ? Number(selectedShipping.cost || 0) : 0);
 
@@ -264,10 +317,55 @@ export default function CartPage() {
                                 </div>
                               </div>
 
-                              <div className="cart-qty-controls" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 4 }}>
+                                <div className="cart-qty-controls" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                                 <button style={{ background: '#fff', color: '#333', border: '1px solid #d6d6d6', borderRadius: 6, width: 32, height: 32, fontWeight: 700, fontSize: '1.2rem', cursor: 'pointer' }} onClick={() => { dispatch({ type: 'SUBTRACT_FROM_CART', product }); }} aria-label="Decrease quantity">-</button>
-                                <span style={{ minWidth: 28, textAlign: 'center', fontWeight: 600, color: '#222', fontSize: '1.1rem' }}>{quantity}</span>
-                                <button style={{ background: '#fff', color: '#333', border: '1px solid #d6d6d6', borderRadius: 6, width: 32, height: 32, fontWeight: 700, fontSize: '1.2rem', cursor: 'pointer' }} onClick={() => { dispatch({ type: 'ADD_TO_CART', product }); }} aria-label="Increase quantity">+</button>
+                                <QuantityInput initialValue={quantity} product={product} dispatch={dispatch} />
+                                <button
+                                  style={{ background: '#fff', color: '#333', border: '1px solid #d6d6d6', borderRadius: 6, width: 32, height: 32, fontWeight: 700, fontSize: '1.2rem', cursor: 'pointer' }}
+                                  onClick={() => {
+                                    const available = Number(product.inventory ?? product.quantity ?? 0);
+                                    const existing = cart.items.find(i => i.product.id === product.id);
+                                    const current = existing ? existing.quantity : 0;
+                                    const desired = current + 1;
+                                    if (Number.isFinite(available) && available > 0 && desired > available) {
+                                      showLimit(product.id);
+                                      return;
+                                    }
+                                    dispatch({ type: 'ADD_TO_CART', product });
+                                  }}
+                                  aria-label="Increase quantity"
+                                >+
+                                </button>
+                                </div>
+                                <div style={{ position: 'relative' }}>
+                                  {limitMap[product.id] && (
+                                    <div
+                                      role="status"
+                                      aria-live="polite"
+                                      style={{
+                                        position: 'absolute',
+                                        top: -34,
+                                        left: '50%',
+                                        transform: 'translateX(-50%)',
+                                        backgroundColor: '#d32f2f',
+                                        border: '1px solid #b71c1c',
+                                        color: '#ffffff',
+                                        WebkitTextFillColor: '#ffffff',
+                                        padding: '6px 8px',
+                                        borderRadius: 6,
+                                        fontSize: 12,
+                                        fontWeight: 700,
+                                        boxShadow: '0 6px 18px rgba(0,0,0,0.12)',
+                                        whiteSpace: 'nowrap',
+                                        zIndex: 9999,
+                                        pointerEvents: 'none',
+                                      }}
+                                    >
+                                      {limitMap[product.id]}
+                                    </div>
+                                  )}
+                                </div>
                               </div>
 
                               <div className="cart-line-total" style={{ textAlign: 'right', minWidth: 110, fontWeight: 800, fontSize: '1.05rem' }}>{isNaN(lineTotal) ? 'Total N/A' : `$${lineTotal.toFixed(2)}`}</div>
@@ -322,7 +420,7 @@ export default function CartPage() {
               >
                 Clear Cart
               </button>
-              { (shipping?.type === 'freight' || totalWeight > 100) ? (
+              { (shipping?.type === 'freight') ? (
                 <button
                   className="btn freight"
                   style={{

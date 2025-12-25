@@ -106,6 +106,37 @@ export default function ProductDetailNew() {
   const isOutOfStock = availableStock <= 0;
   const isMaxed = product ? (qtyInCart >= availableStock && availableStock > 0) : false;
 
+  // Heuristic: determine unit weight (lbs) from common product fields or attributes
+  const getUnitWeight = () => {
+    if (!product) return 0;
+    const candidates = [
+      'weight', 'weight_lbs', 'shipping_weight', 'ship_weight', 'ship_weight_lbs', 'unit_weight'
+    ];
+    for (const k of candidates) {
+      if (product[k] !== undefined && product[k] !== null) {
+        const v = Number(product[k]);
+        if (!Number.isNaN(v) && v > 0) return v;
+      }
+    }
+    // Check attributes for weight-like entries
+    if (Array.isArray(attributes)) {
+      for (const a of attributes) {
+        try {
+          const name = (a.attribute_name || '').toString().toLowerCase();
+          if (name.includes('weight')) {
+            const val = a.value_number !== undefined && a.value_number !== null ? Number(a.value_number) : (a.value_text ? Number(String(a.value_text).replace(/[^0-9.]/g, '')) : NaN);
+            if (!Number.isNaN(val) && val > 0) return val;
+          }
+        } catch (e) { /* ignore parse errors */ }
+      }
+    }
+    return 0;
+  };
+
+  const unitWeight = getUnitWeight();
+  const effectiveQty = Math.max(1, qtyInCart || 1);
+  const totalWeightLbs = unitWeight * effectiveQty;
+
   if (loading) return <div style={{ textAlign: 'center', padding: 24 }}>Loading product…</div>;
   if (!product) return <div style={{ textAlign: 'center', padding: 24 }}>Product not found.</div>;
 
@@ -264,6 +295,28 @@ export default function ProductDetailNew() {
             </button>
           )}
   </div>
+
+        {/* Freight handling: if totalWeightLbs > 100, show a direct 'Proceed to checkout' CTA instead of freight quote */}
+        {totalWeightLbs > 100 ? (
+          <div style={{ marginTop: 18 }}>
+            <button
+              onClick={() => {
+                // Ensure product is in cart then navigate to checkout
+                if (qtyInCart <= 0) dispatch({ type: 'ADD_TO_CART', product, quantity: 1 });
+                navigate('/checkout');
+              }}
+              style={{ background: '#1f8f5a', color: '#fff', border: 'none', padding: '12px 18px', borderRadius: 8, cursor: 'pointer' }}
+            >
+              Proceed to Checkout (Freight)
+            </button>
+          </div>
+        ) : (
+          <div style={{ marginTop: 18 }}>
+            <Link to={`/freight-quote?sku=${encodeURIComponent(product.sku || '')}`} style={{ textDecoration: 'none' }}>
+              <button style={{ background: '#fff', color: '#111', border: '1px solid #ddd', padding: '10px 16px', borderRadius: 8, cursor: 'pointer' }}>Request Freight Quote</button>
+            </Link>
+          </div>
+        )}
 
         {availableStock <= 20 && availableStock > 0 && (
           <div style={{ marginTop: 8, color: 'orange', fontWeight: 700 }}>Low Stock: {availableStock} Available</div>
