@@ -11,91 +11,8 @@ import FreightInquiryPage from './FreightInquiryPage';
 
 function StripeCheckoutButton({ cart, disabled }) {
   const stripe = useStripe();
-  const navigate = useNavigate();
-  // Map cart items to use discounted price if sale is active
-  const getStripeCart = () => {
-    return cart.map(({ product, quantity }) => {
-      const price = Number(product.price);
-      const discountPerc = Number(product.discount_perc) || 0;
-      const endDate = product.discount_end_date ? new Date(product.discount_end_date) : null;
-      const now = new Date();
-      const saleActive = discountPerc > 0 && (!endDate || now <= endDate);
-      const finalPrice = saleActive && !isNaN(price) ? Number((price * (1 - discountPerc)).toFixed(2)) : price;
-      return {
-        product: { ...product, price: finalPrice },
-        quantity
-      };
-    });
-  };
-
-  const totalWeight = cart.reduce((sum, i) => sum + ((i.product.weight || 0) * i.quantity), 0);
-  const shipping = calculateShipping(cart);
-  const handleCheckout = async () => {
-    if (totalWeight > 100) {
-      // Warn user but allow proceeding to checkout if they confirm
-      const ok = window.confirm('Warning: Cart total weight exceeds 100 lbs. Freight may be required. Do you want to continue to checkout?');
-      if (!ok) return;
-    }
-    if (disabled) return;
-    // Client-side validation: ensure all items have valid positive prices before calling server
-    const stripeCart = getStripeCart();
-    const invalid = stripeCart.find(({ product }) => typeof product.price !== 'number' || !isFinite(product.price) || product.price <= 0);
-    if (invalid) {
-      console.error('Checkout blocked: invalid product price in cart', invalid.product);
-      window.alert('Cannot checkout: one or more items have invalid or missing prices. Please remove them from your cart.');
-      return;
-    }
-    try {
-      const res = await fetch('/.netlify/functions/create-checkout-session', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cart: stripeCart, shippingCost: shipping.cost, customer_email: '' }),
-      });
-      if (!res.ok) {
-        // Try to read response body (JSON or text) to show a helpful message
-        let payloadText = '';
-        try {
-          const txt = await res.text();
-          // Try parse JSON first
-          try {
-            const j = JSON.parse(txt);
-            payloadText = j && j.error ? j.error : JSON.stringify(j);
-          } catch (e) {
-            payloadText = txt;
-          }
-        } catch (e) {
-          payloadText = `Status ${res.status}`;
-        }
-        console.error('Checkout failed response:', res.status, payloadText);
-        window.alert(`Checkout failed: ${payloadText}`);
-        return;
-      }
-      const dataText = await res.text().catch(() => null);
-      let data = null;
-      try { data = dataText ? JSON.parse(dataText) : null; } catch (e) { data = null; }
-      if (!data || !data.url) {
-        console.error('Checkout invalid payload:', dataText);
-        window.alert('Checkout failed: invalid response from server.');
-        return;
-      }
-      // navigate to Stripe checkout
-      window.location = data.url;
-    } catch (err) {
-      console.error('Checkout error', err);
-      window.alert('Checkout failed — network error. Please try again later.');
-    }
-  };
-
-  return (
-    <button
-      className="btn primary"
-      style={{ fontWeight: 700, fontSize: '1.1rem', borderRadius: 8, padding: '0.7rem 2rem', marginLeft: '1rem', opacity: disabled ? 0.5 : 1, pointerEvents: disabled ? 'none' : 'auto' }}
-      onClick={handleCheckout}
-      disabled={disabled}
-    >
-      Checkout
-    </button>
-  );
+  // Minimal stub: checkout handled elsewhere in this page; keep a valid component shape
+  return null;
 }
 
 // Normalize image URLs: prefer absolute URLs; if given a filename, prefix with VITE_IMAGE_BASE_URL or CDN.
@@ -348,7 +265,8 @@ export default function CartPage() {
                               </span>
                             </div>
 
-                            <div className="cart-desktop-controls" style={{ display: 'flex', alignItems: 'center', gap: 12, marginLeft: 12, flex: '0 0 auto' }}>
+                            {!isPortrait && (
+                              <div className="cart-desktop-controls" style={{ display: 'flex', alignItems: 'center', gap: 12, marginLeft: 12, flex: '0 0 auto' }}>
                               <div className="cart-price" style={{ textAlign: 'right', minWidth: 100, fontWeight: 700, fontSize: '1.05rem' }}>
                                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
                                   <div style={{ fontSize: '0.95rem', color: saleActive ? '#d32f2f' : '#222' }}>{isNaN(unitPrice) ? 'N/A' : `$${unitPrice.toFixed(2)}`}</div>
@@ -427,16 +345,18 @@ export default function CartPage() {
                               </div>
 
                               <div className="cart-line-total" style={{ textAlign: 'right', minWidth: 110, fontWeight: 800, fontSize: '1.05rem' }}>{isNaN(lineTotal) ? 'Total N/A' : `$${lineTotal.toFixed(2)}`}</div>
-                            </div>
+                              </div>
+                            )}
                           </div>
 
                           <hr className="cart-divider" style={{ border: 'none', borderTop: '1px solid rgba(0,0,0,0.06)', margin: 6 }} />
 
-                          <div className="cart-mobile-summary" style={{ display: 'none', marginTop: 8, paddingTop: 8 }}>
+                          {isPortrait && (
+                            <div className="cart-mobile-summary" style={{ marginTop: 8, paddingTop: 8 }}>
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
                               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                                 <button className="mobile-qty-btn" aria-label="Decrease quantity" onClick={() => { dispatch({ type: 'SUBTRACT_FROM_CART', product }); }} style={{ width: 36, height: 36, borderRadius: 8, border: '1px solid #ddd', background: '#fff', fontWeight: 700 }}>−</button>
-                                <QuantityInput initialValue={quantity} product={product} dispatch={dispatch} />
+                                <QuantityInput initialValue={quantity} product={product} dispatch={dispatch} updateOnBlurOnly={true} />
                                 <button className="mobile-qty-btn" aria-label="Increase quantity" onClick={() => {
                                   const available = Number(product.inventory ?? product.quantity ?? 0);
                                   const existing = cart.items.find(i => i.product.id === product.id);
@@ -484,7 +404,8 @@ export default function CartPage() {
                               </div>
                               <div className="line-total" style={{ fontWeight: 800 }}>{isNaN(lineTotal) ? 'Total N/A' : `$${lineTotal.toFixed(2)}`}</div>
                             </div>
-                          </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>

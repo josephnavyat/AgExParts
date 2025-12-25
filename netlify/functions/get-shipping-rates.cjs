@@ -30,23 +30,10 @@ exports.handler = async function(event, context) {
         body: JSON.stringify({ error: 'No shipping rates found for the provided addresses and parcel. Please check the address and try again.' })
       };
     }
-    // Limit returned rates to a small number to avoid overwhelming the UI.
-    try {
-      const MAX_OPTIONS = Number(process.env.MAX_SHIPPING_OPTIONS) || 3;
-      const rates = Array.isArray(shipment.rates) ? shipment.rates.slice() : [];
-      rates.sort((a, b) => Number(a.amount || 0) - Number(b.amount || 0));
-      const limited = rates.slice(0, MAX_OPTIONS);
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ rates: limited })
-      };
-    } catch (e) {
-      // Fallback to returning all rates if anything goes wrong with filtering
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ rates: shipment.rates })
-      };
-    }
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ rates: shipment.rates })
+    };
   } catch (err) {
     return {
       statusCode: 500,

@@ -34,22 +34,6 @@ The tax exemption upload and profile endpoints require these environment variabl
 - `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION` - AWS credentials for S3 access.
 - `AWS_S3_BUCKET` - S3 bucket name where tax exemption documents will be stored.
 
-### CAPTCHA (Cloudflare Turnstile)
-
-If you enable Turnstile on checkout, set these env vars in Netlify (or your local env):
-
-- `TURNSTILE_SECRET` - Your Turnstile secret key (server-side verification).
-- `TURNSTILE_SITE_KEY` - Your Turnstile site key (used in client-side code).
-
-Example (local):
-
-```bash
-export TURNSTILE_SECRET="<your-secret>"
-export TURNSTILE_SITE_KEY="<your-site-key>"
-```
-
-Note: For security don't hardcode the secret in source — use Netlify environment settings or a secrets manager.
-
 Set these in your Netlify site settings (or local env) before using the upload/profile endpoints.
 
 ## Admin endpoints and notifications

@@ -1,20 +1,9 @@
-// Bump cache name when changing caching behavior so clients pick up a fresh SW.
-const CACHE_NAME = 'agex-cache-v3';
-
 self.addEventListener('install', event => {
   self.skipWaiting();
 });
 
-// On activate, claim clients and remove any old caches so stale assets (or
-// incorrectly cached HTML) aren't returned for CSS/JS/assets preloads.
 self.addEventListener('activate', event => {
-  event.waitUntil(
-    (async () => {
-      const keys = await caches.keys();
-      await Promise.all(keys.map(k => { if (k !== CACHE_NAME) return caches.delete(k); }));
-      await self.clients.claim();
-    })()
-  );
+  event.waitUntil(self.clients.claim());
 });
 
 self.addEventListener('fetch', event => {
@@ -30,79 +19,25 @@ self.addEventListener('fetch', event => {
   // Only handle GET requests here
   if (req.method !== 'GET') return;
 
-  // Skip handling JS module and asset requests; letting the browser fetch these
-  // directly avoids serving index.html (text/html) for chunk imports.
-  if (req.destination === 'script' || url.pathname.startsWith('/assets/') || url.pathname.endsWith('.js') || url.pathname.endsWith('.css')) {
-    return; // fall back to network for scripts/styles
-  }
-
-  // For images, prefer network first to avoid serving stale/broken cached images
-  if (req.destination === 'image' || url.pathname.match(/\.(png|jpg|jpeg|gif|webp|svg)$/i)) {
-    event.respondWith(
-      fetch(req).then(networkResp => {
-        try {
-          const contentType = networkResp.headers.get('content-type') || '';
-          if (networkResp && networkResp.ok && !contentType.includes('text/html')) {
-            const clone = networkResp.clone();
-            caches.open('v1').then(cache => cache.put(req, clone));
-          }
-        } catch (e) {}
-        return networkResp;
-      }).catch(() => caches.match(req).then(cached => cached || Promise.reject('network-failure')))
-    );
-    return;
-  }
-
-  // Prefer network-first for Netlify Function endpoints to avoid serving stale demo data
-  if (url.pathname.startsWith('/.netlify/functions/')) {
-    event.respondWith(
-      fetch(req).then(networkResp => {
-        try {
-          const contentType = networkResp.headers.get('content-type') || '';
-          if (networkResp && networkResp.ok && !contentType.includes('text/html')) {
-            const clone = networkResp.clone();
-            caches.open('v1').then(cache => cache.put(req, clone));
-          }
-        } catch (e) {}
-        return networkResp;
-      }).catch(() => caches.match(req).then(cached => cached || Promise.reject('network-failure')))
-    );
-    return;
-  }
-
   event.respondWith(
-    caches.match(req).then(async (cached) => {
-      // If we have a cached response, ensure it's not HTML (some older SWs
-      // accidentally cached index.html under asset URLs). If it is HTML, ignore it.
-      if (cached) {
-        try {
-          const ct = cached.headers.get('content-type') || '';
-          if (!ct.includes('text/html')) return cached;
-          // else fallthrough to network fetch
-        } catch (e) {
-          // if header read fails, prefer network
-        }
-      }
-
-      try {
-        const networkResp = await fetch(req);
+    caches.match(req).then(cached => {
+      if (cached) return cached;
+      return fetch(req).then(networkResp => {
         // Only cache successful, non-HTML responses
         try {
           const contentType = networkResp.headers.get('content-type') || '';
           if (networkResp && networkResp.ok && !contentType.includes('text/html')) {
             const clone = networkResp.clone();
-            const cache = await caches.open(CACHE_NAME);
-            cache.put(req, clone).catch(()=>{});
+            caches.open('v1').then(cache => cache.put(req, clone));
           }
         } catch (e) {
-          // ignore caching errors
+          // ignore any caching errors
         }
         return networkResp;
-      } catch (e) {
-        // If network fails, return cached if it's valid (non-HTML) otherwise propagate
-        if (cached) return cached;
-        return Promise.reject('network-failure');
-      }
+      }).catch(() => {
+        // If network fails, let the browser try to handle it (or return cached if available)
+        return cached || Promise.reject('network-failure');
+      });
     })
   );
 });
