@@ -146,11 +146,33 @@ export default function CartPage() {
 
   // Controlled quantity input component: syncs initialValue with local state,
   // dispatches SET_QUANTITY on blur or Enter, and keeps the input responsive.
-  function QuantityInput({ initialValue, product, dispatch }) {
+  function QuantityInput({ initialValue, product, dispatch, immediateDispatch = false }) {
     // Use a text input with numeric-only sanitization so browsers don't show native spinners.
     const [val, setVal] = React.useState(() => String(Number(initialValue || 0)));
     // Keep in sync if external cart updates the quantity
     React.useEffect(() => { setVal(String(Number(initialValue || 0))); }, [initialValue]);
+
+    // Auto-dispatch when the user stops typing for a short time (non-mobile)
+    React.useEffect(() => {
+      if (immediateDispatch) return; // mobile will dispatch immediately on change
+      // don't dispatch if input matches the current prop
+      const desired = Number(val || 0);
+      const current = Number(initialValue || 0);
+      if (desired === current) return;
+      const t = setTimeout(() => {
+        const available = Number(product.inventory ?? product.quantity ?? 0);
+        if (Number.isFinite(available) && available > 0 && desired > available) {
+          showLimit(product.id);
+          dispatch({ type: 'SET_QUANTITY', product, quantity: available });
+          setVal(String(available));
+        } else {
+          dispatch({ type: 'SET_QUANTITY', product, quantity: desired });
+          // keep local input in sync with desired
+          setVal(String(desired));
+        }
+      }, 600);
+      return () => clearTimeout(t);
+    }, [val, initialValue, product, dispatch, immediateDispatch]);
     return (
       <input
         aria-label={`Quantity for ${product.name}`}
@@ -164,6 +186,17 @@ export default function CartPage() {
           // keep only digits to avoid non-numeric characters and prevent spinners
           const cleaned = (e.target.value || '').replace(/\D/g, '');
           setVal(cleaned);
+          if (immediateDispatch) {
+            const desired = Number(cleaned || 0);
+            const available = Number(product.inventory ?? product.quantity ?? 0);
+            if (Number.isFinite(available) && available > 0 && desired > available) {
+              showLimit(product.id);
+              dispatch({ type: 'SET_QUANTITY', product, quantity: available });
+              setVal(String(available));
+            } else {
+              dispatch({ type: 'SET_QUANTITY', product, quantity: desired });
+            }
+          }
         }}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
@@ -172,8 +205,10 @@ export default function CartPage() {
             if (Number.isFinite(available) && available > 0 && desired > available) {
               showLimit(product.id);
               dispatch({ type: 'SET_QUANTITY', product, quantity: available });
+              setVal(String(available));
             } else {
               dispatch({ type: 'SET_QUANTITY', product, quantity: desired });
+              setVal(String(desired));
             }
           }
         }}
@@ -183,8 +218,10 @@ export default function CartPage() {
           if (Number.isFinite(available) && available > 0 && desired > available) {
             showLimit(product.id);
             dispatch({ type: 'SET_QUANTITY', product, quantity: available });
+            setVal(String(available));
           } else {
             dispatch({ type: 'SET_QUANTITY', product, quantity: desired });
+            setVal(String(desired));
           }
         }}
         style={{ width: `${Math.max(1, Math.min(((val || '').length || 0), 4))}ch`, textAlign: 'center', fontWeight: 600, color: '#222', fontSize: '1.1rem', padding: '6px 8px', borderRadius: 6, border: '1px solid #d6d6d6', boxSizing: 'content-box' }}
@@ -319,24 +356,43 @@ export default function CartPage() {
 
                               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 4 }}>
                                 <div className="cart-qty-controls" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                { /* Decrease */ }
                                 <button style={{ background: '#fff', color: '#333', border: '1px solid #d6d6d6', borderRadius: 6, width: 32, height: 32, fontWeight: 700, fontSize: '1.2rem', cursor: 'pointer' }} onClick={() => { dispatch({ type: 'SUBTRACT_FROM_CART', product }); }} aria-label="Decrease quantity">-</button>
                                 <QuantityInput initialValue={quantity} product={product} dispatch={dispatch} />
-                                <button
-                                  style={{ background: '#fff', color: '#333', border: '1px solid #d6d6d6', borderRadius: 6, width: 32, height: 32, fontWeight: 700, fontSize: '1.2rem', cursor: 'pointer' }}
-                                  onClick={() => {
-                                    const available = Number(product.inventory ?? product.quantity ?? 0);
-                                    const existing = cart.items.find(i => i.product.id === product.id);
-                                    const current = existing ? existing.quantity : 0;
-                                    const desired = current + 1;
-                                    if (Number.isFinite(available) && available > 0 && desired > available) {
-                                      showLimit(product.id);
-                                      return;
-                                    }
-                                    dispatch({ type: 'ADD_TO_CART', product });
-                                  }}
-                                  aria-label="Increase quantity"
-                                >+
-                                </button>
+                                { /* Increase - disable when at inventory */ }
+                                {(() => {
+                                  const available = Number(product.inventory ?? product.quantity ?? 0);
+                                  const existing = cart.items.find(i => i.product.id === product.id);
+                                  const current = existing ? existing.quantity : 0;
+                                  const isMaxed = Number.isFinite(available) && available > 0 && current >= available;
+                                  return (
+                                    <button
+                                      style={{
+                                        background: isMaxed ? '#f7f7f7' : '#fff',
+                                        color: isMaxed ? '#999' : '#333',
+                                        border: '1px solid #d6d6d6',
+                                        borderRadius: 6,
+                                        width: 32,
+                                        height: 32,
+                                        fontWeight: 700,
+                                        fontSize: '1.2rem',
+                                        cursor: isMaxed ? 'not-allowed' : 'pointer',
+                                      }}
+                                      onClick={() => {
+                                        if (isMaxed) return;
+                                        const desired = current + 1;
+                                        if (Number.isFinite(available) && available > 0 && desired > available) {
+                                          showLimit(product.id);
+                                          return;
+                                        }
+                                        dispatch({ type: 'ADD_TO_CART', product });
+                                      }}
+                                      aria-label="Increase quantity"
+                                      disabled={isMaxed}
+                                    >+
+                                    </button>
+                                  );
+                                })()}
                                 </div>
                                 <div style={{ position: 'relative' }}>
                                   {limitMap[product.id] && (
@@ -378,18 +434,50 @@ export default function CartPage() {
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
                               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                                 <button className="mobile-qty-btn" aria-label="Decrease quantity" onClick={() => { dispatch({ type: 'SUBTRACT_FROM_CART', product }); }} style={{ width: 36, height: 36, borderRadius: 8, border: '1px solid #ddd', background: '#fff', fontWeight: 700 }}>−</button>
-                                <QuantityInput initialValue={quantity} product={product} dispatch={dispatch} />
+                                <QuantityInput initialValue={quantity} product={product} dispatch={dispatch} immediateDispatch={true} />
                                 <button className="mobile-qty-btn" aria-label="Increase quantity" onClick={() => {
                                   const available = Number(product.inventory ?? product.quantity ?? 0);
                                   const existing = cart.items.find(i => i.product.id === product.id);
                                   const current = existing ? existing.quantity : 0;
                                   const desired = current + 1;
+                                  const isMaxedMobile = Number.isFinite(available) && available > 0 && current >= available;
+                                  if (isMaxedMobile) {
+                                    return;
+                                  }
                                   if (Number.isFinite(available) && available > 0 && desired > available) {
                                     showLimit(product.id);
                                     return;
                                   }
                                   dispatch({ type: 'ADD_TO_CART', product });
-                                }} style={{ width: 36, height: 36, borderRadius: 8, border: '1px solid #ddd', background: '#fff', fontWeight: 700 }}>+</button>
+                                }} style={{ width: 36, height: 36, borderRadius: 8, border: '1px solid #ddd', background: '#fff', fontWeight: 700, cursor: (Number.isFinite(product.inventory ?? product.quantity ?? 0) && (cart.items.find(i => i.product.id === product.id)?.quantity || 0) >= Number(product.inventory ?? product.quantity ?? 0)) ? 'not-allowed' : 'pointer' }} disabled={Number.isFinite(product.inventory ?? product.quantity ?? 0) && (cart.items.find(i => i.product.id === product.id)?.quantity || 0) >= Number(product.inventory ?? product.quantity ?? 0)}>+</button>
+                                <div style={{ position: 'relative' }}>
+                                  {limitMap[product.id] && (
+                                    <div
+                                      role="status"
+                                      aria-live="polite"
+                                      style={{
+                                        position: 'absolute',
+                                        top: -34,
+                                        left: '50%',
+                                        transform: 'translateX(-50%)',
+                                        backgroundColor: '#d32f2f',
+                                        border: '1px solid #b71c1c',
+                                        color: '#ffffff',
+                                        WebkitTextFillColor: '#ffffff',
+                                        padding: '6px 8px',
+                                        borderRadius: 6,
+                                        fontSize: 12,
+                                        fontWeight: 700,
+                                        boxShadow: '0 6px 18px rgba(0,0,0,0.12)',
+                                        whiteSpace: 'nowrap',
+                                        zIndex: 9999,
+                                        pointerEvents: 'none',
+                                      }}
+                                    >
+                                      {limitMap[product.id]}
+                                    </div>
+                                  )}
+                                </div>
                                 <div style={{ marginLeft: 12, color: '#666' }}>{`× $${isNaN(unitPrice) ? 'N/A' : unitPrice.toFixed(2)}`}</div>
                               </div>
                               <div className="line-total" style={{ fontWeight: 800 }}>{isNaN(lineTotal) ? 'Total N/A' : `$${lineTotal.toFixed(2)}`}</div>
