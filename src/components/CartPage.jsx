@@ -378,8 +378,18 @@ export default function CartPage() {
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
                               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                                 <button className="mobile-qty-btn" aria-label="Decrease quantity" onClick={() => { dispatch({ type: 'SUBTRACT_FROM_CART', product }); }} style={{ width: 36, height: 36, borderRadius: 8, border: '1px solid #ddd', background: '#fff', fontWeight: 700 }}>−</button>
-                                <div style={{ fontWeight: 700, minWidth: 28, textAlign: 'center' }}>{quantity}</div>
-                                <button className="mobile-qty-btn" aria-label="Increase quantity" onClick={() => { dispatch({ type: 'ADD_TO_CART', product }); }} style={{ width: 36, height: 36, borderRadius: 8, border: '1px solid #ddd', background: '#fff', fontWeight: 700 }}>+</button>
+                                <QuantityInput initialValue={quantity} product={product} dispatch={dispatch} />
+                                <button className="mobile-qty-btn" aria-label="Increase quantity" onClick={() => {
+                                  const available = Number(product.inventory ?? product.quantity ?? 0);
+                                  const existing = cart.items.find(i => i.product.id === product.id);
+                                  const current = existing ? existing.quantity : 0;
+                                  const desired = current + 1;
+                                  if (Number.isFinite(available) && available > 0 && desired > available) {
+                                    showLimit(product.id);
+                                    return;
+                                  }
+                                  dispatch({ type: 'ADD_TO_CART', product });
+                                }} style={{ width: 36, height: 36, borderRadius: 8, border: '1px solid #ddd', background: '#fff', fontWeight: 700 }}>+</button>
                                 <div style={{ marginLeft: 12, color: '#666' }}>{`× $${isNaN(unitPrice) ? 'N/A' : unitPrice.toFixed(2)}`}</div>
                               </div>
                               <div className="line-total" style={{ fontWeight: 800 }}>{isNaN(lineTotal) ? 'Total N/A' : `$${lineTotal.toFixed(2)}`}</div>
