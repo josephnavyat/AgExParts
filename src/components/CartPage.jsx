@@ -146,7 +146,7 @@ export default function CartPage() {
 
   // Controlled quantity input component: syncs initialValue with local state,
   // dispatches SET_QUANTITY on blur or Enter, and keeps the input responsive.
-  function QuantityInput({ initialValue, product, dispatch, immediateDispatch = false }) {
+  function QuantityInput({ initialValue, product, dispatch, immediateDispatch = false, updateOnBlurOnly = false }) {
     // Use a text input with numeric-only sanitization so browsers don't show native spinners.
     const [val, setVal] = React.useState(() => String(Number(initialValue || 0)));
     // Keep in sync if external cart updates the quantity
@@ -154,7 +154,7 @@ export default function CartPage() {
 
     // Auto-dispatch when the user stops typing for a short time (non-mobile)
     React.useEffect(() => {
-      if (immediateDispatch) return; // mobile will dispatch immediately on change
+      if (immediateDispatch || updateOnBlurOnly) return; // mobile will dispatch on blur only
       // don't dispatch if input matches the current prop
       const desired = Number(val || 0);
       const current = Number(initialValue || 0);
@@ -172,7 +172,7 @@ export default function CartPage() {
         }
       }, 600);
       return () => clearTimeout(t);
-    }, [val, initialValue, product, dispatch, immediateDispatch]);
+    }, [val, initialValue, product, dispatch, immediateDispatch, updateOnBlurOnly]);
     return (
       <input
         aria-label={`Quantity for ${product.name}`}
@@ -196,6 +196,8 @@ export default function CartPage() {
             } else {
               dispatch({ type: 'SET_QUANTITY', product, quantity: desired });
             }
+          } else if (updateOnBlurOnly) {
+            // do nothing here; wait for blur or Enter
           }
         }}
         onKeyDown={(e) => {
@@ -358,7 +360,7 @@ export default function CartPage() {
                                 <div className="cart-qty-controls" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                                 { /* Decrease */ }
                                 <button style={{ background: '#fff', color: '#333', border: '1px solid #d6d6d6', borderRadius: 6, width: 32, height: 32, fontWeight: 700, fontSize: '1.2rem', cursor: 'pointer' }} onClick={() => { dispatch({ type: 'SUBTRACT_FROM_CART', product }); }} aria-label="Decrease quantity">-</button>
-                                <QuantityInput initialValue={quantity} product={product} dispatch={dispatch} />
+                                <QuantityInput initialValue={quantity} product={product} dispatch={dispatch} updateOnBlurOnly={true} />
                                 { /* Increase - disable when at inventory */ }
                                 {(() => {
                                   const available = Number(product.inventory ?? product.quantity ?? 0);
