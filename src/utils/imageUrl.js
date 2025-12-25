@@ -71,3 +71,29 @@ export function getImageUrl(img) {
   }
   return '/logo.png';
 }
+
+// Build a URL for files stored in Cloudflare R2 (TemplateDocs bucket).
+// If VITE_R2_BASE_URL is set (e.g. https://<account>.r2.cloudflarestorage.com/bucketname), use it.
+// Otherwise fall back to the same VITE_IMAGE_BASE_URL behavior but point to the TemplateDocs path.
+export function getR2Url(filename) {
+  if (!filename) return '';
+  let base = (import.meta && import.meta.env && import.meta.env.VITE_R2_BASE_URL) || (import.meta && import.meta.env && import.meta.env.VITE_IMAGE_BASE_URL) || '';
+  const placeholderRe = /your[-_.]?cdn|image[-_.]?base[-_.]?url|your[-_.]?domain|example\.com|your-cdn-or-image-base-url/i;
+  if (!base || placeholderRe.test(String(base))) {
+    base = 'https://cdn.agexparts.com/TemplateDocs';
+  }
+  base = String(base).trim();
+  if (!/^https?:\/\//i.test(base)) {
+    if (base.startsWith('//')) base = 'https:' + base;
+    else base = 'https://' + base;
+  }
+  // If the provided base already includes the bucket path, don't duplicate
+  const name = filename.replace(/^\/+/, '');
+  // Ensure we don't double up TemplateDocs
+  let abs = base.replace(/\/$/, '') + '/' + encodeURI(name);
+  // If base doesn't contain TemplateDocs, add it
+  if (!/TemplateDocs/i.test(base)) {
+    abs = base.replace(/\/$/, '') + '/TemplateDocs/' + encodeURI(name);
+  }
+  return abs;
+}
