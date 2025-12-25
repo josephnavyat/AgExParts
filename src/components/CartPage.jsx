@@ -278,7 +278,7 @@ export default function CartPage() {
                                 <div className="cart-qty-controls" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                                 { /* Decrease */ }
                                 <button style={{ background: '#fff', color: '#333', border: '1px solid #d6d6d6', borderRadius: 6, width: 32, height: 32, fontWeight: 700, fontSize: '1.2rem', cursor: 'pointer' }} onClick={() => { dispatch({ type: 'SUBTRACT_FROM_CART', product }); }} aria-label="Decrease quantity">-</button>
-                                <QuantityInput initialValue={quantity} product={product} dispatch={dispatch} updateOnBlurOnly={true} />
+                                <QuantityInput initialValue={quantity} product={product} dispatch={dispatch} />
                                 { /* Increase - disable when at inventory */ }
                                 {(() => {
                                   const available = Number(product.inventory ?? product.quantity ?? 0);
