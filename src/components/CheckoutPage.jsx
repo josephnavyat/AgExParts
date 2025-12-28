@@ -43,6 +43,8 @@ export default function CheckoutPage() {
   const [selectedRate, setSelectedRate] = useState(null);
   const [lastRates, setLastRates] = useState(null);
   const [lastRawResponse, setLastRawResponse] = useState(null);
+  const [estesLoading, setEstesLoading] = useState(false);
+  const [estesError, setEstesError] = useState(null);
 
   const [billingValid, setBillingValid] = useState(false);
 
@@ -125,6 +127,73 @@ export default function CheckoutPage() {
       }
     }
   }, [lastRates]);
+
+  // If cart total weight > 100 lbs, request an Estes freight quote and prefer that as shipping.
+  useEffect(() => {
+    const totalWeight = cart.items.reduce((s, i) => s + ((i.product.weight || 0) * i.quantity), 0);
+    if (totalWeight <= 100) return; // only trigger for heavy shipments
+
+    // Do not request Estes quote until shipping address is complete/valid
+    if (!validateAddress(shipping)) {
+      // intentionally skip until the user provides a valid shipping address
+      console.debug('Skipping Estes quote: shipping address incomplete or invalid', shipping);
+      return;
+    }
+
+    // prepare checkout-like payload for the Netlify function
+    const checkoutPayload = {
+      checkout: {
+        destination: {
+          addressLine1: shipping.street1,
+          city: shipping.city,
+          stateProvince: shipping.state,
+          postalCode: shipping.zip,
+          country: shipping.country || 'US',
+          contactName: shipping.name,
+          phone: shipping.phone
+        },
+        items: cart.items.map(i => ({ name: i.product.title || i.product.name || 'item', weight: i.product.weight || 0, quantity: i.quantity }))
+      }
+    };
+
+    let cancelled = false;
+    (async () => {
+      try {
+        setEstesError(null);
+        setEstesLoading(true);
+        const res = await fetch('/.netlify/functions/estes-quote', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(checkoutPayload) });
+        const j = await res.json().catch(() => ({}));
+        if (cancelled) return;
+        setEstesLoading(false);
+        if (!res.ok) {
+          setEstesError(j && (j.error || j.estesResponse) ? (j.error || JSON.stringify(j.estesResponse)) : 'Estes quote failed');
+          setLastRawResponse(j && j.estesResponse ? j.estesResponse : j);
+          return;
+        }
+
+        // Convert Estes handler response into internal rate format
+        // Handler returns { carrier, scac, quoteNumber, transitDays, total, breakdown }
+        const rate = {
+          object_id: j.quoteNumber || `estes-${Date.now()}`,
+          provider: j.carrier || 'Estes',
+          servicelevel: { name: 'Freight (Estes)' },
+          amount: Number((j.total || 0)),
+          estimated_days: j.transitDays || undefined,
+          raw: j.breakdown || null
+        };
+
+        setLastRates([rate]);
+        setSelectedRate(rate);
+        try { dispatch({ type: 'SET_SHIPPING_COST', cost: Number(rate.amount), shipping: { cost: Number(rate.amount), label: `${rate.provider} ${rate.servicelevel.name}`, rateId: rate.object_id } }); } catch (e) {}
+      } catch (err) {
+        if (cancelled) return;
+        setEstesLoading(false);
+        setEstesError(err && err.message ? err.message : String(err));
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, [cart.items, shipping.street1, shipping.city, shipping.state, shipping.zip]);
 
   // NOTE: do not auto-accept cart.shipping here; require an explicit selection in the checkout flow.
 

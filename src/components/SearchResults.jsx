@@ -4,6 +4,7 @@ import Navbar from "./Navbar.jsx";
 import "../styles/simple-gallery.css";
 import { getImageUrl as resolveImageUrl } from '../utils/imageUrl.js';
 import { useCart, getProductQuantity } from "./CartContext.jsx";
+import LimitTooltip from './LimitTooltip.jsx';
 
 export default function SearchResults() {
   const location = useLocation();
@@ -32,7 +33,7 @@ export default function SearchResults() {
   const [inStockOnly, setInStockOnly] = useState(false);
   const [perPage, setPerPage] = useState(24);
   const [page, setPage] = useState(1);
-  const { dispatch, cart } = useCart();
+  const { dispatch, cart, limitMap, showLimit } = useCart();
 
   useEffect(() => {
     const controller = new AbortController();
@@ -294,44 +295,46 @@ export default function SearchResults() {
                       const availableStock = Number(product.inventory ?? product.quantity ?? 0);
                       if (qty > 0) {
                         return (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#f6f6f6', borderRadius: 8, padding: '0.2rem 0.5rem' }}>
-                            <button
-                              style={{
-                                background: '#fff',
-                                color: '#333',
-                                border: '1px solid #d6d6d6',
-                                borderRadius: 6,
-                                width: 32,
-                                height: 32,
-                                fontWeight: 700,
-                                fontSize: '1.05rem',
-                                cursor: 'pointer',
-                              }}
-                              onClick={(e) => { e.stopPropagation(); e.preventDefault(); dispatch({ type: 'SUBTRACT_FROM_CART', product }); }}
-                              aria-label="Decrease quantity"
-                            >
-                              -
-                            </button>
-                            <span style={{ minWidth: 28, textAlign: 'center', fontWeight: 600, color: '#222', fontSize: '1rem' }}>{qty}</span>
-                            <button
-                              style={{
-                                background: '#fff',
-                                color: '#333',
-                                border: '1px solid #d6d6d6',
-                                borderRadius: 6,
-                                width: 32,
-                                height: 32,
-                                fontWeight: 700,
-                                fontSize: '1.05rem',
-                                cursor: 'pointer',
-                              }}
-                              onClick={(e) => { e.stopPropagation(); e.preventDefault(); dispatch({ type: 'ADD_TO_CART', product }); }}
-                              aria-label="Increase quantity"
-                              disabled={qty >= availableStock}
-                            >
-                              +
-                            </button>
-                          </div>
+                          <>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#f6f6f6', borderRadius: 8, padding: '0.2rem 0.5rem' }}>
+                              <button
+                                style={{
+                                  background: '#fff',
+                                  color: '#333',
+                                  border: '1px solid #d6d6d6',
+                                  borderRadius: 6,
+                                  width: 32,
+                                  height: 32,
+                                  fontWeight: 700,
+                                  fontSize: '1.05rem',
+                                  cursor: 'pointer',
+                                }}
+                                onClick={(e) => { e.stopPropagation(); e.preventDefault(); dispatch({ type: 'SUBTRACT_FROM_CART', product }); }}
+                                aria-label="Decrease quantity"
+                              >
+                                -
+                              </button>
+                              <span style={{ minWidth: 28, textAlign: 'center', fontWeight: 600, color: '#222', fontSize: '1rem' }}>{qty}</span>
+                              <button
+                                style={{
+                                  background: '#fff',
+                                  color: '#333',
+                                  border: '1px solid #d6d6d6',
+                                  borderRadius: 6,
+                                  width: 32,
+                                  height: 32,
+                                  fontWeight: 700,
+                                  fontSize: '1.05rem',
+                                  cursor: 'pointer',
+                                }}
+                                onClick={(e) => { e.stopPropagation(); e.preventDefault(); const desired = (qty || 0) + 1; const available = Number(product.inventory ?? product.quantity ?? 0); if (Number.isFinite(available) && available > 0 && desired > available) { showLimit(product.id); return; } dispatch({ type: 'ADD_TO_CART', product }); }}
+                                aria-label="Increase quantity"
+                              >
+                                +
+                              </button>
+                            </div>
+                            <LimitTooltip productId={product.id} />
+                          </>
                         );
                       }
                       return (

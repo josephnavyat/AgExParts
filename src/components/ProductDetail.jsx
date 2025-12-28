@@ -4,6 +4,7 @@ import Navbar from "./Navbar.jsx";
 import Footer from "./Footer.jsx";
 import { useCart } from "./CartContext.jsx";
 import { getProductQuantity } from "./CartContext.jsx";
+import LimitTooltip from './LimitTooltip.jsx';
 import "../styles/site.css";
 import { getImageUrl as resolveImageUrl } from '../utils/imageUrl.js';
 
@@ -12,7 +13,7 @@ export default function ProductDetail() {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { cart, dispatch } = useCart();
+  const { cart, dispatch, limitMap, showLimit } = useCart();
   const getImageUrl = (img) => resolveImageUrl(img);
   // Helper for available inventory
   const availableStock = product && Number(product.inventory ?? product.quantity ?? 0);
@@ -415,12 +416,18 @@ export default function ProductDetail() {
                     fontSize: '1.1rem',
                     cursor: 'pointer',
                   }}
-                  onClick={() => dispatch({ type: 'ADD_TO_CART', product })}
+                  onClick={() => {
+                    const desired = (getProductQuantity(cart, product.id) || 0) + 1;
+                    const available = Number(product.inventory ?? product.quantity ?? 0);
+                    if (Number.isFinite(available) && available > 0 && desired > available) { showLimit(product.id); return; }
+                    dispatch({ type: 'ADD_TO_CART', product });
+                  }}
                   aria-label="Increase quantity"
-                  disabled={getProductQuantity(cart, product.id) >= availableStock}
+                  
                 >
                   +
                 </button>
+                <LimitTooltip productId={product.id} style={{ marginLeft: 12 }} />
               </div>
             ) : (
               <button
@@ -443,7 +450,7 @@ export default function ProductDetail() {
                 onMouseOver={e => (e.currentTarget.style.background = '#12895c')}
                 onMouseOut={e => (e.currentTarget.style.background = '#19a974')}
                 onClick={() => dispatch({ type: 'ADD_TO_CART', product })}
-                disabled={availableStock <= 0}
+              
               >
                 Add to Cart
               </button>

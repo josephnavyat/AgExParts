@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import QuantityInput from './QuantityInput.jsx';
+import LimitTooltip from './LimitTooltip.jsx';
 import Navbar from "./Navbar.jsx";
 import Footer from "./Footer.jsx";
 import { useCart } from "./CartContext.jsx";
@@ -54,100 +56,12 @@ function calculateShipping(cartItems) {
 }
 
 export default function CartPage() {
-  // transient per-product limit messages when user tries to go past inventory
-  const [limitMap, setLimitMap] = React.useState({});
-  const showLimit = (productId, msg = 'Reached inventory limit') => {
-    setLimitMap(m => ({ ...m, [productId]: msg }));
-    setTimeout(() => setLimitMap(m => { const copy = { ...m }; delete copy[productId]; return copy; }), 1800);
-  };
+  // centralized transient limit messages are provided by CartContext
 
   // Controlled quantity input component: syncs initialValue with local state,
   // dispatches SET_QUANTITY on blur or Enter, and keeps the input responsive.
-  function QuantityInput({ initialValue, product, dispatch, immediateDispatch = false, updateOnBlurOnly = false }) {
-    // Use a text input with numeric-only sanitization so browsers don't show native spinners.
-    const [val, setVal] = React.useState(() => String(Number(initialValue || 0)));
-    // Keep in sync if external cart updates the quantity
-    React.useEffect(() => { setVal(String(Number(initialValue || 0))); }, [initialValue]);
-
-    // Auto-dispatch when the user stops typing for a short time (non-mobile)
-    React.useEffect(() => {
-      if (immediateDispatch || updateOnBlurOnly) return; // mobile will dispatch on blur only
-      // don't dispatch if input matches the current prop
-      const desired = Number(val || 0);
-      const current = Number(initialValue || 0);
-      if (desired === current) return;
-      const t = setTimeout(() => {
-        const available = Number(product.inventory ?? product.quantity ?? 0);
-        if (Number.isFinite(available) && available > 0 && desired > available) {
-          showLimit(product.id);
-          dispatch({ type: 'SET_QUANTITY', product, quantity: available });
-          setVal(String(available));
-        } else {
-          dispatch({ type: 'SET_QUANTITY', product, quantity: desired });
-          // keep local input in sync with desired
-          setVal(String(desired));
-        }
-      }, 600);
-      return () => clearTimeout(t);
-    }, [val, initialValue, product, dispatch, immediateDispatch, updateOnBlurOnly]);
-    return (
-      <input
-        aria-label={`Quantity for ${product.name}`}
-        type="text"
-        inputMode="numeric"
-        pattern="[0-9]*"
-        maxLength={4}
-        value={val}
-        className="qty-input"
-        onChange={(e) => {
-          // keep only digits to avoid non-numeric characters and prevent spinners
-          const cleaned = (e.target.value || '').replace(/\D/g, '');
-          setVal(cleaned);
-          if (immediateDispatch) {
-            const desired = Number(cleaned || 0);
-            const available = Number(product.inventory ?? product.quantity ?? 0);
-            if (Number.isFinite(available) && available > 0 && desired > available) {
-              showLimit(product.id);
-              dispatch({ type: 'SET_QUANTITY', product, quantity: available });
-              setVal(String(available));
-            } else {
-              dispatch({ type: 'SET_QUANTITY', product, quantity: desired });
-            }
-          } else if (updateOnBlurOnly) {
-            // do nothing here; wait for blur or Enter
-          }
-        }}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') {
-            const desired = Number(val || 0);
-            const available = Number(product.inventory ?? product.quantity ?? 0);
-            if (Number.isFinite(available) && available > 0 && desired > available) {
-              showLimit(product.id);
-              dispatch({ type: 'SET_QUANTITY', product, quantity: available });
-              setVal(String(available));
-            } else {
-              dispatch({ type: 'SET_QUANTITY', product, quantity: desired });
-              setVal(String(desired));
-            }
-          }
-        }}
-        onBlur={() => {
-          const desired = Number(val || 0);
-          const available = Number(product.inventory ?? product.quantity ?? 0);
-          if (Number.isFinite(available) && available > 0 && desired > available) {
-            showLimit(product.id);
-            dispatch({ type: 'SET_QUANTITY', product, quantity: available });
-            setVal(String(available));
-          } else {
-            dispatch({ type: 'SET_QUANTITY', product, quantity: desired });
-            setVal(String(desired));
-          }
-        }}
-        style={{ width: `${Math.max(1, Math.min(((val || '').length || 0), 4))}ch`, textAlign: 'center', fontWeight: 600, color: '#222', fontSize: '1.1rem', padding: '6px 8px', borderRadius: 6, border: '1px solid #d6d6d6', boxSizing: 'content-box' }}
-      />
-    );
-  }
-  const { cart, dispatch } = useCart();
+  // Replaced by shared QuantityInput component
+  const { cart, dispatch, limitMap, showLimit } = useCart();
   // detect portrait orientation on narrow screens to avoid CSS specificity wars
   const [isPortrait, setIsPortrait] = React.useState(() => (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width:420px) and (orientation: portrait)').matches) || false);
   React.useEffect(() => {
@@ -308,7 +222,7 @@ export default function CartPage() {
                                         dispatch({ type: 'ADD_TO_CART', product });
                                       }}
                                       aria-label="Increase quantity"
-                                      disabled={isMaxed}
+                                      
                                     >+
                                     </button>
                                   );
@@ -342,6 +256,7 @@ export default function CartPage() {
                                     </div>
                                   )}
                                 </div>
+                                                    <LimitTooltip productId={product.id} />
                               </div>
 
                               <div className="cart-line-total" style={{ textAlign: 'right', minWidth: 110, fontWeight: 800, fontSize: '1.05rem' }}>{isNaN(lineTotal) ? 'Total N/A' : `$${lineTotal.toFixed(2)}`}</div>
@@ -371,7 +286,7 @@ export default function CartPage() {
                                     return;
                                   }
                                   dispatch({ type: 'ADD_TO_CART', product });
-                                }} style={{ width: 36, height: 36, borderRadius: 8, border: '1px solid #ddd', background: '#fff', fontWeight: 700, cursor: (Number.isFinite(product.inventory ?? product.quantity ?? 0) && (cart.items.find(i => i.product.id === product.id)?.quantity || 0) >= Number(product.inventory ?? product.quantity ?? 0)) ? 'not-allowed' : 'pointer' }} disabled={Number.isFinite(product.inventory ?? product.quantity ?? 0) && (cart.items.find(i => i.product.id === product.id)?.quantity || 0) >= Number(product.inventory ?? product.quantity ?? 0)}>+</button>
+                                }} style={{ width: 36, height: 36, borderRadius: 8, border: '1px solid #ddd', background: '#fff', fontWeight: 700, cursor: 'pointer' }}>+</button>
                                 <div style={{ position: 'relative' }}>
                                   {limitMap[product.id] && (
                                     <div

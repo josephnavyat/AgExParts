@@ -39,7 +39,7 @@ export default function ShippingRatesButton({ cart, fromAddress, toAddress, onRa
         mass_unit: "oz"
       };
   // prefer explicit toAddress prop (passed from Checkout), otherwise use cart.shippingAddress or fallback
-  const to_address = toAddress || cart.shippingAddress || {
+      const to_address = toAddress || cart.shippingAddress || {
         name: "Customer",
         street1: "1438 8th St",
         city: "Santa Monica",
@@ -47,6 +47,13 @@ export default function ShippingRatesButton({ cart, fromAddress, toAddress, onRa
         zip: "90405",
         country: "US"
       };
+      // basic address validation: require street, city, state (2 letters), and zip
+      const hasAddress = to_address && to_address.street1 && to_address.city && to_address.state && to_address.zip && (/^[A-Za-z]{2}$/.test(String(to_address.state)) && (/^[0-9]{5}(-[0-9]{4})?$/.test(String(to_address.zip))));
+      if (!hasAddress) {
+        setError('Please enter a complete shipping address before calculating rates');
+        setLoading(false);
+        return;
+      }
       // Debug log
       console.log('Shipping to:', to_address);
       console.log('Parcel:', parcel);

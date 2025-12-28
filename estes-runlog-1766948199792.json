@@ -1,0 +1,86 @@
+{
+  "timestamp": "2025-12-28T18:56:39.791Z",
+  "sent": {
+    "quoteRequest": {
+      "shipDate": "2025-12-30T00:00:00.000Z",
+      "shipTime": "12:00",
+      "serviceLevels": [
+        "ALL"
+      ],
+      "origin": {
+        "name": "AgEx Parts",
+        "locationId": "123",
+        "address": {
+          "city": "Cedar Falls",
+          "stateProvince": "IA",
+          "postalCode": "50613",
+          "country": "US"
+        },
+        "contact": {
+          "name": "Henry Jones",
+          "phone": "8045559876",
+          "phoneExt": "12",
+          "email": "origin.email@email.com"
+        }
+      },
+      "destination": {
+        "name": "XYZ Destination Company",
+        "locationId": "987-B",
+        "address": {
+          "city": "Opelika",
+          "stateProvince": "AL",
+          "postalCode": "36801",
+          "country": "US"
+        },
+        "contact": {
+          "name": "Lucy Patel",
+          "phone": "8045554321",
+          "phoneExt": "1212",
+          "email": "destination.email@email.com"
+        }
+      },
+      "payment": {
+        "account": "B132703",
+        "payor": "Shipper",
+        "terms": "Prepaid"
+      },
+      "requestor": {
+        "name": "Tony Merfeld",
+        "phone": "3198594214",
+        "email": "support@agexparts.com"
+      },
+      "commodity": {
+        "handlingUnits": [
+          {
+            "count": 1,
+            "type": "PT",
+            "weight": 600,
+            "tareWeight": 10,
+            "weightUnit": "Pounds",
+            "length": 48,
+            "width": 40,
+            "height": 48,
+            "dimensionsUnit": "Inches",
+            "isStackable": false,
+            "isTurnable": true,
+            "lineItems": [
+              {
+                "description": "Boxes of widgets",
+                "weight": 600,
+                "pieces": 1,
+                "packagingType": "BX",
+                "classification": "92.5",
+                "nmfc": "158880",
+                "nmfcSub": "3",
+                "isHazardous": false
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "response": {
+    "error": "ESTES_API_URL not configured"
+  }
+}

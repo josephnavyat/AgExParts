@@ -3,6 +3,8 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import getImageUrl from '../utils/getImageUrl.js';
 import SmartImage from './SmartImage.jsx';
 import { useCart, getProductQuantity } from './CartContext.jsx';
+import QuantityInput from './QuantityInput.jsx';
+import LimitTooltip from './LimitTooltip.jsx';
 
 export default function ProductDetailNew() {
   const { id } = useParams();
@@ -12,7 +14,7 @@ export default function ProductDetailNew() {
   const [compatibility, setCompatibility] = useState([]);
   const [images, setImages] = useState([]);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const { dispatch, cart } = useCart();
+  const { dispatch, cart, limitMap, showLimit } = useCart();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -97,7 +99,18 @@ export default function ProductDetailNew() {
     return () => { cancelled = true; };
   }, [product]);
 
-  const addToCart = () => { if (!product) return; dispatch({ type: 'ADD_TO_CART', product, quantity: 1 }); };
+  // use centralized limitMap/showLimit from CartContext
+
+  const addToCart = () => {
+    if (!product) return;
+    const available = Number(product.inventory ?? product.quantity ?? 0);
+    const desired = (qtyInCart || 0) + 1;
+    if (Number.isFinite(available) && available > 0 && desired > available) {
+      showLimit();
+      return;
+    }
+    dispatch({ type: 'ADD_TO_CART', product, quantity: 1 });
+  };
   const subtractFromCart = () => { if (!product) return; dispatch({ type: 'SUBTRACT_FROM_CART', product }); };
   const removeFromCart = () => { if (!product) return; dispatch({ type: 'REMOVE_FROM_CART', id: product.id }); };
 
@@ -270,14 +283,17 @@ export default function ProductDetailNew() {
   <div className="pd-actions pd-actions--inline" style={{ marginTop: 32, display: 'flex', alignItems: 'center', gap: 16 }}>
           <div style={{ fontSize: '1.6rem', fontWeight: 800 }}>${Number(product.price || 0).toFixed(2)}</div>
           {qtyInCart > 0 ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #e6e6e6', borderRadius: 6, overflow: 'hidden' }}>
                 <button aria-label="Decrease quantity" onClick={subtractFromCart} style={{ padding: '8px 10px', border: 'none', background: '#fff', cursor: 'pointer' }}>−</button>
-                <div style={{ padding: '8px 12px', minWidth: 44, textAlign: 'center', fontWeight: 600 }}>{qtyInCart}</div>
-                <button aria-label="Increase quantity" onClick={addToCart} disabled={isMaxed} style={{ padding: '8px 10px', border: 'none', background: isMaxed ? '#f7f7f7' : '#fff', cursor: isMaxed ? 'not-allowed' : 'pointer' }}>+</button>
+                <QuantityInput initialValue={qtyInCart} product={product} dispatch={dispatch} updateOnBlurOnly={false} showLimit={showLimit} />
+                <button aria-label="Increase quantity" onClick={addToCart} style={{ padding: '8px 10px', border: 'none', background: isMaxed ? '#f7f7f7' : '#fff', cursor: 'pointer' }}>+</button>
               </div>
               <button onClick={removeFromCart} style={{ background: '#fff', border: '1px solid #ddd', padding: '8px 12px', borderRadius: 6, cursor: 'pointer' }}>Remove</button>
-            </div>
+              </div>
+              <LimitTooltip productId={product.id} style={{ marginLeft: 12 }} />
+            </>
           ) : (
             <button
               onClick={addToCart}

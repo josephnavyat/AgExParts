@@ -1,5 +1,0 @@
-/*
-  Cache-Control: no-cache
-
-/images/*
-  Cache-Control: max-age=0, must-revalidate

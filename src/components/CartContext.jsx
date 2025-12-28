@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, useEffect } from "react";
+import React, { createContext, useContext, useReducer, useEffect, useState } from "react";
 
 const CartContext = createContext();
 
@@ -143,8 +143,15 @@ const CartProvider = ({ children }) => {
     localStorage.setItem('cart', JSON.stringify(state));
   }, [state]);
 
+  // Centralized transient messages for inventory limits (shared showLimit)
+  const [limitMap, setLimitMap] = useState({});
+  const showLimit = (productId, msg = 'Stock Limit Reached') => {
+    setLimitMap(m => ({ ...m, [productId]: msg }));
+    setTimeout(() => setLimitMap(m => { const copy = { ...m }; delete copy[productId]; return copy; }), 1800);
+  };
+
   return (
-    <CartContext.Provider value={{ cart: state, dispatch }}>
+    <CartContext.Provider value={{ cart: state, dispatch, limitMap, showLimit }}>
       {children}
     </CartContext.Provider>
   );

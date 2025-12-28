@@ -1,0 +1,319 @@
+⬥ Injecting environment variable values for all scopes
+⬥ Ignored general context env var: LANG (defined in process)
+⬥ Ignored project settings env var: DATABASE_URL (defined in .env file)
+⬥ Ignored project settings env var: EASYPOST_API_KEY (defined in .env file)
+⬥ Ignored project settings env var: JWT_SECRET (defined in .env file)
+⬥ Ignored project settings env var: MAILGUN_API_KEY (defined in .env file)
+⬥ Ignored project settings env var: MAILGUN_DOMAIN (defined in .env file)
+⬥ Ignored project settings env var: MAILGUN_FROM (defined in .env file)
+⬥ Ignored project settings env var: STRIPE_SECRET_KEY (defined in .env file)
+⬥ Ignored project settings env var: STRIPE_WEBHOOK_SECRET (defined in .env file)
+⬥ Injected project settings env vars: BASE_URL, NETLIFY_DATABASE_URL, NETLIFY_DATABASE_URL_UNPOOLED, SHIPPO_API_KEY, SMTP_HOST, SMTP_PASS, SMTP_PORT, SMTP_USER, TURNSTILE_SECRET, VITE_API_URL, VITE_IMAGE_BASE_URL, VITE_STORE_CITY, VITE_STORE_NAME, VITE_STORE_PHONE, VITE_STORE_STATE, VITE_STORE_STREET, VITE_STORE_ZIP
+⬥ Injected .env file env vars: DATABASE_URL, EASYPOST_API_KEY, JWT_SECRET, MAILGUN_API_KEY, MAILGUN_DOMAIN, MAILGUN_FROM, STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, AWS_S3_BUCKET, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, TAX_ADMIN_EMAILS, DISABLE_STRIPE_AUTOMATIC_TAX, ESTES_API_KEY, ESTES_CLIENT_ID, ESTES_CLIENT_SECRET, ESTES_ACCOUNT, ESTES_STRING, ESTES_API_URL, ESTES_AUTH_URL, ESTES_RATES_ENDPOINT, SHIPPING_ALLOWED_CARRIERS
+⬥ Setting up local dev server
+[36m[1m​[22m[39m
+[36m[1m❯ Installing extensions[22m[39m
+   - neon
+
+⬥ Starting Vite dev server
+⠋ Waiting for Vite dev server to be ready on port 5173
+[1G
+> agex-parts-react@0.0.2 dev
+> vite
+
+⠙ Waiting for Vite dev server to be ready on port 5173
+[1GThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.
+⠹ Waiting for Vite dev server to be ready on port 5173
+[1G
+  VITE v5.4.20  ready in 112 ms
+
+⠸ Waiting for Vite dev server to be ready on port 5173
+[1G  ➜  Local:   http://localhost:5173/
+⠼ Waiting for Vite dev server to be ready on port 5173
+[1G  ➜  Network: use --host to expose
+⠴ Waiting for Vite dev server to be ready on port 5173
+✔ Vite dev server ready on port 5173
+⬥ Loaded function upload-tax-exempt in Lambda compatibility mode (https://ntl.fyi/lambda-compat)
+⬥ Loaded function upload-image in Lambda compatibility mode (https://ntl.fyi/lambda-compat)
+⬥ Loaded function update-order in Lambda compatibility mode (https://ntl.fyi/lambda-compat)
+⬥ Loaded function send-email in Lambda compatibility mode (https://ntl.fyi/lambda-compat)
+⬥ Loaded function reset-password in Lambda compatibility mode (https://ntl.fyi/lambda-compat)
+⬥ Loaded function stripe-webhook in Lambda compatibility mode (https://ntl.fyi/lambda-compat)
+⬥ Loaded function request-password-reset in Lambda compatibility mode (https://ntl.fyi/lambda-compat)
+⬥ Loaded function login-user in Lambda compatibility mode (https://ntl.fyi/lambda-compat)
+⬥ Loaded function register-user in Lambda compatibility mode (https://ntl.fyi/lambda-compat)
+⬥ Loaded function image-proxy in Lambda compatibility mode (https://ntl.fyi/lambda-compat)
+⬥ Loaded function get-user in Lambda compatibility mode (https://ntl.fyi/lambda-compat)
+⬥ Loaded function get-shipping-rates in Lambda compatibility mode (https://ntl.fyi/lambda-compat)
+⬥ Loaded function get-product-attributes in Lambda compatibility mode (https://ntl.fyi/lambda-compat)
+⬥ Loaded function get-orders in Lambda compatibility mode (https://ntl.fyi/lambda-compat)
+⬥ Loaded function get-order in Lambda compatibility mode (https://ntl.fyi/lambda-compat)
+⬥ Loaded function get-data in Lambda compatibility mode (https://ntl.fyi/lambda-compat)
+⬥ Loaded function get-compatible-skus in Lambda compatibility mode (https://ntl.fyi/lambda-compat)
+⬥ Loaded function get-compatibility in Lambda compatibility mode (https://ntl.fyi/lambda-compat)
+⬥ Loaded function get-compatibility-options in Lambda compatibility mode (https://ntl.fyi/lambda-compat)
+⬥ Loaded function get-compatibility-by-sku in Lambda compatibility mode (https://ntl.fyi/lambda-compat)
+⬥ Loaded function function in Lambda compatibility mode (https://ntl.fyi/lambda-compat)
+⬥ Loaded function estes-quote in Lambda compatibility mode (https://ntl.fyi/lambda-compat)
+⬥ Loaded function debug-compat-sample in Lambda compatibility mode (https://ntl.fyi/lambda-compat)
+⬥ Loaded function create-freight-order in Lambda compatibility mode (https://ntl.fyi/lambda-compat)
+⬥ Loaded function create-checkout-session in Lambda compatibility mode (https://ntl.fyi/lambda-compat)
+⬥ Loaded function contact-parts-specialist in Lambda compatibility mode (https://ntl.fyi/lambda-compat)
+⬥ Loaded function admin-list-tax-uploads in Lambda compatibility mode (https://ntl.fyi/lambda-compat)
+⬥ Loaded function estes-defaults in Lambda compatibility mode (https://ntl.fyi/lambda-compat)
+⬥ Loaded function admin-approve-tax-exempt in Lambda compatibility mode (https://ntl.fyi/lambda-compat)
+
+   ╭──────────────────────── ⬥  ────────────────────────╮
+   │                                                    │
+   │   Local dev server ready: http://localhost:55634   │
+   │                                                    │
+   ╰────────────────────────────────────────────────────╯
+
+(node:22183) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+Request from ::1: GET /.netlify/functions/get-data
+Request from ::1: GET /.netlify/functions/image-proxy?url=https%3A%2F%2Fcdn.agexparts.com%2Ftillage.png
+Request from ::1: GET /.netlify/functions/image-proxy?url=https%3A%2F%2Fcdn.agexparts.com%2Fharvesting.png
+Request from ::1: GET /.netlify/functions/image-proxy?url=https%3A%2F%2Fcdn.agexparts.com%2Fhay_and_forage.png
+Request from ::1: GET /.netlify/functions/image-proxy?url=https%3A%2F%2Fcdn.agexparts.com%2Fmowing.png
+Request from ::1: GET /.netlify/functions/get-data
+Response with status 404 in 197 ms.
+Response with status 404 in 199 ms.
+Response with status 404 in 204 ms.
+Request from ::1: GET /.netlify/functions/get-data
+Response with status 404 in 207 ms.
+Response with status 200 in 336 ms.
+Response with status 200 in 722 ms.
+Request from ::1: GET /.netlify/functions/image-proxy?url=https%3A%2F%2Fcdn.agexparts.com%2FS85-0515.png
+Request from ::1: GET /.netlify/functions/image-proxy?url=https%3A%2F%2Fcdn.agexparts.com%2FS20-8268.png
+Request from ::1: GET /.netlify/functions/image-proxy?url=https%3A%2F%2Fcdn.agexparts.com%2FW16-0808.png
+Request from ::1: GET /.netlify/functions/image-proxy?url=https%3A%2F%2Fcdn.agexparts.com%2FHA8830.png
+Response with status 200 in 48 ms.
+Response with status 200 in 77 ms.
+Response with status 200 in 77 ms.
+Response with status 200 in 94 ms.
+Response with status 200 in 692 ms.
+Request from ::1: GET /.netlify/functions/image-proxy?url=https%3A%2F%2Fcdn.agexparts.com%2Ftillage.png
+Request from ::1: GET /.netlify/functions/image-proxy?url=https%3A%2F%2Fcdn.agexparts.com%2Fharvesting.png
+Request from ::1: GET /.netlify/functions/image-proxy?url=https%3A%2F%2Fcdn.agexparts.com%2Fhay_and_forage.png
+Request from ::1: GET /.netlify/functions/image-proxy?url=https%3A%2F%2Fcdn.agexparts.com%2Fmowing.png
+Request from ::1: GET /.netlify/functions/get-data
+Request from ::1: GET /.netlify/functions/get-data
+Response with status 404 in 33 ms.
+Response with status 404 in 28 ms.
+Response with status 404 in 32 ms.
+Response with status 404 in 29 ms.
+Response with status 200 in 72 ms.
+Response with status 200 in 78 ms.
+Request from ::1: GET /.netlify/functions/get-data
+Request from ::1: GET /.netlify/functions/get-compatibility-options
+Request from ::1: GET /.netlify/functions/get-data
+Request from ::1: GET /.netlify/functions/get-compatibility-options
+Response with status 200 in 80 ms.
+Response with status 200 in 140 ms.
+Request from ::1: GET /.netlify/functions/image-proxy?url=https%3A%2F%2Fcdn.agexparts.com%2FS85-0539.png
+Request from ::1: GET /.netlify/functions/image-proxy?url=https%3A%2F%2Fcdn.agexparts.com%2FDS136005.png
+Request from ::1: GET /.netlify/functions/image-proxy?url=https%3A%2F%2Fcdn.agexparts.com%2FDRZ135058K.png
+Request from ::1: GET /.netlify/functions/image-proxy?url=https%3A%2F%2Fcdn.agexparts.com%2FDRZ136570K.png
+Response with status 200 in 171 ms.
+Request from ::1: GET /.netlify/functions/image-proxy?url=https%3A%2F%2Fcdn.agexparts.com%2FDN125005.png
+Response with status 200 in 182 ms.
+Request from ::1: GET /.netlify/functions/image-proxy?url=https%3A%2F%2Fcdn.agexparts.com%2FB45-1130.png
+Response with status 200 in 102 ms.
+Request from ::1: GET /.netlify/functions/image-proxy?url=https%3A%2F%2Fcdn.agexparts.com%2FSL124L.png
+Response with status 200 in 180 ms.
+Response with status 200 in 303 ms.
+Response with status 200 in 293 ms.
+Response with status 200 in 290 ms.
+Request from ::1: GET /.netlify/functions/image-proxy?url=https%3A%2F%2Fcdn.agexparts.com%2FB55-0065D.png
+Request from ::1: GET /.netlify/functions/image-proxy?url=https%3A%2F%2Fcdn.agexparts.com%2F010-HAR-3818ML.png
+Request from ::1: GET /.netlify/functions/image-proxy?url=https%3A%2F%2Fcdn.agexparts.com%2FB45-2750.png
+Request from ::1: GET /.netlify/functions/image-proxy?url=https%3A%2F%2Fcdn.agexparts.com%2F010-DEG-1001ML.png
+Response with status 200 in 345 ms.
+Request from ::1: GET /.netlify/functions/image-proxy?url=https%3A%2F%2Fcdn.agexparts.com%2FB45-2736.png
+Response with status 200 in 97 ms.
+Request from ::1: GET /.netlify/functions/image-proxy?url=https%3A%2F%2Fcdn.agexparts.com%2F11001HX-S20-3370.png
+Response with status 200 in 125 ms.
+Request from ::1: GET /.netlify/functions/image-proxy?url=https%3A%2F%2Fcdn.agexparts.com%2FHA36.png
+Response with status 200 in 486 ms.
+Request from ::1: GET /.netlify/functions/image-proxy?url=https%3A%2F%2Fcdn.agexparts.com%2FP57-0063.png
+Response with status 200 in 143 ms.
+Response with status 200 in 174 ms.
+Request from ::1: GET /.netlify/functions/image-proxy?url=https%3A%2F%2Fcdn.agexparts.com%2FB45-3049.png
+Request from ::1: GET /.netlify/functions/image-proxy?url=https%3A%2F%2Fcdn.agexparts.com%2FH465493R2.png
+Response with status 200 in 84 ms.
+Response with status 200 in 64 ms.
+Request from ::1: GET /.netlify/functions/image-proxy?url=https%3A%2F%2Fcdn.agexparts.com%2FDS083005.png
+Request from ::1: GET /.netlify/functions/image-proxy?url=https%3A%2F%2Fcdn.agexparts.com%2FHA462.png
+Response with status 200 in 227 ms.
+Response with status 200 in 48 ms.
+Request from ::1: GET /.netlify/functions/image-proxy?url=https%3A%2F%2Fcdn.agexparts.com%2FDS136010.png
+Response with status 200 in 71 ms.
+Response with status 200 in 61 ms.
+Response with status 200 in 75 ms.
+Response with status 200 in 78 ms.
+Response with status 200 in 164 ms.
+Request from ::1: GET /.netlify/functions/image-proxy?url=https%3A%2F%2Fcdn.agexparts.com%2Ftillage.png
+Request from ::1: GET /.netlify/functions/image-proxy?url=https%3A%2F%2Fcdn.agexparts.com%2Fharvesting.png
+Request from ::1: GET /.netlify/functions/image-proxy?url=https%3A%2F%2Fcdn.agexparts.com%2Fhay_and_forage.png
+Request from ::1: GET /.netlify/functions/image-proxy?url=https%3A%2F%2Fcdn.agexparts.com%2Fmowing.png
+Request from ::1: GET /.netlify/functions/get-data
+Request from ::1: GET /.netlify/functions/get-data
+Response with status 404 in 34 ms.
+Response with status 404 in 39 ms.
+Response with status 404 in 44 ms.
+Response with status 404 in 34 ms.
+Response with status 200 in 78 ms.
+Response with status 200 in 83 ms.
+Request from ::1: GET /.netlify/functions/get-data
+Request from ::1: GET /.netlify/functions/get-data
+Response with status 200 in 67 ms.
+Response with status 200 in 70 ms.
+Request from ::1: GET /.netlify/functions/get-data
+Request from ::1: GET /.netlify/functions/get-compatibility-options
+Request from ::1: GET /.netlify/functions/get-compatibility-options
+Response with status 200 in 73 ms.
+Response with status 200 in 167 ms.
+Response with status 200 in 177 ms.
+Request from ::1: POST /.netlify/functions/estes-quote
+Response with status 400 in 1 ms.
+Request from ::1: POST /.netlify/functions/estes-quote
+Response with status 400 in 0 ms.
+Request from ::1: POST /.netlify/functions/estes-quote
+Response with status 400 in 1 ms.
+Request from ::1: POST /.netlify/functions/estes-quote
+Response with status 400 in 1 ms.
+Request from ::1: POST /.netlify/functions/estes-quote
+Response with status 400 in 1 ms.
+Request from ::1: POST /.netlify/functions/estes-quote
+estes-quote-failed { status: 404, message: 'no Route matched with those values' }
+Response with status 404 in 340 ms.
+Request from ::1: POST /.netlify/functions/get-shipping-rates
+Computed totalWeight (lbs): 120
+Skipping EasyPost call due to heavy/oversize; returning placeholder freight rate
+Response with status 200 in 102 ms.
+2:15:42 PM [vite] .env changed, restarting server...
+2:15:42 PM [vite] server restarted.
+2:17:15 PM [vite] .env changed, restarting server...
+2:17:15 PM [vite] server restarted.
+⬥ Reloading function estes-quote...
+⬥ Reloaded function estes-quote
+⬥ Reloading function estes-quote...
+⬥ Reloaded function estes-quote
+Request from ::1: POST /.netlify/functions/estes-quote
+Response with status 400 in 3 ms.
+Request from ::1: POST /.netlify/functions/estes-quote
+Response with status 400 in 1 ms.
+Request from ::1: POST /.netlify/functions/estes-quote
+Response with status 400 in 1 ms.
+Request from ::1: POST /.netlify/functions/estes-quote
+Response with status 400 in 1 ms.
+Request from ::1: POST /.netlify/functions/estes-quote
+Response with status 400 in 0 ms.
+Request from ::1: POST /.netlify/functions/estes-quote
+estes-quote-failed { status: 404, message: 'no Route matched with those values' }
+Response with status 404 in 379 ms.
+Request from ::1: POST /.netlify/functions/get-shipping-rates
+Computed totalWeight (lbs): 120
+Skipping EasyPost call due to heavy/oversize; returning placeholder freight rate
+Response with status 200 in 2 ms.
+⬥ Reloading function estes-quote...
+⬥ Reloaded function estes-quote
+Request from ::1: POST /.netlify/functions/get-shipping-rates
+Computed totalWeight (lbs): 120
+Skipping EasyPost call due to heavy/oversize; returning placeholder freight rate
+Response with status 200 in 7 ms.
+Request from ::1: POST /.netlify/functions/get-shipping-rates
+Computed totalWeight (lbs): 120
+Skipping EasyPost call due to heavy/oversize; returning placeholder freight rate
+Response with status 200 in 3 ms.
+Request from ::1: POST /.netlify/functions/estes-quote
+Response with status 400 in 2 ms.
+Request from ::1: POST /.netlify/functions/estes-quote
+Response with status 400 in 1 ms.
+Request from ::1: POST /.netlify/functions/estes-quote
+Response with status 400 in 2 ms.
+Request from ::1: POST /.netlify/functions/estes-quote
+Response with status 400 in 2 ms.
+Request from ::1: POST /.netlify/functions/estes-quote
+Response with status 400 in 2 ms.
+Request from ::1: POST /.netlify/functions/estes-quote
+estes-quote-failed { status: 404, message: 'no Route matched with those values' }
+Response with status 404 in 329 ms.
+Request from ::1: POST /.netlify/functions/get-shipping-rates
+Computed totalWeight (lbs): 120
+Skipping EasyPost call due to heavy/oversize; returning placeholder freight rate
+Response with status 200 in 3 ms.
+Request from ::1: POST /.netlify/functions/get-shipping-rates
+Computed totalWeight (lbs): 120
+Skipping EasyPost call due to heavy/oversize; returning placeholder freight rate
+Response with status 200 in 3 ms.
+⬥ Reloading function estes-quote...
+⬥ Reloaded function estes-quote
+Request from ::1: POST /.netlify/functions/estes-quote
+Response with status 400 in 3 ms.
+Request from ::1: POST /.netlify/functions/estes-quote
+Response with status 400 in 1 ms.
+Request from ::1: POST /.netlify/functions/estes-quote
+Response with status 400 in 1 ms.
+Request from ::1: POST /.netlify/functions/estes-quote
+Response with status 400 in 0 ms.
+Request from ::1: POST /.netlify/functions/estes-quote
+Response with status 400 in 1 ms.
+Request from ::1: POST /.netlify/functions/estes-quote
+estes-quote-failed { status: 404, message: 'no Route matched with those values' }
+Response with status 404 in 301 ms.
+Request from ::1: POST /.netlify/functions/get-shipping-rates
+Computed totalWeight (lbs): 120
+Skipping EasyPost call due to heavy/oversize; returning placeholder freight rate
+Response with status 200 in 2 ms.
+Request from ::1: POST /.netlify/functions/get-shipping-rates
+Computed totalWeight (lbs): 120
+Skipping EasyPost call due to heavy/oversize; returning placeholder freight rate
+Response with status 200 in 3 ms.
+Request from ::1: POST /.netlify/functions/get-shipping-rates
+Computed totalWeight (lbs): 120
+Skipping EasyPost call due to heavy/oversize; returning placeholder freight rate
+Response with status 200 in 5 ms.
+Request from ::1: POST /.netlify/functions/get-shipping-rates
+Computed totalWeight (lbs): 120
+Skipping EasyPost call due to heavy/oversize; returning placeholder freight rate
+Response with status 200 in 4 ms.
+Request from ::1: POST /.netlify/functions/estes-quote
+Response with status 400 in 2 ms.
+Request from ::1: POST /.netlify/functions/estes-quote
+Response with status 400 in 2 ms.
+Request from ::1: POST /.netlify/functions/estes-quote
+Response with status 400 in 1 ms.
+Request from ::1: POST /.netlify/functions/estes-quote
+Response with status 400 in 2 ms.
+Request from ::1: POST /.netlify/functions/estes-quote
+Response with status 400 in 1 ms.
+Request from ::1: POST /.netlify/functions/estes-quote
+Request from ::1: POST /.netlify/functions/get-shipping-rates
+Computed totalWeight (lbs): 120
+Skipping EasyPost call due to heavy/oversize; returning placeholder freight rate
+Response with status 200 in 1 ms.
+estes-quote-failed { status: 404, message: 'no Route matched with those values' }
+Response with status 404 in 1391 ms.
+2:40:05 PM [vite] hmr update /src/components/CheckoutPage.jsx
+2:40:14 PM [vite] hmr update /src/components/ShippingRatesButton.jsx
+Request from ::1: POST /.netlify/functions/estes-quote
+estes-quote-failed { status: 404, message: 'no Route matched with those values' }
+Response with status 404 in 320 ms.
+Request from ::1: POST /.netlify/functions/estes-quote
+estes-quote-failed { status: 404, message: 'no Route matched with those values' }
+Response with status 404 in 372 ms.
+Request from ::1: POST /.netlify/functions/get-shipping-rates
+Computed totalWeight (lbs): 120
+Skipping EasyPost call due to heavy/oversize; returning placeholder freight rate
+Response with status 200 in 4 ms.
+Request from ::1: POST /.netlify/functions/get-shipping-rates
+Computed totalWeight (lbs): 120
+Skipping EasyPost call due to heavy/oversize; returning placeholder freight rate
+Response with status 200 in 4 ms.
+Request from ::1: POST /.netlify/functions/get-shipping-rates
+Computed totalWeight (lbs): 120
+Skipping EasyPost call due to heavy/oversize; returning placeholder freight rate
+Response with status 200 in 3 ms.
