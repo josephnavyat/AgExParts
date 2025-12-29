@@ -1,0 +1,1 @@
+import{u as r,j as l}from"./index-gi7GTMaL.js";function a({productId:t,style:s={},className:e=""}){const{limitMap:i}=r(),o=i&&t?i[t]:void 0;return o?l.jsx("div",{role:"status","aria-live":"polite",className:`limit-tooltip ${e}`,style:{marginTop:6,color:"#d32f2f",fontWeight:800,fontSize:"0.95rem",...s},children:o}):null}export{a as L};
