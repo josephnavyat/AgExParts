@@ -1,14 +1,14 @@
 {
-  "timestamp": 1766981296774,
+  "timestamp": 1766982213271,
   "carrier": "Estes",
   "scac": "EXLA",
-  "quoteNumber": "LVQZYLY",
+  "quoteNumber": "LVQZ4LV",
   "serviceLevelText": "LTL Standard Transit",
   "transitDays": 1,
   "total": 158.06,
   "breakdown": {
     "totalCharges": "158.06",
-    "totalShipmentWeight": 228,
+    "totalShipmentWeight": 218,
     "rateType": "Customer Pricing",
     "ratedCube": ".00",
     "ratedLinearFeet": 2,
