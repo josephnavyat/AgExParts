@@ -4,6 +4,8 @@ const https = require('https');
 const defaults = require('./estes-defaults');
 const fs = require('fs');
 const path = require('path');
+const CACHE_FILE = path.resolve(process.cwd(), 'estes-cache.json');
+const CACHE_TTL_MS = 1000 * 60 * 60; // 1 hour
 
 function postJson(urlString, body, headers = {}) {
   return new Promise((resolve, reject) => {
@@ -55,7 +57,7 @@ function buildEstesPayloadFromCheckout(body) {
     dimensionsUnit: 'Inches',
     isStackable: false,
     isTurnable: false,
-    lineItems: items.length ? items.map(it => ({ description: it.name || it.title || 'item', weight: Number(it.weight || it.itemWeight || 0) || 0, pieces: Number(it.quantity || it.qty || 1) || 1, packagingType: it.packageCode || 'BX', classification: it.classification })) : [{ weight: Math.max(1, Math.round(totalWeight)), pieces: totalPieces }]
+    lineItems: items.length ? items.map(it => ({ description: it.name || it.title || 'item', weight: Number(it.weight || it.itemWeight || 0) || 0, pieces: Number(it.quantity || it.qty || 1) || 1, packagingType: it.packageCode || 'BX', classification: it.classification || '92.5', nmfc: it.nmfc || '', nmfcSub: it.nmfcSub || '', isHazardous: !!it.isHazardous })) : [{ weight: Math.max(1, Math.round(totalWeight)), pieces: totalPieces, packagingType: 'BX', classification: '92.5', nmfc: '', nmfcSub: '', isHazardous: false }]
   };
 
   const payload = {
@@ -77,7 +79,9 @@ function buildEstesPayloadFromCheckout(body) {
         },
         contact: {
           name: destination.contactName || destination.contact || '',
-          phone: destination.phone || ''
+          phone: destination.phone || '',
+          phoneExt: destination.phoneExt || '',
+          email: destination.contactEmail || destination.email || ''
         }
       },
       commodity: { handlingUnits: [handlingUnit] },
@@ -97,11 +101,22 @@ exports.handler = async function(event) {
   }
 
   try {
-    const body = JSON.parse(event.body || '{}');
+  let body = JSON.parse(event.body || '{}');
+  // Accept wrapper payloads like { payload: { ... } } (from debug files)
+  try { if (body && body.payload && typeof body.payload === 'object') body = body.payload; } catch (e) {}
 
   // Build the Estes payload. Accept either a full `quoteRequest` from client or build from checkout data.
   let estesPayload;
   if (body && body.quoteRequest) {
+      // Accept payloads where origin/destination were provided at the top-level (as produced by the direct script)
+      // by copying them into quoteRequest if missing.
+      try {
+        if ((!body.quoteRequest.origin || !body.quoteRequest.destination) && (body.origin || body.destination)) {
+          body.quoteRequest.origin = body.quoteRequest.origin || body.origin || body.quoteRequest.origin;
+          body.quoteRequest.destination = body.quoteRequest.destination || body.destination || body.quoteRequest.destination;
+        }
+      } catch (e) {}
+
       // basic validation: require shipDate and origin/destination postal codes
       const qr = body.quoteRequest || {};
       const originPost = (qr.origin && (qr.origin.postalCode || (qr.origin.address && qr.origin.address.postalCode))) || null;
@@ -109,7 +124,54 @@ exports.handler = async function(event) {
       if (!qr.shipDate || !originPost || !destPost) {
         return { statusCode: 400, body: JSON.stringify({ error: 'quoteRequest must include shipDate and origin.destination postalCode' }) };
       }
-      estesPayload = body; // forward client-provided structure
+      // forward client-provided structure, but sanitize commodity weights to ensure Estes receives numeric totals
+      estesPayload = body;
+      try {
+        const qr = estesPayload.quoteRequest || {};
+        if (qr.commodity && Array.isArray(qr.commodity.handlingUnits) && qr.commodity.handlingUnits.length > 0) {
+          // compute total weight from handlingUnits or lineItems
+          let computed = 0;
+          let tareTotal = 0;
+          let piecesTotal = 0;
+          for (const hu of qr.commodity.handlingUnits) {
+            // prefer explicit hu.weight, fall back to sum of lineItems
+            if (hu && (hu.weight || hu.weight === 0)) {
+              computed += Number(hu.weight) || 0;
+            } else if (hu && Array.isArray(hu.lineItems) && hu.lineItems.length > 0) {
+              for (const li of hu.lineItems) {
+                const liPieces = Number(li.pieces || li.count || 1) || 1;
+                piecesTotal += liPieces;
+                computed += Number(li.weight || 0) * liPieces;
+              }
+            }
+            if (hu && (hu.tareWeight || hu.tareWeight === 0)) {
+              tareTotal += Number(hu.tareWeight) || 0;
+            }
+            if (hu && (hu.lineItems && Array.isArray(hu.lineItems))) {
+              for (const li of hu.lineItems) {
+                piecesTotal += Number(li.pieces || 0) || 0;
+              }
+            }
+          }
+          // if computed is zero, try to use top-level body.weight
+          if (!computed && (estesPayload.weight || estesPayload.totalWeight)) computed = Number(estesPayload.weight || estesPayload.totalWeight) || 0;
+          // apply computed weight back into first handling unit to ensure carrier sees non-zero
+          if (computed > 0) {
+            const first = qr.commodity.handlingUnits[0];
+            // include tare to create gross weight for carrier
+            const gross = Math.max(1, Math.round((Number(computed) || 0) + (Number(tareTotal) || 0)));
+            first.weight = gross;
+            if (!first.weightUnit) first.weightUnit = 'Pounds';
+            // Also set an aggregate totalShipmentWeight including tare weight
+            try {
+              if (!qr.commodity) qr.commodity = {};
+              qr.commodity.totalShipmentWeight = gross;
+              // helpful extras
+              if (!qr.commodity.totalPieces) qr.commodity.totalPieces = piecesTotal || 1;
+            } catch (e) { /* ignore */ }
+          }
+        }
+      } catch (e) { /* best-effort */ }
     } else {
       // Expect client to send a `checkout` object with destination and items. We'll map fields below.
       const checkout = body.checkout || {};
@@ -135,8 +197,8 @@ exports.handler = async function(event) {
         height: body.height || 48,
         dimensionsUnit: 'Inches',
         isStackable: false,
-        isTurnable: false,
-        lineItems: items.length ? items.map(it => ({ description: it.name || it.title || 'item', weight: Number(it.weight || it.itemWeight || 0) || 0, pieces: Number(it.quantity || it.qty || 1) || 1, packagingType: it.packageCode || 'BX', classification: it.classification })) : [{ weight: Math.max(1, Math.round(totalWeight)), pieces: totalPieces }]
+            isTurnable: true,
+            lineItems: items.length ? items.map(it => ({ description: it.name || it.title || 'item', weight: Number(it.weight || it.itemWeight || 0) || 0, pieces: Number(it.quantity || it.qty || 1) || 1, packagingType: it.packageCode || 'BX', classification: it.classification || '92.5', nmfc: it.nmfc || '', nmfcSub: it.nmfcSub || '', isHazardous: !!it.isHazardous })) : [{ weight: Math.max(1, Math.round(totalWeight)), pieces: totalPieces, packagingType: 'BX', classification: '92.5', nmfc: '', nmfcSub: '', isHazardous: false }]
       };
 
       estesPayload = {
@@ -156,10 +218,12 @@ exports.handler = async function(event) {
               postalCode: String(destPostal),
               country: destination.country || destination.countryAbbrev || 'US'
             },
-            contact: {
-              name: destination.contactName || destination.contact || '',
-              phone: destination.phone || ''
-            }
+                contact: {
+                  name: destination.contactName || destination.contact || '',
+                  phone: destination.phone || '',
+                  phoneExt: destination.phoneExt || '',
+                  email: destination.contactEmail || destination.email || ''
+                },
           },
           commodity: { handlingUnits: [handlingUnit] },
           accessorials: body.accessorials || []
@@ -214,6 +278,89 @@ exports.handler = async function(event) {
 
     // Save pre payload and overwrite a simple log for easy debugging (auth-and-quote-direct style)
     try {
+      // Ensure the top-level payload mirrors the successful request shape we observed in logs
+      // (duplicate quoteRequest.origin/destination at top-level and normalize common street suffixes)
+      try {
+        if (estesPayload && estesPayload.quoteRequest) {
+          // duplicate into top-level if not already present
+          if (!estesPayload.origin && estesPayload.quoteRequest.origin) {
+            estesPayload.origin = JSON.parse(JSON.stringify(estesPayload.quoteRequest.origin));
+          }
+          if (!estesPayload.destination && estesPayload.quoteRequest.destination) {
+            estesPayload.destination = JSON.parse(JSON.stringify(estesPayload.quoteRequest.destination));
+          }
+          // duplicate commodity to top-level to match successful request shape where carrier reads top-level commodity
+          try {
+            if (!estesPayload.commodity && estesPayload.quoteRequest.commodity) {
+              estesPayload.commodity = JSON.parse(JSON.stringify(estesPayload.quoteRequest.commodity));
+            }
+            // ensure aggregates exist at top-level commodity as well
+            if (estesPayload.commodity) {
+              if (!estesPayload.commodity.totalShipmentWeight && estesPayload.quoteRequest && estesPayload.quoteRequest.commodity && estesPayload.quoteRequest.commodity.totalShipmentWeight) {
+                estesPayload.commodity.totalShipmentWeight = estesPayload.quoteRequest.commodity.totalShipmentWeight;
+              }
+              if (!estesPayload.commodity.totalPieces && estesPayload.quoteRequest && estesPayload.quoteRequest.commodity && estesPayload.quoteRequest.commodity.totalPieces) {
+                estesPayload.commodity.totalPieces = estesPayload.quoteRequest.commodity.totalPieces || estesPayload.quoteRequest.commodity.totalPieces;
+              }
+            }
+          } catch (e) { /* best-effort */ }
+          // normalize common street suffix abbreviations to full words (e.g., "Dr" -> "Drive")
+          const expandSuffix = (s = '') => {
+            try {
+              return String(s).replace(/\bDr\.?\b/gi, 'Drive').replace(/\bRd\.?\b/gi, 'Road').replace(/\bSt\.?\b/gi, 'Street');
+            } catch (e) { return s; }
+          };
+          if (estesPayload.quoteRequest.origin && estesPayload.quoteRequest.origin.address && estesPayload.quoteRequest.origin.address.address1) {
+            estesPayload.quoteRequest.origin.address.address1 = expandSuffix(estesPayload.quoteRequest.origin.address.address1);
+            if (estesPayload.origin && estesPayload.origin.address) estesPayload.origin.address.address1 = expandSuffix(estesPayload.origin.address.address1);
+          }
+          if (estesPayload.quoteRequest.destination && estesPayload.quoteRequest.destination.address && estesPayload.quoteRequest.destination.address.address1) {
+            estesPayload.quoteRequest.destination.address.address1 = expandSuffix(estesPayload.quoteRequest.destination.address.address1);
+            if (estesPayload.destination && estesPayload.destination.address) estesPayload.destination.address.address1 = expandSuffix(estesPayload.destination.address.address1);
+          }
+          // LTL-friendly normalizations: ensure numeric counts/pieces, weight units, and classification/nmfc fields
+          try {
+            const qr = estesPayload.quoteRequest;
+            if (qr && qr.commodity && Array.isArray(qr.commodity.handlingUnits)) {
+              let aggWeight = 0;
+              let aggPieces = 0;
+              for (const hu of qr.commodity.handlingUnits) {
+                if (!hu) continue;
+                // ensure count
+                if (!hu.count || isNaN(Number(hu.count))) hu.count = 1;
+                // normalize weight unit
+                if (!hu.weightUnit) hu.weightUnit = 'Pounds';
+                // ensure numeric weight
+                if (hu.weight || hu.weight === 0) hu.weight = Number(hu.weight) || 0;
+                if (hu.tareWeight || hu.tareWeight === 0) hu.tareWeight = Number(hu.tareWeight) || 0;
+                // ensure lineItems exist and have pieces/weight/classification
+                if (!Array.isArray(hu.lineItems) || hu.lineItems.length === 0) {
+                  hu.lineItems = hu.lineItems || [{ weight: hu.weight || 0, pieces: hu.count || 1 }];
+                }
+                for (const li of hu.lineItems) {
+                  if (!li) continue;
+                  if (!li.pieces || isNaN(Number(li.pieces))) li.pieces = li.count || 1;
+                  li.pieces = Number(li.pieces) || 1;
+                  if (li.weight || li.weight === 0) li.weight = Number(li.weight) || 0;
+                  if (!li.classification) li.classification = li.classification || '92.5';
+                  // nmfc optional: keep if present
+                  aggPieces += li.pieces || 0;
+                  aggWeight += (li.weight || 0) * (li.pieces || 1);
+                }
+                // if hu.weight missing, use aggregate of lineItems + tare
+                if ((!hu.weight || hu.weight === 0) && aggWeight > 0) {
+                  hu.weight = aggWeight + (hu.tareWeight || 0);
+                }
+              }
+              // ensure commodity aggregates
+              try {
+                if (!qr.commodity.totalShipmentWeight || qr.commodity.totalShipmentWeight === 0) qr.commodity.totalShipmentWeight = Math.max(1, Math.round(aggWeight + (qr.commodity.handlingUnits.reduce((s, h) => s + (Number(h.tareWeight || 0)), 0) || 0)));
+                if (!qr.commodity.totalPieces || qr.commodity.totalPieces === 0) qr.commodity.totalPieces = aggPieces || qr.commodity.handlingUnits.reduce((s,h) => s + (Number(h.count || 1) || 1), 0);
+              } catch (e) {}
+            }
+          } catch (e) { /* best-effort */ }
+        }
+      } catch (e) { /* best-effort normalization; ignore errors */ }
       fs.writeFileSync(path.resolve(process.cwd(), 'estes-debug-pre.json'), JSON.stringify({ timestamp: new Date().toISOString(), payload: estesPayload }, null, 2));
       const logObj = { timestamp: new Date().toISOString(), event: 'pre-payload', payload: estesPayload };
       fs.writeFileSync(path.resolve(process.cwd(), 'estes-debug.log'), JSON.stringify(logObj, null, 2) + '\n\n');
@@ -317,6 +464,15 @@ exports.handler = async function(event) {
           const retryResp = await postJson(url, retryPayload, headers);
           let retryData;
           try { retryData = JSON.parse(retryResp.body); } catch (e) { retryData = { raw: retryResp.body }; }
+            // Persist retry response to a separate retry log for visibility
+            try {
+              const retryLogDir = path.resolve(process.cwd(), 'estes-logs');
+              if (!fs.existsSync(retryLogDir)) fs.mkdirSync(retryLogDir, { recursive: true });
+              const nowRetry = new Date().toISOString().replace(/[:.]/g,'-');
+              const retryFile = path.join(retryLogDir, `estes-retry-${nowRetry}.json`);
+              const retryLogObj = { timestamp: new Date().toISOString(), event: 'retry-response', request: retryPayload, response: retryData, statusCode: retryResp.statusCode };
+              try { fs.writeFileSync(retryFile, JSON.stringify(retryLogObj, null, 2)); } catch (e) { /* ignore write errors */ }
+            } catch (e) { /* ignore logging errors */ }
           if (retryResp.statusCode && retryResp.statusCode < 400) {
             return { statusCode: 200, body: JSON.stringify({ carrier: 'Estes', scac: 'EXLA', quoteNumber: retryData.quoteNumber, transitDays: retryData.transitDays, total: retryData.charges && retryData.charges.total, breakdown: retryData.charges, retryAttempted: true }) };
           }
@@ -461,6 +617,12 @@ exports.handler = async function(event) {
           }
         }
 
+        // Persist last-successful normalized quote to cache for fallback
+        try {
+          const cacheObj = { timestamp: Date.now(), carrier: 'Estes', scac: 'EXLA', quoteNumber: quoteId, serviceLevelText: serviceLevelText, transitDays: data.transitDays || null, total: Number(total), breakdown: breakdown || data };
+          fs.writeFileSync(CACHE_FILE, JSON.stringify(cacheObj, null, 2));
+        } catch (e) { /* ignore cache write errors */ }
+
         return {
           statusCode: 200,
           body: JSON.stringify({ carrier: 'Estes', scac: 'EXLA', quoteNumber: quoteId, serviceLevelText: serviceLevelText, transitDays: data.transitDays || (data.data && data.data[0] && data.data[0].transitDetails && data.data[0].transitDetails.transitDays) || null, total: total, breakdown: breakdown || data })
@@ -471,7 +633,18 @@ exports.handler = async function(event) {
       console.warn('estes-normalize-failed', e && e.message);
     }
 
-    // Generic fallback: return what we can
+    // Generic fallback: return what we can. If cache available and fresh, return that instead.
+    try {
+      if (fs.existsSync(CACHE_FILE)) {
+        const raw = fs.readFileSync(CACHE_FILE, 'utf8');
+        const cached = JSON.parse(raw);
+        if (cached && cached.timestamp && (Date.now() - cached.timestamp) < CACHE_TTL_MS) {
+          cached.cached = true;
+          return { statusCode: 200, body: JSON.stringify(cached) };
+        }
+      }
+    } catch (e) { /* ignore cache read errors */ }
+
     return {
       statusCode: 200,
       body: JSON.stringify({ carrier: 'Estes', scac: 'EXLA', quoteNumber: data.quoteNumber, transitDays: data.transitDays, total: (data && data.charges && data.charges.total) || null, breakdown: data })

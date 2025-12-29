@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-12-28T20:40:43.710Z",
+  "timestamp": "2025-12-28T22:48:04.914Z",
   "request": {
     "headers": {
       "Authorization": "<REDACTED>",
@@ -53,7 +53,7 @@
             {
               "count": 1,
               "type": "PT",
-              "weight": 120,
+              "weight": 1120,
               "tareWeight": 10,
               "weightUnit": "Pounds",
               "length": 48,
@@ -66,7 +66,7 @@
                 {
                   "description": "RAKE WHEEL RH- SITREX HIGH CAPACITY",
                   "weight": 40,
-                  "pieces": 3,
+                  "pieces": 28,
                   "packagingType": "BX"
                 }
               ]
@@ -88,7 +88,21 @@
     }
   },
   "response": {
-    "message": "no Route matched with those values",
-    "request_id": "460b483fdc1d6d752872d21a5ace4974"
+    "data": [],
+    "error": {
+      "code": 70020,
+      "message": "Rates not found",
+      "details": "Refer to information list for details",
+      "information": [
+        {
+          "messageId": "GSC0001",
+          "message": "The Origin City, State, Zip, and Country you've entered are not valid together. Please review and resubmit."
+        },
+        {
+          "messageId": "GSC0002",
+          "message": "The Destination City, State, Zip, and Country you've entered are not valid together. Please review and resubmit."
+        }
+      ]
+    }
   }
 }

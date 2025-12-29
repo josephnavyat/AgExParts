@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-12-28T20:53:43.855Z",
+  "timestamp": "2025-12-28T23:10:43.525Z",
   "request": {
     "headers": {
       "Authorization": "<REDACTED>",
@@ -53,7 +53,7 @@
             {
               "count": 1,
               "type": "PT",
-              "weight": 120,
+              "weight": 600,
               "tareWeight": 10,
               "weightUnit": "Pounds",
               "length": 48,
@@ -64,9 +64,9 @@
               "isTurnable": false,
               "lineItems": [
                 {
-                  "description": "RAKE WHEEL RH- SITREX HIGH CAPACITY",
-                  "weight": 40,
-                  "pieces": 3,
+                  "description": "Boxes of widgets",
+                  "weight": 600,
+                  "pieces": 1,
                   "packagingType": "BX"
                 }
               ]

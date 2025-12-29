@@ -1,0 +1,16 @@
+{
+  "checkout": {
+    "destination": {
+      "addressLine1": "4138 Wynnewood Dr",
+      "city": "Cedar Falls",
+      "stateProvince": "IA",
+      "postalCode": "50613",
+      "country": "US",
+      "contactName": "Navya Joseph",
+      "phone": ""
+    },
+    "items": [
+      { "name": "Boxes of widgets", "weight": 600, "quantity": 1 }
+    ]
+  }
+}

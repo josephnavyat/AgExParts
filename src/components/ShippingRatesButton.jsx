@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 import { useCart } from './CartContext.jsx';
 
-export default function ShippingRatesButton({ cart, fromAddress, toAddress, onRates, onResponse, onSelect, compact, showResults, inlineResults = true }) {
+export default function ShippingRatesButton({ cart, fromAddress, toAddress, onRates, onResponse, onSelect, compact, showResults, inlineResults = true, onCalculateClick }) {
   const { dispatch } = useCart();
   const [loading, setLoading] = useState(false);
   const [rates, setRates] = useState(null);
@@ -54,9 +54,27 @@ export default function ShippingRatesButton({ cart, fromAddress, toAddress, onRa
         setLoading(false);
         return;
       }
-      // Debug log
-      console.log('Shipping to:', to_address);
-      console.log('Parcel:', parcel);
+  // Debug log
+  console.debug('Shipping to:', to_address);
+  console.debug('Parcel:', parcel);
+  // If client-side detects a heavy/oversize parcel and server may filter placeholder, prepare a local placeholder fallback.
+  const clientTotalLbs = (() => {
+    try {
+      let raw = Number(parcel.weight) || 0; // parcel.weight is in oz per client
+      const mu = (parcel.mass_unit || '').toString().toLowerCase();
+      if (mu === 'oz' || mu === 'ounces') raw = raw / 16; // oz -> lbs
+      else if (mu === 'kg' || mu === 'kilograms') raw = raw * 2.2046226218; // kg -> lbs
+      else if (mu === 'g' || mu === 'grams') raw = raw / 453.59237; // g -> lbs
+      return raw;
+    } catch (e) { return 0; }
+  })();
+  const clientOversize = (() => {
+    try {
+      const L = Number(parcel.length || 0); const W = Number(parcel.width || 0); const H = Number(parcel.height || 0);
+      const girth = 2 * (W + H);
+      return (L + girth) > 165;
+    } catch (e) { return false; }
+  })();
       const res = await fetch("/.netlify/functions/get-shipping-rates", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -74,11 +92,25 @@ export default function ShippingRatesButton({ cart, fromAddress, toAddress, onRa
 
       if (data.rates) {
         const ratesArr = Array.isArray(data.rates) ? data.rates.slice() : [];
-        // pick cheapest by numeric amount
-        ratesArr.sort((a, b) => Number(a.amount || 0) - Number(b.amount || 0));
-        const cheapest = ratesArr[0];
-  // use the sorted array for UI and callbacks so cheapest is first
-  setRates(ratesArr);
+        // Do not show the default freight placeholder (e.g. object_id: 'freight-placeholder-250')
+        // until a real Estes quote is present. This avoids showing a $250 placeholder
+        // shipping cost before the Estes handler returns a valid quote (requested by UX).
+        const hasEstes = Boolean(data.estes_quote);
+        const filteredRates = ratesArr.filter(r => {
+          try {
+            const id = (r && r.object_id) || (r && r.raw && r.raw.id) || '';
+            // treat known placeholder pattern as transient
+            if (!hasEstes && id && String(id).startsWith('freight-placeholder')) return false;
+          } catch (e) {}
+          return true;
+        });
+  // pick cheapest by numeric amount
+  ratesArr.sort((a, b) => Number(a.amount || 0) - Number(b.amount || 0));
+  // Use filteredRates only (always exclude freight-placeholder unless Estes provides a real quote)
+  const displayedRates = (filteredRates && filteredRates.length > 0) ? filteredRates : [];
+  const cheapest = displayedRates[0];
+  // use the displayed array for UI and callbacks so cheapest is first
+  setRates(displayedRates);
   if (cheapest) {
           // auto-select cheapest
           setSelectedRateId(cheapest.object_id);
@@ -92,8 +124,12 @@ export default function ShippingRatesButton({ cart, fromAddress, toAddress, onRa
             try { onSelect(cheapest); } catch (e) { console.warn('onSelect handler failed', e); }
           }
         }
-  if (typeof onResponse === 'function') onResponse({ rates: ratesArr, selected: cheapest });
-  if (typeof onRates === 'function') onRates(ratesArr);
+        if (typeof onResponse === 'function') onResponse({ rates: displayedRates, selected: cheapest });
+        if (typeof onRates === 'function') onRates(displayedRates);
+        // If there are no non-placeholder rates and we filtered out the placeholder, surface an error so the user knows quoting failed.
+        if ((!filteredRates || filteredRates.length === 0) && ratesArr.length > 0 && !hasEstes) {
+          setError('Unable to obtain carrier rates for this shipment');
+        }
       } else setError(data.error || "No rates found");
       // If server returned only an Estes quote (no normal rates), try to extract list
       if (!data.rates && data.estes_quote) {
@@ -131,7 +167,7 @@ export default function ShippingRatesButton({ cart, fromAddress, toAddress, onRa
       <button
         className="btn secondary"
         style={{ fontWeight: 600, fontSize: "1rem", borderRadius: 8, padding: "0.7rem 2rem" }}
-        onClick={handleGetRates}
+        onClick={() => { try { if (typeof onCalculateClick === 'function') onCalculateClick(); } catch (e) {} ; handleGetRates(); }}
         disabled={loading}
       >
         {loading ? "Getting Shipping Rates..." : "Calculate Shipping"}

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-12-28T21:20:39.203Z",
+  "timestamp": "2025-12-28T21:37:20.009Z",
   "auth": {
     "url": "https://cloudapi.estes-express.com/authenticate",
     "headers": {
@@ -7,7 +7,7 @@
       "Authorization": "<REDACTED>"
     },
     "response": {
-      "token": "eyJ0eXAiOiJKV1QiLCJraWQiOiJKYkxSb0l0aVFXYXZwYno3QjBJcm1zVW4xbjQ9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJjZjU0NzVkZi0yMGZlLTRjYWYtODE3Mi02YjAxYThjODExNTgiLCJjdHMiOiJPQVVUSDJfU1RBVEVMRVNTX0dSQU5UIiwiYXV0aF9sZXZlbCI6MCwiYXVkaXRUcmFja2luZ0lkIjoiMmE4ODU1NmYtZGVmNi00MzgyLWI2MTgtMWJjMDc1YjFlY2M4LTE0MDc0NjU4MTgiLCJzdWJuYW1lIjoiY2Y1NDc1ZGYtMjBmZS00Y2FmLTgxNzItNmIwMWE4YzgxMTU4IiwiaXNzIjoiaHR0cHM6Ly9vcGVuYW0tdHJ1Y2tzbDJsLXVzZTQuaWQuZm9yZ2Vyb2NrLmlvOjQ0My9hbS9vYXV0aDIvYWxwaGEiLCJ0b2tlbk5hbWUiOiJhY2Nlc3NfdG9rZW4iLCJ0b2tlbl90eXBlIjoiQmVhcmVyIiwiYXV0aEdyYW50SWQiOiJPajJXdVBCQ25UanV2QmFyaVp6VDdGVFRJTFEiLCJjbGllbnRfaWQiOiJLb25nQVdTIiwiYXVkIjoiS29uZ0FXUyIsIm5iZiI6MTc2Njk1NjgzNSwic2NvcGUiOlsib3BlbmlkIl0sImF1dGhfdGltZSI6MTc2Njk1NjgzNSwicmVhbG0iOiIvYWxwaGEiLCJleHAiOjE3NjY5NjA0MzUsImlhdCI6MTc2Njk1NjgzNSwiZXhwaXJlc19pbiI6MzYwMCwianRpIjoiNll1OUdsNWlTZHBpZ05Yc0U0cDNmS012RGZnIiwicm9sZXMiOlsiaW1hZ2VzIiwiY2hhcmdlcyIsInJhdGVRdW90ZSIsImNsYWltcyIsInBpY2t1cCIsIm15RXN0ZXNBY2Nlc3MiLCJpbnZvaWNlIiwidHJhY2tpbmciLCJib2wiXSwidXNlcm5hbWUiOiJBZ0V4UGFydHMiLCJhY2NvdW50Q29kZSI6IkIxMzI3MDMifQ.iOZJvJFCaawkRikdNFSyvufGPD19zas9N8h5UCkJFxpdaUgNYmfVH4qFyFAuPL_vPMeYB3DsrFGnGUI9RKPAzLtAUO4VGtJ3d0DwloDlR84hqsiXSz9VN6olYHMl0nZoo3IDETSLOYz8XT75qV16D74QugT4SmRP9Dy9um91SxaAgHUY7VnwvJrBoVTOVfNUY4kJiJd2w0-lL72wQwtJIgkfZOn8SvCEuySSIiRg1WcCkjZP0Ya_RWhOHXxMSrPYnDidg2AuXGTWf6LDu0zxEqiay8v8RdNsSGGZDm2_hPSyBDf7yhRIy50tWiHfhHeost3W-QiruMyuT_tH6EVhKQ"
+      "token": "eyJ0eXAiOiJKV1QiLCJraWQiOiJKYkxSb0l0aVFXYXZwYno3QjBJcm1zVW4xbjQ9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJjZjU0NzVkZi0yMGZlLTRjYWYtODE3Mi02YjAxYThjODExNTgiLCJjdHMiOiJPQVVUSDJfU1RBVEVMRVNTX0dSQU5UIiwiYXV0aF9sZXZlbCI6MCwiYXVkaXRUcmFja2luZ0lkIjoiMmE4ODU1NmYtZGVmNi00MzgyLWI2MTgtMWJjMDc1YjFlY2M4LTE0MDgyNTYxOTUiLCJzdWJuYW1lIjoiY2Y1NDc1ZGYtMjBmZS00Y2FmLTgxNzItNmIwMWE4YzgxMTU4IiwiaXNzIjoiaHR0cHM6Ly9vcGVuYW0tdHJ1Y2tzbDJsLXVzZTQuaWQuZm9yZ2Vyb2NrLmlvOjQ0My9hbS9vYXV0aDIvYWxwaGEiLCJ0b2tlbk5hbWUiOiJhY2Nlc3NfdG9rZW4iLCJ0b2tlbl90eXBlIjoiQmVhcmVyIiwiYXV0aEdyYW50SWQiOiJTNEtMRnZLeFNkbkZxb0F5bE83bkdVdjBHSWMiLCJjbGllbnRfaWQiOiJLb25nQVdTIiwiYXVkIjoiS29uZ0FXUyIsIm5iZiI6MTc2Njk1NzgzNiwic2NvcGUiOlsib3BlbmlkIl0sImF1dGhfdGltZSI6MTc2Njk1NzgzNiwicmVhbG0iOiIvYWxwaGEiLCJleHAiOjE3NjY5NjE0MzYsImlhdCI6MTc2Njk1NzgzNiwiZXhwaXJlc19pbiI6MzYwMCwianRpIjoiOGRLdktqODJqTDB6bE9OQ1dLRk8wZjdLSE1BIiwicm9sZXMiOlsiaW1hZ2VzIiwiY2hhcmdlcyIsInJhdGVRdW90ZSIsImNsYWltcyIsInBpY2t1cCIsIm15RXN0ZXNBY2Nlc3MiLCJpbnZvaWNlIiwidHJhY2tpbmciLCJib2wiXSwidXNlcm5hbWUiOiJBZ0V4UGFydHMiLCJhY2NvdW50Q29kZSI6IkIxMzI3MDMifQ.URwWDbXU4VWmgMaGRjGsxTMyOFAyhsSm3JE8WThN3MCczyE894HgTAPvS-jkJ0GTbrMdOwOsplaNLdZY4Ro0PZ3JfImtrIkCprgbqyZuQJQvaZ_se9aWYRfD5DhRGVFD6e4kohLhq2r4USbxgMXVumcDnngeJernTldpLLxtgsy2-RKdT25fFU9ygxAWg8sp-vh1OtMUYg2DU3ji8T-FPf9BbbYOXw7w4cLxl1lObNc1hsXnBz3NJUTNCgiJ56Bqg1Sqy0mZWM1H71Cnei19KMCxpIKbwtwoCuclvdhIWnVJFpm5tAQvNlcWbKUgB_7LPlmq4isejGkGLa5H1fULvw"
     }
   },
   "quote": {
@@ -101,7 +101,7 @@
         {
           "serviceLevelId": "99",
           "serviceLevelText": "LTL Standard Transit",
-          "quoteId": "LVQWRQG",
+          "quoteId": "LVQWVWT",
           "rateFound": true,
           "dates": {
             "quoteExpiration": "2025-12-29-01.00.00.000000",
@@ -187,7 +187,7 @@
         {
           "serviceLevelId": "98",
           "serviceLevelText": "Guaranteed LTL Standard Transit: 5PM",
-          "quoteId": "1VQWRQG",
+          "quoteId": "1VQWVWT",
           "rateFound": true,
           "dates": {
             "quoteExpiration": "2025-12-28-16.00.00.000000",
@@ -277,7 +277,7 @@
         {
           "serviceLevelId": "96",
           "serviceLevelText": "Guaranteed LTL Standard Transit: 12PM",
-          "quoteId": "2VQWRQG",
+          "quoteId": "2VQWVWT",
           "rateFound": true,
           "dates": {
             "quoteExpiration": "2025-12-28-16.00.00.000000",
@@ -367,7 +367,7 @@
         {
           "serviceLevelId": "95",
           "serviceLevelText": "Guaranteed LTL Standard Transit: 10AM",
-          "quoteId": "3VQWRQG",
+          "quoteId": "3VQWVWT",
           "rateFound": true,
           "dates": {
             "quoteExpiration": "2025-12-28-16.00.00.000000",
@@ -457,7 +457,7 @@
         {
           "serviceLevelId": "90",
           "serviceLevelText": "Estes Retail Guarantee",
-          "quoteId": "RVQWRQG",
+          "quoteId": "RVQWVWT",
           "rateFound": true,
           "dates": {
             "quoteExpiration": "2025-12-28-16.00.00.000000",
@@ -556,7 +556,7 @@
         {
           "serviceLevelId": "94",
           "serviceLevelText": "Volume and Truckload Basic",
-          "quoteId": "VVQWRQG",
+          "quoteId": "VVQWVWT",
           "rateFound": true,
           "dates": {
             "quoteExpiration": "2026-01-28-01.00.00.000000",
@@ -614,7 +614,7 @@
         {
           "serviceLevelId": "92",
           "serviceLevelText": "Guaranteed Volume and Truckload Standard",
-          "quoteId": "SVQWRQG",
+          "quoteId": "SVQWVWT",
           "rateFound": true,
           "dates": {
             "quoteExpiration": "2025-12-28-16.00.00.000000",
@@ -672,7 +672,7 @@
         {
           "serviceLevelId": "93",
           "serviceLevelText": "Guaranteed Volume and Truckload Economy",
-          "quoteId": "EVQWRQG",
+          "quoteId": "EVQWVWT",
           "rateFound": true,
           "dates": {
             "quoteExpiration": "2025-12-28-16.00.00.000000",
@@ -730,7 +730,7 @@
         {
           "serviceLevelId": "97",
           "serviceLevelText": "Guaranteed Exclusive Use",
-          "quoteId": "XVQWRQG",
+          "quoteId": "XVQWVWT",
           "rateFound": true,
           "dates": {
             "quoteExpiration": "2025-12-28-16.00.00.000000",

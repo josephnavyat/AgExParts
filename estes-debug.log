@@ -1,13 +1,80 @@
 {
-  "timestamp": "2025-12-28T21:20:35.342Z",
+  "timestamp": "2025-12-29T01:04:19.603Z",
   "event": "pre-payload",
   "payload": {
     "quoteRequest": {
-      "shipDate": "2025-12-30T00:00:00.000Z",
-      "shipTime": "12:00",
+      "shipDate": "2025-12-29T00:00:00.000Z",
       "serviceLevels": [
         "ALL"
-      ]
+      ],
+      "origin": {
+        "name": "AgEx Parts Warehouse",
+        "locationId": "AGEX-001",
+        "address": {
+          "address1": "1128 Dunkerton Road",
+          "address2": "",
+          "city": "Cedar Falls",
+          "stateProvince": "IA",
+          "postalCode": "50613",
+          "country": "US"
+        },
+        "contact": {
+          "name": "AgEx Parts",
+          "phone": "3190000000",
+          "phoneExt": "",
+          "email": "origin@agexparts.com"
+        }
+      },
+      "destination": {
+        "name": "",
+        "locationId": "",
+        "address": {
+          "address1": "4138 Wynnewood Drive",
+          "address2": "",
+          "city": "Cedar Falls",
+          "stateProvince": "IA",
+          "postalCode": "50613",
+          "country": "US"
+        },
+        "contact": {
+          "name": "Navya Joseph",
+          "phone": "",
+          "phoneExt": "",
+          "email": ""
+        }
+      },
+      "commodity": {
+        "handlingUnits": [
+          {
+            "count": 1,
+            "type": "PT",
+            "weight": 80,
+            "tareWeight": 10,
+            "weightUnit": "Pounds",
+            "length": 48,
+            "width": 40,
+            "height": 48,
+            "dimensionsUnit": "Inches",
+            "isStackable": false,
+            "isTurnable": true,
+            "lineItems": [
+              {
+                "description": "package",
+                "weight": 80,
+                "pieces": 1,
+                "packagingType": "BX",
+                "classification": "92.5",
+                "nmfc": "",
+                "nmfcSub": "",
+                "isHazardous": false
+              }
+            ]
+          }
+        ],
+        "totalShipmentWeight": 90,
+        "totalPieces": 1
+      },
+      "accessorials": []
     },
     "payment": {
       "account": "B132703",
@@ -15,40 +82,44 @@
       "terms": "Prepaid"
     },
     "requestor": {
-      "name": "Tony Merfeld",
-      "phone": "3198594214",
-      "email": "support@agexparts.com"
+      "name": "AgEx Parts",
+      "phone": "0000000000",
+      "email": "requestor@agexparts.com"
     },
     "origin": {
-      "name": "AgEx Parts",
-      "locationId": "123",
+      "name": "AgEx Parts Warehouse",
+      "locationId": "AGEX-001",
       "address": {
+        "address1": "1128 Dunkerton Road",
+        "address2": "",
         "city": "Cedar Falls",
         "stateProvince": "IA",
         "postalCode": "50613",
         "country": "US"
       },
       "contact": {
-        "name": "Henry Jones",
-        "phone": "8045559876",
-        "phoneExt": "12",
-        "email": "origin.email@email.com"
+        "name": "AgEx Parts",
+        "phone": "3190000000",
+        "phoneExt": "",
+        "email": "origin@agexparts.com"
       }
     },
     "destination": {
-      "name": "XYZ Destination Company",
-      "locationId": "987-B",
+      "name": "",
+      "locationId": "",
       "address": {
-        "city": "Opelika",
-        "stateProvince": "AL",
-        "postalCode": "36801",
+        "address1": "4138 Wynnewood Drive",
+        "address2": "",
+        "city": "Cedar Falls",
+        "stateProvince": "IA",
+        "postalCode": "50613",
         "country": "US"
       },
       "contact": {
-        "name": "Lucy Patel",
-        "phone": "8045554321",
-        "phoneExt": "1212",
-        "email": "destination.email@email.com"
+        "name": "Navya Joseph",
+        "phone": "",
+        "phoneExt": "",
+        "email": ""
       }
     },
     "commodity": {
@@ -56,7 +127,7 @@
         {
           "count": 1,
           "type": "PT",
-          "weight": 600,
+          "weight": 80,
           "tareWeight": 10,
           "weightUnit": "Pounds",
           "length": 48,
@@ -67,13 +138,13 @@
           "isTurnable": true,
           "lineItems": [
             {
-              "description": "Boxes of widgets",
-              "weight": 600,
+              "description": "package",
+              "weight": 80,
               "pieces": 1,
               "packagingType": "BX",
               "classification": "92.5",
-              "nmfc": "158880",
-              "nmfcSub": "3",
+              "nmfc": "",
+              "nmfcSub": "",
               "isHazardous": false
             }
           ]
@@ -84,21 +155,21 @@
 }
 
 {
-  "timestamp": "2025-12-28T21:20:35.780Z",
+  "timestamp": "2025-12-29T01:04:19.877Z",
   "event": "auth-response",
   "response": {
     "statusCode": 200,
     "headers": {
-      "date": "Sun, 28 Dec 2025 21:20:35 GMT",
+      "date": "Mon, 29 Dec 2025 01:04:19 GMT",
       "content-type": "application/json",
       "transfer-encoding": "chunked",
       "connection": "keep-alive",
       "x-kong-mocking-plugin": "true",
-      "x-kong-response-latency": "93",
+      "x-kong-response-latency": "80",
       "server": "kong/3.12.0.0-enterprise-edition",
-      "x-kong-request-id": "be0e21429b1ba53b58b1cd7e8319c12f"
+      "x-kong-request-id": "fdd03540797ebf3727d69b521261411d"
     },
-    "rawBody": "{\"token\":\"eyJ0eXAiOiJKV1QiLCJraWQiOiJKYkxSb0l0aVFXYXZwYno3QjBJcm1zVW4xbjQ9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJjZjU0NzVkZi0yMGZlLTRjYWYtODE3Mi02YjAxYThjODExNTgiLCJjdHMiOiJPQVVUSDJfU1RBVEVMRVNTX0dSQU5UIiwiYXV0aF9sZXZlbCI6MCwiYXVkaXRUcmFja2luZ0lkIjoiMmE4ODU1NmYtZGVmNi00MzgyLWI2MTgtMWJjMDc1YjFlY2M4LTE0MDc0NjU4MTgiLCJzdWJuYW1lIjoiY2Y1NDc1ZGYtMjBmZS00Y2FmLTgxNzItNmIwMWE4YzgxMTU4IiwiaXNzIjoiaHR0cHM6Ly9vcGVuYW0tdHJ1Y2tzbDJsLXVzZTQuaWQuZm9yZ2Vyb2NrLmlvOjQ0My9hbS9vYXV0aDIvYWxwaGEiLCJ0b2tlbk5hbWUiOiJhY2Nlc3NfdG9rZW4iLCJ0b2tlbl90eXBlIjoiQmVhcmVyIiwiYXV0aEdyYW50SWQiOiJPajJXdVBCQ25UanV2QmFyaVp6VDdGVFRJTFEiLCJjbGllbnRfaWQiOiJLb25nQVdTIiwiYXVkIjoiS29uZ0FXUyIsIm5iZiI6MTc2Njk1NjgzNSwic2NvcGUiOlsib3BlbmlkIl0sImF1dGhfdGltZSI6MTc2Njk1NjgzNSwicmVhbG0iOiIvYWxwaGEiLCJleHAiOjE3NjY5NjA0MzUsImlhdCI6MTc2Njk1NjgzNSwiZXhwaXJlc19pbiI6MzYwMCwianRpIjoiNll1OUdsNWlTZHBpZ05Yc0U0cDNmS012RGZnIiwicm9sZXMiOlsiaW1hZ2VzIiwiY2hhcmdlcyIsInJhdGVRdW90ZSIsImNsYWltcyIsInBpY2t1cCIsIm15RXN0ZXNBY2Nlc3MiLCJpbnZvaWNlIiwidHJhY2tpbmciLCJib2wiXSwidXNlcm5hbWUiOiJBZ0V4UGFydHMiLCJhY2NvdW50Q29kZSI6IkIxMzI3MDMifQ.iOZJvJFCaawkRikdNFSyvufGPD19zas9N8h5UCkJFxpdaUgNYmfVH4qFyFAuPL_vPMeYB3DsrFGnGUI9RKPAzLtAUO4VGtJ3d0DwloDlR84hqsiXSz9VN6olYHMl0nZoo3IDETSLOYz8XT75qV16D74QugT4SmRP9Dy9um91SxaAgHUY7VnwvJrBoVTOVfNUY4kJiJd2w0-lL72wQwtJIgkfZOn8SvCEuySSIiRg1WcCkjZP0Ya_RWhOHXxMSrPYnDidg2AuXGTWf6LDu0zxEqiay8v8RdNsSGGZDm2_hPSyBDf7yhRIy50tWiHfhHeost3W-QiruMyuT_tH6EVhKQ\"}",
+    "rawBody": "{\"token\":\"eyJ0eXAiOiJKV1QiLCJraWQiOiJKYkxSb0l0aVFXYXZwYno3QjBJcm1zVW4xbjQ9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJjZjU0NzVkZi0yMGZlLTRjYWYtODE3Mi02YjAxYThjODExNTgiLCJjdHMiOiJPQVVUSDJfU1RBVEVMRVNTX0dSQU5UIiwiYXV0aF9sZXZlbCI6MCwiYXVkaXRUcmFja2luZ0lkIjoiNTViNDAxYzctZDUwMy00ZDg2LThjYjItYjI3YjE3NmRkNWI1LTE0MTc3MjEwODgiLCJzdWJuYW1lIjoiY2Y1NDc1ZGYtMjBmZS00Y2FmLTgxNzItNmIwMWE4YzgxMTU4IiwiaXNzIjoiaHR0cHM6Ly9vcGVuYW0tdHJ1Y2tzbDJsLXVzZTQuaWQuZm9yZ2Vyb2NrLmlvOjQ0My9hbS9vYXV0aDIvYWxwaGEiLCJ0b2tlbk5hbWUiOiJhY2Nlc3NfdG9rZW4iLCJ0b2tlbl90eXBlIjoiQmVhcmVyIiwiYXV0aEdyYW50SWQiOiJkbjQydXR3Nm1qbTBILW9kaEdybEpSMEZlYVkiLCJjbGllbnRfaWQiOiJLb25nQVdTIiwiYXVkIjoiS29uZ0FXUyIsIm5iZiI6MTc2Njk3MDI1OSwic2NvcGUiOlsib3BlbmlkIl0sImF1dGhfdGltZSI6MTc2Njk3MDI1OSwicmVhbG0iOiIvYWxwaGEiLCJleHAiOjE3NjY5NzM4NTksImlhdCI6MTc2Njk3MDI1OSwiZXhwaXJlc19pbiI6MzYwMCwianRpIjoiT0VTLTFyc0xfYi1GRDZaYXJtV0toOUtOWVFJIiwicm9sZXMiOlsiaW1hZ2VzIiwiY2hhcmdlcyIsInJhdGVRdW90ZSIsImNsYWltcyIsInBpY2t1cCIsIm15RXN0ZXNBY2Nlc3MiLCJpbnZvaWNlIiwidHJhY2tpbmciLCJib2wiXSwidXNlcm5hbWUiOiJBZ0V4UGFydHMiLCJhY2NvdW50Q29kZSI6IkIxMzI3MDMifQ.PABa9QC14vq-NWUV0NA3gfHCLXqQ5HFA7wb_5dyihPhdSXkKxG0y9D78OlFJOdIajB5i7GlJA0a_RWat__XIlskY3neI_lW0ByZtBOCB968yfOy59hpSCGZaGPPG7byuCpL9lw1-qvFjnesNuqhUXHXmfhidO_hp3ue_3x2Qi-qulMJ4iEFH1tB1v1PvmA_2ogFf2ZegLZWl-9s3h12IA62kANPB8j1-1pkHt8wiQPpk9kt33hLfAxKzdB5WTB14LS32hcedLL53DLPpFXAsX-VpNQS5CYQkltJDsdgTK5n4xe9Rp9NmScLPRWBicJFfQXxurxkng31JZRI3IFW3nA\"}",
     "json": {
       "token": "<REDACTED>"
     }
@@ -106,16 +177,83 @@
 }
 
 {
-  "timestamp": "2025-12-28T21:20:39.206Z",
+  "timestamp": "2025-12-29T01:04:23.164Z",
   "event": "quote-response",
-  "curl": "curl --location --request POST 'https://cloudapi.estes-express.com/v1/rate-quotes' \\n+--header 'apikey: SaTrn7vp5yU3Gqn8tI2eFg1l56oP1X4s' \\n+--header 'Authorization: Bearer <REDACTED>' \\n+--header 'Content-Type: application/json' \\n+--data-raw '",
+  "curl": "curl --location --request POST 'https://cloudapi.estes-express.com/v1/rate-quotes' \\\n+--header 'apikey: SaTrn7vp5yU3Gqn8tI2eFg1l56oP1X4s' \\\n+--header 'Authorization: Bearer <REDACTED>' \\\n+--header 'Content-Type: application/json' \\\n+--data-raw '",
   "request": {
     "quoteRequest": {
-      "shipDate": "2025-12-30T00:00:00.000Z",
-      "shipTime": "12:00",
+      "shipDate": "2025-12-29T00:00:00.000Z",
       "serviceLevels": [
         "ALL"
-      ]
+      ],
+      "origin": {
+        "name": "AgEx Parts Warehouse",
+        "locationId": "AGEX-001",
+        "address": {
+          "address1": "1128 Dunkerton Road",
+          "address2": "",
+          "city": "Cedar Falls",
+          "stateProvince": "IA",
+          "postalCode": "50613",
+          "country": "US"
+        },
+        "contact": {
+          "name": "AgEx Parts",
+          "phone": "3190000000",
+          "phoneExt": "",
+          "email": "origin@agexparts.com"
+        }
+      },
+      "destination": {
+        "name": "",
+        "locationId": "",
+        "address": {
+          "address1": "4138 Wynnewood Drive",
+          "address2": "",
+          "city": "Cedar Falls",
+          "stateProvince": "IA",
+          "postalCode": "50613",
+          "country": "US"
+        },
+        "contact": {
+          "name": "Navya Joseph",
+          "phone": "",
+          "phoneExt": "",
+          "email": ""
+        }
+      },
+      "commodity": {
+        "handlingUnits": [
+          {
+            "count": 1,
+            "type": "PT",
+            "weight": 80,
+            "tareWeight": 10,
+            "weightUnit": "Pounds",
+            "length": 48,
+            "width": 40,
+            "height": 48,
+            "dimensionsUnit": "Inches",
+            "isStackable": false,
+            "isTurnable": true,
+            "lineItems": [
+              {
+                "description": "package",
+                "weight": 80,
+                "pieces": 1,
+                "packagingType": "BX",
+                "classification": "92.5",
+                "nmfc": "",
+                "nmfcSub": "",
+                "isHazardous": false
+              }
+            ]
+          }
+        ],
+        "totalShipmentWeight": 90,
+        "totalPieces": 1
+      },
+      "accessorials": []
     },
     "payment": {
       "account": "B132703",
@@ -123,40 +261,44 @@
       "terms": "Prepaid"
     },
     "requestor": {
-      "name": "Tony Merfeld",
-      "phone": "3198594214",
-      "email": "support@agexparts.com"
+      "name": "AgEx Parts",
+      "phone": "0000000000",
+      "email": "requestor@agexparts.com"
     },
     "origin": {
-      "name": "AgEx Parts",
-      "locationId": "123",
+      "name": "AgEx Parts Warehouse",
+      "locationId": "AGEX-001",
       "address": {
+        "address1": "1128 Dunkerton Road",
+        "address2": "",
         "city": "Cedar Falls",
         "stateProvince": "IA",
         "postalCode": "50613",
         "country": "US"
       },
       "contact": {
-        "name": "Henry Jones",
-        "phone": "8045559876",
-        "phoneExt": "12",
-        "email": "origin.email@email.com"
+        "name": "AgEx Parts",
+        "phone": "3190000000",
+        "phoneExt": "",
+        "email": "origin@agexparts.com"
       }
     },
     "destination": {
-      "name": "XYZ Destination Company",
-      "locationId": "987-B",
+      "name": "",
+      "locationId": "",
       "address": {
-        "city": "Opelika",
-        "stateProvince": "AL",
-        "postalCode": "36801",
+        "address1": "4138 Wynnewood Drive",
+        "address2": "",
+        "city": "Cedar Falls",
+        "stateProvince": "IA",
+        "postalCode": "50613",
         "country": "US"
       },
       "contact": {
-        "name": "Lucy Patel",
-        "phone": "8045554321",
-        "phoneExt": "1212",
-        "email": "destination.email@email.com"
+        "name": "Navya Joseph",
+        "phone": "",
+        "phoneExt": "",
+        "email": ""
       }
     },
     "commodity": {
@@ -164,7 +306,7 @@
         {
           "count": 1,
           "type": "PT",
-          "weight": 600,
+          "weight": 80,
           "tareWeight": 10,
           "weightUnit": "Pounds",
           "length": 48,
@@ -175,13 +317,13 @@
           "isTurnable": true,
           "lineItems": [
             {
-              "description": "Boxes of widgets",
-              "weight": 600,
+              "description": "package",
+              "weight": 80,
               "pieces": 1,
               "packagingType": "BX",
               "classification": "92.5",
-              "nmfc": "158880",
-              "nmfcSub": "3",
+              "nmfc": "",
+              "nmfcSub": "",
               "isHazardous": false
             }
           ]
@@ -192,7 +334,7 @@
   "response": {
     "statusCode": 200,
     "headers": {
-      "date": "Sun, 28 Dec 2025 21:20:39 GMT",
+      "date": "Mon, 29 Dec 2025 01:04:23 GMT",
       "content-type": "application/json",
       "transfer-encoding": "chunked",
       "connection": "keep-alive",
@@ -203,26 +345,26 @@
       "expires": "0",
       "x-frame-options": "DENY",
       "server": "kong/3.12.0.0-enterprise-edition",
-      "x-kong-upstream-latency": "3244",
-      "x-kong-proxy-latency": "2",
+      "x-kong-upstream-latency": "3233",
+      "x-kong-proxy-latency": "3",
       "via": "1.1 kong/3.12.0.0-enterprise-edition",
-      "x-kong-request-id": "39c9255b3f0f931c0a3d5a40f1bbfc2d"
+      "x-kong-request-id": "97662d3ddffd0e74986c2a5613ab8549"
     },
-    "rawBody": "{\"data\":[{\"serviceLevelId\":\"99\",\"serviceLevelText\":\"LTL Standard Transit\",\"quoteId\":\"LVQWRQG\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2025-12-29-01.00.00.000000\",\"transitDeliveryDate\":\"2026-01-05\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":3,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"073\",\"destinationTerminalInfo\":{\"name\":\"Opelika\",\"address1\":\"5361 County Road Hwy 388\",\"city\":\"Cusseta\",\"stateProvince\":\"AL\",\"postalCode\":\"36852\",\"country\":\"US\",\"contact\":{\"name\":\"Jason Howard\",\"phone\":\"(334) 756-0680\",\"fax\":\"13347560688\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"360.52\",\"totalShipmentWeight\":610,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":2,\"ratedAccessorials\":[{\"code\":\"FSC\",\"description\":\"Fuel Surcharge\",\"charge\":\"79.96\"}]},\"lineItemCharges\":[{\"description\":\"Boxes of widgets\",\"classification\":\"92.5\",\"weight\":600,\"rate\":\"418.12\",\"charge\":\"2508.72\"}],\"chargeItems\":[{\"description\":\"Commodity Total\",\"charge\":\"2508.72\"},{\"description\":\"Discount 89.00%\",\"charge\":\"-2232.76\"},{\"description\":\"Tare Weight Charge - 10lbs\",\"charge\":\"4.60\"},{\"description\":\"Fuel Surcharge 28.50%\",\"charge\":\"79.96\"}],\"disclaimersURL\":\"https://www.estes-express.com/myestes/rate-quote-estimate/terms\"},{\"serviceLevelId\":\"98\",\"serviceLevelText\":\"Guaranteed LTL Standard Transit: 5PM\",\"quoteId\":\"1VQWRQG\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2025-12-28-16.00.00.000000\",\"transitDeliveryDate\":\"2026-01-05\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":3,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"073\",\"destinationTerminalInfo\":{\"name\":\"Opelika\",\"address1\":\"5361 County Road Hwy 388\",\"city\":\"Cusseta\",\"stateProvince\":\"AL\",\"postalCode\":\"36852\",\"country\":\"US\",\"contact\":{\"name\":\"Jason Howard\",\"phone\":\"(334) 756-0680\",\"fax\":\"13347560688\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"443.30\",\"totalShipmentWeight\":610,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":2,\"ratedAccessorials\":[{\"code\":\"FSC\",\"description\":\"Fuel Surcharge\",\"charge\":\"79.96\"}]},\"lineItemCharges\":[{\"description\":\"Boxes of widgets\",\"classification\":\"92.5\",\"weight\":600,\"rate\":\"418.12\",\"charge\":\"2508.72\"}],\"chargeItems\":[{\"description\":\"Commodity Total\",\"charge\":\"2508.72\"},{\"description\":\"Discount 89.00%\",\"charge\":\"-2232.76\"},{\"description\":\"Tare Weight Charge - 10lbs\",\"charge\":\"4.60\"},{\"description\":\"Fuel Surcharge 28.50%\",\"charge\":\"79.96\"},{\"description\":\"Service Level Adjustment\",\"charge\":\"82.78\"}],\"disclaimersURL\":\"https://www.estes-express.com/myestes/rate-quote-estimate/terms\"},{\"serviceLevelId\":\"96\",\"serviceLevelText\":\"Guaranteed LTL Standard Transit: 12PM\",\"quoteId\":\"2VQWRQG\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2025-12-28-16.00.00.000000\",\"transitDeliveryDate\":\"2026-01-05\",\"transitDeliveryTime\":\"12:00\"},\"transitDetails\":{\"transitDays\":3,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"073\",\"destinationTerminalInfo\":{\"name\":\"Opelika\",\"address1\":\"5361 County Road Hwy 388\",\"city\":\"Cusseta\",\"stateProvince\":\"AL\",\"postalCode\":\"36852\",\"country\":\"US\",\"contact\":{\"name\":\"Jason Howard\",\"phone\":\"(334) 756-0680\",\"fax\":\"13347560688\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"470.90\",\"totalShipmentWeight\":610,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":2,\"ratedAccessorials\":[{\"code\":\"FSC\",\"description\":\"Fuel Surcharge\",\"charge\":\"79.96\"}]},\"lineItemCharges\":[{\"description\":\"Boxes of widgets\",\"classification\":\"92.5\",\"weight\":600,\"rate\":\"418.12\",\"charge\":\"2508.72\"}],\"chargeItems\":[{\"description\":\"Commodity Total\",\"charge\":\"2508.72\"},{\"description\":\"Discount 89.00%\",\"charge\":\"-2232.76\"},{\"description\":\"Tare Weight Charge - 10lbs\",\"charge\":\"4.60\"},{\"description\":\"Fuel Surcharge 28.50%\",\"charge\":\"79.96\"},{\"description\":\"Service Level Adjustment\",\"charge\":\"110.38\"}],\"disclaimersURL\":\"https://www.estes-express.com/myestes/rate-quote-estimate/terms\"},{\"serviceLevelId\":\"95\",\"serviceLevelText\":\"Guaranteed LTL Standard Transit: 10AM\",\"quoteId\":\"3VQWRQG\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2025-12-28-16.00.00.000000\",\"transitDeliveryDate\":\"2026-01-05\",\"transitDeliveryTime\":\"10:00\"},\"transitDetails\":{\"transitDays\":3,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"073\",\"destinationTerminalInfo\":{\"name\":\"Opelika\",\"address1\":\"5361 County Road Hwy 388\",\"city\":\"Cusseta\",\"stateProvince\":\"AL\",\"postalCode\":\"36852\",\"country\":\"US\",\"contact\":{\"name\":\"Jason Howard\",\"phone\":\"(334) 756-0680\",\"fax\":\"13347560688\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"500.52\",\"totalShipmentWeight\":610,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":2,\"ratedAccessorials\":[{\"code\":\"FSC\",\"description\":\"Fuel Surcharge\",\"charge\":\"79.96\"}]},\"lineItemCharges\":[{\"description\":\"Boxes of widgets\",\"classification\":\"92.5\",\"weight\":600,\"rate\":\"418.12\",\"charge\":\"2508.72\"}],\"chargeItems\":[{\"description\":\"Commodity Total\",\"charge\":\"2508.72\"},{\"description\":\"Discount 89.00%\",\"charge\":\"-2232.76\"},{\"description\":\"Tare Weight Charge - 10lbs\",\"charge\":\"4.60\"},{\"description\":\"Fuel Surcharge 28.50%\",\"charge\":\"79.96\"},{\"description\":\"Service Level Adjustment\",\"charge\":\"140.00\"}],\"disclaimersURL\":\"https://www.estes-express.com/myestes/rate-quote-estimate/terms\"},{\"serviceLevelId\":\"90\",\"serviceLevelText\":\"Estes Retail Guarantee\",\"quoteId\":\"RVQWRQG\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2025-12-28-16.00.00.000000\",\"transitDeliveryDate\":\"2026-01-05\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":3,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"073\",\"destinationTerminalInfo\":{\"name\":\"Opelika\",\"address1\":\"5361 County Road Hwy 388\",\"city\":\"Cusseta\",\"stateProvince\":\"AL\",\"postalCode\":\"36852\",\"country\":\"US\",\"contact\":{\"name\":\"Jason Howard\",\"phone\":\"(334) 756-0680\",\"fax\":\"13347560688\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"460.52\",\"totalShipmentWeight\":610,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":2,\"ratedAccessorials\":[{\"code\":\"FSC\",\"description\":\"Fuel Surcharge\",\"charge\":\"79.96\"},{\"code\":\"APT\",\"description\":\"APPOINTMENT CHARGE\",\"charge\":\".00\"}]},\"lineItemCharges\":[{\"description\":\"Boxes of widgets\",\"classification\":\"92.5\",\"weight\":600,\"rate\":\"418.12\",\"charge\":\"2508.72\"}],\"chargeItems\":[{\"description\":\"Commodity Total\",\"charge\":\"2508.72\"},{\"description\":\"Discount 89.00%\",\"charge\":\"-2232.76\"},{\"description\":\"Tare Weight Charge - 10lbs\",\"charge\":\"4.60\"},{\"description\":\"Fuel Surcharge 28.50%\",\"charge\":\"79.96\"},{\"description\":\"APPOINTMENT CHARGE\",\"charge\":\"0.00\"},{\"description\":\"Service Level Adjustment\",\"charge\":\"100.00\"}],\"disclaimersURL\":\"https://www.estes-express.com/myestes/rate-quote-estimate/terms\"},{\"serviceLevelId\":\"94\",\"serviceLevelText\":\"Volume and Truckload Basic\",\"quoteId\":\"VVQWRQG\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2026-01-28-01.00.00.000000\",\"transitDeliveryDate\":\"2026-01-05\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":3,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"073\",\"destinationTerminalInfo\":{\"name\":\"Opelika\",\"address1\":\"5361 County Road Hwy 388\",\"city\":\"Cusseta\",\"stateProvince\":\"AL\",\"postalCode\":\"36852\",\"country\":\"US\",\"contact\":{\"name\":\"Jason Howard\",\"phone\":\"(334) 756-0680\",\"fax\":\"13347560688\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"724.60\",\"totalShipmentWeight\":610,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":7},\"chargeItems\":[{\"description\":\"Tare Weight Charge - 10lbs\",\"charge\":\"4.60\"}],\"disclaimersURL\":\"https://www.estes-express.com/myestes/rate-quote-estimate/terms\"},{\"serviceLevelId\":\"92\",\"serviceLevelText\":\"Guaranteed Volume and Truckload Standard\",\"quoteId\":\"SVQWRQG\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2025-12-28-16.00.00.000000\",\"transitDeliveryDate\":\"2026-01-05\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":3,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"073\",\"destinationTerminalInfo\":{\"name\":\"Opelika\",\"address1\":\"5361 County Road Hwy 388\",\"city\":\"Cusseta\",\"stateProvince\":\"AL\",\"postalCode\":\"36852\",\"country\":\"US\",\"contact\":{\"name\":\"Jason Howard\",\"phone\":\"(334) 756-0680\",\"fax\":\"13347560688\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"1012.60\",\"totalShipmentWeight\":610,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":7},\"chargeItems\":[{\"description\":\"Tare Weight Charge - 10lbs\",\"charge\":\"4.60\"}],\"disclaimersURL\":\"https://www.estes-express.com/myestes/rate-quote-estimate/terms\"},{\"serviceLevelId\":\"93\",\"serviceLevelText\":\"Guaranteed Volume and Truckload Economy\",\"quoteId\":\"EVQWRQG\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2025-12-28-16.00.00.000000\",\"transitDeliveryDate\":\"2026-01-06\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":3,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"073\",\"destinationTerminalInfo\":{\"name\":\"Opelika\",\"address1\":\"5361 County Road Hwy 388\",\"city\":\"Cusseta\",\"stateProvince\":\"AL\",\"postalCode\":\"36852\",\"country\":\"US\",\"contact\":{\"name\":\"Jason Howard\",\"phone\":\"(334) 756-0680\",\"fax\":\"13347560688\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"940.60\",\"totalShipmentWeight\":610,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":7},\"chargeItems\":[{\"description\":\"Tare Weight Charge - 10lbs\",\"charge\":\"4.60\"}],\"disclaimersURL\":\"https://www.estes-express.com/myestes/rate-quote-estimate/terms\"},{\"serviceLevelId\":\"97\",\"serviceLevelText\":\"Guaranteed Exclusive Use\",\"quoteId\":\"XVQWRQG\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2025-12-28-16.00.00.000000\",\"transitDeliveryDate\":\"2025-12-31\",\"transitDeliveryTime\":\"11:00\"},\"transitDetails\":{\"transitDays\":3,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"073\",\"destinationTerminalInfo\":{\"name\":\"Opelika\",\"address1\":\"5361 County Road Hwy 388\",\"city\":\"Cusseta\",\"stateProvince\":\"AL\",\"postalCode\":\"36852\",\"country\":\"US\",\"contact\":{\"name\":\"Jason Howard\",\"phone\":\"(334) 756-0680\",\"fax\":\"13347560688\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"5537.25\",\"totalShipmentWeight\":610,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":2},\"chargeItems\":[{\"description\":\"Commodity Total\",\"charge\":\"5532.65\"},{\"description\":\"Tare Weight Charge - 10lbs\",\"charge\":\"4.60\"}],\"disclaimersURL\":\"https://www.estes-express.com/myestes/rate-quote-estimate/terms\"}],\"error\":{\"code\":0,\"message\":\"\",\"details\":\"\"}}",
+    "rawBody": "{\"data\":[{\"serviceLevelId\":\"99\",\"serviceLevelText\":\"LTL Standard Transit\",\"quoteId\":\"LVQX74H\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2025-12-29-01.00.00.000000\",\"transitDeliveryDate\":\"2025-12-30\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"158.06\",\"totalShipmentWeight\":90,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":2,\"ratedAccessorials\":[{\"code\":\"FSC\",\"description\":\"Fuel Surcharge\",\"charge\":\"35.06\"}]},\"lineItemCharges\":[{\"description\":\"package\",\"classification\":\"92.5\",\"weight\":80,\"rate\":\".00\",\"charge\":\"123.00\"}],\"chargeItems\":[{\"description\":\"Commodity Total\",\"charge\":\"123.00\"},{\"description\":\"Tare Weight Charge - 10lbs\",\"charge\":\"0.00\"},{\"description\":\"Fuel Surcharge 28.50%\",\"charge\":\"35.06\"}],\"disclaimersURL\":\"https://www.estes-express.com/myestes/rate-quote-estimate/terms\"},{\"serviceLevelId\":\"98\",\"serviceLevelText\":\"Guaranteed LTL Standard Transit: 5PM\",\"quoteId\":\"1VQX74H\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2025-12-28-16.00.00.000000\",\"transitDeliveryDate\":\"2025-12-30\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"218.06\",\"totalShipmentWeight\":90,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":2,\"ratedAccessorials\":[{\"code\":\"FSC\",\"description\":\"Fuel Surcharge\",\"charge\":\"35.06\"}]},\"lineItemCharges\":[{\"description\":\"package\",\"classification\":\"92.5\",\"weight\":80,\"rate\":\".00\",\"charge\":\"123.00\"}],\"chargeItems\":[{\"description\":\"Commodity Total\",\"charge\":\"123.00\"},{\"description\":\"Tare Weight Charge - 10lbs\",\"charge\":\"0.00\"},{\"description\":\"Fuel Surcharge 28.50%\",\"charge\":\"35.06\"},{\"description\":\"Service Level Adjustment\",\"charge\":\"60.00\"}],\"disclaimersURL\":\"https://www.estes-express.com/myestes/rate-quote-estimate/terms\"},{\"serviceLevelId\":\"96\",\"serviceLevelText\":\"Guaranteed LTL Standard Transit: 12PM\",\"quoteId\":\"2VQX74H\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2025-12-28-16.00.00.000000\",\"transitDeliveryDate\":\"2025-12-30\",\"transitDeliveryTime\":\"12:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"258.06\",\"totalShipmentWeight\":90,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":2,\"ratedAccessorials\":[{\"code\":\"FSC\",\"description\":\"Fuel Surcharge\",\"charge\":\"35.06\"}]},\"lineItemCharges\":[{\"description\":\"package\",\"classification\":\"92.5\",\"weight\":80,\"rate\":\".00\",\"charge\":\"123.00\"}],\"chargeItems\":[{\"description\":\"Commodity Total\",\"charge\":\"123.00\"},{\"description\":\"Tare Weight Charge - 10lbs\",\"charge\":\"0.00\"},{\"description\":\"Fuel Surcharge 28.50%\",\"charge\":\"35.06\"},{\"description\":\"Service Level Adjustment\",\"charge\":\"100.00\"}],\"disclaimersURL\":\"https://www.estes-express.com/myestes/rate-quote-estimate/terms\"},{\"serviceLevelId\":\"95\",\"serviceLevelText\":\"Guaranteed LTL Standard Transit: 10AM\",\"quoteId\":\"3VQX74H\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2025-12-28-16.00.00.000000\",\"transitDeliveryDate\":\"2025-12-30\",\"transitDeliveryTime\":\"10:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"298.06\",\"totalShipmentWeight\":90,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":2,\"ratedAccessorials\":[{\"code\":\"FSC\",\"description\":\"Fuel Surcharge\",\"charge\":\"35.06\"}]},\"lineItemCharges\":[{\"description\":\"package\",\"classification\":\"92.5\",\"weight\":80,\"rate\":\".00\",\"charge\":\"123.00\"}],\"chargeItems\":[{\"description\":\"Commodity Total\",\"charge\":\"123.00\"},{\"description\":\"Tare Weight Charge - 10lbs\",\"charge\":\"0.00\"},{\"description\":\"Fuel Surcharge 28.50%\",\"charge\":\"35.06\"},{\"description\":\"Service Level Adjustment\",\"charge\":\"140.00\"}],\"disclaimersURL\":\"https://www.estes-express.com/myestes/rate-quote-estimate/terms\"},{\"serviceLevelId\":\"90\",\"serviceLevelText\":\"Estes Retail Guarantee\",\"quoteId\":\"RVQX74H\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2025-12-28-16.00.00.000000\",\"transitDeliveryDate\":\"2025-12-30\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"258.06\",\"totalShipmentWeight\":90,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":2,\"ratedAccessorials\":[{\"code\":\"FSC\",\"description\":\"Fuel Surcharge\",\"charge\":\"35.06\"},{\"code\":\"APT\",\"description\":\"APPOINTMENT CHARGE\",\"charge\":\".00\"}]},\"lineItemCharges\":[{\"description\":\"package\",\"classification\":\"92.5\",\"weight\":80,\"rate\":\".00\",\"charge\":\"123.00\"}],\"chargeItems\":[{\"description\":\"Commodity Total\",\"charge\":\"123.00\"},{\"description\":\"Tare Weight Charge - 10lbs\",\"charge\":\"0.00\"},{\"description\":\"Fuel Surcharge 28.50%\",\"charge\":\"35.06\"},{\"description\":\"APPOINTMENT CHARGE\",\"charge\":\"0.00\"},{\"description\":\"Service Level Adjustment\",\"charge\":\"100.00\"}],\"disclaimersURL\":\"https://www.estes-express.com/myestes/rate-quote-estimate/terms\"},{\"serviceLevelId\":\"94\",\"serviceLevelText\":\"Volume and Truckload Basic\",\"quoteId\":\"VVQX74H\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2026-01-28-01.00.00.000000\",\"transitDeliveryDate\":\"2025-12-30\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"325.00\",\"totalShipmentWeight\":90,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":7},\"chargeItems\":[{\"description\":\"Tare Weight Charge - 10lbs\",\"charge\":\"0.00\"}],\"disclaimersURL\":\"https://www.estes-express.com/myestes/rate-quote-estimate/terms\"},{\"serviceLevelId\":\"92\",\"serviceLevelText\":\"Guaranteed Volume and Truckload Standard\",\"quoteId\":\"SVQX74H\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2025-12-28-16.00.00.000000\",\"transitDeliveryDate\":\"2025-12-30\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"455.00\",\"totalShipmentWeight\":90,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":7},\"chargeItems\":[{\"description\":\"Tare Weight Charge - 10lbs\",\"charge\":\"0.00\"}],\"disclaimersURL\":\"https://www.estes-express.com/myestes/rate-quote-estimate/terms\"},{\"serviceLevelId\":\"93\",\"serviceLevelText\":\"Guaranteed Volume and Truckload Economy\",\"quoteId\":\"EVQX74H\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2025-12-28-16.00.00.000000\",\"transitDeliveryDate\":\"2025-12-31\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"422.50\",\"totalShipmentWeight\":90,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":7},\"chargeItems\":[{\"description\":\"Tare Weight Charge - 10lbs\",\"charge\":\"0.00\"}],\"disclaimersURL\":\"https://www.estes-express.com/myestes/rate-quote-estimate/terms\"},{\"serviceLevelId\":\"97\",\"serviceLevelText\":\"Guaranteed Exclusive Use\",\"quoteId\":\"XVQX74H\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2025-12-28-16.00.00.000000\",\"transitDeliveryDate\":\"2025-12-30\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"1195.00\",\"totalShipmentWeight\":90,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":2},\"chargeItems\":[{\"description\":\"Commodity Total\",\"charge\":\"1195.00\"}],\"disclaimersURL\":\"https://www.estes-express.com/myestes/rate-quote-estimate/terms\"}],\"error\":{\"code\":0,\"message\":\"\",\"details\":\"\"}}",
     "json": {
       "data": [
         {
           "serviceLevelId": "99",
           "serviceLevelText": "LTL Standard Transit",
-          "quoteId": "LVQWRQG",
+          "quoteId": "LVQX74H",
           "rateFound": true,
           "dates": {
             "quoteExpiration": "2025-12-29-01.00.00.000000",
-            "transitDeliveryDate": "2026-01-05",
+            "transitDeliveryDate": "2025-12-30",
             "transitDeliveryTime": "17:00"
           },
           "transitDetails": {
-            "transitDays": 3,
+            "transitDays": 1,
             "laneType": "DIRECT",
             "originTerminal": "144",
             "originTerminalInfo": {
@@ -238,25 +380,25 @@
                 "fax": "13192266420"
               }
             },
-            "destinationTerminal": "073",
+            "destinationTerminal": "144",
             "destinationTerminalInfo": {
-              "name": "Opelika",
-              "address1": "5361 County Road Hwy 388",
-              "city": "Cusseta",
-              "stateProvince": "AL",
-              "postalCode": "36852",
+              "name": "Waterloo",
+              "address1": "2125 Commercial Street",
+              "city": "Waterloo",
+              "stateProvince": "IA",
+              "postalCode": "50702",
               "country": "US",
               "contact": {
-                "name": "Jason Howard",
-                "phone": "(334) 756-0680",
-                "fax": "13347560688"
+                "name": "Brian Wunn",
+                "phone": "(319) 226-6414",
+                "fax": "13192266420"
               }
             },
             "transitMessage": ""
           },
           "quoteRate": {
-            "totalCharges": "360.52",
-            "totalShipmentWeight": 610,
+            "totalCharges": "158.06",
+            "totalShipmentWeight": 90,
             "rateType": "Customer Pricing",
             "ratedCube": ".00",
             "ratedLinearFeet": 2,
@@ -264,35 +406,31 @@
               {
                 "code": "FSC",
                 "description": "Fuel Surcharge",
-                "charge": "79.96"
+                "charge": "35.06"
               }
             ]
           },
           "lineItemCharges": [
             {
-              "description": "Boxes of widgets",
+              "description": "package",
               "classification": "92.5",
-              "weight": 600,
-              "rate": "418.12",
-              "charge": "2508.72"
+              "weight": 80,
+              "rate": ".00",
+              "charge": "123.00"
             }
           ],
           "chargeItems": [
             {
               "description": "Commodity Total",
-              "charge": "2508.72"
-            },
-            {
-              "description": "Discount 89.00%",
-              "charge": "-2232.76"
+              "charge": "123.00"
             },
             {
               "description": "Tare Weight Charge - 10lbs",
-              "charge": "4.60"
+              "charge": "0.00"
             },
             {
               "description": "Fuel Surcharge 28.50%",
-              "charge": "79.96"
+              "charge": "35.06"
             }
           ],
           "disclaimersURL": "https://www.estes-express.com/myestes/rate-quote-estimate/terms"
@@ -300,15 +438,15 @@
         {
           "serviceLevelId": "98",
           "serviceLevelText": "Guaranteed LTL Standard Transit: 5PM",
-          "quoteId": "1VQWRQG",
+          "quoteId": "1VQX74H",
           "rateFound": true,
           "dates": {
             "quoteExpiration": "2025-12-28-16.00.00.000000",
-            "transitDeliveryDate": "2026-01-05",
+            "transitDeliveryDate": "2025-12-30",
             "transitDeliveryTime": "17:00"
           },
           "transitDetails": {
-            "transitDays": 3,
+            "transitDays": 1,
             "laneType": "DIRECT",
             "originTerminal": "144",
             "originTerminalInfo": {
@@ -324,25 +462,25 @@
                 "fax": "13192266420"
               }
             },
-            "destinationTerminal": "073",
+            "destinationTerminal": "144",
             "destinationTerminalInfo": {
-              "name": "Opelika",
-              "address1": "5361 County Road Hwy 388",
-              "city": "Cusseta",
-              "stateProvince": "AL",
-              "postalCode": "36852",
+              "name": "Waterloo",
+              "address1": "2125 Commercial Street",
+              "city": "Waterloo",
+              "stateProvince": "IA",
+              "postalCode": "50702",
               "country": "US",
               "contact": {
-                "name": "Jason Howard",
-                "phone": "(334) 756-0680",
-                "fax": "13347560688"
+                "name": "Brian Wunn",
+                "phone": "(319) 226-6414",
+                "fax": "13192266420"
               }
             },
             "transitMessage": ""
           },
           "quoteRate": {
-            "totalCharges": "443.30",
-            "totalShipmentWeight": 610,
+            "totalCharges": "218.06",
+            "totalShipmentWeight": 90,
             "rateType": "Customer Pricing",
             "ratedCube": ".00",
             "ratedLinearFeet": 2,
@@ -350,39 +488,35 @@
               {
                 "code": "FSC",
                 "description": "Fuel Surcharge",
-                "charge": "79.96"
+                "charge": "35.06"
               }
             ]
           },
           "lineItemCharges": [
             {
-              "description": "Boxes of widgets",
+              "description": "package",
               "classification": "92.5",
-              "weight": 600,
-              "rate": "418.12",
-              "charge": "2508.72"
+              "weight": 80,
+              "rate": ".00",
+              "charge": "123.00"
             }
           ],
           "chargeItems": [
             {
               "description": "Commodity Total",
-              "charge": "2508.72"
-            },
-            {
-              "description": "Discount 89.00%",
-              "charge": "-2232.76"
+              "charge": "123.00"
             },
             {
               "description": "Tare Weight Charge - 10lbs",
-              "charge": "4.60"
+              "charge": "0.00"
             },
             {
               "description": "Fuel Surcharge 28.50%",
-              "charge": "79.96"
+              "charge": "35.06"
             },
             {
               "description": "Service Level Adjustment",
-              "charge": "82.78"
+              "charge": "60.00"
             }
           ],
           "disclaimersURL": "https://www.estes-express.com/myestes/rate-quote-estimate/terms"
@@ -390,15 +524,15 @@
         {
           "serviceLevelId": "96",
           "serviceLevelText": "Guaranteed LTL Standard Transit: 12PM",
-          "quoteId": "2VQWRQG",
+          "quoteId": "2VQX74H",
           "rateFound": true,
           "dates": {
             "quoteExpiration": "2025-12-28-16.00.00.000000",
-            "transitDeliveryDate": "2026-01-05",
+            "transitDeliveryDate": "2025-12-30",
             "transitDeliveryTime": "12:00"
           },
           "transitDetails": {
-            "transitDays": 3,
+            "transitDays": 1,
             "laneType": "DIRECT",
             "originTerminal": "144",
             "originTerminalInfo": {
@@ -414,25 +548,25 @@
                 "fax": "13192266420"
               }
             },
-            "destinationTerminal": "073",
+            "destinationTerminal": "144",
             "destinationTerminalInfo": {
-              "name": "Opelika",
-              "address1": "5361 County Road Hwy 388",
-              "city": "Cusseta",
-              "stateProvince": "AL",
-              "postalCode": "36852",
+              "name": "Waterloo",
+              "address1": "2125 Commercial Street",
+              "city": "Waterloo",
+              "stateProvince": "IA",
+              "postalCode": "50702",
               "country": "US",
               "contact": {
-                "name": "Jason Howard",
-                "phone": "(334) 756-0680",
-                "fax": "13347560688"
+                "name": "Brian Wunn",
+                "phone": "(319) 226-6414",
+                "fax": "13192266420"
               }
             },
             "transitMessage": ""
           },
           "quoteRate": {
-            "totalCharges": "470.90",
-            "totalShipmentWeight": 610,
+            "totalCharges": "258.06",
+            "totalShipmentWeight": 90,
             "rateType": "Customer Pricing",
             "ratedCube": ".00",
             "ratedLinearFeet": 2,
@@ -440,39 +574,35 @@
               {
                 "code": "FSC",
                 "description": "Fuel Surcharge",
-                "charge": "79.96"
+                "charge": "35.06"
               }
             ]
           },
           "lineItemCharges": [
             {
-              "description": "Boxes of widgets",
+              "description": "package",
               "classification": "92.5",
-              "weight": 600,
-              "rate": "418.12",
-              "charge": "2508.72"
+              "weight": 80,
+              "rate": ".00",
+              "charge": "123.00"
             }
           ],
           "chargeItems": [
             {
               "description": "Commodity Total",
-              "charge": "2508.72"
-            },
-            {
-              "description": "Discount 89.00%",
-              "charge": "-2232.76"
+              "charge": "123.00"
             },
             {
               "description": "Tare Weight Charge - 10lbs",
-              "charge": "4.60"
+              "charge": "0.00"
             },
             {
               "description": "Fuel Surcharge 28.50%",
-              "charge": "79.96"
+              "charge": "35.06"
             },
             {
               "description": "Service Level Adjustment",
-              "charge": "110.38"
+              "charge": "100.00"
             }
           ],
           "disclaimersURL": "https://www.estes-express.com/myestes/rate-quote-estimate/terms"
@@ -480,15 +610,15 @@
         {
           "serviceLevelId": "95",
           "serviceLevelText": "Guaranteed LTL Standard Transit: 10AM",
-          "quoteId": "3VQWRQG",
+          "quoteId": "3VQX74H",
           "rateFound": true,
           "dates": {
             "quoteExpiration": "2025-12-28-16.00.00.000000",
-            "transitDeliveryDate": "2026-01-05",
+            "transitDeliveryDate": "2025-12-30",
             "transitDeliveryTime": "10:00"
           },
           "transitDetails": {
-            "transitDays": 3,
+            "transitDays": 1,
             "laneType": "DIRECT",
             "originTerminal": "144",
             "originTerminalInfo": {
@@ -504,25 +634,25 @@
                 "fax": "13192266420"
               }
             },
-            "destinationTerminal": "073",
+            "destinationTerminal": "144",
             "destinationTerminalInfo": {
-              "name": "Opelika",
-              "address1": "5361 County Road Hwy 388",
-              "city": "Cusseta",
-              "stateProvince": "AL",
-              "postalCode": "36852",
+              "name": "Waterloo",
+              "address1": "2125 Commercial Street",
+              "city": "Waterloo",
+              "stateProvince": "IA",
+              "postalCode": "50702",
               "country": "US",
               "contact": {
-                "name": "Jason Howard",
-                "phone": "(334) 756-0680",
-                "fax": "13347560688"
+                "name": "Brian Wunn",
+                "phone": "(319) 226-6414",
+                "fax": "13192266420"
               }
             },
             "transitMessage": ""
           },
           "quoteRate": {
-            "totalCharges": "500.52",
-            "totalShipmentWeight": 610,
+            "totalCharges": "298.06",
+            "totalShipmentWeight": 90,
             "rateType": "Customer Pricing",
             "ratedCube": ".00",
             "ratedLinearFeet": 2,
@@ -530,35 +660,31 @@
               {
                 "code": "FSC",
                 "description": "Fuel Surcharge",
-                "charge": "79.96"
+                "charge": "35.06"
               }
             ]
           },
           "lineItemCharges": [
             {
-              "description": "Boxes of widgets",
+              "description": "package",
               "classification": "92.5",
-              "weight": 600,
-              "rate": "418.12",
-              "charge": "2508.72"
+              "weight": 80,
+              "rate": ".00",
+              "charge": "123.00"
             }
           ],
           "chargeItems": [
             {
               "description": "Commodity Total",
-              "charge": "2508.72"
-            },
-            {
-              "description": "Discount 89.00%",
-              "charge": "-2232.76"
+              "charge": "123.00"
             },
             {
               "description": "Tare Weight Charge - 10lbs",
-              "charge": "4.60"
+              "charge": "0.00"
             },
             {
               "description": "Fuel Surcharge 28.50%",
-              "charge": "79.96"
+              "charge": "35.06"
             },
             {
               "description": "Service Level Adjustment",
@@ -570,15 +696,15 @@
         {
           "serviceLevelId": "90",
           "serviceLevelText": "Estes Retail Guarantee",
-          "quoteId": "RVQWRQG",
+          "quoteId": "RVQX74H",
           "rateFound": true,
           "dates": {
             "quoteExpiration": "2025-12-28-16.00.00.000000",
-            "transitDeliveryDate": "2026-01-05",
+            "transitDeliveryDate": "2025-12-30",
             "transitDeliveryTime": "17:00"
           },
           "transitDetails": {
-            "transitDays": 3,
+            "transitDays": 1,
             "laneType": "DIRECT",
             "originTerminal": "144",
             "originTerminalInfo": {
@@ -594,25 +720,25 @@
                 "fax": "13192266420"
               }
             },
-            "destinationTerminal": "073",
+            "destinationTerminal": "144",
             "destinationTerminalInfo": {
-              "name": "Opelika",
-              "address1": "5361 County Road Hwy 388",
-              "city": "Cusseta",
-              "stateProvince": "AL",
-              "postalCode": "36852",
+              "name": "Waterloo",
+              "address1": "2125 Commercial Street",
+              "city": "Waterloo",
+              "stateProvince": "IA",
+              "postalCode": "50702",
               "country": "US",
               "contact": {
-                "name": "Jason Howard",
-                "phone": "(334) 756-0680",
-                "fax": "13347560688"
+                "name": "Brian Wunn",
+                "phone": "(319) 226-6414",
+                "fax": "13192266420"
               }
             },
             "transitMessage": ""
           },
           "quoteRate": {
-            "totalCharges": "460.52",
-            "totalShipmentWeight": 610,
+            "totalCharges": "258.06",
+            "totalShipmentWeight": 90,
             "rateType": "Customer Pricing",
             "ratedCube": ".00",
             "ratedLinearFeet": 2,
@@ -620,7 +746,7 @@
               {
                 "code": "FSC",
                 "description": "Fuel Surcharge",
-                "charge": "79.96"
+                "charge": "35.06"
               },
               {
                 "code": "APT",
@@ -631,29 +757,25 @@
           },
           "lineItemCharges": [
             {
-              "description": "Boxes of widgets",
+              "description": "package",
               "classification": "92.5",
-              "weight": 600,
-              "rate": "418.12",
-              "charge": "2508.72"
+              "weight": 80,
+              "rate": ".00",
+              "charge": "123.00"
             }
           ],
           "chargeItems": [
             {
               "description": "Commodity Total",
-              "charge": "2508.72"
-            },
-            {
-              "description": "Discount 89.00%",
-              "charge": "-2232.76"
+              "charge": "123.00"
             },
             {
               "description": "Tare Weight Charge - 10lbs",
-              "charge": "4.60"
+              "charge": "0.00"
             },
             {
               "description": "Fuel Surcharge 28.50%",
-              "charge": "79.96"
+              "charge": "35.06"
             },
             {
               "description": "APPOINTMENT CHARGE",
@@ -669,15 +791,15 @@
         {
           "serviceLevelId": "94",
           "serviceLevelText": "Volume and Truckload Basic",
-          "quoteId": "VVQWRQG",
+          "quoteId": "VVQX74H",
           "rateFound": true,
           "dates": {
             "quoteExpiration": "2026-01-28-01.00.00.000000",
-            "transitDeliveryDate": "2026-01-05",
+            "transitDeliveryDate": "2025-12-30",
             "transitDeliveryTime": "17:00"
           },
           "transitDetails": {
-            "transitDays": 3,
+            "transitDays": 1,
             "laneType": "DIRECT",
             "originTerminal": "144",
             "originTerminalInfo": {
@@ -693,25 +815,25 @@
                 "fax": "13192266420"
               }
             },
-            "destinationTerminal": "073",
+            "destinationTerminal": "144",
             "destinationTerminalInfo": {
-              "name": "Opelika",
-              "address1": "5361 County Road Hwy 388",
-              "city": "Cusseta",
-              "stateProvince": "AL",
-              "postalCode": "36852",
+              "name": "Waterloo",
+              "address1": "2125 Commercial Street",
+              "city": "Waterloo",
+              "stateProvince": "IA",
+              "postalCode": "50702",
               "country": "US",
               "contact": {
-                "name": "Jason Howard",
-                "phone": "(334) 756-0680",
-                "fax": "13347560688"
+                "name": "Brian Wunn",
+                "phone": "(319) 226-6414",
+                "fax": "13192266420"
               }
             },
             "transitMessage": ""
           },
           "quoteRate": {
-            "totalCharges": "724.60",
-            "totalShipmentWeight": 610,
+            "totalCharges": "325.00",
+            "totalShipmentWeight": 90,
             "rateType": "Customer Pricing",
             "ratedCube": ".00",
             "ratedLinearFeet": 7
@@ -719,7 +841,7 @@
           "chargeItems": [
             {
               "description": "Tare Weight Charge - 10lbs",
-              "charge": "4.60"
+              "charge": "0.00"
             }
           ],
           "disclaimersURL": "https://www.estes-express.com/myestes/rate-quote-estimate/terms"
@@ -727,15 +849,15 @@
         {
           "serviceLevelId": "92",
           "serviceLevelText": "Guaranteed Volume and Truckload Standard",
-          "quoteId": "SVQWRQG",
+          "quoteId": "SVQX74H",
           "rateFound": true,
           "dates": {
             "quoteExpiration": "2025-12-28-16.00.00.000000",
-            "transitDeliveryDate": "2026-01-05",
+            "transitDeliveryDate": "2025-12-30",
             "transitDeliveryTime": "17:00"
           },
           "transitDetails": {
-            "transitDays": 3,
+            "transitDays": 1,
             "laneType": "DIRECT",
             "originTerminal": "144",
             "originTerminalInfo": {
@@ -751,25 +873,25 @@
                 "fax": "13192266420"
               }
             },
-            "destinationTerminal": "073",
+            "destinationTerminal": "144",
             "destinationTerminalInfo": {
-              "name": "Opelika",
-              "address1": "5361 County Road Hwy 388",
-              "city": "Cusseta",
-              "stateProvince": "AL",
-              "postalCode": "36852",
+              "name": "Waterloo",
+              "address1": "2125 Commercial Street",
+              "city": "Waterloo",
+              "stateProvince": "IA",
+              "postalCode": "50702",
               "country": "US",
               "contact": {
-                "name": "Jason Howard",
-                "phone": "(334) 756-0680",
-                "fax": "13347560688"
+                "name": "Brian Wunn",
+                "phone": "(319) 226-6414",
+                "fax": "13192266420"
               }
             },
             "transitMessage": ""
           },
           "quoteRate": {
-            "totalCharges": "1012.60",
-            "totalShipmentWeight": 610,
+            "totalCharges": "455.00",
+            "totalShipmentWeight": 90,
             "rateType": "Customer Pricing",
             "ratedCube": ".00",
             "ratedLinearFeet": 7
@@ -777,7 +899,7 @@
           "chargeItems": [
             {
               "description": "Tare Weight Charge - 10lbs",
-              "charge": "4.60"
+              "charge": "0.00"
             }
           ],
           "disclaimersURL": "https://www.estes-express.com/myestes/rate-quote-estimate/terms"
@@ -785,15 +907,15 @@
         {
           "serviceLevelId": "93",
           "serviceLevelText": "Guaranteed Volume and Truckload Economy",
-          "quoteId": "EVQWRQG",
+          "quoteId": "EVQX74H",
           "rateFound": true,
           "dates": {
             "quoteExpiration": "2025-12-28-16.00.00.000000",
-            "transitDeliveryDate": "2026-01-06",
+            "transitDeliveryDate": "2025-12-31",
             "transitDeliveryTime": "17:00"
           },
           "transitDetails": {
-            "transitDays": 3,
+            "transitDays": 1,
             "laneType": "DIRECT",
             "originTerminal": "144",
             "originTerminalInfo": {
@@ -809,25 +931,25 @@
                 "fax": "13192266420"
               }
             },
-            "destinationTerminal": "073",
+            "destinationTerminal": "144",
             "destinationTerminalInfo": {
-              "name": "Opelika",
-              "address1": "5361 County Road Hwy 388",
-              "city": "Cusseta",
-              "stateProvince": "AL",
-              "postalCode": "36852",
+              "name": "Waterloo",
+              "address1": "2125 Commercial Street",
+              "city": "Waterloo",
+              "stateProvince": "IA",
+              "postalCode": "50702",
               "country": "US",
               "contact": {
-                "name": "Jason Howard",
-                "phone": "(334) 756-0680",
-                "fax": "13347560688"
+                "name": "Brian Wunn",
+                "phone": "(319) 226-6414",
+                "fax": "13192266420"
               }
             },
             "transitMessage": ""
           },
           "quoteRate": {
-            "totalCharges": "940.60",
-            "totalShipmentWeight": 610,
+            "totalCharges": "422.50",
+            "totalShipmentWeight": 90,
             "rateType": "Customer Pricing",
             "ratedCube": ".00",
             "ratedLinearFeet": 7
@@ -835,7 +957,7 @@
           "chargeItems": [
             {
               "description": "Tare Weight Charge - 10lbs",
-              "charge": "4.60"
+              "charge": "0.00"
             }
           ],
           "disclaimersURL": "https://www.estes-express.com/myestes/rate-quote-estimate/terms"
@@ -843,15 +965,15 @@
         {
           "serviceLevelId": "97",
           "serviceLevelText": "Guaranteed Exclusive Use",
-          "quoteId": "XVQWRQG",
+          "quoteId": "XVQX74H",
           "rateFound": true,
           "dates": {
             "quoteExpiration": "2025-12-28-16.00.00.000000",
-            "transitDeliveryDate": "2025-12-31",
-            "transitDeliveryTime": "11:00"
+            "transitDeliveryDate": "2025-12-30",
+            "transitDeliveryTime": "17:00"
           },
           "transitDetails": {
-            "transitDays": 3,
+            "transitDays": 1,
             "laneType": "DIRECT",
             "originTerminal": "144",
             "originTerminalInfo": {
@@ -867,25 +989,25 @@
                 "fax": "13192266420"
               }
             },
-            "destinationTerminal": "073",
+            "destinationTerminal": "144",
             "destinationTerminalInfo": {
-              "name": "Opelika",
-              "address1": "5361 County Road Hwy 388",
-              "city": "Cusseta",
-              "stateProvince": "AL",
-              "postalCode": "36852",
+              "name": "Waterloo",
+              "address1": "2125 Commercial Street",
+              "city": "Waterloo",
+              "stateProvince": "IA",
+              "postalCode": "50702",
               "country": "US",
               "contact": {
-                "name": "Jason Howard",
-                "phone": "(334) 756-0680",
-                "fax": "13347560688"
+                "name": "Brian Wunn",
+                "phone": "(319) 226-6414",
+                "fax": "13192266420"
               }
             },
             "transitMessage": ""
           },
           "quoteRate": {
-            "totalCharges": "5537.25",
-            "totalShipmentWeight": 610,
+            "totalCharges": "1195.00",
+            "totalShipmentWeight": 90,
             "rateType": "Customer Pricing",
             "ratedCube": ".00",
             "ratedLinearFeet": 2
@@ -893,11 +1015,7 @@
           "chargeItems": [
             {
               "description": "Commodity Total",
-              "charge": "5532.65"
-            },
-            {
-              "description": "Tare Weight Charge - 10lbs",
-              "charge": "4.60"
+              "charge": "1195.00"
             }
           ],
           "disclaimersURL": "https://www.estes-express.com/myestes/rate-quote-estimate/terms"

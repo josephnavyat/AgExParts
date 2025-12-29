@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-12-28T20:52:21.328Z",
+  "timestamp": "2025-12-28T22:50:27.133Z",
   "request": {
     "headers": {
       "Authorization": "<REDACTED>",
@@ -36,11 +36,11 @@
           "name": "",
           "locationId": "",
           "address": {
-            "address1": "4138 Wynnewood Dr",
+            "address1": "4138 Wynnewood Drive",
             "address2": "",
-            "city": "Cedar Fall",
-            "stateProvince": "IA",
-            "postalCode": "50613",
+            "city": "Opelika",
+            "stateProvince": "AL",
+            "postalCode": "36801",
             "country": "US"
           },
           "contact": {
@@ -53,7 +53,7 @@
             {
               "count": 1,
               "type": "PT",
-              "weight": 120,
+              "weight": 1120,
               "tareWeight": 10,
               "weightUnit": "Pounds",
               "length": 48,
@@ -66,7 +66,7 @@
                 {
                   "description": "RAKE WHEEL RH- SITREX HIGH CAPACITY",
                   "weight": 40,
-                  "pieces": 3,
+                  "pieces": 28,
                   "packagingType": "BX"
                 }
               ]

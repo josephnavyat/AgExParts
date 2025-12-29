@@ -1,0 +1,275 @@
+{
+  "timestamp": "2025-12-29T00:56:00.843Z",
+  "request": {
+    "headers": {
+      "Authorization": "<REDACTED>",
+      "x-api-key": "SaTrn7vp5yU3Gqn8tI2eFg1l56oP1X4s",
+      "apiKey": "<REDACTED>",
+      "apikey": "<REDACTED>",
+      "Content-Type": "application/json"
+    },
+    "payload": {
+      "quoteRequest": {
+        "shipDate": "2025-12-29T00:00:00.000Z",
+        "serviceLevels": [
+          "ALL"
+        ],
+        "origin": {
+          "name": "AgEx Parts Warehouse",
+          "locationId": "AGEX-001",
+          "address": {
+            "address1": "1128 Dunkerton Road",
+            "address2": "",
+            "city": "Cedar Falls",
+            "stateProvince": "IA",
+            "postalCode": "50613",
+            "country": "US"
+          },
+          "contact": {
+            "name": "AgEx Parts",
+            "phone": "3190000000",
+            "phoneExt": "",
+            "email": "origin@agexparts.com"
+          }
+        },
+        "destination": {
+          "name": "",
+          "locationId": "",
+          "address": {
+            "address1": "5361 County Road Hwy 388",
+            "address2": "",
+            "city": "Cusseta",
+            "stateProvince": "AL",
+            "postalCode": "36852",
+            "country": "US"
+          },
+          "contact": {
+            "name": "Navya Joseph",
+            "phone": "",
+            "phoneExt": "",
+            "email": ""
+          }
+        },
+        "commodity": {
+          "handlingUnits": [
+            {
+              "count": 1,
+              "type": "PT",
+              "weight": 400,
+              "tareWeight": 10,
+              "weightUnit": "Pounds",
+              "length": 48,
+              "width": 40,
+              "height": 48,
+              "dimensionsUnit": "Inches",
+              "isStackable": false,
+              "isTurnable": true,
+              "lineItems": [
+                {
+                  "description": "RAKE WHEEL RH- SITREX HIGH CAPACITY",
+                  "weight": 40,
+                  "pieces": 10,
+                  "packagingType": "BX",
+                  "classification": "92.5",
+                  "nmfc": "",
+                  "nmfcSub": "",
+                  "isHazardous": false
+                }
+              ]
+            }
+          ],
+          "totalShipmentWeight": 410,
+          "totalPieces": 10
+        },
+        "accessorials": []
+      },
+      "payment": {
+        "account": "B132703",
+        "payor": "Shipper",
+        "terms": "Prepaid"
+      },
+      "requestor": {
+        "name": "AgEx Parts",
+        "phone": "0000000000",
+        "email": "requestor@agexparts.com"
+      },
+      "origin": {
+        "name": "AgEx Parts Warehouse",
+        "locationId": "AGEX-001",
+        "address": {
+          "address1": "1128 Dunkerton Road",
+          "address2": "",
+          "city": "Cedar Falls",
+          "stateProvince": "IA",
+          "postalCode": "50613",
+          "country": "US"
+        },
+        "contact": {
+          "name": "AgEx Parts",
+          "phone": "3190000000",
+          "phoneExt": "",
+          "email": "origin@agexparts.com"
+        }
+      },
+      "destination": {
+        "name": "",
+        "locationId": "",
+        "address": {
+          "address1": "5361 County Road Hwy 388",
+          "address2": "",
+          "city": "Cusseta",
+          "stateProvince": "AL",
+          "postalCode": "36852",
+          "country": "US"
+        },
+        "contact": {
+          "name": "Navya Joseph",
+          "phone": "",
+          "phoneExt": "",
+          "email": ""
+        }
+      }
+    }
+  },
+  "response": {
+    "data": [
+      {
+        "serviceLevelId": "94",
+        "serviceLevelText": "Volume and Truckload Basic",
+        "quoteId": "VVQX6DY",
+        "rateFound": true,
+        "dates": {
+          "quoteExpiration": "2026-01-28-01.00.00.000000",
+          "transitDeliveryDate": "2026-01-02",
+          "transitDeliveryTime": "17:00"
+        },
+        "transitDetails": {
+          "transitDays": 3,
+          "laneType": "DIRECT",
+          "originTerminal": "144",
+          "originTerminalInfo": {
+            "name": "Waterloo",
+            "address1": "2125 Commercial Street",
+            "city": "Waterloo",
+            "stateProvince": "IA",
+            "postalCode": "50702",
+            "country": "US",
+            "contact": {
+              "name": "Brian Wunn",
+              "phone": "(319) 226-6414",
+              "fax": "13192266420"
+            }
+          },
+          "destinationTerminal": "073",
+          "destinationTerminalInfo": {
+            "name": "Opelika",
+            "address1": "5361 County Road Hwy 388",
+            "city": "Cusseta",
+            "stateProvince": "AL",
+            "postalCode": "36852",
+            "country": "US",
+            "contact": {
+              "name": "Jason Howard",
+              "phone": "(334) 756-0680",
+              "fax": "13347560688"
+            }
+          },
+          "transitMessage": ""
+        },
+        "quoteRate": {
+          "totalCharges": "720.00",
+          "totalShipmentWeight": 0,
+          "rateType": "Customer Pricing",
+          "ratedCube": ".00",
+          "ratedLinearFeet": 7
+        },
+        "disclaimersURL": "https://www.estes-express.com/myestes/rate-quote-estimate/terms"
+      },
+      {
+        "serviceLevelId": "98",
+        "serviceLevelText": "Guaranteed LTL Standard Transit: 5PM",
+        "rateFound": false,
+        "reasons": [
+          {
+            "messageId": "QUE0008",
+            "message": "Total weight must contain a value greater than zero."
+          }
+        ]
+      },
+      {
+        "serviceLevelId": "96",
+        "serviceLevelText": "Guaranteed LTL Standard Transit: 12PM",
+        "rateFound": false,
+        "reasons": [
+          {
+            "messageId": "QUE0008",
+            "message": "Total weight must contain a value greater than zero."
+          }
+        ]
+      },
+      {
+        "serviceLevelId": "95",
+        "serviceLevelText": "Guaranteed LTL Standard Transit: 10AM",
+        "rateFound": false,
+        "reasons": [
+          {
+            "messageId": "QUE0008",
+            "message": "Total weight must contain a value greater than zero."
+          }
+        ]
+      },
+      {
+        "serviceLevelId": "90",
+        "serviceLevelText": "Estes Retail Guarantee",
+        "rateFound": false,
+        "reasons": [
+          {
+            "messageId": "QUE0008",
+            "message": "Total weight must contain a value greater than zero."
+          }
+        ]
+      },
+      {
+        "serviceLevelId": "92",
+        "serviceLevelText": "Guaranteed Volume and Truckload Standard",
+        "rateFound": false
+      },
+      {
+        "serviceLevelId": "93",
+        "serviceLevelText": "Guaranteed Volume and Truckload Economy",
+        "rateFound": false
+      },
+      {
+        "serviceLevelId": "97",
+        "serviceLevelText": "Guaranteed Exclusive Use",
+        "rateFound": false,
+        "reasons": [
+          {
+            "messageId": "GSC0173",
+            "message": "At least one commodity must have a handling unit quantity."
+          }
+        ]
+      },
+      {
+        "serviceLevelId": "99",
+        "serviceLevelText": "LTL Standard Transit",
+        "rateFound": false,
+        "reasons": [
+          {
+            "messageId": "QUE0008",
+            "message": "Total weight must contain a value greater than zero."
+          },
+          {
+            "messageId": "GSC0009",
+            "message": "We are unable to complete the LTL portion of your quote online. For assistance, please call our Rate Quote Department at 877-268-4555 and PRESS 4."
+          }
+        ]
+      }
+    ],
+    "error": {
+      "code": 0,
+      "message": "",
+      "details": ""
+    }
+  }
+}

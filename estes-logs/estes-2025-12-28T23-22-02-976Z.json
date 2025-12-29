@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-12-28T19:55:57.261Z",
+  "timestamp": "2025-12-28T23:22:02.976Z",
   "request": {
     "headers": {
       "Authorization": "<REDACTED>",
@@ -10,13 +10,13 @@
     },
     "payload": {
       "quoteRequest": {
-        "shipDate": "2025-12-28",
+        "shipDate": "2025-12-28T00:00:00.000Z",
         "serviceLevels": [
           "ALL"
         ],
         "origin": {
           "name": "AgEx Parts Warehouse",
-          "locationId": "AGEX-001",
+          "locationId": "AGEX-002",
           "address": {
             "address1": "1128 Dunkerton Road",
             "address2": "",
@@ -53,7 +53,7 @@
             {
               "count": 1,
               "type": "PT",
-              "weight": 120,
+              "weight": 600,
               "tareWeight": 10,
               "weightUnit": "Pounds",
               "length": 48,
@@ -64,9 +64,9 @@
               "isTurnable": false,
               "lineItems": [
                 {
-                  "description": "RAKE WHEEL RH- SITREX HIGH CAPACITY",
-                  "weight": 40,
-                  "pieces": 3,
+                  "description": "Boxes of widgets",
+                  "weight": 600,
+                  "pieces": 1,
                   "packagingType": "BX"
                 }
               ]
@@ -88,7 +88,21 @@
     }
   },
   "response": {
-    "message": "no Route matched with those values",
-    "request_id": "ff137771212c432d77de7657c64ff600"
+    "data": [],
+    "error": {
+      "code": 70020,
+      "message": "Rates not found",
+      "details": "Refer to information list for details",
+      "information": [
+        {
+          "messageId": "GSC0001",
+          "message": "The Origin City, State, Zip, and Country you've entered are not valid together. Please review and resubmit."
+        },
+        {
+          "messageId": "GSC0002",
+          "message": "The Destination City, State, Zip, and Country you've entered are not valid together. Please review and resubmit."
+        }
+      ]
+    }
   }
 }

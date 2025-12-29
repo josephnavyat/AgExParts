@@ -45,6 +45,7 @@ export default function CheckoutPage() {
   const [lastRawResponse, setLastRawResponse] = useState(null);
   const [estesLoading, setEstesLoading] = useState(false);
   const [estesError, setEstesError] = useState(null);
+  const [calculateEstesRequested, setCalculateEstesRequested] = useState(false);
 
   const [billingValid, setBillingValid] = useState(false);
 
@@ -68,6 +69,10 @@ export default function CheckoutPage() {
     setShipping(next);
   if (copyToBilling) setBilling(next);
   setShippingErrors(getAddressErrors(next));
+  // any change to the shipping address invalidates a prior Estes calculation
+  setCalculateEstesRequested(false);
+  setLastRates(null);
+  setSelectedRate(null);
   };
 
   const handleBillingChange = (k, v) => {
@@ -131,12 +136,20 @@ export default function CheckoutPage() {
   // If cart total weight > 100 lbs, request an Estes freight quote and prefer that as shipping.
   useEffect(() => {
     const totalWeight = cart.items.reduce((s, i) => s + ((i.product.weight || 0) * i.quantity), 0);
-    if (totalWeight <= 100) return; // only trigger for heavy shipments
+    // only run when user explicitly requests calculation
+    if (!calculateEstesRequested) return;
+
+    if (totalWeight <= 100) {
+      console.debug('Skipping Estes quote: total weight <= 100 lbs');
+      setCalculateEstesRequested(false);
+      return; // only trigger for heavy shipments
+    }
 
     // Do not request Estes quote until shipping address is complete/valid
     if (!validateAddress(shipping)) {
       // intentionally skip until the user provides a valid shipping address
       console.debug('Skipping Estes quote: shipping address incomplete or invalid', shipping);
+      setCalculateEstesRequested(false);
       return;
     }
 
@@ -158,13 +171,21 @@ export default function CheckoutPage() {
 
     let cancelled = false;
     (async () => {
-      try {
+  try {
         setEstesError(null);
         setEstesLoading(true);
+  // leave calculateEstesRequested true while loading; reset after
+        // Debug: show the payload sent to the Estes function
+        console.log('Estes checkoutPayload:', checkoutPayload);
         const res = await fetch('/.netlify/functions/estes-quote', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(checkoutPayload) });
-        const j = await res.json().catch(() => ({}));
-        if (cancelled) return;
-        setEstesLoading(false);
+  const j = await res.json().catch(() => ({}));
+  if (cancelled) return;
+  // Debug: log the Estes handler response and keep raw response visible in UI
+  console.log('Estes response:', j);
+  setLastRawResponse(j);
+  setEstesLoading(false);
+  // after a run, clear the flag so subsequent changes require another click
+  setCalculateEstesRequested(false);
         if (!res.ok) {
           setEstesError(j && (j.error || j.estesResponse) ? (j.error || JSON.stringify(j.estesResponse)) : 'Estes quote failed');
           setLastRawResponse(j && j.estesResponse ? j.estesResponse : j);
@@ -192,8 +213,8 @@ export default function CheckoutPage() {
       }
     })();
 
-    return () => { cancelled = true; };
-  }, [cart.items, shipping.street1, shipping.city, shipping.state, shipping.zip]);
+  return () => { cancelled = true; };
+  }, [cart.items, shipping.street1, shipping.city, shipping.state, shipping.zip, calculateEstesRequested]);
 
   // NOTE: do not auto-accept cart.shipping here; require an explicit selection in the checkout flow.
 
@@ -357,7 +378,7 @@ export default function CheckoutPage() {
                   country: 'US',
                   phone: import.meta.env.VITE_STORE_PHONE || '3105551212'
                 };
-                return <ShippingRatesButton compact inlineResults={false} disabled={shippingErrors.length>0} cart={cart} toAddress={shipping} fromAddress={fromAddress} onRates={onRatesFound} onResponse={onRatesResponse} onSelect={(r) => { setSelectedRate(r); setShippingCalculated(true); setLastRates(prev => prev || [r]); }} showResults={true} />;
+                return <ShippingRatesButton compact inlineResults={false} disabled={shippingErrors.length>0} cart={cart} toAddress={shipping} fromAddress={fromAddress} onRates={onRatesFound} onResponse={onRatesResponse} onSelect={(r) => { setSelectedRate(r); setShippingCalculated(true); setLastRates(prev => prev || [r]); }} showResults={true} onCalculateClick={() => setCalculateEstesRequested(true)} />;
               })()
             }
             <div>
@@ -371,13 +392,7 @@ export default function CheckoutPage() {
               ))}
             </div>
           )}
-          {/* Render rates/debug below the inputs so buttons don't shift */}
-          {lastRawResponse && !lastRates && (
-            <details style={{ marginTop: 12 }}>
-              <summary style={{ cursor: 'pointer' }}>Debug: raw response</summary>
-              <pre style={{ whiteSpace: 'pre-wrap', maxHeight: 240, overflow: 'auto' }}>{JSON.stringify(lastRawResponse, null, 2)}</pre>
-            </details>
-          )}
+          {/* Debug responses intentionally hidden in the UI to avoid clutter. */}
           {/* Render the returned rates here so the Calculate button and Continue button sit on the same line. */}
           {lastRates && Array.isArray(lastRates) && (
             <div style={{ marginTop: 12 }}>
