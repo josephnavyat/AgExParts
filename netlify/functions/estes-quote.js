@@ -422,7 +422,68 @@ exports.handler = async function(event) {
       apikey: apiKey,
       'Content-Type': 'application/json'
     };
-  const resp = await postJson(url, estesPayload, headers);
+    // Sanitize weight-related fields to be integer numbers expected by Estes API.
+    try {
+      const sanitizeWeights = (payload) => {
+        try {
+          const safeNum = (v) => {
+            // Accept numeric-like strings or numbers; Estes requires integers
+            if (v === undefined || v === null) return v;
+            const n = Number(v);
+            if (isNaN(n)) return v;
+            return Math.max(0, Math.round(n));
+          };
+          if (!payload) return payload;
+          // normalize at top-level
+          if (payload.weight) payload.weight = safeNum(payload.weight);
+          if (payload.totalWeight) payload.totalWeight = safeNum(payload.totalWeight);
+          if (payload.commodity) {
+            if (payload.commodity.totalShipmentWeight) payload.commodity.totalShipmentWeight = safeNum(payload.commodity.totalShipmentWeight);
+            if (payload.commodity.totalPieces) payload.commodity.totalPieces = safeNum(payload.commodity.totalPieces);
+            if (Array.isArray(payload.commodity.handlingUnits)) {
+              for (const hu of payload.commodity.handlingUnits) {
+                if (!hu) continue;
+                if (hu.weight || hu.weight === 0) hu.weight = safeNum(hu.weight);
+                if (hu.tareWeight || hu.tareWeight === 0) hu.tareWeight = safeNum(hu.tareWeight);
+                if (hu.count || hu.count === 0) hu.count = safeNum(hu.count);
+                if (hu.lineItems && Array.isArray(hu.lineItems)) {
+                  for (const li of hu.lineItems) {
+                    if (!li) continue;
+                    if (li.weight || li.weight === 0) li.weight = safeNum(li.weight);
+                    if (li.pieces || li.pieces === 0) li.pieces = safeNum(li.pieces || li.count);
+                  }
+                }
+              }
+            }
+          }
+          // If quoteRequest exists, sanitize nested commodity there too
+          if (payload.quoteRequest && payload.quoteRequest.commodity) {
+            const c = payload.quoteRequest.commodity;
+            if (c.totalShipmentWeight) c.totalShipmentWeight = safeNum(c.totalShipmentWeight);
+            if (c.totalPieces) c.totalPieces = safeNum(c.totalPieces);
+            if (Array.isArray(c.handlingUnits)) {
+              for (const hu of c.handlingUnits) {
+                if (!hu) continue;
+                if (hu.weight || hu.weight === 0) hu.weight = safeNum(hu.weight);
+                if (hu.tareWeight || hu.tareWeight === 0) hu.tareWeight = safeNum(hu.tareWeight);
+                if (hu.count || hu.count === 0) hu.count = safeNum(hu.count);
+                if (hu.lineItems && Array.isArray(hu.lineItems)) {
+                  for (const li of hu.lineItems) {
+                    if (!li) continue;
+                    if (li.weight || li.weight === 0) li.weight = safeNum(li.weight);
+                    if (li.pieces || li.pieces === 0) li.pieces = safeNum(li.pieces || li.count);
+                  }
+                }
+              }
+            }
+          }
+        } catch (e) { /* best-effort */ }
+        return payload;
+      };
+      estesPayload = sanitizeWeights(estesPayload);
+    } catch (e) { /* ignore sanitize errors */ }
+
+    const resp = await postJson(url, estesPayload, headers);
 
     // write a redacted file log for debugging (includes initial request and Estes response)
     try {

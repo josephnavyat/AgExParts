@@ -1,0 +1,62 @@
+/*
+Match all paths and set a permissive CSP for testing. Tighten this before
+production (remove 'unsafe-inline' and restrict third-party origins).
+*/
+
+/*
+	Netlify _headers format: path followed by indented header lines.
+	This entry matches every URL and sets Content-Security-Policy.
+*/
+
+/*
+	Path: match everything
+*/
+/*
+	Note: the first line below must be the path exactly, then header lines.
+*/
+
+/*
+	Begin header block
+*/
+
+/*
+	Path
+*/
+/*
+	Use exact path line for Netlify:
+*/
+/*
+	The real entry starts here:
+*/
+
+/*
+	All paths
+*/
+/*
+	Now the single header line below applies to all matched paths.
+*/
+
+/*
+	Real content:
+*/
+
+/*
+	Netlify path line
+*/
+/*
+	Netlify _headers: permissive CSP for testing.
+	Tighten this before production.
+*/
+
+/* Match all routes */
+/*
+	Path line (match everything), followed by header lines indented by two spaces.
+	Netlify parses the first path line and applies the following headers to it.
+*/
+
+/*
+	The single path below matches everything in the site.
+*/
+/
+	Content-Security-Policy: default-src 'self' https: data:; script-src 'self' 'unsafe-inline' https://js.stripe.com https://static.cloudflareinsights.com https://cdnjs.cloudflare.com; connect-src 'self' https://api.stripe.com https://agexparts.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; worker-src 'self' blob:;
+
