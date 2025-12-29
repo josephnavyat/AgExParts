@@ -10,16 +10,124 @@
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+    <!-- Dynamically insert the module script so we can append a cache-busting
+         query in dev (localhost). This ensures module-imported CSS is refetched. -->
     <script>
-      // Register service worker only in production/non-local environments.
-      // This prevents a previously-registered SW (from production) from
-      // intercepting local dev requests and returning HTML for module imports.
-      if ('serviceWorker' in navigator && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/service-worker.js');
-        });
+      (function insertModule(){
+        const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+        const s = document.createElement('script');
+        s.type = 'module';
+        let src = '/src/main.jsx';
+        if (isLocal) src += '?t=' + Date.now();
+        s.src = src;
+        document.head.appendChild(s);
+      })();
+    </script>
+    <script>
+      // In dev (localhost) proactively unregister any previously-registered
+      // service workers so they can't serve stale production caches.
+      // In non-local environments, register the production service worker as usual.
+      if ('serviceWorker' in navigator) {
+        if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+          // Attempt to unregister any service workers that might control localhost.
+          // This runs only in dev and is safe to leave in production because
+          // it won't execute on other hostnames.
+          window.addEventListener('load', async () => {
+            try {
+              const regs = await navigator.serviceWorker.getRegistrations();
+              for (const r of regs) {
+                try {
+                  await r.unregister();
+                } catch (e) {
+                  // ignore failures — best-effort
+                }
+              }
+              // If a SW was controlling the page, a hard reload helps the page load un-cached assets
+              if (navigator.serviceWorker.controller) {
+                // do a reload that bypasses cache
+                location.reload(true);
+              }
+            } catch (e) {
+              // ignore
+            }
+          });
+        } else {
+          window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/service-worker.js');
+          });
+        }
       }
     </script>
+      <script>
+    // Dev-only: force refresh of stylesheet links and observe new ones.
+        // Vite dynamically injects CSS links after initial load, so use a
+        // MutationObserver to catch those and append a timestamp query.
+        if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+          (function refreshStyles() {
+            function bump(link) {
+              try {
+                const href = link.getAttribute('href');
+                if (!href) return;
+                const base = href.split('?')[0];
+                const stamped = base + '?t=' + Date.now();
+                if (href !== stamped) link.setAttribute('href', stamped);
+              } catch (e) {}
+            }
+
+            // bump existing styles immediately
+            document.querySelectorAll('link[rel="stylesheet"]').forEach(bump);
+
+            // observe additions of new link elements (Vite injects CSS links)
+            const mo = new MutationObserver(muts => {
+              for (const m of muts) {
+                for (const n of m.addedNodes) {
+                  if (n.nodeType === 1 && n.tagName === 'LINK' && n.rel === 'stylesheet') {
+                    bump(n);
+                  }
+                }
+              }
+            });
+            mo.observe(document.head || document.documentElement, { childList: true, subtree: true });
+            // stop observing after 10s — enough for dev injection but avoids long-running observers
+            setTimeout(() => mo.disconnect(), 10000);
+
+            // diagnostics + fallback: if a stylesheet request is not producing
+            // a usable CSS (e.g. Network shows '-' or unresolved), attempt to
+            // fetch it directly with cache-bypass and inject as inline style.
+            function fetchAndInject(link) {
+              try {
+                const href = link.getAttribute('href');
+                if (!href) return;
+                const url = href.split('?')[0] + '?_=' + Date.now();
+                console.info('[dev-css] fetching bypass:', url);
+                fetch(url, { cache: 'no-store' }).then(resp => {
+                  if (!resp.ok) throw new Error('fetch-failed ' + resp.status);
+                  return resp.text();
+                }).then(text => {
+                  const s = document.createElement('style');
+                  s.setAttribute('data-dev-injected','true');
+                  s.textContent = text;
+                  document.head.appendChild(s);
+                  console.info('[dev-css] injected inline stylesheet for', url);
+                }).catch(err => {
+                  console.warn('[dev-css] failed to fetch stylesheet', url, err);
+                });
+              } catch (e) { }
+            }
+
+            // After a short delay, inspect stylesheet links; if any have no
+            // associated loaded CSS (observed via computedStyle on body), try fallback.
+            setTimeout(() => {
+              try {
+                document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
+                  // if link failed (no href or unusual href) attempt fallback
+                  const href = link.getAttribute('href') || '';
+                  if (!href || href.trim() === '') fetchAndInject(link);
+                });
+              } catch (e) { }
+            }, 1200);
+          })();
+        }
+      </script>
   </body>
 </html>

@@ -1,22 +1,22 @@
 {
-  "timestamp": 1766971395668,
+  "timestamp": 1766981296774,
   "carrier": "Estes",
   "scac": "EXLA",
-  "quoteNumber": "LVQYDQP",
+  "quoteNumber": "LVQZYLY",
   "serviceLevelText": "LTL Standard Transit",
   "transitDays": 1,
-  "total": 414.93,
+  "total": 158.06,
   "breakdown": {
-    "totalCharges": "414.93",
-    "totalShipmentWeight": 4000,
+    "totalCharges": "158.06",
+    "totalShipmentWeight": 228,
     "rateType": "Customer Pricing",
     "ratedCube": ".00",
-    "ratedLinearFeet": 4,
+    "ratedLinearFeet": 2,
     "ratedAccessorials": [
       {
         "code": "FSC",
         "description": "Fuel Surcharge",
-        "charge": "92.03"
+        "charge": "35.06"
       }
     ]
   }
