@@ -7,11 +7,19 @@
   <meta name="theme-color" content="#19a974" />
   <link rel="manifest" href="/manifest.json" />
    <title>AgEx Parts – Agricultural Parts & Supplies</title>
-    <script type="module" crossorigin src="/assets/index-PZtE8jMc.js"></script>
+    <script type="module" crossorigin src="/assets/index-gi7GTMaL.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-B6OWTcj2.css">
   </head>
   <body>
     <div id="root"></div>
-  <script type="module" src="/register-sw.js"></script>
+    <!-- Vite entry: use relative path so build can detect and bundle correctly -->
+    <script>
+      // Register service worker only in production/non-local environments.
+      if ('serviceWorker' in navigator && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/service-worker.js');
+        });
+      }
+    </script>
   </body>
 </html>

@@ -1,0 +1,1 @@
+import{j as r}from"./index-gi7GTMaL.js";import{N as o}from"./Navbar-BEaLdVHS.js";import"./imageUrl-CI4-tccc.js";function e({children:t}){return r.jsxs(r.Fragment,{children:[r.jsx(o,{}),t]})}export{e as default};

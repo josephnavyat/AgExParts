@@ -1,1 +1,0 @@
-import{j as r}from"./index-PZtE8jMc.js";import{N as o}from"./Navbar-BThQrc94.js";import"./imageUrl-BC-b4leq.js";function e({children:t}){return r.jsxs(r.Fragment,{children:[r.jsx(o,{}),t]})}export{e as default};
