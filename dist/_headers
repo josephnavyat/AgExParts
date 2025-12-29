@@ -1,0 +1,5 @@
+/*
+  # Relaxed CSP for local/dev to permit Vite HMR and small inline scripts.
+  # NOTE: This includes 'unsafe-inline' for scripts — consider switching to a
+  # nonce-based or hash-based CSP for production to avoid enabling inline execution.
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://static.cloudflareinsights.com 'unsafe-inline'; script-src-elem 'self' https://static.cloudflareinsights.com 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://api.easypost.com https://api.shippo.com ws: wss:; worker-src 'self' blob:; manifest-src 'self';

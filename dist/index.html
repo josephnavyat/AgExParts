@@ -7,83 +7,11 @@
   <meta name="theme-color" content="#19a974" />
   <link rel="manifest" href="/manifest.json" />
    <title>AgEx Parts – Agricultural Parts & Supplies</title>
-    <script>
-      (function insertModule(){
-        const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-        if (isLocal) {
-          const ts = '?t=' + Date.now();
-          const s = document.createElement('script'); s.type = 'module'; s.src = '/assets/index-PZtE8jMc.js' + ts; s.crossOrigin = 'anonymous'; document.head.appendChild(s);
-          const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = '/assets/index-B6OWTcj2.css' + ts; l.crossOrigin = 'anonymous'; document.head.appendChild(l);
-        } else {
-          const s = document.createElement('script'); s.type = 'module'; s.src = '/assets/index-PZtE8jMc.js'; s.crossOrigin = 'anonymous'; document.head.appendChild(s);
-          const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = '/assets/index-B6OWTcj2.css'; l.crossOrigin = 'anonymous'; document.head.appendChild(l);
-        }
-      })();
-    </script>
+    <script type="module" crossorigin src="/assets/index-PZtE8jMc.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-B6OWTcj2.css">
   </head>
   <body>
     <div id="root"></div>
-    <script>
-      // In dev (localhost) proactively unregister any previously-registered
-      // service workers so they can't serve stale production caches.
-      if ('serviceWorker' in navigator) {
-        if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
-          window.addEventListener('load', async () => {
-            try {
-              const regs = await navigator.serviceWorker.getRegistrations();
-              for (const r of regs) {
-                try { await r.unregister(); } catch (e) {}
-              }
-              if (navigator.serviceWorker.controller) location.reload(true);
-            } catch (e) { }
-          });
-        } else {
-          window.addEventListener('load', () => { navigator.serviceWorker.register('/service-worker.js'); });
-        }
-      }
-    </script>
-    <script>
-      if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
-        (function refreshStyles() {
-          function bump(link) {
-            try {
-              const href = link.getAttribute('href');
-              if (!href) return;
-              const base = href.split('?')[0];
-              const stamped = base + '?t=' + Date.now();
-              if (href !== stamped) link.setAttribute('href', stamped);
-            } catch (e) {}
-          }
-          document.querySelectorAll('link[rel="stylesheet"]').forEach(bump);
-          const mo = new MutationObserver(muts => {
-            for (const m of muts) for (const n of m.addedNodes) {
-              if (n.nodeType === 1 && n.tagName === 'LINK' && n.rel === 'stylesheet') bump(n);
-            }
-          });
-          mo.observe(document.head || document.documentElement, { childList: true, subtree: true });
-          setTimeout(() => mo.disconnect(), 10000);
-
-          function fetchAndInject(link) {
-            try {
-              const href = link.getAttribute('href');
-              if (!href) return;
-              const url = href.split('?')[0] + '?_=' + Date.now();
-              console.info('[dev-css] fetching bypass:', url);
-              fetch(url, { cache: 'no-store' }).then(resp => {
-                if (!resp.ok) throw new Error('fetch-failed ' + resp.status);
-                return resp.text();
-              }).then(text => {
-                const s = document.createElement('style'); s.setAttribute('data-dev-injected','true'); s.textContent = text; document.head.appendChild(s);
-                console.info('[dev-css] injected inline stylesheet for', url);
-              }).catch(err => { console.warn('[dev-css] failed to fetch stylesheet', url, err); });
-            } catch (e) { }
-          }
-
-          setTimeout(() => {
-            try { document.querySelectorAll('link[rel="stylesheet"]').forEach(link => { const href = link.getAttribute('href') || ''; if (!href || href.trim() === '') fetchAndInject(link); }); } catch (e) { }
-          }, 1200);
-          })();
-        }
-    </script>
+  <script type="module" src="/register-sw.js"></script>
   </body>
 </html>
