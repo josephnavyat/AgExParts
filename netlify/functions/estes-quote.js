@@ -361,9 +361,10 @@ exports.handler = async function(event) {
           } catch (e) { /* best-effort */ }
         }
       } catch (e) { /* best-effort normalization; ignore errors */ }
-      fs.writeFileSync(path.resolve(process.cwd(), 'estes-debug-pre.json'), JSON.stringify({ timestamp: new Date().toISOString(), payload: estesPayload }, null, 2));
-      const logObj = { timestamp: new Date().toISOString(), event: 'pre-payload', payload: estesPayload };
-      fs.writeFileSync(path.resolve(process.cwd(), 'estes-debug.log'), JSON.stringify(logObj, null, 2) + '\n\n');
+      if (String(process.env.ESTES_ENABLE_RUN_LOGS || '').toLowerCase() === 'true') {
+        try { fs.writeFileSync(path.resolve(process.cwd(), 'estes-debug-pre.json'), JSON.stringify({ timestamp: new Date().toISOString(), payload: estesPayload }, null, 2)); } catch (e) {}
+        try { const logObj = { timestamp: new Date().toISOString(), event: 'pre-payload', payload: estesPayload }; fs.writeFileSync(path.resolve(process.cwd(), 'estes-debug.log'), JSON.stringify(logObj, null, 2) + '\n\n'); } catch (e) {}
+      }
     } catch (e) {}
 
     // First authenticate to obtain a Bearer token from Estes
@@ -409,7 +410,9 @@ exports.handler = async function(event) {
         if (authLogFull.json.accessToken) authLogFull.json.accessToken = '<REDACTED>';
         if (authLogFull.json.access_token) authLogFull.json.access_token = '<REDACTED>';
       }
-      fs.appendFileSync(path.resolve(process.cwd(), 'estes-debug.log'), JSON.stringify({ timestamp: new Date().toISOString(), event: 'auth-response', response: authLogFull }, null, 2) + '\n\n');
+      if (String(process.env.ESTES_ENABLE_RUN_LOGS || '').toLowerCase() === 'true') {
+        try { fs.appendFileSync(path.resolve(process.cwd(), 'estes-debug.log'), JSON.stringify({ timestamp: new Date().toISOString(), event: 'auth-response', response: authLogFull }, null, 2) + '\n\n'); } catch (e) {}
+      }
     } catch (e) {}
 
     const headers = {
@@ -423,17 +426,21 @@ exports.handler = async function(event) {
 
     // write a redacted file log for debugging (includes initial request and Estes response)
     try {
-      const logDir = path.resolve(process.cwd(), 'estes-logs');
-      if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
-      const now = new Date().toISOString().replace(/[:.]/g,'-');
-      const logfile = path.join(logDir, `estes-${now}.json`);
-      const redact = (obj) => JSON.parse(JSON.stringify(obj, (k,v) => {
-        if (typeof v === 'string' && (k.toLowerCase().includes('token') || k.toLowerCase().includes('authorization') || k.toLowerCase().includes('apikey') || k.toLowerCase().includes('api_key'))) return '<REDACTED>';
-        return v;
-      }));
-      const toWrite = { timestamp: new Date().toISOString(), request: redact({ headers, payload: estesPayload }), response: null };
-      try { toWrite.response = JSON.parse(resp.body); } catch (e) { toWrite.response = { raw: resp.body }; }
-      fs.writeFileSync(logfile, JSON.stringify(toWrite, null, 2));
+      if (String(process.env.ESTES_ENABLE_RUN_LOGS || '').toLowerCase() === 'true') {
+        try {
+          const logDir = path.resolve(process.cwd(), 'estes-logs');
+          if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
+          const now = new Date().toISOString().replace(/[:.]/g,'-');
+          const logfile = path.join(logDir, `estes-${now}.json`);
+          const redact = (obj) => JSON.parse(JSON.stringify(obj, (k,v) => {
+            if (typeof v === 'string' && (k.toLowerCase().includes('token') || k.toLowerCase().includes('authorization') || k.toLowerCase().includes('apikey') || k.toLowerCase().includes('api_key'))) return '<REDACTED>';
+            return v;
+          }));
+          const toWrite = { timestamp: new Date().toISOString(), request: redact({ headers, payload: estesPayload }), response: null };
+          try { toWrite.response = JSON.parse(resp.body); } catch (e) { toWrite.response = { raw: resp.body }; }
+          try { fs.writeFileSync(logfile, JSON.stringify(toWrite, null, 2)); } catch (e) {}
+        } catch (e) { /* ignore */ }
+      }
     } catch (e) { console.error('estes-log-write-failed', e && e.message); }
 
     // Append full quote response and curl snippet to plain `estes-debug.log` for easy debugging
@@ -443,7 +450,9 @@ exports.handler = async function(event) {
       const redactedToken = token ? '<REDACTED>' : '';
       const redactedApiKey = apiKey ? apiKey : '';
       const curlSnippet = `curl --location --request POST '${url}' \\\n+--header 'apikey: ${redactedApiKey}' \\\n+--header 'Authorization: Bearer ${redactedToken}' \\\n+--header 'Content-Type: application/json' \\\n+--data-raw '`;
-      fs.appendFileSync(path.resolve(process.cwd(), 'estes-debug.log'), JSON.stringify({ timestamp: new Date().toISOString(), event: 'quote-response', curl: curlSnippet, request: estesPayload, response: quoteLogFull }, null, 2) + '\n\n');
+      if (String(process.env.ESTES_ENABLE_RUN_LOGS || '').toLowerCase() === 'true') {
+        try { fs.appendFileSync(path.resolve(process.cwd(), 'estes-debug.log'), JSON.stringify({ timestamp: new Date().toISOString(), event: 'quote-response', curl: curlSnippet, request: estesPayload, response: quoteLogFull }, null, 2) + '\n\n'); } catch (e) {}
+      }
     } catch (e) {}
 
   let data;
@@ -471,7 +480,7 @@ exports.handler = async function(event) {
               const nowRetry = new Date().toISOString().replace(/[:.]/g,'-');
               const retryFile = path.join(retryLogDir, `estes-retry-${nowRetry}.json`);
               const retryLogObj = { timestamp: new Date().toISOString(), event: 'retry-response', request: retryPayload, response: retryData, statusCode: retryResp.statusCode };
-              try { fs.writeFileSync(retryFile, JSON.stringify(retryLogObj, null, 2)); } catch (e) { /* ignore write errors */ }
+              try { if (String(process.env.ESTES_ENABLE_RUN_LOGS || '').toLowerCase() === 'true') { fs.writeFileSync(retryFile, JSON.stringify(retryLogObj, null, 2)); } } catch (e) { /* ignore write errors */ }
             } catch (e) { /* ignore logging errors */ }
           if (retryResp.statusCode && retryResp.statusCode < 400) {
             return { statusCode: 200, body: JSON.stringify({ carrier: 'Estes', scac: 'EXLA', quoteNumber: retryData.quoteNumber, transitDays: retryData.transitDays, total: retryData.charges && retryData.charges.total, breakdown: retryData.charges, retryAttempted: true }) };
