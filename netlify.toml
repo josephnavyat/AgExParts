@@ -1,3 +1,30 @@
+[build]
+	publish = "dist"
+
 [functions]
 directory = "netlify/functions"
 node_bundler = "zisi"
+
+[[redirects]]
+	from = "/assets/*"
+	to = "/assets/:splat"
+	status = 200
+	force = false
+
+[[redirects]]
+	from = "/service-worker.js"
+	to = "/service-worker.js"
+	status = 200
+	force = false
+
+[[redirects]]
+	from = "/robots.txt"
+	to = "/robots.txt"
+	status = 200
+	force = false
+
+[[redirects]]
+	from = "/*"
+	to = "/index.html"
+	status = 200
+	force = false
