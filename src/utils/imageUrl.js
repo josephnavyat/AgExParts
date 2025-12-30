@@ -31,7 +31,11 @@ export function getImageUrl(img) {
         const allowed = envAllowed.length ? envAllowed : ['cdn.agexparts.com', 'agexparts.com', 'www.agexparts.com'];
         const ok = allowed.some(h => host === h || host.endsWith('.' + h) || host.endsWith(h));
         if (ok) {
-          return `/.netlify/functions/image-proxy?url=${encodeURIComponent(s)}`;
+          // If the host is one of our allowed CDN hosts, prefer returning
+          // the absolute CDN URL directly so the browser can fetch it
+          // without hitting the image proxy. This reduces function calls
+          // and is safe if the CDN supports CORS for your origin.
+          return s;
         }
       } catch (e) {
         // malformed URL — fall back to returning the raw string
@@ -44,7 +48,7 @@ export function getImageUrl(img) {
     // If the environment variable contains a placeholder or obvious example text,
     // treat it as unset and fall back to the canonical CDN.
     const placeholderRe = /your[-_.]?cdn|image[-_.]?base[-_.]?url|your[-_.]?domain|example\.com|your-cdn-or-image-base-url/i;
-    if (!base || placeholderRe.test(String(base))) {
+  if (!base || placeholderRe.test(String(base))) {
       if (typeof console !== 'undefined' && console.warn) {
         // Friendly dev warning when running locally with a placeholder env var
         console.warn('VITE_IMAGE_BASE_URL is missing or looks like a placeholder — falling back to https://cdn.agexparts.com');
@@ -62,7 +66,10 @@ export function getImageUrl(img) {
     try {
       const u = new URL(abs);
       if (u.hostname && u.hostname.endsWith('cdn.agexparts.com')) {
-        return `/.netlify/functions/image-proxy?url=${encodeURIComponent(abs)}`;
+        // Prefer returning the CDN absolute URL directly rather than routing
+        // through the image proxy. If you still need proxying for CORS or
+        // caching reasons, set IMAGE_PROXY_ALLOWED_HOSTS and adjust logic.
+        return abs;
       }
     } catch (e) {
       // ignore and return absolute

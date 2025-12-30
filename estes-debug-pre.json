@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-12-29T01:04:19.603Z",
+  "timestamp": "2025-12-29T16:06:33.300Z",
   "payload": {
     "quoteRequest": {
       "shipDate": "2025-12-29T00:00:00.000Z",
@@ -47,7 +47,7 @@
           {
             "count": 1,
             "type": "PT",
-            "weight": 80,
+            "weight": 160,
             "tareWeight": 10,
             "weightUnit": "Pounds",
             "length": 48,
@@ -58,8 +58,28 @@
             "isTurnable": true,
             "lineItems": [
               {
-                "description": "package",
-                "weight": 80,
+                "description": "Sickle Blade, Mower Conditioner, 10 pack",
+                "weight": 12,
+                "pieces": 7,
+                "packagingType": "BX",
+                "classification": "92.5",
+                "nmfc": "",
+                "nmfcSub": "",
+                "isHazardous": false
+              },
+              {
+                "description": "20\" NOTHCED VERTICAL BLADE - DEGELMAN/KINZE",
+                "weight": 10,
+                "pieces": 6,
+                "packagingType": "BX",
+                "classification": "92.5",
+                "nmfc": "",
+                "nmfcSub": "",
+                "isHazardous": false
+              },
+              {
+                "description": "Notched Disc Blade, Standard Concavity, 20\" x 5 mm",
+                "weight": 15.9,
                 "pieces": 1,
                 "packagingType": "BX",
                 "classification": "92.5",
@@ -70,8 +90,8 @@
             ]
           }
         ],
-        "totalShipmentWeight": 90,
-        "totalPieces": 1
+        "totalShipmentWeight": 170,
+        "totalPieces": 14
       },
       "accessorials": []
     },
@@ -126,7 +146,7 @@
         {
           "count": 1,
           "type": "PT",
-          "weight": 80,
+          "weight": 160,
           "tareWeight": 10,
           "weightUnit": "Pounds",
           "length": 48,
@@ -137,8 +157,28 @@
           "isTurnable": true,
           "lineItems": [
             {
-              "description": "package",
-              "weight": 80,
+              "description": "Sickle Blade, Mower Conditioner, 10 pack",
+              "weight": 12,
+              "pieces": 7,
+              "packagingType": "BX",
+              "classification": "92.5",
+              "nmfc": "",
+              "nmfcSub": "",
+              "isHazardous": false
+            },
+            {
+              "description": "20\" NOTHCED VERTICAL BLADE - DEGELMAN/KINZE",
+              "weight": 10,
+              "pieces": 6,
+              "packagingType": "BX",
+              "classification": "92.5",
+              "nmfc": "",
+              "nmfcSub": "",
+              "isHazardous": false
+            },
+            {
+              "description": "Notched Disc Blade, Standard Concavity, 20\" x 5 mm",
+              "weight": 15.9,
               "pieces": 1,
               "packagingType": "BX",
               "classification": "92.5",
