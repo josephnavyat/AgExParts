@@ -3,105 +3,21 @@ import React, { useEffect, useState, useRef } from 'react';
 import { getImageUrl as resolveImageUrl } from '../utils/imageUrl.js';
 import { useCart } from './CartContext.jsx';
 
-// Small presentational accordion used only inside the mobile categories panel
-function CategoryAccordion({ category, isOpen, onToggle, onNavigate }) {
-  const { category: title, subcategories = [] } = category || {};
-  // onNavigate is expected to be a function that accepts a URL string and performs navigation + panel close
-  return (
-    <div className="cat-col-item" style={{ padding: 6 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        {/* Make the category title clickable to search by category */}
-        <a
-          href={`/search-results?category=${encodeURIComponent(title)}`}
-          onClick={(e) => { e.preventDefault(); try { onNavigate(`/search-results?category=${encodeURIComponent(title)}`); } catch (err) { try { window.location.href = `/search-results?category=${encodeURIComponent(title)}` } catch (e) {} } }}
-          style={{ fontWeight: 700, color: 'inherit', textDecoration: 'none' }}
-        >
-          {title}
-        </a>
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          {/* expand/collapse buttons: up (collapse) and down (expand) */}
-          <button
-            aria-label={isOpen ? `Collapse ${title}` : `Expand ${title}`}
-            title={isOpen ? `Collapse ${title}` : `Expand ${title}`}
-            onClick={(e) => { e.stopPropagation(); onToggle(); }}
-            className="nav-icon"
-            style={{ width: 36, height: 36 }}
-          >
-            {isOpen ? (
-              <svg className="nav-svg" viewBox="0 0 24 24"><path d="M6 15l6-6 6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/></svg>
-            ) : (
-              <svg className="nav-svg" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/></svg>
-            )}
-          </button>
-        </div>
-      </div>
-      {isOpen && subcategories && subcategories.length > 0 && (
-        <div style={{ marginTop: 8 }}>
-          {subcategories.map(s => {
-            const url = `/search-results?category=${encodeURIComponent(title)}&subcategory=${encodeURIComponent(s)}`;
-            return (
-              <a
-                key={s}
-                href={url}
-                className="sub-item"
-                onClick={(e) => { e.preventDefault(); try { onNavigate(url); } catch (err) { try { window.location.href = url; } catch (e) {} } }}
-              >
-                {s}
-              </a>
-            );
-          })}
-        </div>
-      )}
-    </div>
-  );
-}
-
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
-  const [navHidden, setNavHidden] = useState(false);
-  const [secondaryOpen, setSecondaryOpen] = useState(false);
-  const [machinePanelOpen, setMachinePanelOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [productsIndex, setProductsIndex] = useState(null);
   const [suggestions, setSuggestions] = useState([]);
   const [suggestOpen, setSuggestOpen] = useState(false);
   const searchDebounce = useRef(null);
-  const lastYRef = useRef(0);
 
-  // Scroll behavior:
-  // - collapse the secondary row + shrink logo after a bit
-  // - hide the whole navbar when scrolling down, show when scrolling up
   useEffect(() => {
-    lastYRef.current = window.scrollY || 0;
-
-    const onScroll = () => {
-      const y = window.scrollY || 0;
-      setScrolled(y > 80);
-
-      // ignore tiny scroll jitter
-      const delta = Math.abs(y - lastYRef.current);
-      if (delta < 8) return;
-
-      const goingDown = y > lastYRef.current;
-      const pastThreshold = y > 120; // don't hide right at the top
-
-      // Keep visible while user is interacting with nav UI
-      const keepVisible = showSearch || machinePanelOpen || secondaryOpen;
-      if (keepVisible) {
-        setNavHidden(false);
-      } else {
-        if (goingDown && pastThreshold) setNavHidden(true);
-        else setNavHidden(false);
-      }
-
-      lastYRef.current = y;
-    };
-
-    window.addEventListener('scroll', onScroll, { passive: true });
+    const onScroll = () => setScrolled(window.scrollY > 80);
+    document.addEventListener('scroll', onScroll);
     onScroll();
-    return () => window.removeEventListener('scroll', onScroll);
-  }, [showSearch, machinePanelOpen, secondaryOpen]);
+    return () => document.removeEventListener('scroll', onScroll);
+  }, []);
 
   // Keep body class in sync with collapsed state so CSS can adjust layout
   useEffect(() => {
@@ -113,6 +29,7 @@ export default function Navbar() {
 
   const { cart } = useCart();
   const cartCount = cart.items.reduce((sum, i) => sum + i.quantity, 0);
+  const [secondaryOpen, setSecondaryOpen] = useState(false);
   const secondaryRef = useRef(null);
   const toggleRef = useRef(null);
   const location = useLocation();
@@ -121,7 +38,6 @@ export default function Navbar() {
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [categoriesLoading, setCategoriesLoading] = useState(false);
   const [catsLoaded, setCatsLoaded] = useState(false);
-  const [leftPanelOpen, setLeftPanelOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState('');
   // Manufacturer -> machine_type -> model dropdown state
   // inline manufacturer/machine panel open is controlled via DOM class on `.nav-manufacturer-inline`
@@ -134,6 +50,7 @@ export default function Navbar() {
   const [selManufacturer, setSelManufacturer] = useState('');
   const [selMachineType, setSelMachineType] = useState('');
   const [selModel, setSelModel] = useState('');
+  const [machinePanelOpen, setMachinePanelOpen] = useState(false);
 
   const loadCategories = async () => {
     if (catsLoaded || categoriesLoading) return;
@@ -344,22 +261,9 @@ export default function Navbar() {
     return () => document.removeEventListener('keydown', onKey);
   }, [secondaryOpen]);
 
-  // Left-panel Escape handling: close and restore focus to the main toggle
-  useEffect(() => {
-    if (!leftPanelOpen) return;
-    const onKey = (e) => {
-      if (e.key === 'Escape') {
-        setLeftPanelOpen(false);
-        try { toggleRef.current?.focus(); } catch (err) {}
-      }
-    };
-    document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
-  }, [leftPanelOpen]);
-
   return (
     <>
-      <nav id="nav" className={`nav ${scrolled ? 'scrolled' : ''}${showSearch ? ' nav--search-open' : ''}${navHidden ? ' nav--hidden' : ''}`}> 
+      <nav id="nav" className={`nav ${scrolled ? 'scrolled' : ''}${showSearch ? ' nav--search-open' : ''}`}> 
         <div className="container nav-inner" style={{ flexWrap: 'wrap', alignItems: 'center' }}>
           <div className="brand">
             <img src="/logo.png" alt="AgEx Parts logo" style={{ height: '80px', width: 'auto' }} />
@@ -402,23 +306,9 @@ export default function Navbar() {
                 }}>{cartCount}</span>
               )}
             </Link>
-            {/* Mobile left-panel toggle placed to the right of the cart button */}
-            <button
-              className="nav-left-toggle"
-              aria-label="Browse categories"
-              title="Browse categories"
-              onClick={async () => {
-                setLeftPanelOpen((s) => !s);
-                try { if (!catsLoaded) await loadCategories(); } catch (e) {}
-                setSecondaryOpen(false);
-              }}
-              ref={toggleRef}
-            >
-              <svg className="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M3 12h18M3 18h18" /></svg>
-            </button>
           </div>
         </div>
-  {showSearch && (
+        {showSearch && (
           <div
             className="search-bar-collapsible"
             style={{
@@ -529,7 +419,7 @@ export default function Navbar() {
             </form>
           </div>
         )}
-  {/* Secondary nav row: browse links and mobile toggle */}
+        {/* Secondary nav row: browse links and mobile toggle */}
         <div className={`nav-secondary ${secondaryOpen ? 'open' : ''}`} ref={secondaryRef}>
           <div className="container">
             <nav id="secondary-links" aria-label="Browse links">
@@ -645,43 +535,6 @@ export default function Navbar() {
             </nav>
           </div>
         </div>
-        {/* Left-side sliding panel and backdrop for mobile categories */}
-        <div className={`nav-categories-panel left${leftPanelOpen ? ' open' : ''}`} role="dialog" aria-modal="true" aria-label="Categories panel">
-          <div className="categories-panel-inner">
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-              <strong style={{ fontSize: 16 }}>Categories</strong>
-              <button className="nav-icon" onClick={() => setLeftPanelOpen(false)} aria-label="Close categories">
-                <svg className="nav-svg" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              </button>
-            </div>
-            <div style={{ display: 'grid', gap: 6 }}>
-              {categories && categories.length ? (
-                categories.map(cat => (
-                  <CategoryAccordion
-                    key={cat.category}
-                    category={cat}
-                    isOpen={activeCategory === cat.category}
-                    onToggle={() => {
-                      // toggle active category when user taps the chevron
-                      setActiveCategory(prev => (prev === cat.category ? '' : cat.category));
-                    }}
-                    onNavigate={(url) => {
-                      try {
-                        navigate(url);
-                      } catch (e) {
-                        try { window.location.href = url; } catch (err) {}
-                      }
-                      try { setLeftPanelOpen(false); } catch (err) {}
-                    }}
-                  />
-                ))
-              ) : (
-                <div style={{ padding: 8, color: '#666' }}>{categoriesLoading ? 'Loading...' : 'No categories'}</div>
-              )}
-            </div>
-          </div>
-        </div>
-        <div className={`left-panel-backdrop${leftPanelOpen ? ' open' : ''}`} onClick={() => setLeftPanelOpen(false)} aria-hidden={!leftPanelOpen}></div>
       </nav>
     </>
   );
