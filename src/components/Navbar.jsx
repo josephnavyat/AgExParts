@@ -645,11 +645,11 @@ export default function Navbar() {
             </nav>
           </div>
         </div>
-      </nav>
+  </nav>
 
       {/* Left-side sliding panel and backdrop for mobile categories - rendered outside the nav
           so fixed positioning and z-index don't get affected by nav stacking contexts */}
-      <div className={`nav-categories-panel left${leftPanelOpen ? ' open' : ''}`} role="dialog" aria-modal="true" aria-label="Categories panel">
+  <div className={`nav-categories-panel right${leftPanelOpen ? ' open' : ''}`} role="dialog" aria-modal="true" aria-label="Categories panel">
         <div className="categories-panel-inner">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 8 }}>
             <button className="nav-icon" onClick={() => setLeftPanelOpen(false)} aria-label="Close categories" title="Close">
@@ -683,7 +683,7 @@ export default function Navbar() {
           </div>
         </div>
       </div>
-      <div className={`left-panel-backdrop${leftPanelOpen ? ' open' : ''}`} onClick={() => setLeftPanelOpen(false)} aria-hidden={!leftPanelOpen}></div>
+  <div className={`right-panel-backdrop${leftPanelOpen ? ' open' : ''}`} onClick={() => setLeftPanelOpen(false)} aria-hidden={!leftPanelOpen}></div>
     </>
   );
 }
