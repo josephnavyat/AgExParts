@@ -645,44 +645,45 @@ export default function Navbar() {
             </nav>
           </div>
         </div>
-        {/* Left-side sliding panel and backdrop for mobile categories */}
-        <div className={`nav-categories-panel left${leftPanelOpen ? ' open' : ''}`} role="dialog" aria-modal="true" aria-label="Categories panel">
-          <div className="categories-panel-inner">
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-              <strong style={{ fontSize: 16 }}>Categories</strong>
-              <button className="nav-icon" onClick={() => setLeftPanelOpen(false)} aria-label="Close categories">
-                <svg className="nav-svg" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              </button>
-            </div>
-            <div style={{ display: 'grid', gap: 6 }}>
-              {categories && categories.length ? (
-                categories.map(cat => (
-                  <CategoryAccordion
-                    key={cat.category}
-                    category={cat}
-                    isOpen={activeCategory === cat.category}
-                    onToggle={() => {
-                      // toggle active category when user taps the chevron
-                      setActiveCategory(prev => (prev === cat.category ? '' : cat.category));
-                    }}
-                    onNavigate={(url) => {
-                      try {
-                        navigate(url);
-                      } catch (e) {
-                        try { window.location.href = url; } catch (err) {}
-                      }
-                      try { setLeftPanelOpen(false); } catch (err) {}
-                    }}
-                  />
-                ))
-              ) : (
-                <div style={{ padding: 8, color: '#666' }}>{categoriesLoading ? 'Loading...' : 'No categories'}</div>
-              )}
-            </div>
+      </nav>
+
+      {/* Left-side sliding panel and backdrop for mobile categories - rendered outside the nav
+          so fixed positioning and z-index don't get affected by nav stacking contexts */}
+      <div className={`nav-categories-panel left${leftPanelOpen ? ' open' : ''}`} role="dialog" aria-modal="true" aria-label="Categories panel">
+        <div className="categories-panel-inner">
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 8 }}>
+            <button className="nav-icon" onClick={() => setLeftPanelOpen(false)} aria-label="Close categories" title="Close">
+              <svg className="nav-svg" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </button>
+          </div>
+          <div style={{ display: 'grid', gap: 6 }}>
+            {categories && categories.length ? (
+              categories.map(cat => (
+                <CategoryAccordion
+                  key={cat.category}
+                  category={cat}
+                  isOpen={activeCategory === cat.category}
+                  onToggle={() => {
+                    // toggle active category when user taps the chevron
+                    setActiveCategory(prev => (prev === cat.category ? '' : cat.category));
+                  }}
+                  onNavigate={(url) => {
+                    try {
+                      navigate(url);
+                    } catch (e) {
+                      try { window.location.href = url; } catch (err) {}
+                    }
+                    try { setLeftPanelOpen(false); } catch (err) {}
+                  }}
+                />
+              ))
+            ) : (
+              <div style={{ padding: 8, color: '#666' }}>{categoriesLoading ? 'Loading...' : 'No categories'}</div>
+            )}
           </div>
         </div>
-        <div className={`left-panel-backdrop${leftPanelOpen ? ' open' : ''}`} onClick={() => setLeftPanelOpen(false)} aria-hidden={!leftPanelOpen}></div>
-      </nav>
+      </div>
+      <div className={`left-panel-backdrop${leftPanelOpen ? ' open' : ''}`} onClick={() => setLeftPanelOpen(false)} aria-hidden={!leftPanelOpen}></div>
     </>
   );
 }
