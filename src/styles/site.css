@@ -9,6 +9,21 @@ img { max-width: 100%; height: auto; }
   .hero-content { padding: 12px; }
 }
 
+/* Compact card sizes for mobile to avoid overflowing the hero */
+@media (max-width: 680px) {
+  .card-grid { gap: 8px; padding: 6px 8px; }
+  .card-grid .card { --card-w: 140px; min-height: 110px; width: var(--card-w); }
+  .card.card--with-image .card-image { height: 60px; }
+  .card.card--with-image .card-content { padding: 10px; }
+}
+
+/* Slightly more compact on medium desktop/tablet */
+@media (min-width: 681px) and (max-width: 1200px) {
+  .hero { height: 65vh; min-height: 380px; }
+  .card-grid .card { --card-w: 160px; min-height: 120px; }
+  .card.card--with-image .card-image { height: 72px; }
+}
+
 @media (max-width: 480px) {
   .card-grid { grid-template-columns: 1fr; }
   .gallery-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
@@ -204,7 +219,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* HERO */
-.hero { position: relative; height: 90vh; min-height: 540px; display: grid; place-items: center; transform: translateY(-18px); }
+.hero { position: relative; height: 70vh; min-height: 420px; display: grid; place-items: center; transform: translateY(-18px); }
 /* You can override the image via inline style: style={{ '--hero': 'url(/hero-16x9.png)' }} */
 .hero { --hero: url('/hero-16x9.png'); }
 .hero::before {
@@ -236,6 +251,10 @@ a { color: inherit; text-decoration: none; }
 @media (max-width: 680px) {
   .hero { transform: translateY(-8px); }
   .hero::before { background-position: center calc(50% - 8px); }
+  /* Reduce hero height and padding on small screens so category cards don't overlap the image */
+  .hero { height: 50vh; min-height: 260px; }
+  .hero-content { padding: 12px; }
+  .hero .cta-row + .container { margin-top: 10px; }
 }
 
 /* Categories section background to visually blend with the hero */
@@ -890,7 +909,7 @@ body.nav-collapsed .brand h1 { display: none !important; }
 .card-grid {
   display: flex;
   flex-wrap: nowrap;
-  gap: 10px;
+  gap: 8px;
   justify-content: center;
   align-items: stretch;
   margin: 0 auto;
@@ -910,12 +929,12 @@ body.nav-collapsed .brand h1 { display: none !important; }
 
 /* Force uniform card sizes when inside the hero/container */
 .card-grid .card {
-  --card-w: 170px;
-  --card-h: 100px;
+  --card-w: 150px;
+  --card-h: 90px;
   width: var(--card-w);
   /* allow height to grow on mobile to avoid clipping */
   height: auto;
-  min-height: 120px;
+  min-height: 100px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -940,10 +959,11 @@ body.nav-collapsed .brand h1 { display: none !important; }
   display: block;
   width: 100%;
   height: 64px;
-  object-fit: contain;
+  object-fit: cover;
   opacity: 1;
   margin-top: 6px;
   background: transparent;
+  border-radius: 6px;
 }
 .card--with-image .card-footer {
   padding: 4px 8px 8px 8px;
@@ -958,18 +978,18 @@ body.nav-collapsed .brand h1 { display: none !important; }
 }
 @media (max-width: 680px) {
   .card-grid { flex-wrap: wrap; justify-content: center; }
-  .card-grid .card { --card-w: 160px; --card-h: auto; width: 46%; min-height: 140px; }
+  .card-grid .card { --card-w: 130px; --card-h: auto; width: 46%; min-height: 110px; }
+  .card--with-image .card-image { height: 48px; }
 }
 
 /* Further scale down typography and pills for better mobile fit */
-@media (max-width: 680px) {
-  .card { padding: 12px; border-radius: 10px; }
-  .card h3 { font-size: 15px; }
+@media (max-width: 480px) {
+  .card-grid { gap: 8px; padding: 6px 8px; }
+  .card-grid .card { --card-w: 120px; min-height: 96px; }
+  .card--with-image .card-image { height: 44px; }
   .card p { font-size: 13px; }
   .pill { padding: 4px 8px; font-size: 11px; }
-}
 
-@media (max-width: 480px) {
   .card { padding: 10px; border-radius: 8px; }
   .card h3 { font-size: 14px; }
   .card p { font-size: 12px; }

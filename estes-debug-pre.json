@@ -1,8 +1,8 @@
 {
-  "timestamp": "2025-12-29T16:06:33.300Z",
+  "timestamp": "2025-12-30T00:44:26.424Z",
   "payload": {
     "quoteRequest": {
-      "shipDate": "2025-12-29T00:00:00.000Z",
+      "shipDate": "2025-12-30T00:00:00.000Z",
       "serviceLevels": [
         "ALL"
       ],
