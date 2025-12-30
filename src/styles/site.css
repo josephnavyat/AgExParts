@@ -596,6 +596,16 @@ input[type=number]::-webkit-inner-spin-button {
   .nav-secondary { padding: 8px 12px; }
   .nav-secondary .nav-secondary-toggle { display: inline-flex !important; background: transparent; border: none; color: #fff; font-size: 20px; cursor: pointer; }
   .nav-secondary nav { display: none; flex-direction: column; gap: 8px; align-items: flex-start; width: 100%; }
+
+/* Extra small screens: increase overlap so cards sit more on the hero */
+@media (max-width: 480px) {
+  .hero { height: 64vh; min-height: 340px; }
+  /* bring the cards higher and tighten gaps */
+  .hero .cta-row + .container { margin-top: -32px; }
+  .card-grid { gap: 6px; padding: 4px 8px; }
+  .card-grid .card { --card-w: 128px; min-height: 120px; }
+  .card--with-image .card-image { height: 56px; }
+}
   .nav-secondary.open nav { display: flex; }
 }
 
