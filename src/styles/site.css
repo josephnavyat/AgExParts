@@ -252,9 +252,11 @@ a { color: inherit; text-decoration: none; }
   .hero { transform: translateY(-8px); }
   .hero::before { background-position: center calc(50% - 8px); }
   /* Reduce hero height and padding on small screens so category cards don't overlap the image */
-  .hero { height: 50vh; min-height: 260px; }
+  /* Slightly taller on small screens so hero image remains prominent */
+  .hero { height: 58vh; min-height: 300px; }
   .hero-content { padding: 12px; }
-  .hero .cta-row + .container { margin-top: 10px; }
+  /* Pull the card-grid closer to the hero so category cards sit on top of the image */
+  .hero .cta-row + .container { margin-top: -16px; }
 }
 
 /* Categories section background to visually blend with the hero */
