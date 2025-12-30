@@ -86,6 +86,11 @@ html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); f
 body { padding-top: var(--nav-total-height); transition: padding-top 220ms ease; }
 body.nav-collapsed { padding-top: var(--nav-total-height-collapsed); }
 
+/* When nav is hidden (scrolled away), remove reserved top padding so content
+  moves up under the viewport and secondary nav fully collapses. */
+body.nav-hidden { padding-top: 0 !important; }
+body.nav-hidden .nav-secondary { display: none !important; max-height: 0 !important; opacity: 0 !important; }
+
 /* Checkout page needs slightly less top padding because its sections already use internal spacing.
   Add a hook class `.checkout-page` to reduce the reserved navbar space for that route. */
 body.checkout-page { padding-top: var(--nav-main-height); }
@@ -432,7 +437,7 @@ body.hero-active .hero .card .muted {
    opens a left-side sliding panel with the category menu. The markup must
    render a button with `.nav-left-toggle` and the categories panel should
    have `.nav-categories-panel.left`. Toggling the `open` class on the
-   panel will slide it in and show the backdrop `.left-panel-backdrop`. */
+  panel will slide it in and show the backdrop `.right-panel-backdrop`. */
 @media (max-width: 700px) {
   /* hide the inline secondary nav (we'll use the toggle) */
   .nav-secondary { display: none !important; }
@@ -456,10 +461,12 @@ body.hero-active .hero .card .muted {
   .nav-left-toggle:hover { background: rgba(0,0,0,0.04); transform: translateY(-2px); }
 
   /* Right-side sliding categories panel (mobile) */
-  .nav-categories-panel.left {
+  .nav-categories-panel.right {
   position: fixed;
   top: var(--nav-main-height);
-    right: -100%; /* hidden by default on the right */
+  /* clear any inherited left/width anchors so this panel can slide from the right */
+  left: auto !important;
+  right: -100% !important; /* hidden by default on the right */
     height: calc(100% - var(--nav-main-height));
     width: min(420px, 82vw); /* allow a bit more width for text but don't span full page */
     max-width: 92vw;
@@ -474,12 +481,14 @@ body.hero-active .hero .card .muted {
     -webkit-overflow-scrolling: touch;
   }
 
-  .nav-categories-panel.left.open {
-    right: 0; /* slide in from the right */
+  .nav-categories-panel.right.open {
+  right: 0 !important; /* slide in from the right */
+  left: auto !important;
+  transform: translateX(0) !important;
   }
 
   /* Simple backdrop that darkens the rest of the page when the panel is open */
-  .left-panel-backdrop {
+  .right-panel-backdrop {
     display: none;
     position: fixed;
   inset: 0;
@@ -488,11 +497,11 @@ body.hero-active .hero .card .muted {
   z-index: 25;
     transition: opacity 200ms ease;
   }
-  .left-panel-backdrop.open { display: block; opacity: 1; }
+  .right-panel-backdrop.open { display: block; opacity: 1; }
 
   /* Make the category items full-width and comfortable for touch */
-  .nav-categories-panel.left .cat-col-item,
-  .nav-categories-panel.left .sub-item {
+  .nav-categories-panel.right .cat-col-item,
+  .nav-categories-panel.right .sub-item {
     display: block; width: 100%; padding: 12px 10px; box-sizing: border-box; color: #333;
   }
 

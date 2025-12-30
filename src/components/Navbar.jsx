@@ -111,6 +111,15 @@ export default function Navbar() {
     } catch (e) {}
   }, [scrolled]);
 
+  // When navHidden toggles (user scrolled down far enough), add a body class
+  // so CSS can remove reserved padding and fully collapse the secondary nav.
+  useEffect(() => {
+    try {
+      if (navHidden) document.body.classList.add('nav-hidden');
+      else document.body.classList.remove('nav-hidden');
+    } catch (e) {}
+  }, [navHidden]);
+
   const { cart } = useCart();
   const cartCount = cart.items.reduce((sum, i) => sum + i.quantity, 0);
   const secondaryRef = useRef(null);
