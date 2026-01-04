@@ -246,10 +246,6 @@ export default function ProductDetail() {
                 )}
               </div>
 
-              <div className="pd-side-actions">
-                <Link className="btn secondary" to="/cart">View Cart</Link>
-                <Link className="btn secondary" to="/catalog">Continue Shopping</Link>
-              </div>
             </aside>
           </div>
 
