@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { getImageUrl as resolveImageUrl } from '../utils/imageUrl.js';
@@ -21,7 +20,7 @@ const Card = ({ title, tag, note, to, image }) => {
   );
   if (to) return <Link className="card card--with-image" to={to}>{inner}</Link>;
   return <div className="card card--with-image">{inner}</div>;
-}
+};
 
 // Small static sample mapping as fallback; we'll try to pull real sample images from products.
 const SAMPLE_IMAGES = {
@@ -107,7 +106,6 @@ export default function Hero() {
           <CardRow />
         </div>
       </div>
-
     </header>
-  )
+  );
 }
