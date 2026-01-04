@@ -1,9 +1,9 @@
 {
-  "timestamp": "2025-12-30T00:44:26.425Z",
+  "timestamp": "2026-01-02T22:58:49.754Z",
   "event": "pre-payload",
   "payload": {
     "quoteRequest": {
-      "shipDate": "2025-12-30T00:00:00.000Z",
+      "shipDate": "2026-01-02T00:00:00.000Z",
       "serviceLevels": [
         "ALL"
       ],
@@ -59,28 +59,8 @@
             "isTurnable": true,
             "lineItems": [
               {
-                "description": "Sickle Blade, Mower Conditioner, 10 pack",
-                "weight": 12,
-                "pieces": 7,
-                "packagingType": "BX",
-                "classification": "92.5",
-                "nmfc": "",
-                "nmfcSub": "",
-                "isHazardous": false
-              },
-              {
-                "description": "20\" NOTHCED VERTICAL BLADE - DEGELMAN/KINZE",
-                "weight": 10,
-                "pieces": 6,
-                "packagingType": "BX",
-                "classification": "92.5",
-                "nmfc": "",
-                "nmfcSub": "",
-                "isHazardous": false
-              },
-              {
-                "description": "Notched Disc Blade, Standard Concavity, 20\" x 5 mm",
-                "weight": 15.9,
+                "description": "package",
+                "weight": 159.9,
                 "pieces": 1,
                 "packagingType": "BX",
                 "classification": "92.5",
@@ -92,7 +72,7 @@
           }
         ],
         "totalShipmentWeight": 170,
-        "totalPieces": 14
+        "totalPieces": 1
       },
       "accessorials": []
     },
@@ -158,28 +138,8 @@
           "isTurnable": true,
           "lineItems": [
             {
-              "description": "Sickle Blade, Mower Conditioner, 10 pack",
-              "weight": 12,
-              "pieces": 7,
-              "packagingType": "BX",
-              "classification": "92.5",
-              "nmfc": "",
-              "nmfcSub": "",
-              "isHazardous": false
-            },
-            {
-              "description": "20\" NOTHCED VERTICAL BLADE - DEGELMAN/KINZE",
-              "weight": 10,
-              "pieces": 6,
-              "packagingType": "BX",
-              "classification": "92.5",
-              "nmfc": "",
-              "nmfcSub": "",
-              "isHazardous": false
-            },
-            {
-              "description": "Notched Disc Blade, Standard Concavity, 20\" x 5 mm",
-              "weight": 15.9,
+              "description": "package",
+              "weight": 159.9,
               "pieces": 1,
               "packagingType": "BX",
               "classification": "92.5",
@@ -195,21 +155,21 @@
 }
 
 {
-  "timestamp": "2025-12-30T00:44:26.751Z",
+  "timestamp": "2026-01-02T22:58:49.991Z",
   "event": "auth-response",
   "response": {
     "statusCode": 200,
     "headers": {
-      "date": "Tue, 30 Dec 2025 00:44:26 GMT",
+      "date": "Fri, 02 Jan 2026 22:58:50 GMT",
       "content-type": "application/json",
       "transfer-encoding": "chunked",
       "connection": "keep-alive",
       "x-kong-mocking-plugin": "true",
-      "x-kong-response-latency": "90",
+      "x-kong-response-latency": "107",
       "server": "kong/3.12.0.0-enterprise-edition",
-      "x-kong-request-id": "8866700ef167d57656767011a71c7b2d"
+      "x-kong-request-id": "8a57b97ba8fec67c3a8f5912d2a6d117"
     },
-    "rawBody": "{\"token\":\"eyJ0eXAiOiJKV1QiLCJraWQiOiJKYkxSb0l0aVFXYXZwYno3QjBJcm1zVW4xbjQ9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJjZjU0NzVkZi0yMGZlLTRjYWYtODE3Mi02YjAxYThjODExNTgiLCJjdHMiOiJPQVVUSDJfU1RBVEVMRVNTX0dSQU5UIiwiYXV0aF9sZXZlbCI6MCwiYXVkaXRUcmFja2luZ0lkIjoiNTViNDAxYzctZDUwMy00ZDg2LThjYjItYjI3YjE3NmRkNWI1LTE1MDQwMDIyMjEiLCJzdWJuYW1lIjoiY2Y1NDc1ZGYtMjBmZS00Y2FmLTgxNzItNmIwMWE4YzgxMTU4IiwiaXNzIjoiaHR0cHM6Ly9vcGVuYW0tdHJ1Y2tzbDJsLXVzZTQuaWQuZm9yZ2Vyb2NrLmlvOjQ0My9hbS9vYXV0aDIvYWxwaGEiLCJ0b2tlbk5hbWUiOiJhY2Nlc3NfdG9rZW4iLCJ0b2tlbl90eXBlIjoiQmVhcmVyIiwiYXV0aEdyYW50SWQiOiJOUWEtcUlPRGJQV2lCd1JUMGdQckJUYWRUZDAiLCJjbGllbnRfaWQiOiJLb25nQVdTIiwiYXVkIjoiS29uZ0FXUyIsIm5iZiI6MTc2NzA1NTQ2Niwic2NvcGUiOlsib3BlbmlkIl0sImF1dGhfdGltZSI6MTc2NzA1NTQ2NiwicmVhbG0iOiIvYWxwaGEiLCJleHAiOjE3NjcwNTkwNjYsImlhdCI6MTc2NzA1NTQ2NiwiZXhwaXJlc19pbiI6MzYwMCwianRpIjoiM2pRbk8zNWgxRjFfMkZtNjlaNXhkS0ZQM0FNIiwicm9sZXMiOlsiaW1hZ2VzIiwiY2hhcmdlcyIsInJhdGVRdW90ZSIsImNsYWltcyIsInBpY2t1cCIsIm15RXN0ZXNBY2Nlc3MiLCJpbnZvaWNlIiwidHJhY2tpbmciLCJib2wiXSwidXNlcm5hbWUiOiJBZ0V4UGFydHMiLCJhY2NvdW50Q29kZSI6IkIxMzI3MDMifQ.wXd_oFq0VEn890Y3G3MZ0gw9-4Fsu2om3Be1nhZcRpWNCeEsnuCa7k7Mm9qFChxungZpR6CKFb3XFN7opiLbxnRVvqFO5ryngOZESSzjdnBJ5Jrl3x01TW4hAwM5Zp38HEk4FIn9COtRAHAxb-dKg9eW-kvGtM0QHMz__aXGcc3V5z7-v0j9cgCdwplBIsRE8MCKecPila_Wlnk4AqKFuKiK07dRp9f-uxZ30lZb7hLk04PMZKKvv2fHws4YvAqR-0tslckRabf6laRQcrEyKwdsWmesqqanl_bjZH6at2MbeNoRbKxb43Kjt3JxwibOhV4X4TlA4GrFi1WVwk7GFw\"}",
+    "rawBody": "{\"token\":\"eyJ0eXAiOiJKV1QiLCJraWQiOiJRdVZieTZkTWlGalR2MDFaaWRxVy9wNnlkUVE9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiI4ZjEyMTc5Yy1hOWViLTQ4OWItYjk4ZC1kYTE3Y2NiZGYzZDYiLCJjdHMiOiJPQVVUSDJfU1RBVEVMRVNTX0dSQU5UIiwiYXV0aF9sZXZlbCI6MCwiYXVkaXRUcmFja2luZ0lkIjoiNDg4ZDY1YWItYzNkMy00ZWJmLWFmMDEtOTZhYTMxZDA0Njk4LTUwNTY2NDEzIiwic3VibmFtZSI6IjhmMTIxNzljLWE5ZWItNDg5Yi1iOThkLWRhMTdjY2JkZjNkNiIsImlzcyI6Imh0dHBzOi8vb3BlbmFtLXRydWNrc2wybC11c2U0LXN0YWdpbmcuaWQuZm9yZ2Vyb2NrLmlvOjQ0My9hbS9vYXV0aDIvYWxwaGEiLCJ0b2tlbk5hbWUiOiJhY2Nlc3NfdG9rZW4iLCJ0b2tlbl90eXBlIjoiQmVhcmVyIiwiYXV0aEdyYW50SWQiOiJrSk5XUUlxRW9OTDB6N1F2RGJjWlMzeTBHZjAiLCJjbGllbnRfaWQiOiJLb25nQVdTIiwiYXVkIjoiS29uZ0FXUyIsIm5iZiI6MTc2NzM5NDcyOSwic2NvcGUiOlsib3BlbmlkIl0sImF1dGhfdGltZSI6MTc2NzM5NDcyOSwicmVhbG0iOiIvYWxwaGEiLCJleHAiOjE3NjczOTgzMjksImlhdCI6MTc2NzM5NDcyOSwiZXhwaXJlc19pbiI6MzYwMCwianRpIjoieFlsYWFyMVNlQzIwMTFadTh6MG5kODdNd3JnIiwicm9sZXMiOlsiaW1hZ2VzIiwiY2hhcmdlcyIsImNsYWltcyIsInJhdGVRdW90ZSIsIm15RXN0ZXNBY2Nlc3MiLCJwaWNrdXAiLCJpbnZvaWNlIiwidHJhY2tpbmciLCJib2wiXSwidXNlcm5hbWUiOiJBZ0V4UGFydHMiLCJhY2NvdW50Q29kZSI6IkIxMzI3MDMifQ.jk9zxmIablwn5A3q6QP8XXy4VMHYRivEi9VlSdWk9yXRlkp3ZexY1j6Qc9m-fxuFvK6yFEg3PvC6Tf1ZdGF9HyEV47abHUAcq48hizkEDSMNVzndMxviApp4MpzEFY0bL-7vz6yB21y0kPr-OLLddpXh5h0E4xDGwNd_XtykU3wfi7TzPpouzoAee0hri4LamrFS5dRLeQL_taWcLzC9SS7p-X84sdc2jcvSpBkTcG93ehOQ73zIGZQpw5LW1y6omGts2yu2oWymw9cwy0uSTlzN3VBwt8I6Z_B0iV_NazP6i9K2p4z-hbKjVIcH115x2dZ_0adZ0IajHyqctdV6Tg\"}",
     "json": {
       "token": "<REDACTED>"
     }
@@ -217,21 +177,21 @@
 }
 
 {
-  "timestamp": "2025-12-30T00:44:26.754Z",
+  "timestamp": "2026-01-02T22:58:50.017Z",
   "event": "auth-response",
   "response": {
     "statusCode": 200,
     "headers": {
-      "date": "Tue, 30 Dec 2025 00:44:26 GMT",
+      "date": "Fri, 02 Jan 2026 22:58:50 GMT",
       "content-type": "application/json",
       "transfer-encoding": "chunked",
       "connection": "keep-alive",
       "x-kong-mocking-plugin": "true",
-      "x-kong-response-latency": "91",
+      "x-kong-response-latency": "132",
       "server": "kong/3.12.0.0-enterprise-edition",
-      "x-kong-request-id": "49d2721aa275621f975084341e16b40c"
+      "x-kong-request-id": "d902221a691c7515468d57313e46303c"
     },
-    "rawBody": "{\"token\":\"eyJ0eXAiOiJKV1QiLCJraWQiOiJKYkxSb0l0aVFXYXZwYno3QjBJcm1zVW4xbjQ9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJjZjU0NzVkZi0yMGZlLTRjYWYtODE3Mi02YjAxYThjODExNTgiLCJjdHMiOiJPQVVUSDJfU1RBVEVMRVNTX0dSQU5UIiwiYXV0aF9sZXZlbCI6MCwiYXVkaXRUcmFja2luZ0lkIjoiMmE4ODU1NmYtZGVmNi00MzgyLWI2MTgtMWJjMDc1YjFlY2M4LTE1MDUwNjk0MTMiLCJzdWJuYW1lIjoiY2Y1NDc1ZGYtMjBmZS00Y2FmLTgxNzItNmIwMWE4YzgxMTU4IiwiaXNzIjoiaHR0cHM6Ly9vcGVuYW0tdHJ1Y2tzbDJsLXVzZTQuaWQuZm9yZ2Vyb2NrLmlvOjQ0My9hbS9vYXV0aDIvYWxwaGEiLCJ0b2tlbk5hbWUiOiJhY2Nlc3NfdG9rZW4iLCJ0b2tlbl90eXBlIjoiQmVhcmVyIiwiYXV0aEdyYW50SWQiOiJiYWM3Zl9QNW1jd2NNOTJ3bVVHM0xJZGF0MFEiLCJjbGllbnRfaWQiOiJLb25nQVdTIiwiYXVkIjoiS29uZ0FXUyIsIm5iZiI6MTc2NzA1NTQ2Niwic2NvcGUiOlsib3BlbmlkIl0sImF1dGhfdGltZSI6MTc2NzA1NTQ2NiwicmVhbG0iOiIvYWxwaGEiLCJleHAiOjE3NjcwNTkwNjYsImlhdCI6MTc2NzA1NTQ2NiwiZXhwaXJlc19pbiI6MzYwMCwianRpIjoiaXNVQ0NnbnA1SkdQNlJGRDdFMlhWcUxvak80Iiwicm9sZXMiOlsiaW1hZ2VzIiwiY2hhcmdlcyIsInJhdGVRdW90ZSIsImNsYWltcyIsInBpY2t1cCIsIm15RXN0ZXNBY2Nlc3MiLCJpbnZvaWNlIiwidHJhY2tpbmciLCJib2wiXSwidXNlcm5hbWUiOiJBZ0V4UGFydHMiLCJhY2NvdW50Q29kZSI6IkIxMzI3MDMifQ.PkSkvUFgy-e-tNZDNphq-z-EqkmZv6M09G8Zj9XgFZ00d1MaKSXM7dRY_kjsE87qETZpj_-yZM-oK61-LZerw8ffmWn56GdFqeo2ndGqugMPRLXGo_SgAj44WHMprbBZpDrx_D7SZSOqMgm3SKgkEy6fMhCUOyYKaorM_rhPgxeb96ddmiNVsWB5BtHhnRtY222sQFLKMAIeHlWpK8oALtzuXm3CrTEZmP_ge20eRLbYnyGBuRqllxmknNMEXinlMmgyqKbqW-ks5LV1MEjEeMl0SeQb8zp0Y3LzMpfqfypIG6vk_ttZkQXZzCzXQMntllaOzbuU1VCJJ1PD7D8nUw\"}",
+    "rawBody": "{\"token\":\"eyJ0eXAiOiJKV1QiLCJraWQiOiJRdVZieTZkTWlGalR2MDFaaWRxVy9wNnlkUVE9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiI4ZjEyMTc5Yy1hOWViLTQ4OWItYjk4ZC1kYTE3Y2NiZGYzZDYiLCJjdHMiOiJPQVVUSDJfU1RBVEVMRVNTX0dSQU5UIiwiYXV0aF9sZXZlbCI6MCwiYXVkaXRUcmFja2luZ0lkIjoiNjEwY2I2MjItZTA2Zi00YmNjLTg1NDAtODcxNzExYzYwNDMwLTUxMTQyNjQ4Iiwic3VibmFtZSI6IjhmMTIxNzljLWE5ZWItNDg5Yi1iOThkLWRhMTdjY2JkZjNkNiIsImlzcyI6Imh0dHBzOi8vb3BlbmFtLXRydWNrc2wybC11c2U0LXN0YWdpbmcuaWQuZm9yZ2Vyb2NrLmlvOjQ0My9hbS9vYXV0aDIvYWxwaGEiLCJ0b2tlbk5hbWUiOiJhY2Nlc3NfdG9rZW4iLCJ0b2tlbl90eXBlIjoiQmVhcmVyIiwiYXV0aEdyYW50SWQiOiJJcGkwQUNzMEtiX0NTMGF3ZVFtX2VSZGNjVW8iLCJjbGllbnRfaWQiOiJLb25nQVdTIiwiYXVkIjoiS29uZ0FXUyIsIm5iZiI6MTc2NzM5NDczMCwic2NvcGUiOlsib3BlbmlkIl0sImF1dGhfdGltZSI6MTc2NzM5NDczMCwicmVhbG0iOiIvYWxwaGEiLCJleHAiOjE3NjczOTgzMzAsImlhdCI6MTc2NzM5NDczMCwiZXhwaXJlc19pbiI6MzYwMCwianRpIjoiUVlfWjZvbFh4cl9QQ1FXWUJnbkFKWUl1eGZZIiwicm9sZXMiOlsiaW1hZ2VzIiwiY2hhcmdlcyIsImNsYWltcyIsInJhdGVRdW90ZSIsIm15RXN0ZXNBY2Nlc3MiLCJwaWNrdXAiLCJpbnZvaWNlIiwidHJhY2tpbmciLCJib2wiXSwidXNlcm5hbWUiOiJBZ0V4UGFydHMiLCJhY2NvdW50Q29kZSI6IkIxMzI3MDMifQ.ofooeBy88ljJROGTdWb9LT3U17bqb_nJ25QukReApVC_Wc9uQ9lnC7nXNzAXfZzhMe-_VYyo310cF2UyA39lr6nw-FfbPERpNVBeb6jc_I2hrqPOfQgxCKeIfTEW-2-VWXeyFMxWhEQAI4PMTPmFdaeeobTOJlU2SYhZqaxx4pkNlKNXeJfgW38yfaV7Jngv7JtQe-1LFyKJniHJueByVPtIgNuuUVx8SDQgo613LAXm1dQT4wSU6WlyNAjO-mh5MlOd1vf13xL3oEX2-TAP509Flx63Z4Z4Z-emJzQaFsk5BIVjzL-NKkt_8f9lhlKnoOJiUOyW7QcbmNgOuFUhmw\"}",
     "json": {
       "token": "<REDACTED>"
     }
@@ -239,12 +199,12 @@
 }
 
 {
-  "timestamp": "2025-12-30T00:44:30.411Z",
+  "timestamp": "2026-01-02T22:58:55.235Z",
   "event": "quote-response",
-  "curl": "curl --location --request POST 'https://cloudapi.estes-express.com/v1/rate-quotes' \\\n+--header 'apikey: SaTrn7vp5yU3Gqn8tI2eFg1l56oP1X4s' \\\n+--header 'Authorization: Bearer <REDACTED>' \\\n+--header 'Content-Type: application/json' \\\n+--data-raw '",
+  "curl": "curl --location --request POST 'https://uat-cloudapi.estes-express.com/v1/rate-quotes' \\\n+--header 'apikey: pjHf8SHvAk61ypg8kGNgMAITx77hKWn3' \\\n+--header 'Authorization: Bearer <REDACTED>' \\\n+--header 'Content-Type: application/json' \\\n+--data-raw '",
   "request": {
     "quoteRequest": {
-      "shipDate": "2025-12-30T00:00:00.000Z",
+      "shipDate": "2026-01-02T00:00:00.000Z",
       "serviceLevels": [
         "ALL"
       ],
@@ -396,7 +356,7 @@
   "response": {
     "statusCode": 200,
     "headers": {
-      "date": "Tue, 30 Dec 2025 00:44:30 GMT",
+      "date": "Fri, 02 Jan 2026 22:58:55 GMT",
       "content-type": "application/json",
       "transfer-encoding": "chunked",
       "connection": "keep-alive",
@@ -407,22 +367,22 @@
       "expires": "0",
       "x-frame-options": "DENY",
       "server": "kong/3.12.0.0-enterprise-edition",
-      "x-kong-upstream-latency": "3601",
-      "x-kong-proxy-latency": "5",
+      "x-kong-upstream-latency": "5168",
+      "x-kong-proxy-latency": "4",
       "via": "1.1 kong/3.12.0.0-enterprise-edition",
-      "x-kong-request-id": "4cea2f08de319a2cf647e52b44adb560"
+      "x-kong-request-id": "4053ca741e6c553742044d5d690c7427"
     },
-    "rawBody": "{\"data\":[{\"serviceLevelId\":\"99\",\"serviceLevelText\":\"LTL Standard Transit\",\"quoteId\":\"LVRKVD7\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2025-12-30-01.00.00.000000\",\"transitDeliveryDate\":\"2025-12-31\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"158.06\",\"totalShipmentWeight\":170,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":2,\"ratedAccessorials\":[{\"code\":\"FSC\",\"description\":\"Fuel Surcharge\",\"charge\":\"35.06\"}]},\"lineItemCharges\":[{\"description\":\"package\",\"classification\":\"92.5\",\"weight\":160,\"rate\":\".00\",\"charge\":\"123.00\"}],\"chargeItems\":[{\"description\":\"Commodity Total\",\"charge\":\"123.00\"},{\"description\":\"Tare Weight Charge - 10lbs\",\"charge\":\"0.00\"},{\"description\":\"Fuel Surcharge 28.50%\",\"charge\":\"35.06\"}],\"disclaimersURL\":\"https://www.estes-express.com/myestes/rate-quote-estimate/terms\"},{\"serviceLevelId\":\"98\",\"serviceLevelText\":\"Guaranteed LTL Standard Transit: 5PM\",\"quoteId\":\"1VRKVD7\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2025-12-29-16.00.00.000000\",\"transitDeliveryDate\":\"2025-12-31\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"218.06\",\"totalShipmentWeight\":170,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":2,\"ratedAccessorials\":[{\"code\":\"FSC\",\"description\":\"Fuel Surcharge\",\"charge\":\"35.06\"}]},\"lineItemCharges\":[{\"description\":\"package\",\"classification\":\"92.5\",\"weight\":160,\"rate\":\".00\",\"charge\":\"123.00\"}],\"chargeItems\":[{\"description\":\"Commodity Total\",\"charge\":\"123.00\"},{\"description\":\"Tare Weight Charge - 10lbs\",\"charge\":\"0.00\"},{\"description\":\"Fuel Surcharge 28.50%\",\"charge\":\"35.06\"},{\"description\":\"Service Level Adjustment\",\"charge\":\"60.00\"}],\"disclaimersURL\":\"https://www.estes-express.com/myestes/rate-quote-estimate/terms\"},{\"serviceLevelId\":\"96\",\"serviceLevelText\":\"Guaranteed LTL Standard Transit: 12PM\",\"quoteId\":\"2VRKVD7\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2025-12-29-16.00.00.000000\",\"transitDeliveryDate\":\"2025-12-31\",\"transitDeliveryTime\":\"12:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"258.06\",\"totalShipmentWeight\":170,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":2,\"ratedAccessorials\":[{\"code\":\"FSC\",\"description\":\"Fuel Surcharge\",\"charge\":\"35.06\"}]},\"lineItemCharges\":[{\"description\":\"package\",\"classification\":\"92.5\",\"weight\":160,\"rate\":\".00\",\"charge\":\"123.00\"}],\"chargeItems\":[{\"description\":\"Commodity Total\",\"charge\":\"123.00\"},{\"description\":\"Tare Weight Charge - 10lbs\",\"charge\":\"0.00\"},{\"description\":\"Fuel Surcharge 28.50%\",\"charge\":\"35.06\"},{\"description\":\"Service Level Adjustment\",\"charge\":\"100.00\"}],\"disclaimersURL\":\"https://www.estes-express.com/myestes/rate-quote-estimate/terms\"},{\"serviceLevelId\":\"95\",\"serviceLevelText\":\"Guaranteed LTL Standard Transit: 10AM\",\"quoteId\":\"3VRKVD7\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2025-12-29-16.00.00.000000\",\"transitDeliveryDate\":\"2025-12-31\",\"transitDeliveryTime\":\"10:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"298.06\",\"totalShipmentWeight\":170,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":2,\"ratedAccessorials\":[{\"code\":\"FSC\",\"description\":\"Fuel Surcharge\",\"charge\":\"35.06\"}]},\"lineItemCharges\":[{\"description\":\"package\",\"classification\":\"92.5\",\"weight\":160,\"rate\":\".00\",\"charge\":\"123.00\"}],\"chargeItems\":[{\"description\":\"Commodity Total\",\"charge\":\"123.00\"},{\"description\":\"Tare Weight Charge - 10lbs\",\"charge\":\"0.00\"},{\"description\":\"Fuel Surcharge 28.50%\",\"charge\":\"35.06\"},{\"description\":\"Service Level Adjustment\",\"charge\":\"140.00\"}],\"disclaimersURL\":\"https://www.estes-express.com/myestes/rate-quote-estimate/terms\"},{\"serviceLevelId\":\"90\",\"serviceLevelText\":\"Estes Retail Guarantee\",\"quoteId\":\"RVRKVD7\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2025-12-29-16.00.00.000000\",\"transitDeliveryDate\":\"2025-12-31\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"258.06\",\"totalShipmentWeight\":170,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":2,\"ratedAccessorials\":[{\"code\":\"FSC\",\"description\":\"Fuel Surcharge\",\"charge\":\"35.06\"},{\"code\":\"APT\",\"description\":\"APPOINTMENT CHARGE\",\"charge\":\".00\"}]},\"lineItemCharges\":[{\"description\":\"package\",\"classification\":\"92.5\",\"weight\":160,\"rate\":\".00\",\"charge\":\"123.00\"}],\"chargeItems\":[{\"description\":\"Commodity Total\",\"charge\":\"123.00\"},{\"description\":\"Tare Weight Charge - 10lbs\",\"charge\":\"0.00\"},{\"description\":\"Fuel Surcharge 28.50%\",\"charge\":\"35.06\"},{\"description\":\"APPOINTMENT CHARGE\",\"charge\":\"0.00\"},{\"description\":\"Service Level Adjustment\",\"charge\":\"100.00\"}],\"disclaimersURL\":\"https://www.estes-express.com/myestes/rate-quote-estimate/terms\"},{\"serviceLevelId\":\"94\",\"serviceLevelText\":\"Volume and Truckload Basic\",\"quoteId\":\"VVRKVD7\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2026-01-29-01.00.00.000000\",\"transitDeliveryDate\":\"2025-12-31\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"325.00\",\"totalShipmentWeight\":170,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":7},\"chargeItems\":[{\"description\":\"Tare Weight Charge - 10lbs\",\"charge\":\"0.00\"}],\"disclaimersURL\":\"https://www.estes-express.com/myestes/rate-quote-estimate/terms\"},{\"serviceLevelId\":\"92\",\"serviceLevelText\":\"Guaranteed Volume and Truckload Standard\",\"quoteId\":\"SVRKVD7\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2025-12-29-16.00.00.000000\",\"transitDeliveryDate\":\"2025-12-31\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"455.00\",\"totalShipmentWeight\":170,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":7},\"chargeItems\":[{\"description\":\"Tare Weight Charge - 10lbs\",\"charge\":\"0.00\"}],\"disclaimersURL\":\"https://www.estes-express.com/myestes/rate-quote-estimate/terms\"},{\"serviceLevelId\":\"93\",\"serviceLevelText\":\"Guaranteed Volume and Truckload Economy\",\"quoteId\":\"EVRKVD7\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2025-12-29-16.00.00.000000\",\"transitDeliveryDate\":\"2026-01-02\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"422.50\",\"totalShipmentWeight\":170,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":7},\"chargeItems\":[{\"description\":\"Tare Weight Charge - 10lbs\",\"charge\":\"0.00\"}],\"disclaimersURL\":\"https://www.estes-express.com/myestes/rate-quote-estimate/terms\"},{\"serviceLevelId\":\"97\",\"serviceLevelText\":\"Guaranteed Exclusive Use\",\"quoteId\":\"XVRKVD7\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2025-12-29-16.00.00.000000\",\"transitDeliveryDate\":\"2025-12-31\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"1195.00\",\"totalShipmentWeight\":170,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":2},\"chargeItems\":[{\"description\":\"Commodity Total\",\"charge\":\"1195.00\"}],\"disclaimersURL\":\"https://www.estes-express.com/myestes/rate-quote-estimate/terms\"}],\"error\":{\"code\":0,\"message\":\"\",\"details\":\"\"}}",
+    "rawBody": "{\"data\":[{\"serviceLevelId\":\"99\",\"serviceLevelText\":\"LTL Standard Transit\",\"quoteId\":\"LS6GWXZ\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2026-01-03-01.00.00.000000\",\"transitDeliveryDate\":\"2026-01-05\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"157.81\",\"totalShipmentWeight\":170,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":2,\"ratedAccessorials\":[{\"code\":\"FSC\",\"description\":\"Fuel Surcharge\",\"charge\":\"34.81\"}]},\"lineItemCharges\":[{\"description\":\"package\",\"classification\":\"92.5\",\"weight\":160,\"rate\":\".00\",\"charge\":\"123.00\"}],\"chargeItems\":[{\"description\":\"Commodity Total\",\"charge\":\"123.00\"},{\"description\":\"Tare Weight Charge - 10lbs\",\"charge\":\"0.00\"},{\"description\":\"Fuel Surcharge 28.30%\",\"charge\":\"34.81\"}],\"disclaimersURL\":\"https://estes-express-uat.estesinternal.com/myestes/rate-quote-estimate/terms\",\"alerts\":[{\"messageId\":\"GSC0004\",\"message\":\"Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time.\"}]},{\"serviceLevelId\":\"98\",\"serviceLevelText\":\"Guaranteed LTL Standard Transit: 5PM\",\"quoteId\":\"1S6GWXZ\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2026-01-02-16.00.00.000000\",\"transitDeliveryDate\":\"2026-01-05\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"217.81\",\"totalShipmentWeight\":170,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":2,\"ratedAccessorials\":[{\"code\":\"FSC\",\"description\":\"Fuel Surcharge\",\"charge\":\"34.81\"}]},\"lineItemCharges\":[{\"description\":\"package\",\"classification\":\"92.5\",\"weight\":160,\"rate\":\".00\",\"charge\":\"123.00\"}],\"chargeItems\":[{\"description\":\"Commodity Total\",\"charge\":\"123.00\"},{\"description\":\"Tare Weight Charge - 10lbs\",\"charge\":\"0.00\"},{\"description\":\"Fuel Surcharge 28.30%\",\"charge\":\"34.81\"},{\"description\":\"Service Level Adjustment\",\"charge\":\"60.00\"}],\"disclaimersURL\":\"https://estes-express-uat.estesinternal.com/myestes/rate-quote-estimate/terms\",\"alerts\":[{\"messageId\":\"GSC0004\",\"message\":\"Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time.\"}]},{\"serviceLevelId\":\"96\",\"serviceLevelText\":\"Guaranteed LTL Standard Transit: 12PM\",\"quoteId\":\"2S6GWXZ\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2026-01-02-16.00.00.000000\",\"transitDeliveryDate\":\"2026-01-05\",\"transitDeliveryTime\":\"12:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"257.81\",\"totalShipmentWeight\":170,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":2,\"ratedAccessorials\":[{\"code\":\"FSC\",\"description\":\"Fuel Surcharge\",\"charge\":\"34.81\"}]},\"lineItemCharges\":[{\"description\":\"package\",\"classification\":\"92.5\",\"weight\":160,\"rate\":\".00\",\"charge\":\"123.00\"}],\"chargeItems\":[{\"description\":\"Commodity Total\",\"charge\":\"123.00\"},{\"description\":\"Tare Weight Charge - 10lbs\",\"charge\":\"0.00\"},{\"description\":\"Fuel Surcharge 28.30%\",\"charge\":\"34.81\"},{\"description\":\"Service Level Adjustment\",\"charge\":\"100.00\"}],\"disclaimersURL\":\"https://estes-express-uat.estesinternal.com/myestes/rate-quote-estimate/terms\",\"alerts\":[{\"messageId\":\"GSC0004\",\"message\":\"Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time.\"}]},{\"serviceLevelId\":\"95\",\"serviceLevelText\":\"Guaranteed LTL Standard Transit: 10AM\",\"quoteId\":\"3S6GWXZ\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2026-01-02-16.00.00.000000\",\"transitDeliveryDate\":\"2026-01-05\",\"transitDeliveryTime\":\"10:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"297.81\",\"totalShipmentWeight\":170,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":2,\"ratedAccessorials\":[{\"code\":\"FSC\",\"description\":\"Fuel Surcharge\",\"charge\":\"34.81\"}]},\"lineItemCharges\":[{\"description\":\"package\",\"classification\":\"92.5\",\"weight\":160,\"rate\":\".00\",\"charge\":\"123.00\"}],\"chargeItems\":[{\"description\":\"Commodity Total\",\"charge\":\"123.00\"},{\"description\":\"Tare Weight Charge - 10lbs\",\"charge\":\"0.00\"},{\"description\":\"Fuel Surcharge 28.30%\",\"charge\":\"34.81\"},{\"description\":\"Service Level Adjustment\",\"charge\":\"140.00\"}],\"disclaimersURL\":\"https://estes-express-uat.estesinternal.com/myestes/rate-quote-estimate/terms\",\"alerts\":[{\"messageId\":\"GSC0004\",\"message\":\"Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time.\"}]},{\"serviceLevelId\":\"90\",\"serviceLevelText\":\"Estes Retail Guarantee\",\"quoteId\":\"RS6GWXZ\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2026-01-02-16.00.00.000000\",\"transitDeliveryDate\":\"2026-01-05\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"257.81\",\"totalShipmentWeight\":170,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":2,\"ratedAccessorials\":[{\"code\":\"FSC\",\"description\":\"Fuel Surcharge\",\"charge\":\"34.81\"},{\"code\":\"APT\",\"description\":\"APPOINTMENT CHARGE\",\"charge\":\".00\"}]},\"lineItemCharges\":[{\"description\":\"package\",\"classification\":\"92.5\",\"weight\":160,\"rate\":\".00\",\"charge\":\"123.00\"}],\"chargeItems\":[{\"description\":\"Commodity Total\",\"charge\":\"123.00\"},{\"description\":\"Tare Weight Charge - 10lbs\",\"charge\":\"0.00\"},{\"description\":\"Fuel Surcharge 28.30%\",\"charge\":\"34.81\"},{\"description\":\"APPOINTMENT CHARGE\",\"charge\":\"0.00\"},{\"description\":\"Service Level Adjustment\",\"charge\":\"100.00\"}],\"disclaimersURL\":\"https://estes-express-uat.estesinternal.com/myestes/rate-quote-estimate/terms\",\"alerts\":[{\"messageId\":\"GSC0004\",\"message\":\"Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time.\"}]},{\"serviceLevelId\":\"94\",\"serviceLevelText\":\"Volume and Truckload Basic\",\"quoteId\":\"VS6GWXZ\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2026-02-02-01.00.00.000000\",\"transitDeliveryDate\":\"2026-01-05\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"325.00\",\"totalShipmentWeight\":170,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":7},\"disclaimersURL\":\"https://estes-express-uat.estesinternal.com/myestes/rate-quote-estimate/terms\",\"alerts\":[{\"messageId\":\"GSC0004\",\"message\":\"Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time.\"}]},{\"serviceLevelId\":\"92\",\"serviceLevelText\":\"Guaranteed Volume and Truckload Standard\",\"quoteId\":\"SS6GWXZ\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2026-01-02-16.00.00.000000\",\"transitDeliveryDate\":\"2026-01-05\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"455.00\",\"totalShipmentWeight\":170,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":7},\"disclaimersURL\":\"https://estes-express-uat.estesinternal.com/myestes/rate-quote-estimate/terms\",\"alerts\":[{\"messageId\":\"GSC0004\",\"message\":\"Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time.\"}]},{\"serviceLevelId\":\"93\",\"serviceLevelText\":\"Guaranteed Volume and Truckload Economy\",\"quoteId\":\"ES6GWXZ\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2026-01-02-16.00.00.000000\",\"transitDeliveryDate\":\"2026-01-06\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"422.50\",\"totalShipmentWeight\":170,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":7},\"disclaimersURL\":\"https://estes-express-uat.estesinternal.com/myestes/rate-quote-estimate/terms\",\"alerts\":[{\"messageId\":\"GSC0004\",\"message\":\"Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time.\"}]},{\"serviceLevelId\":\"97\",\"serviceLevelText\":\"Guaranteed Exclusive Use\",\"quoteId\":\"XS6GWXZ\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2026-01-02-16.00.00.000000\",\"transitDeliveryDate\":\"2026-01-05\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"1195.00\",\"totalShipmentWeight\":170,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":2},\"chargeItems\":[{\"description\":\"Commodity Total\",\"charge\":\"1195.00\"}],\"disclaimersURL\":\"https://estes-express-uat.estesinternal.com/myestes/rate-quote-estimate/terms\",\"alerts\":[{\"messageId\":\"GSC0004\",\"message\":\"Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time.\"}]}],\"error\":{\"code\":0,\"message\":\"\",\"details\":\"\"}}",
     "json": {
       "data": [
         {
           "serviceLevelId": "99",
           "serviceLevelText": "LTL Standard Transit",
-          "quoteId": "LVRKVD7",
+          "quoteId": "LS6GWXZ",
           "rateFound": true,
           "dates": {
-            "quoteExpiration": "2025-12-30-01.00.00.000000",
-            "transitDeliveryDate": "2025-12-31",
+            "quoteExpiration": "2026-01-03-01.00.00.000000",
+            "transitDeliveryDate": "2026-01-05",
             "transitDeliveryTime": "17:00"
           },
           "transitDetails": {
@@ -459,7 +419,7 @@
             "transitMessage": ""
           },
           "quoteRate": {
-            "totalCharges": "158.06",
+            "totalCharges": "157.81",
             "totalShipmentWeight": 170,
             "rateType": "Customer Pricing",
             "ratedCube": ".00",
@@ -468,7 +428,7 @@
               {
                 "code": "FSC",
                 "description": "Fuel Surcharge",
-                "charge": "35.06"
+                "charge": "34.81"
               }
             ]
           },
@@ -491,20 +451,26 @@
               "charge": "0.00"
             },
             {
-              "description": "Fuel Surcharge 28.50%",
-              "charge": "35.06"
+              "description": "Fuel Surcharge 28.30%",
+              "charge": "34.81"
             }
           ],
-          "disclaimersURL": "https://www.estes-express.com/myestes/rate-quote-estimate/terms"
+          "disclaimersURL": "https://estes-express-uat.estesinternal.com/myestes/rate-quote-estimate/terms",
+          "alerts": [
+            {
+              "messageId": "GSC0004",
+              "message": "Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time."
+            }
+          ]
         },
         {
           "serviceLevelId": "98",
           "serviceLevelText": "Guaranteed LTL Standard Transit: 5PM",
-          "quoteId": "1VRKVD7",
+          "quoteId": "1S6GWXZ",
           "rateFound": true,
           "dates": {
-            "quoteExpiration": "2025-12-29-16.00.00.000000",
-            "transitDeliveryDate": "2025-12-31",
+            "quoteExpiration": "2026-01-02-16.00.00.000000",
+            "transitDeliveryDate": "2026-01-05",
             "transitDeliveryTime": "17:00"
           },
           "transitDetails": {
@@ -541,7 +507,7 @@
             "transitMessage": ""
           },
           "quoteRate": {
-            "totalCharges": "218.06",
+            "totalCharges": "217.81",
             "totalShipmentWeight": 170,
             "rateType": "Customer Pricing",
             "ratedCube": ".00",
@@ -550,7 +516,7 @@
               {
                 "code": "FSC",
                 "description": "Fuel Surcharge",
-                "charge": "35.06"
+                "charge": "34.81"
               }
             ]
           },
@@ -573,24 +539,30 @@
               "charge": "0.00"
             },
             {
-              "description": "Fuel Surcharge 28.50%",
-              "charge": "35.06"
+              "description": "Fuel Surcharge 28.30%",
+              "charge": "34.81"
             },
             {
               "description": "Service Level Adjustment",
               "charge": "60.00"
             }
           ],
-          "disclaimersURL": "https://www.estes-express.com/myestes/rate-quote-estimate/terms"
+          "disclaimersURL": "https://estes-express-uat.estesinternal.com/myestes/rate-quote-estimate/terms",
+          "alerts": [
+            {
+              "messageId": "GSC0004",
+              "message": "Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time."
+            }
+          ]
         },
         {
           "serviceLevelId": "96",
           "serviceLevelText": "Guaranteed LTL Standard Transit: 12PM",
-          "quoteId": "2VRKVD7",
+          "quoteId": "2S6GWXZ",
           "rateFound": true,
           "dates": {
-            "quoteExpiration": "2025-12-29-16.00.00.000000",
-            "transitDeliveryDate": "2025-12-31",
+            "quoteExpiration": "2026-01-02-16.00.00.000000",
+            "transitDeliveryDate": "2026-01-05",
             "transitDeliveryTime": "12:00"
           },
           "transitDetails": {
@@ -627,7 +599,7 @@
             "transitMessage": ""
           },
           "quoteRate": {
-            "totalCharges": "258.06",
+            "totalCharges": "257.81",
             "totalShipmentWeight": 170,
             "rateType": "Customer Pricing",
             "ratedCube": ".00",
@@ -636,7 +608,7 @@
               {
                 "code": "FSC",
                 "description": "Fuel Surcharge",
-                "charge": "35.06"
+                "charge": "34.81"
               }
             ]
           },
@@ -659,24 +631,30 @@
               "charge": "0.00"
             },
             {
-              "description": "Fuel Surcharge 28.50%",
-              "charge": "35.06"
+              "description": "Fuel Surcharge 28.30%",
+              "charge": "34.81"
             },
             {
               "description": "Service Level Adjustment",
               "charge": "100.00"
             }
           ],
-          "disclaimersURL": "https://www.estes-express.com/myestes/rate-quote-estimate/terms"
+          "disclaimersURL": "https://estes-express-uat.estesinternal.com/myestes/rate-quote-estimate/terms",
+          "alerts": [
+            {
+              "messageId": "GSC0004",
+              "message": "Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time."
+            }
+          ]
         },
         {
           "serviceLevelId": "95",
           "serviceLevelText": "Guaranteed LTL Standard Transit: 10AM",
-          "quoteId": "3VRKVD7",
+          "quoteId": "3S6GWXZ",
           "rateFound": true,
           "dates": {
-            "quoteExpiration": "2025-12-29-16.00.00.000000",
-            "transitDeliveryDate": "2025-12-31",
+            "quoteExpiration": "2026-01-02-16.00.00.000000",
+            "transitDeliveryDate": "2026-01-05",
             "transitDeliveryTime": "10:00"
           },
           "transitDetails": {
@@ -713,7 +691,7 @@
             "transitMessage": ""
           },
           "quoteRate": {
-            "totalCharges": "298.06",
+            "totalCharges": "297.81",
             "totalShipmentWeight": 170,
             "rateType": "Customer Pricing",
             "ratedCube": ".00",
@@ -722,7 +700,7 @@
               {
                 "code": "FSC",
                 "description": "Fuel Surcharge",
-                "charge": "35.06"
+                "charge": "34.81"
               }
             ]
           },
@@ -745,24 +723,30 @@
               "charge": "0.00"
             },
             {
-              "description": "Fuel Surcharge 28.50%",
-              "charge": "35.06"
+              "description": "Fuel Surcharge 28.30%",
+              "charge": "34.81"
             },
             {
               "description": "Service Level Adjustment",
               "charge": "140.00"
             }
           ],
-          "disclaimersURL": "https://www.estes-express.com/myestes/rate-quote-estimate/terms"
+          "disclaimersURL": "https://estes-express-uat.estesinternal.com/myestes/rate-quote-estimate/terms",
+          "alerts": [
+            {
+              "messageId": "GSC0004",
+              "message": "Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time."
+            }
+          ]
         },
         {
           "serviceLevelId": "90",
           "serviceLevelText": "Estes Retail Guarantee",
-          "quoteId": "RVRKVD7",
+          "quoteId": "RS6GWXZ",
           "rateFound": true,
           "dates": {
-            "quoteExpiration": "2025-12-29-16.00.00.000000",
-            "transitDeliveryDate": "2025-12-31",
+            "quoteExpiration": "2026-01-02-16.00.00.000000",
+            "transitDeliveryDate": "2026-01-05",
             "transitDeliveryTime": "17:00"
           },
           "transitDetails": {
@@ -799,7 +783,7 @@
             "transitMessage": ""
           },
           "quoteRate": {
-            "totalCharges": "258.06",
+            "totalCharges": "257.81",
             "totalShipmentWeight": 170,
             "rateType": "Customer Pricing",
             "ratedCube": ".00",
@@ -808,7 +792,7 @@
               {
                 "code": "FSC",
                 "description": "Fuel Surcharge",
-                "charge": "35.06"
+                "charge": "34.81"
               },
               {
                 "code": "APT",
@@ -836,8 +820,8 @@
               "charge": "0.00"
             },
             {
-              "description": "Fuel Surcharge 28.50%",
-              "charge": "35.06"
+              "description": "Fuel Surcharge 28.30%",
+              "charge": "34.81"
             },
             {
               "description": "APPOINTMENT CHARGE",
@@ -848,16 +832,22 @@
               "charge": "100.00"
             }
           ],
-          "disclaimersURL": "https://www.estes-express.com/myestes/rate-quote-estimate/terms"
+          "disclaimersURL": "https://estes-express-uat.estesinternal.com/myestes/rate-quote-estimate/terms",
+          "alerts": [
+            {
+              "messageId": "GSC0004",
+              "message": "Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time."
+            }
+          ]
         },
         {
           "serviceLevelId": "94",
           "serviceLevelText": "Volume and Truckload Basic",
-          "quoteId": "VVRKVD7",
+          "quoteId": "VS6GWXZ",
           "rateFound": true,
           "dates": {
-            "quoteExpiration": "2026-01-29-01.00.00.000000",
-            "transitDeliveryDate": "2025-12-31",
+            "quoteExpiration": "2026-02-02-01.00.00.000000",
+            "transitDeliveryDate": "2026-01-05",
             "transitDeliveryTime": "17:00"
           },
           "transitDetails": {
@@ -900,22 +890,22 @@
             "ratedCube": ".00",
             "ratedLinearFeet": 7
           },
-          "chargeItems": [
+          "disclaimersURL": "https://estes-express-uat.estesinternal.com/myestes/rate-quote-estimate/terms",
+          "alerts": [
             {
-              "description": "Tare Weight Charge - 10lbs",
-              "charge": "0.00"
+              "messageId": "GSC0004",
+              "message": "Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time."
             }
-          ],
-          "disclaimersURL": "https://www.estes-express.com/myestes/rate-quote-estimate/terms"
+          ]
         },
         {
           "serviceLevelId": "92",
           "serviceLevelText": "Guaranteed Volume and Truckload Standard",
-          "quoteId": "SVRKVD7",
+          "quoteId": "SS6GWXZ",
           "rateFound": true,
           "dates": {
-            "quoteExpiration": "2025-12-29-16.00.00.000000",
-            "transitDeliveryDate": "2025-12-31",
+            "quoteExpiration": "2026-01-02-16.00.00.000000",
+            "transitDeliveryDate": "2026-01-05",
             "transitDeliveryTime": "17:00"
           },
           "transitDetails": {
@@ -958,22 +948,22 @@
             "ratedCube": ".00",
             "ratedLinearFeet": 7
           },
-          "chargeItems": [
+          "disclaimersURL": "https://estes-express-uat.estesinternal.com/myestes/rate-quote-estimate/terms",
+          "alerts": [
             {
-              "description": "Tare Weight Charge - 10lbs",
-              "charge": "0.00"
+              "messageId": "GSC0004",
+              "message": "Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time."
             }
-          ],
-          "disclaimersURL": "https://www.estes-express.com/myestes/rate-quote-estimate/terms"
+          ]
         },
         {
           "serviceLevelId": "93",
           "serviceLevelText": "Guaranteed Volume and Truckload Economy",
-          "quoteId": "EVRKVD7",
+          "quoteId": "ES6GWXZ",
           "rateFound": true,
           "dates": {
-            "quoteExpiration": "2025-12-29-16.00.00.000000",
-            "transitDeliveryDate": "2026-01-02",
+            "quoteExpiration": "2026-01-02-16.00.00.000000",
+            "transitDeliveryDate": "2026-01-06",
             "transitDeliveryTime": "17:00"
           },
           "transitDetails": {
@@ -1016,22 +1006,22 @@
             "ratedCube": ".00",
             "ratedLinearFeet": 7
           },
-          "chargeItems": [
+          "disclaimersURL": "https://estes-express-uat.estesinternal.com/myestes/rate-quote-estimate/terms",
+          "alerts": [
             {
-              "description": "Tare Weight Charge - 10lbs",
-              "charge": "0.00"
+              "messageId": "GSC0004",
+              "message": "Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time."
             }
-          ],
-          "disclaimersURL": "https://www.estes-express.com/myestes/rate-quote-estimate/terms"
+          ]
         },
         {
           "serviceLevelId": "97",
           "serviceLevelText": "Guaranteed Exclusive Use",
-          "quoteId": "XVRKVD7",
+          "quoteId": "XS6GWXZ",
           "rateFound": true,
           "dates": {
-            "quoteExpiration": "2025-12-29-16.00.00.000000",
-            "transitDeliveryDate": "2025-12-31",
+            "quoteExpiration": "2026-01-02-16.00.00.000000",
+            "transitDeliveryDate": "2026-01-05",
             "transitDeliveryTime": "17:00"
           },
           "transitDetails": {
@@ -1080,7 +1070,13 @@
               "charge": "1195.00"
             }
           ],
-          "disclaimersURL": "https://www.estes-express.com/myestes/rate-quote-estimate/terms"
+          "disclaimersURL": "https://estes-express-uat.estesinternal.com/myestes/rate-quote-estimate/terms",
+          "alerts": [
+            {
+              "messageId": "GSC0004",
+              "message": "Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time."
+            }
+          ]
         }
       ],
       "error": {
@@ -1093,12 +1089,12 @@
 }
 
 {
-  "timestamp": "2025-12-30T00:44:31.245Z",
+  "timestamp": "2026-01-02T22:58:55.351Z",
   "event": "quote-response",
-  "curl": "curl --location --request POST 'https://cloudapi.estes-express.com/v1/rate-quotes' \\\n+--header 'apikey: SaTrn7vp5yU3Gqn8tI2eFg1l56oP1X4s' \\\n+--header 'Authorization: Bearer <REDACTED>' \\\n+--header 'Content-Type: application/json' \\\n+--data-raw '",
+  "curl": "curl --location --request POST 'https://uat-cloudapi.estes-express.com/v1/rate-quotes' \\\n+--header 'apikey: pjHf8SHvAk61ypg8kGNgMAITx77hKWn3' \\\n+--header 'Authorization: Bearer <REDACTED>' \\\n+--header 'Content-Type: application/json' \\\n+--data-raw '",
   "request": {
     "quoteRequest": {
-      "shipDate": "2025-12-30T00:00:00.000Z",
+      "shipDate": "2026-01-02T00:00:00.000Z",
       "serviceLevels": [
         "ALL"
       ],
@@ -1290,7 +1286,7 @@
   "response": {
     "statusCode": 200,
     "headers": {
-      "date": "Tue, 30 Dec 2025 00:44:31 GMT",
+      "date": "Fri, 02 Jan 2026 22:58:55 GMT",
       "content-type": "application/json",
       "transfer-encoding": "chunked",
       "connection": "keep-alive",
@@ -1301,22 +1297,22 @@
       "expires": "0",
       "x-frame-options": "DENY",
       "server": "kong/3.12.0.0-enterprise-edition",
-      "x-kong-upstream-latency": "4404",
-      "x-kong-proxy-latency": "2",
+      "x-kong-upstream-latency": "5274",
+      "x-kong-proxy-latency": "3",
       "via": "1.1 kong/3.12.0.0-enterprise-edition",
-      "x-kong-request-id": "1386e107ca8d372737cd96685825342f"
+      "x-kong-request-id": "f205ad43577921012c00da53b500184c"
     },
-    "rawBody": "{\"data\":[{\"serviceLevelId\":\"99\",\"serviceLevelText\":\"LTL Standard Transit\",\"quoteId\":\"LVRKVD6\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2025-12-30-01.00.00.000000\",\"transitDeliveryDate\":\"2025-12-31\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"158.06\",\"totalShipmentWeight\":160,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":2,\"ratedAccessorials\":[{\"code\":\"FSC\",\"description\":\"Fuel Surcharge\",\"charge\":\"35.06\"}]},\"lineItemCharges\":[{\"description\":\"20\\\" NOTHCED VERTICAL BLADE - DEGELMAN/KINZE\",\"classification\":\"92.5\",\"weight\":10,\"rate\":\".00\",\"charge\":\"123.00\"},{\"description\":\"Notched Disc Blade, Standard Concavity, 20\\\" x 5 mm\",\"classification\":\"92.5\",\"weight\":16,\"rate\":\".00\",\"charge\":\".00\"},{\"description\":\"Sickle Blade, Mower Conditioner, 10 pack\",\"classification\":\"92.5\",\"weight\":12,\"rate\":\".00\",\"charge\":\".00\"}],\"chargeItems\":[{\"description\":\"Commodity Total\",\"charge\":\"123.00\"},{\"description\":\"Tare Weight Charge - 122lbs\",\"charge\":\"0.00\"},{\"description\":\"Fuel Surcharge 28.50%\",\"charge\":\"35.06\"}],\"disclaimersURL\":\"https://www.estes-express.com/myestes/rate-quote-estimate/terms\",\"alerts\":[{\"messageId\":\"GSC0203\",\"message\":\"For one or more Handling Units, the Tare Weight value was updated to account for the associated Handling Units provided weight.\"}]},{\"serviceLevelId\":\"98\",\"serviceLevelText\":\"Guaranteed LTL Standard Transit: 5PM\",\"quoteId\":\"1VRKVD6\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2025-12-29-16.00.00.000000\",\"transitDeliveryDate\":\"2025-12-31\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"218.06\",\"totalShipmentWeight\":160,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":2,\"ratedAccessorials\":[{\"code\":\"FSC\",\"description\":\"Fuel Surcharge\",\"charge\":\"35.06\"}]},\"lineItemCharges\":[{\"description\":\"20\\\" NOTHCED VERTICAL BLADE - DEGELMAN/KINZE\",\"classification\":\"92.5\",\"weight\":10,\"rate\":\".00\",\"charge\":\"123.00\"},{\"description\":\"Notched Disc Blade, Standard Concavity, 20\\\" x 5 mm\",\"classification\":\"92.5\",\"weight\":16,\"rate\":\".00\",\"charge\":\".00\"},{\"description\":\"Sickle Blade, Mower Conditioner, 10 pack\",\"classification\":\"92.5\",\"weight\":12,\"rate\":\".00\",\"charge\":\".00\"}],\"chargeItems\":[{\"description\":\"Commodity Total\",\"charge\":\"123.00\"},{\"description\":\"Tare Weight Charge - 122lbs\",\"charge\":\"0.00\"},{\"description\":\"Fuel Surcharge 28.50%\",\"charge\":\"35.06\"},{\"description\":\"Service Level Adjustment\",\"charge\":\"60.00\"}],\"disclaimersURL\":\"https://www.estes-express.com/myestes/rate-quote-estimate/terms\",\"alerts\":[{\"messageId\":\"GSC0203\",\"message\":\"For one or more Handling Units, the Tare Weight value was updated to account for the associated Handling Units provided weight.\"}]},{\"serviceLevelId\":\"96\",\"serviceLevelText\":\"Guaranteed LTL Standard Transit: 12PM\",\"quoteId\":\"2VRKVD6\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2025-12-29-16.00.00.000000\",\"transitDeliveryDate\":\"2025-12-31\",\"transitDeliveryTime\":\"12:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"258.06\",\"totalShipmentWeight\":160,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":2,\"ratedAccessorials\":[{\"code\":\"FSC\",\"description\":\"Fuel Surcharge\",\"charge\":\"35.06\"}]},\"lineItemCharges\":[{\"description\":\"20\\\" NOTHCED VERTICAL BLADE - DEGELMAN/KINZE\",\"classification\":\"92.5\",\"weight\":10,\"rate\":\".00\",\"charge\":\"123.00\"},{\"description\":\"Notched Disc Blade, Standard Concavity, 20\\\" x 5 mm\",\"classification\":\"92.5\",\"weight\":16,\"rate\":\".00\",\"charge\":\".00\"},{\"description\":\"Sickle Blade, Mower Conditioner, 10 pack\",\"classification\":\"92.5\",\"weight\":12,\"rate\":\".00\",\"charge\":\".00\"}],\"chargeItems\":[{\"description\":\"Commodity Total\",\"charge\":\"123.00\"},{\"description\":\"Tare Weight Charge - 122lbs\",\"charge\":\"0.00\"},{\"description\":\"Fuel Surcharge 28.50%\",\"charge\":\"35.06\"},{\"description\":\"Service Level Adjustment\",\"charge\":\"100.00\"}],\"disclaimersURL\":\"https://www.estes-express.com/myestes/rate-quote-estimate/terms\",\"alerts\":[{\"messageId\":\"GSC0203\",\"message\":\"For one or more Handling Units, the Tare Weight value was updated to account for the associated Handling Units provided weight.\"}]},{\"serviceLevelId\":\"95\",\"serviceLevelText\":\"Guaranteed LTL Standard Transit: 10AM\",\"quoteId\":\"3VRKVD6\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2025-12-29-16.00.00.000000\",\"transitDeliveryDate\":\"2025-12-31\",\"transitDeliveryTime\":\"10:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"298.06\",\"totalShipmentWeight\":160,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":2,\"ratedAccessorials\":[{\"code\":\"FSC\",\"description\":\"Fuel Surcharge\",\"charge\":\"35.06\"}]},\"lineItemCharges\":[{\"description\":\"20\\\" NOTHCED VERTICAL BLADE - DEGELMAN/KINZE\",\"classification\":\"92.5\",\"weight\":10,\"rate\":\".00\",\"charge\":\"123.00\"},{\"description\":\"Notched Disc Blade, Standard Concavity, 20\\\" x 5 mm\",\"classification\":\"92.5\",\"weight\":16,\"rate\":\".00\",\"charge\":\".00\"},{\"description\":\"Sickle Blade, Mower Conditioner, 10 pack\",\"classification\":\"92.5\",\"weight\":12,\"rate\":\".00\",\"charge\":\".00\"}],\"chargeItems\":[{\"description\":\"Commodity Total\",\"charge\":\"123.00\"},{\"description\":\"Tare Weight Charge - 122lbs\",\"charge\":\"0.00\"},{\"description\":\"Fuel Surcharge 28.50%\",\"charge\":\"35.06\"},{\"description\":\"Service Level Adjustment\",\"charge\":\"140.00\"}],\"disclaimersURL\":\"https://www.estes-express.com/myestes/rate-quote-estimate/terms\",\"alerts\":[{\"messageId\":\"GSC0203\",\"message\":\"For one or more Handling Units, the Tare Weight value was updated to account for the associated Handling Units provided weight.\"}]},{\"serviceLevelId\":\"90\",\"serviceLevelText\":\"Estes Retail Guarantee\",\"quoteId\":\"RVRKVD6\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2025-12-29-16.00.00.000000\",\"transitDeliveryDate\":\"2025-12-31\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"258.06\",\"totalShipmentWeight\":160,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":2,\"ratedAccessorials\":[{\"code\":\"FSC\",\"description\":\"Fuel Surcharge\",\"charge\":\"35.06\"},{\"code\":\"APT\",\"description\":\"APPOINTMENT CHARGE\",\"charge\":\".00\"}]},\"lineItemCharges\":[{\"description\":\"20\\\" NOTHCED VERTICAL BLADE - DEGELMAN/KINZE\",\"classification\":\"92.5\",\"weight\":10,\"rate\":\".00\",\"charge\":\"123.00\"},{\"description\":\"Notched Disc Blade, Standard Concavity, 20\\\" x 5 mm\",\"classification\":\"92.5\",\"weight\":16,\"rate\":\".00\",\"charge\":\".00\"},{\"description\":\"Sickle Blade, Mower Conditioner, 10 pack\",\"classification\":\"92.5\",\"weight\":12,\"rate\":\".00\",\"charge\":\".00\"}],\"chargeItems\":[{\"description\":\"Commodity Total\",\"charge\":\"123.00\"},{\"description\":\"Tare Weight Charge - 122lbs\",\"charge\":\"0.00\"},{\"description\":\"Fuel Surcharge 28.50%\",\"charge\":\"35.06\"},{\"description\":\"APPOINTMENT CHARGE\",\"charge\":\"0.00\"},{\"description\":\"Service Level Adjustment\",\"charge\":\"100.00\"}],\"disclaimersURL\":\"https://www.estes-express.com/myestes/rate-quote-estimate/terms\",\"alerts\":[{\"messageId\":\"GSC0203\",\"message\":\"For one or more Handling Units, the Tare Weight value was updated to account for the associated Handling Units provided weight.\"}]},{\"serviceLevelId\":\"94\",\"serviceLevelText\":\"Volume and Truckload Basic\",\"quoteId\":\"VVRKVD6\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2026-01-29-01.00.00.000000\",\"transitDeliveryDate\":\"2025-12-31\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"325.00\",\"totalShipmentWeight\":160,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":7},\"chargeItems\":[{\"description\":\"Tare Weight Charge - 122lbs\",\"charge\":\"0.00\"}],\"disclaimersURL\":\"https://www.estes-express.com/myestes/rate-quote-estimate/terms\"},{\"serviceLevelId\":\"92\",\"serviceLevelText\":\"Guaranteed Volume and Truckload Standard\",\"quoteId\":\"SVRKVD6\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2025-12-29-16.00.00.000000\",\"transitDeliveryDate\":\"2025-12-31\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"455.00\",\"totalShipmentWeight\":160,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":7},\"chargeItems\":[{\"description\":\"Tare Weight Charge - 122lbs\",\"charge\":\"0.00\"}],\"disclaimersURL\":\"https://www.estes-express.com/myestes/rate-quote-estimate/terms\"},{\"serviceLevelId\":\"93\",\"serviceLevelText\":\"Guaranteed Volume and Truckload Economy\",\"quoteId\":\"EVRKVD6\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2025-12-29-16.00.00.000000\",\"transitDeliveryDate\":\"2026-01-02\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"422.50\",\"totalShipmentWeight\":160,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":7},\"chargeItems\":[{\"description\":\"Tare Weight Charge - 122lbs\",\"charge\":\"0.00\"}],\"disclaimersURL\":\"https://www.estes-express.com/myestes/rate-quote-estimate/terms\"},{\"serviceLevelId\":\"97\",\"serviceLevelText\":\"Guaranteed Exclusive Use\",\"quoteId\":\"XVRKVD6\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2025-12-29-16.00.00.000000\",\"transitDeliveryDate\":\"2025-12-31\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"1195.00\",\"totalShipmentWeight\":160,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":2},\"chargeItems\":[{\"description\":\"Commodity Total\",\"charge\":\"1195.00\"}],\"disclaimersURL\":\"https://www.estes-express.com/myestes/rate-quote-estimate/terms\",\"alerts\":[{\"messageId\":\"GSC0203\",\"message\":\"For one or more Handling Units, the Tare Weight value was updated to account for the associated Handling Units provided weight.\"}]}],\"error\":{\"code\":0,\"message\":\"\",\"details\":\"\"}}",
+    "rawBody": "{\"data\":[{\"serviceLevelId\":\"99\",\"serviceLevelText\":\"LTL Standard Transit\",\"quoteId\":\"LS6GWX2\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2026-01-03-01.00.00.000000\",\"transitDeliveryDate\":\"2026-01-05\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"157.81\",\"totalShipmentWeight\":160,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":2,\"ratedAccessorials\":[{\"code\":\"FSC\",\"description\":\"Fuel Surcharge\",\"charge\":\"34.81\"}]},\"lineItemCharges\":[{\"description\":\"20\\\" NOTHCED VERTICAL BLADE - DEGELMAN/KINZE\",\"classification\":\"92.5\",\"weight\":10,\"rate\":\".00\",\"charge\":\"123.00\"},{\"description\":\"Notched Disc Blade, Standard Concavity, 20\\\" x 5 mm\",\"classification\":\"92.5\",\"weight\":16,\"rate\":\".00\",\"charge\":\".00\"},{\"description\":\"Sickle Blade, Mower Conditioner, 10 pack\",\"classification\":\"92.5\",\"weight\":12,\"rate\":\".00\",\"charge\":\".00\"}],\"chargeItems\":[{\"description\":\"Commodity Total\",\"charge\":\"123.00\"},{\"description\":\"Tare Weight Charge - 122lbs\",\"charge\":\"0.00\"},{\"description\":\"Fuel Surcharge 28.30%\",\"charge\":\"34.81\"}],\"disclaimersURL\":\"https://estes-express-uat.estesinternal.com/myestes/rate-quote-estimate/terms\",\"alerts\":[{\"messageId\":\"GSC0203\",\"message\":\"For one or more Handling Units, the Tare Weight value was updated to account for the associated Handling Units provided weight.\"},{\"messageId\":\"GSC0004\",\"message\":\"Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time.\"}]},{\"serviceLevelId\":\"98\",\"serviceLevelText\":\"Guaranteed LTL Standard Transit: 5PM\",\"quoteId\":\"1S6GWX2\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2026-01-02-16.00.00.000000\",\"transitDeliveryDate\":\"2026-01-05\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"217.81\",\"totalShipmentWeight\":160,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":2,\"ratedAccessorials\":[{\"code\":\"FSC\",\"description\":\"Fuel Surcharge\",\"charge\":\"34.81\"}]},\"lineItemCharges\":[{\"description\":\"20\\\" NOTHCED VERTICAL BLADE - DEGELMAN/KINZE\",\"classification\":\"92.5\",\"weight\":10,\"rate\":\".00\",\"charge\":\"123.00\"},{\"description\":\"Notched Disc Blade, Standard Concavity, 20\\\" x 5 mm\",\"classification\":\"92.5\",\"weight\":16,\"rate\":\".00\",\"charge\":\".00\"},{\"description\":\"Sickle Blade, Mower Conditioner, 10 pack\",\"classification\":\"92.5\",\"weight\":12,\"rate\":\".00\",\"charge\":\".00\"}],\"chargeItems\":[{\"description\":\"Commodity Total\",\"charge\":\"123.00\"},{\"description\":\"Tare Weight Charge - 122lbs\",\"charge\":\"0.00\"},{\"description\":\"Fuel Surcharge 28.30%\",\"charge\":\"34.81\"},{\"description\":\"Service Level Adjustment\",\"charge\":\"60.00\"}],\"disclaimersURL\":\"https://estes-express-uat.estesinternal.com/myestes/rate-quote-estimate/terms\",\"alerts\":[{\"messageId\":\"GSC0203\",\"message\":\"For one or more Handling Units, the Tare Weight value was updated to account for the associated Handling Units provided weight.\"},{\"messageId\":\"GSC0004\",\"message\":\"Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time.\"}]},{\"serviceLevelId\":\"96\",\"serviceLevelText\":\"Guaranteed LTL Standard Transit: 12PM\",\"quoteId\":\"2S6GWX2\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2026-01-02-16.00.00.000000\",\"transitDeliveryDate\":\"2026-01-05\",\"transitDeliveryTime\":\"12:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"257.81\",\"totalShipmentWeight\":160,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":2,\"ratedAccessorials\":[{\"code\":\"FSC\",\"description\":\"Fuel Surcharge\",\"charge\":\"34.81\"}]},\"lineItemCharges\":[{\"description\":\"20\\\" NOTHCED VERTICAL BLADE - DEGELMAN/KINZE\",\"classification\":\"92.5\",\"weight\":10,\"rate\":\".00\",\"charge\":\"123.00\"},{\"description\":\"Notched Disc Blade, Standard Concavity, 20\\\" x 5 mm\",\"classification\":\"92.5\",\"weight\":16,\"rate\":\".00\",\"charge\":\".00\"},{\"description\":\"Sickle Blade, Mower Conditioner, 10 pack\",\"classification\":\"92.5\",\"weight\":12,\"rate\":\".00\",\"charge\":\".00\"}],\"chargeItems\":[{\"description\":\"Commodity Total\",\"charge\":\"123.00\"},{\"description\":\"Tare Weight Charge - 122lbs\",\"charge\":\"0.00\"},{\"description\":\"Fuel Surcharge 28.30%\",\"charge\":\"34.81\"},{\"description\":\"Service Level Adjustment\",\"charge\":\"100.00\"}],\"disclaimersURL\":\"https://estes-express-uat.estesinternal.com/myestes/rate-quote-estimate/terms\",\"alerts\":[{\"messageId\":\"GSC0203\",\"message\":\"For one or more Handling Units, the Tare Weight value was updated to account for the associated Handling Units provided weight.\"},{\"messageId\":\"GSC0004\",\"message\":\"Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time.\"}]},{\"serviceLevelId\":\"95\",\"serviceLevelText\":\"Guaranteed LTL Standard Transit: 10AM\",\"quoteId\":\"3S6GWX2\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2026-01-02-16.00.00.000000\",\"transitDeliveryDate\":\"2026-01-05\",\"transitDeliveryTime\":\"10:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"297.81\",\"totalShipmentWeight\":160,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":2,\"ratedAccessorials\":[{\"code\":\"FSC\",\"description\":\"Fuel Surcharge\",\"charge\":\"34.81\"}]},\"lineItemCharges\":[{\"description\":\"20\\\" NOTHCED VERTICAL BLADE - DEGELMAN/KINZE\",\"classification\":\"92.5\",\"weight\":10,\"rate\":\".00\",\"charge\":\"123.00\"},{\"description\":\"Notched Disc Blade, Standard Concavity, 20\\\" x 5 mm\",\"classification\":\"92.5\",\"weight\":16,\"rate\":\".00\",\"charge\":\".00\"},{\"description\":\"Sickle Blade, Mower Conditioner, 10 pack\",\"classification\":\"92.5\",\"weight\":12,\"rate\":\".00\",\"charge\":\".00\"}],\"chargeItems\":[{\"description\":\"Commodity Total\",\"charge\":\"123.00\"},{\"description\":\"Tare Weight Charge - 122lbs\",\"charge\":\"0.00\"},{\"description\":\"Fuel Surcharge 28.30%\",\"charge\":\"34.81\"},{\"description\":\"Service Level Adjustment\",\"charge\":\"140.00\"}],\"disclaimersURL\":\"https://estes-express-uat.estesinternal.com/myestes/rate-quote-estimate/terms\",\"alerts\":[{\"messageId\":\"GSC0203\",\"message\":\"For one or more Handling Units, the Tare Weight value was updated to account for the associated Handling Units provided weight.\"},{\"messageId\":\"GSC0004\",\"message\":\"Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time.\"}]},{\"serviceLevelId\":\"90\",\"serviceLevelText\":\"Estes Retail Guarantee\",\"quoteId\":\"RS6GWX2\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2026-01-02-16.00.00.000000\",\"transitDeliveryDate\":\"2026-01-05\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"257.81\",\"totalShipmentWeight\":160,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":2,\"ratedAccessorials\":[{\"code\":\"FSC\",\"description\":\"Fuel Surcharge\",\"charge\":\"34.81\"},{\"code\":\"APT\",\"description\":\"APPOINTMENT CHARGE\",\"charge\":\".00\"}]},\"lineItemCharges\":[{\"description\":\"20\\\" NOTHCED VERTICAL BLADE - DEGELMAN/KINZE\",\"classification\":\"92.5\",\"weight\":10,\"rate\":\".00\",\"charge\":\"123.00\"},{\"description\":\"Notched Disc Blade, Standard Concavity, 20\\\" x 5 mm\",\"classification\":\"92.5\",\"weight\":16,\"rate\":\".00\",\"charge\":\".00\"},{\"description\":\"Sickle Blade, Mower Conditioner, 10 pack\",\"classification\":\"92.5\",\"weight\":12,\"rate\":\".00\",\"charge\":\".00\"}],\"chargeItems\":[{\"description\":\"Commodity Total\",\"charge\":\"123.00\"},{\"description\":\"Tare Weight Charge - 122lbs\",\"charge\":\"0.00\"},{\"description\":\"Fuel Surcharge 28.30%\",\"charge\":\"34.81\"},{\"description\":\"APPOINTMENT CHARGE\",\"charge\":\"0.00\"},{\"description\":\"Service Level Adjustment\",\"charge\":\"100.00\"}],\"disclaimersURL\":\"https://estes-express-uat.estesinternal.com/myestes/rate-quote-estimate/terms\",\"alerts\":[{\"messageId\":\"GSC0203\",\"message\":\"For one or more Handling Units, the Tare Weight value was updated to account for the associated Handling Units provided weight.\"},{\"messageId\":\"GSC0004\",\"message\":\"Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time.\"}]},{\"serviceLevelId\":\"94\",\"serviceLevelText\":\"Volume and Truckload Basic\",\"quoteId\":\"VS6GWX2\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2026-02-02-01.00.00.000000\",\"transitDeliveryDate\":\"2026-01-05\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"325.00\",\"totalShipmentWeight\":160,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":7},\"disclaimersURL\":\"https://estes-express-uat.estesinternal.com/myestes/rate-quote-estimate/terms\",\"alerts\":[{\"messageId\":\"GSC0004\",\"message\":\"Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time.\"}]},{\"serviceLevelId\":\"92\",\"serviceLevelText\":\"Guaranteed Volume and Truckload Standard\",\"quoteId\":\"SS6GWX2\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2026-01-02-16.00.00.000000\",\"transitDeliveryDate\":\"2026-01-05\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"455.00\",\"totalShipmentWeight\":160,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":7},\"disclaimersURL\":\"https://estes-express-uat.estesinternal.com/myestes/rate-quote-estimate/terms\",\"alerts\":[{\"messageId\":\"GSC0004\",\"message\":\"Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time.\"}]},{\"serviceLevelId\":\"93\",\"serviceLevelText\":\"Guaranteed Volume and Truckload Economy\",\"quoteId\":\"ES6GWX2\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2026-01-02-16.00.00.000000\",\"transitDeliveryDate\":\"2026-01-06\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"422.50\",\"totalShipmentWeight\":160,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":7},\"disclaimersURL\":\"https://estes-express-uat.estesinternal.com/myestes/rate-quote-estimate/terms\",\"alerts\":[{\"messageId\":\"GSC0004\",\"message\":\"Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time.\"}]},{\"serviceLevelId\":\"97\",\"serviceLevelText\":\"Guaranteed Exclusive Use\",\"quoteId\":\"XS6GWX2\",\"rateFound\":true,\"dates\":{\"quoteExpiration\":\"2026-01-02-16.00.00.000000\",\"transitDeliveryDate\":\"2026-01-05\",\"transitDeliveryTime\":\"17:00\"},\"transitDetails\":{\"transitDays\":1,\"laneType\":\"DIRECT\",\"originTerminal\":\"144\",\"originTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"destinationTerminal\":\"144\",\"destinationTerminalInfo\":{\"name\":\"Waterloo\",\"address1\":\"2125 Commercial Street\",\"city\":\"Waterloo\",\"stateProvince\":\"IA\",\"postalCode\":\"50702\",\"country\":\"US\",\"contact\":{\"name\":\"Brian Wunn\",\"phone\":\"(319) 226-6414\",\"fax\":\"13192266420\"}},\"transitMessage\":\"\"},\"quoteRate\":{\"totalCharges\":\"1195.00\",\"totalShipmentWeight\":160,\"rateType\":\"Customer Pricing\",\"ratedCube\":\".00\",\"ratedLinearFeet\":2},\"chargeItems\":[{\"description\":\"Commodity Total\",\"charge\":\"1195.00\"}],\"disclaimersURL\":\"https://estes-express-uat.estesinternal.com/myestes/rate-quote-estimate/terms\",\"alerts\":[{\"messageId\":\"GSC0203\",\"message\":\"For one or more Handling Units, the Tare Weight value was updated to account for the associated Handling Units provided weight.\"},{\"messageId\":\"GSC0004\",\"message\":\"Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time.\"}]}],\"error\":{\"code\":0,\"message\":\"\",\"details\":\"\"}}",
     "json": {
       "data": [
         {
           "serviceLevelId": "99",
           "serviceLevelText": "LTL Standard Transit",
-          "quoteId": "LVRKVD6",
+          "quoteId": "LS6GWX2",
           "rateFound": true,
           "dates": {
-            "quoteExpiration": "2025-12-30-01.00.00.000000",
-            "transitDeliveryDate": "2025-12-31",
+            "quoteExpiration": "2026-01-03-01.00.00.000000",
+            "transitDeliveryDate": "2026-01-05",
             "transitDeliveryTime": "17:00"
           },
           "transitDetails": {
@@ -1353,7 +1349,7 @@
             "transitMessage": ""
           },
           "quoteRate": {
-            "totalCharges": "158.06",
+            "totalCharges": "157.81",
             "totalShipmentWeight": 160,
             "rateType": "Customer Pricing",
             "ratedCube": ".00",
@@ -1362,7 +1358,7 @@
               {
                 "code": "FSC",
                 "description": "Fuel Surcharge",
-                "charge": "35.06"
+                "charge": "34.81"
               }
             ]
           },
@@ -1399,26 +1395,30 @@
               "charge": "0.00"
             },
             {
-              "description": "Fuel Surcharge 28.50%",
-              "charge": "35.06"
+              "description": "Fuel Surcharge 28.30%",
+              "charge": "34.81"
             }
           ],
-          "disclaimersURL": "https://www.estes-express.com/myestes/rate-quote-estimate/terms",
+          "disclaimersURL": "https://estes-express-uat.estesinternal.com/myestes/rate-quote-estimate/terms",
           "alerts": [
             {
               "messageId": "GSC0203",
               "message": "For one or more Handling Units, the Tare Weight value was updated to account for the associated Handling Units provided weight."
+            },
+            {
+              "messageId": "GSC0004",
+              "message": "Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time."
             }
           ]
         },
         {
           "serviceLevelId": "98",
           "serviceLevelText": "Guaranteed LTL Standard Transit: 5PM",
-          "quoteId": "1VRKVD6",
+          "quoteId": "1S6GWX2",
           "rateFound": true,
           "dates": {
-            "quoteExpiration": "2025-12-29-16.00.00.000000",
-            "transitDeliveryDate": "2025-12-31",
+            "quoteExpiration": "2026-01-02-16.00.00.000000",
+            "transitDeliveryDate": "2026-01-05",
             "transitDeliveryTime": "17:00"
           },
           "transitDetails": {
@@ -1455,7 +1455,7 @@
             "transitMessage": ""
           },
           "quoteRate": {
-            "totalCharges": "218.06",
+            "totalCharges": "217.81",
             "totalShipmentWeight": 160,
             "rateType": "Customer Pricing",
             "ratedCube": ".00",
@@ -1464,7 +1464,7 @@
               {
                 "code": "FSC",
                 "description": "Fuel Surcharge",
-                "charge": "35.06"
+                "charge": "34.81"
               }
             ]
           },
@@ -1501,30 +1501,34 @@
               "charge": "0.00"
             },
             {
-              "description": "Fuel Surcharge 28.50%",
-              "charge": "35.06"
+              "description": "Fuel Surcharge 28.30%",
+              "charge": "34.81"
             },
             {
               "description": "Service Level Adjustment",
               "charge": "60.00"
             }
           ],
-          "disclaimersURL": "https://www.estes-express.com/myestes/rate-quote-estimate/terms",
+          "disclaimersURL": "https://estes-express-uat.estesinternal.com/myestes/rate-quote-estimate/terms",
           "alerts": [
             {
               "messageId": "GSC0203",
               "message": "For one or more Handling Units, the Tare Weight value was updated to account for the associated Handling Units provided weight."
+            },
+            {
+              "messageId": "GSC0004",
+              "message": "Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time."
             }
           ]
         },
         {
           "serviceLevelId": "96",
           "serviceLevelText": "Guaranteed LTL Standard Transit: 12PM",
-          "quoteId": "2VRKVD6",
+          "quoteId": "2S6GWX2",
           "rateFound": true,
           "dates": {
-            "quoteExpiration": "2025-12-29-16.00.00.000000",
-            "transitDeliveryDate": "2025-12-31",
+            "quoteExpiration": "2026-01-02-16.00.00.000000",
+            "transitDeliveryDate": "2026-01-05",
             "transitDeliveryTime": "12:00"
           },
           "transitDetails": {
@@ -1561,7 +1565,7 @@
             "transitMessage": ""
           },
           "quoteRate": {
-            "totalCharges": "258.06",
+            "totalCharges": "257.81",
             "totalShipmentWeight": 160,
             "rateType": "Customer Pricing",
             "ratedCube": ".00",
@@ -1570,7 +1574,7 @@
               {
                 "code": "FSC",
                 "description": "Fuel Surcharge",
-                "charge": "35.06"
+                "charge": "34.81"
               }
             ]
           },
@@ -1607,30 +1611,34 @@
               "charge": "0.00"
             },
             {
-              "description": "Fuel Surcharge 28.50%",
-              "charge": "35.06"
+              "description": "Fuel Surcharge 28.30%",
+              "charge": "34.81"
             },
             {
               "description": "Service Level Adjustment",
               "charge": "100.00"
             }
           ],
-          "disclaimersURL": "https://www.estes-express.com/myestes/rate-quote-estimate/terms",
+          "disclaimersURL": "https://estes-express-uat.estesinternal.com/myestes/rate-quote-estimate/terms",
           "alerts": [
             {
               "messageId": "GSC0203",
               "message": "For one or more Handling Units, the Tare Weight value was updated to account for the associated Handling Units provided weight."
+            },
+            {
+              "messageId": "GSC0004",
+              "message": "Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time."
             }
           ]
         },
         {
           "serviceLevelId": "95",
           "serviceLevelText": "Guaranteed LTL Standard Transit: 10AM",
-          "quoteId": "3VRKVD6",
+          "quoteId": "3S6GWX2",
           "rateFound": true,
           "dates": {
-            "quoteExpiration": "2025-12-29-16.00.00.000000",
-            "transitDeliveryDate": "2025-12-31",
+            "quoteExpiration": "2026-01-02-16.00.00.000000",
+            "transitDeliveryDate": "2026-01-05",
             "transitDeliveryTime": "10:00"
           },
           "transitDetails": {
@@ -1667,7 +1675,7 @@
             "transitMessage": ""
           },
           "quoteRate": {
-            "totalCharges": "298.06",
+            "totalCharges": "297.81",
             "totalShipmentWeight": 160,
             "rateType": "Customer Pricing",
             "ratedCube": ".00",
@@ -1676,7 +1684,7 @@
               {
                 "code": "FSC",
                 "description": "Fuel Surcharge",
-                "charge": "35.06"
+                "charge": "34.81"
               }
             ]
           },
@@ -1713,30 +1721,34 @@
               "charge": "0.00"
             },
             {
-              "description": "Fuel Surcharge 28.50%",
-              "charge": "35.06"
+              "description": "Fuel Surcharge 28.30%",
+              "charge": "34.81"
             },
             {
               "description": "Service Level Adjustment",
               "charge": "140.00"
             }
           ],
-          "disclaimersURL": "https://www.estes-express.com/myestes/rate-quote-estimate/terms",
+          "disclaimersURL": "https://estes-express-uat.estesinternal.com/myestes/rate-quote-estimate/terms",
           "alerts": [
             {
               "messageId": "GSC0203",
               "message": "For one or more Handling Units, the Tare Weight value was updated to account for the associated Handling Units provided weight."
+            },
+            {
+              "messageId": "GSC0004",
+              "message": "Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time."
             }
           ]
         },
         {
           "serviceLevelId": "90",
           "serviceLevelText": "Estes Retail Guarantee",
-          "quoteId": "RVRKVD6",
+          "quoteId": "RS6GWX2",
           "rateFound": true,
           "dates": {
-            "quoteExpiration": "2025-12-29-16.00.00.000000",
-            "transitDeliveryDate": "2025-12-31",
+            "quoteExpiration": "2026-01-02-16.00.00.000000",
+            "transitDeliveryDate": "2026-01-05",
             "transitDeliveryTime": "17:00"
           },
           "transitDetails": {
@@ -1773,7 +1785,7 @@
             "transitMessage": ""
           },
           "quoteRate": {
-            "totalCharges": "258.06",
+            "totalCharges": "257.81",
             "totalShipmentWeight": 160,
             "rateType": "Customer Pricing",
             "ratedCube": ".00",
@@ -1782,7 +1794,7 @@
               {
                 "code": "FSC",
                 "description": "Fuel Surcharge",
-                "charge": "35.06"
+                "charge": "34.81"
               },
               {
                 "code": "APT",
@@ -1824,8 +1836,8 @@
               "charge": "0.00"
             },
             {
-              "description": "Fuel Surcharge 28.50%",
-              "charge": "35.06"
+              "description": "Fuel Surcharge 28.30%",
+              "charge": "34.81"
             },
             {
               "description": "APPOINTMENT CHARGE",
@@ -1836,22 +1848,26 @@
               "charge": "100.00"
             }
           ],
-          "disclaimersURL": "https://www.estes-express.com/myestes/rate-quote-estimate/terms",
+          "disclaimersURL": "https://estes-express-uat.estesinternal.com/myestes/rate-quote-estimate/terms",
           "alerts": [
             {
               "messageId": "GSC0203",
               "message": "For one or more Handling Units, the Tare Weight value was updated to account for the associated Handling Units provided weight."
+            },
+            {
+              "messageId": "GSC0004",
+              "message": "Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time."
             }
           ]
         },
         {
           "serviceLevelId": "94",
           "serviceLevelText": "Volume and Truckload Basic",
-          "quoteId": "VVRKVD6",
+          "quoteId": "VS6GWX2",
           "rateFound": true,
           "dates": {
-            "quoteExpiration": "2026-01-29-01.00.00.000000",
-            "transitDeliveryDate": "2025-12-31",
+            "quoteExpiration": "2026-02-02-01.00.00.000000",
+            "transitDeliveryDate": "2026-01-05",
             "transitDeliveryTime": "17:00"
           },
           "transitDetails": {
@@ -1894,22 +1910,22 @@
             "ratedCube": ".00",
             "ratedLinearFeet": 7
           },
-          "chargeItems": [
+          "disclaimersURL": "https://estes-express-uat.estesinternal.com/myestes/rate-quote-estimate/terms",
+          "alerts": [
             {
-              "description": "Tare Weight Charge - 122lbs",
-              "charge": "0.00"
+              "messageId": "GSC0004",
+              "message": "Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time."
             }
-          ],
-          "disclaimersURL": "https://www.estes-express.com/myestes/rate-quote-estimate/terms"
+          ]
         },
         {
           "serviceLevelId": "92",
           "serviceLevelText": "Guaranteed Volume and Truckload Standard",
-          "quoteId": "SVRKVD6",
+          "quoteId": "SS6GWX2",
           "rateFound": true,
           "dates": {
-            "quoteExpiration": "2025-12-29-16.00.00.000000",
-            "transitDeliveryDate": "2025-12-31",
+            "quoteExpiration": "2026-01-02-16.00.00.000000",
+            "transitDeliveryDate": "2026-01-05",
             "transitDeliveryTime": "17:00"
           },
           "transitDetails": {
@@ -1952,22 +1968,22 @@
             "ratedCube": ".00",
             "ratedLinearFeet": 7
           },
-          "chargeItems": [
+          "disclaimersURL": "https://estes-express-uat.estesinternal.com/myestes/rate-quote-estimate/terms",
+          "alerts": [
             {
-              "description": "Tare Weight Charge - 122lbs",
-              "charge": "0.00"
+              "messageId": "GSC0004",
+              "message": "Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time."
             }
-          ],
-          "disclaimersURL": "https://www.estes-express.com/myestes/rate-quote-estimate/terms"
+          ]
         },
         {
           "serviceLevelId": "93",
           "serviceLevelText": "Guaranteed Volume and Truckload Economy",
-          "quoteId": "EVRKVD6",
+          "quoteId": "ES6GWX2",
           "rateFound": true,
           "dates": {
-            "quoteExpiration": "2025-12-29-16.00.00.000000",
-            "transitDeliveryDate": "2026-01-02",
+            "quoteExpiration": "2026-01-02-16.00.00.000000",
+            "transitDeliveryDate": "2026-01-06",
             "transitDeliveryTime": "17:00"
           },
           "transitDetails": {
@@ -2010,22 +2026,22 @@
             "ratedCube": ".00",
             "ratedLinearFeet": 7
           },
-          "chargeItems": [
+          "disclaimersURL": "https://estes-express-uat.estesinternal.com/myestes/rate-quote-estimate/terms",
+          "alerts": [
             {
-              "description": "Tare Weight Charge - 122lbs",
-              "charge": "0.00"
+              "messageId": "GSC0004",
+              "message": "Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time."
             }
-          ],
-          "disclaimersURL": "https://www.estes-express.com/myestes/rate-quote-estimate/terms"
+          ]
         },
         {
           "serviceLevelId": "97",
           "serviceLevelText": "Guaranteed Exclusive Use",
-          "quoteId": "XVRKVD6",
+          "quoteId": "XS6GWX2",
           "rateFound": true,
           "dates": {
-            "quoteExpiration": "2025-12-29-16.00.00.000000",
-            "transitDeliveryDate": "2025-12-31",
+            "quoteExpiration": "2026-01-02-16.00.00.000000",
+            "transitDeliveryDate": "2026-01-05",
             "transitDeliveryTime": "17:00"
           },
           "transitDetails": {
@@ -2074,11 +2090,15 @@
               "charge": "1195.00"
             }
           ],
-          "disclaimersURL": "https://www.estes-express.com/myestes/rate-quote-estimate/terms",
+          "disclaimersURL": "https://estes-express-uat.estesinternal.com/myestes/rate-quote-estimate/terms",
           "alerts": [
             {
               "messageId": "GSC0203",
               "message": "For one or more Handling Units, the Tare Weight value was updated to account for the associated Handling Units provided weight."
+            },
+            {
+              "messageId": "GSC0004",
+              "message": "Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time."
             }
           ]
         }

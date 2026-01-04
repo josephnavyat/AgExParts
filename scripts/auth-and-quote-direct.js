@@ -46,8 +46,8 @@ function postJson(urlString, body, headers = {}) {
   });
 }
 
-const authUrl = process.env.ESTES_AUTH_URL || 'https://cloudapi.estes-express.com/authenticate';
-const ratesUrl = process.env.ESTES_RATES_ENDPOINT || 'https://cloudapi.estes-express.com/v1/rate-quotes';
+const authUrl = process.env.ESTES_AUTH_URL  || '';
+const ratesUrl = process.env.ESTES_RATES_ENDPOINT || '';
 const apiKey = process.env.ESTES_API_KEY || '';
 const basicB64 = process.env.ESTES_STRING || '';
 

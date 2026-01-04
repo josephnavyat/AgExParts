@@ -371,7 +371,7 @@ export default function Navbar() {
       <nav id="nav" className={`nav ${scrolled ? 'scrolled' : ''}${showSearch ? ' nav--search-open' : ''}${navHidden ? ' nav--hidden' : ''}`}> 
         <div className="container nav-inner" style={{ flexWrap: 'wrap', alignItems: 'center' }}>
           <div className="brand">
-            <img src="/logo.png" alt="AgEx Parts logo" style={{ height: '80px', width: 'auto' }} />
+            <img src="/logo.png" alt="AgEx Parts logo" style={{ height: '60px', width: 'auto' }} />
             <h1 className="distressed" style={{ color: 'dark grey' }}>For your ideal PART</h1>
           </div>
           <div className="nav-cta" style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>

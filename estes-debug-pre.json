@@ -1,8 +1,8 @@
 {
-  "timestamp": "2025-12-30T00:44:26.424Z",
+  "timestamp": "2026-01-02T22:58:49.754Z",
   "payload": {
     "quoteRequest": {
-      "shipDate": "2025-12-30T00:00:00.000Z",
+      "shipDate": "2026-01-02T00:00:00.000Z",
       "serviceLevels": [
         "ALL"
       ],
@@ -58,28 +58,8 @@
             "isTurnable": true,
             "lineItems": [
               {
-                "description": "Sickle Blade, Mower Conditioner, 10 pack",
-                "weight": 12,
-                "pieces": 7,
-                "packagingType": "BX",
-                "classification": "92.5",
-                "nmfc": "",
-                "nmfcSub": "",
-                "isHazardous": false
-              },
-              {
-                "description": "20\" NOTHCED VERTICAL BLADE - DEGELMAN/KINZE",
-                "weight": 10,
-                "pieces": 6,
-                "packagingType": "BX",
-                "classification": "92.5",
-                "nmfc": "",
-                "nmfcSub": "",
-                "isHazardous": false
-              },
-              {
-                "description": "Notched Disc Blade, Standard Concavity, 20\" x 5 mm",
-                "weight": 15.9,
+                "description": "package",
+                "weight": 159.9,
                 "pieces": 1,
                 "packagingType": "BX",
                 "classification": "92.5",
@@ -91,7 +71,7 @@
           }
         ],
         "totalShipmentWeight": 170,
-        "totalPieces": 14
+        "totalPieces": 1
       },
       "accessorials": []
     },
@@ -157,28 +137,8 @@
           "isTurnable": true,
           "lineItems": [
             {
-              "description": "Sickle Blade, Mower Conditioner, 10 pack",
-              "weight": 12,
-              "pieces": 7,
-              "packagingType": "BX",
-              "classification": "92.5",
-              "nmfc": "",
-              "nmfcSub": "",
-              "isHazardous": false
-            },
-            {
-              "description": "20\" NOTHCED VERTICAL BLADE - DEGELMAN/KINZE",
-              "weight": 10,
-              "pieces": 6,
-              "packagingType": "BX",
-              "classification": "92.5",
-              "nmfc": "",
-              "nmfcSub": "",
-              "isHazardous": false
-            },
-            {
-              "description": "Notched Disc Blade, Standard Concavity, 20\" x 5 mm",
-              "weight": 15.9,
+              "description": "package",
+              "weight": 159.9,
               "pieces": 1,
               "packagingType": "BX",
               "classification": "92.5",
