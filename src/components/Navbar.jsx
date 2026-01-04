@@ -69,61 +69,14 @@ export default function Navbar() {
   const searchDebounce = useRef(null);
   const lastYRef = useRef(0);
 
-  // Scroll behavior:
-  // - collapse the secondary row + shrink logo after a bit
-  // - hide the whole navbar when scrolling down, show when scrolling up
-  useEffect(() => {
-    lastYRef.current = window.scrollY || 0;
-
-    const onScroll = () => {
-      const y = window.scrollY || 0;
-      setScrolled(y > 80);
-
-      // ignore tiny scroll jitter
-      const delta = Math.abs(y - lastYRef.current);
-      if (delta < 8) return;
-
-      const goingDown = y > lastYRef.current;
-      const pastThreshold = y > 120; // don't hide right at the top
-
-      // Keep visible while user is interacting with nav UI
-      const keepVisible = showSearch || machinePanelOpen || secondaryOpen;
-      if (keepVisible) {
-        setNavHidden(false);
-      } else {
-        if (goingDown && pastThreshold) setNavHidden(true);
-        else setNavHidden(false);
-      }
-
-      lastYRef.current = y;
-    };
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener('scroll', onScroll);
-  }, [showSearch, machinePanelOpen, secondaryOpen]);
-
-  // Keep body class in sync with collapsed state so CSS can adjust layout
-  useEffect(() => {
-    try {
-      if (scrolled) document.body.classList.add('nav-collapsed');
-      else document.body.classList.remove('nav-collapsed');
-    } catch (e) {}
-  }, [scrolled]);
-
-  // When navHidden toggles (user scrolled down far enough), add a body class
-  // so CSS can remove reserved padding and fully collapse the secondary nav.
-  useEffect(() => {
-    try {
-      if (navHidden) document.body.classList.add('nav-hidden');
-      else document.body.classList.remove('nav-hidden');
-    } catch (e) {}
-  }, [navHidden]);
-
   const { cart } = useCart();
   const cartCount = cart.items.reduce((sum, i) => sum + i.quantity, 0);
   const secondaryRef = useRef(null);
+  const machineWrapRef = useRef(null);
+  const machineCloseTimerRef = useRef(null);
   const toggleRef = useRef(null);
+  const panelRef = useRef(null);
+  const [panelLeft, setPanelLeft] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
@@ -335,7 +288,115 @@ export default function Navbar() {
     }
   }, []);
 
-  // Close secondary nav on route change
+  // Scroll behavior: add shadow when scrolled and hide navbar when scrolling down
+  useEffect(() => {
+    const lastYRef = { current: window.scrollY || 0 };
+    let raf = 0;
+    const onScroll = () => {
+      if (raf) return;
+      raf = window.requestAnimationFrame(() => {
+        raf = 0;
+        const y = window.scrollY || 0;
+        setScrolled(y > 10);
+
+        // Never hide while any overlay is open
+        if (suggestOpen || leftPanelOpen || secondaryOpen || showSearch) {
+          setNavHidden(false);
+          lastYRef.current = y;
+          return;
+        }
+
+        const last = lastYRef.current;
+        const delta = Math.abs(y - last);
+        const goingDown = y > last;
+
+        // Only react after a little movement to avoid jitter
+        if (delta > 6) {
+          if (goingDown && y > 120) setNavHidden(true);
+          if (!goingDown) setNavHidden(false);
+        }
+
+        if (y < 10) setNavHidden(false);
+        lastYRef.current = y;
+      });
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (raf) window.cancelAnimationFrame(raf);
+    };
+  }, [suggestOpen, leftPanelOpen, secondaryOpen, showSearch]);
+
+
+  
+  // Close machine dropdown on outside click / tap
+  useEffect(() => {
+    if (!machinePanelOpen) return;
+    const onDown = (e) => {
+      const el = machineWrapRef.current;
+      if (!el) return;
+      if (!el.contains(e.target)) setMachinePanelOpen(false);
+    };
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('touchstart', onDown, { passive: true });
+    return () => {
+      document.removeEventListener('mousedown', onDown);
+      document.removeEventListener('touchstart', onDown);
+    };
+  }, [machinePanelOpen]);
+
+  // Compute panel left position so it centers under the toggle and stays inside viewport
+  useEffect(() => {
+    if (!machinePanelOpen) {
+      // reset panelLeft when closed so CSS can fallback
+      setPanelLeft(null);
+      return;
+    }
+
+    const compute = () => {
+      try {
+        const wrap = machineWrapRef.current;
+        const panel = panelRef.current;
+        if (!wrap || !panel) return;
+        // find the trigger element (the link) inside wrap
+        const trigger = wrap.querySelector('.nav-manufacturers-toggle');
+        const triggerRect = trigger ? trigger.getBoundingClientRect() : wrap.getBoundingClientRect();
+        const panelRect = panel.getBoundingClientRect();
+        const viewportW = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+
+        // desired left so the panel center aligns with trigger center
+        const desiredLeft = Math.round((triggerRect.left + triggerRect.width / 2) - (panelRect.width / 2));
+
+        // clamp so panel stays within viewport with small margin
+        const margin = 12;
+        const minLeft = margin;
+        const maxLeft = Math.max(margin, viewportW - panelRect.width - margin);
+        const clamped = Math.min(Math.max(desiredLeft, minLeft), maxLeft);
+
+        // compute left relative to the wrap element's left (since panel is absolute inside wrap)
+        const wrapRect = wrap.getBoundingClientRect();
+        const leftRelative = Math.round(clamped - wrapRect.left);
+        setPanelLeft(leftRelative);
+      } catch (e) {
+        // ignore
+      }
+    };
+
+    // compute initially and on a small timeout to allow layout to settle
+    compute();
+    const t = setTimeout(compute, 60);
+
+    window.addEventListener('resize', compute);
+    window.addEventListener('scroll', compute, { passive: true });
+    return () => {
+      clearTimeout(t);
+      window.removeEventListener('resize', compute);
+      window.removeEventListener('scroll', compute);
+    };
+  }, [machinePanelOpen]);
+// Close secondary nav on route change
   useEffect(() => {
     setSecondaryOpen(false);
   }, [location.pathname]);
@@ -369,7 +430,7 @@ export default function Navbar() {
   return (
     <>
       <nav id="nav" className={`nav ${scrolled ? 'scrolled' : ''}${showSearch ? ' nav--search-open' : ''}${navHidden ? ' nav--hidden' : ''}`}> 
-        <div className="container nav-inner" style={{ flexWrap: 'wrap', alignItems: 'center' }}>
+        <div className="container nav-inner" style={{ alignItems: 'center' }}>
           <div className="brand">
             <img src="/logo.png" alt="AgEx Parts logo" style={{ height: '60px', width: 'auto' }} />
             <h1 className="distressed" style={{ color: 'dark grey' }}>For your ideal PART</h1>
@@ -575,22 +636,47 @@ export default function Navbar() {
               </div>
 
               {/* Browse by Machine (integrated manufacturer / machine type / model) */}
-              <div className="nav-manufacturers-wrapper" style={{ position: 'relative' }}>
+              <div
+                className="nav-manufacturers-wrapper"
+                ref={machineWrapRef}
+                style={{ position: 'relative' }}
+                onMouseEnter={() => {
+                  if (machineCloseTimerRef.current) clearTimeout(machineCloseTimerRef.current);
+                  setMachinePanelOpen(true);
+                }}
+                onMouseLeave={() => {
+                  if (machineCloseTimerRef.current) clearTimeout(machineCloseTimerRef.current);
+                  machineCloseTimerRef.current = setTimeout(() => setMachinePanelOpen(false), 140);
+                }}
+              >
                 <a
                   href="/machines"
                   className="nav-secondary-link nav-manufacturers-toggle"
                   onClick={async (e) => {
                     e.preventDefault();
+                    // Click opens the dropdown; it will close on mouse-leave or outside click.
+                    const willOpen = !machinePanelOpen;
                     setSecondaryOpen(true);
-                    // ensure nested mapping exists; reload if only flat lists present
                     if (manufacturers.length === 0 || Object.keys(machineTypes || {}).length === 0) await loadManufacturers();
                     setCategoriesOpen(false);
-                    setMachinePanelOpen((s) => !s);
+                    setMachinePanelOpen(willOpen);
                   }}
                 >
                   Browse by Machine
                 </a>
-                <div className={`nav-manufacturer-inline${machinePanelOpen ? ' open' : ''}`} style={{ position: 'absolute', left: 0, top: '100%', zIndex: 45, minWidth: 360, display: machinePanelOpen ? 'block' : 'none' }}>
+                <div
+                  ref={panelRef}
+                  className={`nav-manufacturer-inline${machinePanelOpen ? ' open' : ''}`}
+                  style={{
+                    position: 'absolute',
+                    left: panelLeft != null ? panelLeft : 0,
+                    top: '100%',
+                    zIndex: 45,
+                    minWidth: 360,
+                    display: machinePanelOpen ? 'block' : 'none',
+                    transform: 'none'
+                  }}
+                >
                   <div className="simple-gallery-filter-header" style={{ padding: '10px 12px 6px' }}>Browse Machines</div>
                   <div className="nav-manufacturer-row" style={{ padding: '12px' }}>
                     <select className="filter-select" value={selManufacturer} onChange={(e) => { const v = e.target.value; setSelManufacturer(v); setSelMachineType(''); setSelModel(''); }}>
