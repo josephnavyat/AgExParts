@@ -63,10 +63,13 @@ export default function CartPage() {
   // Replaced by shared QuantityInput component
   const { cart, dispatch, limitMap, showLimit } = useCart();
   // detect portrait orientation on narrow screens to avoid CSS specificity wars
-  const [isPortrait, setIsPortrait] = React.useState(() => (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width:420px) and (orientation: portrait)').matches) || false);
+  // Treat small screens (<= 900px) as the 'mobile' layout so the mobile qty
+  // controls render under each item (after the divider). This matches user
+  // expectation for phones and small tablets.
+  const [isPortrait, setIsPortrait] = React.useState(() => (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width:900px)').matches) || false);
   React.useEffect(() => {
     if (!window || !window.matchMedia) return;
-    const mq = window.matchMedia('(max-width:420px) and (orientation: portrait)');
+    const mq = window.matchMedia('(max-width:900px)');
     const onChange = (e) => setIsPortrait(e.matches);
     try { mq.addEventListener('change', onChange); } catch (e) { mq.addListener(onChange); }
     return () => { try { mq.removeEventListener('change', onChange); } catch (e) { mq.removeListener(onChange); } };
@@ -111,37 +114,14 @@ export default function CartPage() {
   return (
     <>
       <Navbar />
-      <div style={{ minHeight: '80vh', padding: '2rem', background: 'var(--bg)', boxSizing: 'border-box' }}>
-        <h2
-          className="distressed gallery-title"
-          style={{
-            textAlign: 'center',
-            marginBottom: '2rem',
-            color: '#222',
-            textShadow: '0 1px 4px #fff, 0 0px 1px #bbb',
-            fontSize: '2rem',
-            wordBreak: 'break-word',
-          }}
-        >
-          Shopping Cart
-        </h2>
+      <div className="page-wrapper" style={{ minHeight: '80vh' }}>
+        <h2 className="distressed gallery-title cart-page-title">Shopping Cart</h2>
         {cart.items.length === 0 ? (
-          <div style={{ textAlign: 'center', color: '#444', fontSize: '1.2rem', fontWeight: 500 }}>Your cart is empty.</div>
+          <div className="cart-empty">Your cart is empty.</div>
         ) : (
-          <div className="cart-page-content" style={{ maxWidth: 800, margin: '0 auto', background: '#fff', borderRadius: 16, boxShadow: '0 2px 12px rgba(0,0,0,0.10)', padding: '2rem', color: '#222', boxSizing: 'border-box', width: '100%' }}>
-            {/* Header row for columns: Item (left) and Price | Qty | Total (right) */}
-            {!isPortrait && (
-              <div className="cart-header-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', maxWidth: 800, margin: '0 auto', padding: '0 0.5rem 0.5rem 0.5rem', color: '#666', fontSize: '0.95rem', boxSizing: 'border-box' }}>
-                <div style={{ flex: 1 }} />
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <div style={{ minWidth: 100, textAlign: 'right' }}>Price</div>
-                  <div style={{ width: 120, textAlign: 'center' }}>Qty</div>
-                  <div style={{ minWidth: 110, textAlign: 'right' }}>Total</div>
-                </div>
-              </div>
-            )}
+          <div className="cart-page-content">
 
-            <div className="cart-cards" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div className="cart-cards">
               {cart.items.map(({ product, quantity }) => {
                 const price = Number(product.price);
                 const discountPerc = Number(product.discount_perc) || 0;
@@ -152,25 +132,17 @@ export default function CartPage() {
                 const lineTotal = (!isNaN(unitPrice) ? (unitPrice * quantity) : 0);
 
                 return (
-                  <div key={product.id} className="cart-card" style={{ display: 'flex', flexDirection: 'column', background: '#f8f8f8', borderRadius: 12, padding: '1rem', boxShadow: '0 1px 4px #eee', width: '100%' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, width: '100%' }}>
+                  <div key={product.id} className="cart-card">
+                    <div className="cart-card-row">
                       {product.image && (
-                        <img
-                          src={getImageUrl(product.image)}
-                          alt={product.name}
-                          style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 8, boxShadow: '0 1px 4px #ccc' }}
-                          loading="lazy"
-                          onError={e => { console.log('Image error:', product.image, getImageUrl(product.image)); e.currentTarget.src = '/logo.png'; }}
-                        />
+                        <img src={getImageUrl(product.image)} alt={product.name} className="cart-card-thumb" loading="lazy" onError={e => { console.log('Image error:', product.image, getImageUrl(product.image)); e.currentTarget.src = '/logo.png'; }} />
                       )}
 
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div className="cart-item-inner" style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                          <div className="cart-item-header" style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-                            <div style={{ minWidth: 0, flex: 1 }}>
-                              <span className="cart-product-name" style={{ fontWeight: 700, fontSize: '1.05rem', display: 'block', marginBottom: 6 }}>
-                                {product.name.length > 100 ? product.name.slice(0, 100) + '…' : product.name}
-                              </span>
+                      <div className="cart-card-body">
+                        <div className="cart-item-inner">
+                          <div className="cart-item-header">
+                            <div className="cart-item-main">
+                              <span className="cart-product-name">{product.name.length > 100 ? product.name.slice(0, 100) + '…' : product.name}</span>
                               {product.sku && (
                                 <span className="cart-product-sku" style={{ fontSize: '0.95rem', color: '#666', display: 'block', marginBottom: 2 }}>SKU: {product.sku}</span>
                               )}
@@ -180,145 +152,63 @@ export default function CartPage() {
                             </div>
 
                             {!isPortrait && (
-                              <div className="cart-desktop-controls" style={{ display: 'flex', alignItems: 'center', gap: 12, marginLeft: 12, flex: '0 0 auto' }}>
-                              <div className="cart-price" style={{ textAlign: 'right', minWidth: 100, fontWeight: 700, fontSize: '1.05rem' }}>
-                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                                  <div style={{ fontSize: '0.95rem', color: saleActive ? '#d32f2f' : '#222' }}>{isNaN(unitPrice) ? 'N/A' : `$${unitPrice.toFixed(2)}`}</div>
-                                  {saleActive && !isNaN(price) && (<div style={{ fontSize: '0.85rem', color: '#888', textDecoration: 'line-through' }}>${price.toFixed(2)}</div>)}
+                              <div className="cart-desktop-controls">
+                                <div className="cart-price">
+                                  <div className="cart-price-inner">
+                                    <div className={saleActive ? 'cart-price-current sale' : 'cart-price-current'}>{isNaN(unitPrice) ? 'N/A' : `$${unitPrice.toFixed(2)}`}</div>
+                                    {saleActive && !isNaN(price) && (<div className="cart-price-original">${price.toFixed(2)}</div>)}
+                                  </div>
                                 </div>
-                              </div>
-
-                              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 4 }}>
-                                <div className="cart-qty-controls" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                { /* Decrease */ }
-                                <button style={{ background: '#fff', color: '#333', border: '1px solid #d6d6d6', borderRadius: 6, width: 32, height: 32, fontWeight: 700, fontSize: '1.2rem', cursor: 'pointer' }} onClick={() => { dispatch({ type: 'SUBTRACT_FROM_CART', product }); }} aria-label="Decrease quantity">-</button>
-                                <QuantityInput initialValue={quantity} product={product} dispatch={dispatch} />
-                                { /* Increase - disable when at inventory */ }
-                                {(() => {
-                                  const available = Number(product.inventory ?? product.quantity ?? 0);
-                                  const existing = cart.items.find(i => i.product.id === product.id);
-                                  const current = existing ? existing.quantity : 0;
-                                  const isMaxed = Number.isFinite(available) && available > 0 && current >= available;
-                                  return (
-                                    <button
-                                      style={{
-                                        background: isMaxed ? '#f7f7f7' : '#fff',
-                                        color: isMaxed ? '#999' : '#333',
-                                        border: '1px solid #d6d6d6',
-                                        borderRadius: 6,
-                                        width: 32,
-                                        height: 32,
-                                        fontWeight: 700,
-                                        fontSize: '1.2rem',
-                                        cursor: isMaxed ? 'not-allowed' : 'pointer',
-                                      }}
-                                      onClick={() => {
-                                        if (isMaxed) return;
-                                        const desired = current + 1;
-                                        if (Number.isFinite(available) && available > 0 && desired > available) {
-                                          showLimit(product.id);
-                                          return;
-                                        }
-                                        dispatch({ type: 'ADD_TO_CART', product });
-                                      }}
-                                      aria-label="Increase quantity"
-                                      
-                                    >+
-                                    </button>
-                                  );
-                                })()}
+                                <div className="cart-qty-block">
+                                  <div className="cart-qty-controls">
+                                    <button className="qty-btn" onClick={() => { dispatch({ type: 'SUBTRACT_FROM_CART', product }); }} aria-label="Decrease quantity">-</button>
+                                    <QuantityInput initialValue={quantity} product={product} dispatch={dispatch} />
+                                    {(() => {
+                                      const available = Number(product.inventory ?? product.quantity ?? 0);
+                                      const existing = cart.items.find(i => i.product.id === product.id);
+                                      const current = existing ? existing.quantity : 0;
+                                      const isMaxed = Number.isFinite(available) && available > 0 && current >= available;
+                                      return (
+                                        <button className="qty-btn" onClick={() => {
+                                          if (isMaxed) return;
+                                          const desired = current + 1;
+                                          if (Number.isFinite(available) && available > 0 && desired > available) { showLimit(product.id); return; }
+                                          dispatch({ type: 'ADD_TO_CART', product });
+                                        }} aria-label="Increase quantity">+</button>
+                                      );
+                                    })()}
+                                  </div>
+                                  <div className="limit-wrapper">{limitMap[product.id] && <div className="limit-message" role="status" aria-live="polite">{limitMap[product.id]}</div>}</div>
+                                  <LimitTooltip productId={product.id} />
                                 </div>
-                                <div style={{ position: 'relative' }}>
-                                  {limitMap[product.id] && (
-                                    <div
-                                      role="status"
-                                      aria-live="polite"
-                                      style={{
-                                        position: 'absolute',
-                                        top: -34,
-                                        left: '50%',
-                                        transform: 'translateX(-50%)',
-                                        backgroundColor: '#d32f2f',
-                                        border: '1px solid #b71c1c',
-                                        color: '#ffffff',
-                                        WebkitTextFillColor: '#ffffff',
-                                        padding: '6px 8px',
-                                        borderRadius: 6,
-                                        fontSize: 12,
-                                        fontWeight: 700,
-                                        boxShadow: '0 6px 18px rgba(0,0,0,0.12)',
-                                        whiteSpace: 'nowrap',
-                                        zIndex: 9999,
-                                        pointerEvents: 'none',
-                                      }}
-                                    >
-                                      {limitMap[product.id]}
-                                    </div>
-                                  )}
-                                </div>
-                                                    <LimitTooltip productId={product.id} />
-                              </div>
-
-                              <div className="cart-line-total" style={{ textAlign: 'right', minWidth: 110, fontWeight: 800, fontSize: '1.05rem' }}>{isNaN(lineTotal) ? 'Total N/A' : `$${lineTotal.toFixed(2)}`}</div>
+                                <div className="cart-line-total">{isNaN(lineTotal) ? 'Total N/A' : `$${lineTotal.toFixed(2)}`}</div>
                               </div>
                             )}
                           </div>
 
-                          <hr className="cart-divider" style={{ border: 'none', borderTop: '1px solid rgba(0,0,0,0.06)', margin: 6 }} />
+                          <hr className="cart-divider" />
 
                           {isPortrait && (
-                            <div className="cart-mobile-summary" style={{ marginTop: 8, paddingTop: 8 }}>
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                <button className="mobile-qty-btn" aria-label="Decrease quantity" onClick={() => { dispatch({ type: 'SUBTRACT_FROM_CART', product }); }} style={{ width: 36, height: 36, borderRadius: 8, border: '1px solid #ddd', background: '#fff', fontWeight: 700 }}>−</button>
-                                <QuantityInput initialValue={quantity} product={product} dispatch={dispatch} updateOnBlurOnly={true} />
-                                <button className="mobile-qty-btn" aria-label="Increase quantity" onClick={() => {
-                                  const available = Number(product.inventory ?? product.quantity ?? 0);
-                                  const existing = cart.items.find(i => i.product.id === product.id);
-                                  const current = existing ? existing.quantity : 0;
-                                  const desired = current + 1;
-                                  const isMaxedMobile = Number.isFinite(available) && available > 0 && current >= available;
-                                  if (isMaxedMobile) {
-                                    return;
-                                  }
-                                  if (Number.isFinite(available) && available > 0 && desired > available) {
-                                    showLimit(product.id);
-                                    return;
-                                  }
-                                  dispatch({ type: 'ADD_TO_CART', product });
-                                }} style={{ width: 36, height: 36, borderRadius: 8, border: '1px solid #ddd', background: '#fff', fontWeight: 700, cursor: 'pointer' }}>+</button>
-                                <div style={{ position: 'relative' }}>
-                                  {limitMap[product.id] && (
-                                    <div
-                                      role="status"
-                                      aria-live="polite"
-                                      style={{
-                                        position: 'absolute',
-                                        top: -34,
-                                        left: '50%',
-                                        transform: 'translateX(-50%)',
-                                        backgroundColor: '#d32f2f',
-                                        border: '1px solid #b71c1c',
-                                        color: '#ffffff',
-                                        WebkitTextFillColor: '#ffffff',
-                                        padding: '6px 8px',
-                                        borderRadius: 6,
-                                        fontSize: 12,
-                                        fontWeight: 700,
-                                        boxShadow: '0 6px 18px rgba(0,0,0,0.12)',
-                                        whiteSpace: 'nowrap',
-                                        zIndex: 9999,
-                                        pointerEvents: 'none',
-                                      }}
-                                    >
-                                      {limitMap[product.id]}
-                                    </div>
-                                  )}
+                            <div className="cart-mobile-summary">
+                              <div className="cart-mobile-inner">
+                                <div className="cart-mobile-qty">
+                                  <button className="mobile-qty-btn" aria-label="Decrease quantity" onClick={() => { dispatch({ type: 'SUBTRACT_FROM_CART', product }); }}>−</button>
+                                  <QuantityInput initialValue={quantity} product={product} dispatch={dispatch} updateOnBlurOnly={true} />
+                                  <button className="mobile-qty-btn" aria-label="Increase quantity" onClick={() => {
+                                    const available = Number(product.inventory ?? product.quantity ?? 0);
+                                    const existing = cart.items.find(i => i.product.id === product.id);
+                                    const current = existing ? existing.quantity : 0;
+                                    const desired = current + 1;
+                                    const isMaxedMobile = Number.isFinite(available) && available > 0 && current >= available;
+                                    if (isMaxedMobile) return;
+                                    if (Number.isFinite(available) && available > 0 && desired > available) { showLimit(product.id); return; }
+                                    dispatch({ type: 'ADD_TO_CART', product });
+                                  }}>+</button>
+                                  {limitMap[product.id] && <div className="limit-message">{limitMap[product.id]}</div>}
+                                  <div className="cart-mobile-price">{`× $${isNaN(unitPrice) ? 'N/A' : unitPrice.toFixed(2)}`}</div>
                                 </div>
-                                <div style={{ marginLeft: 12, color: '#666' }}>{`× $${isNaN(unitPrice) ? 'N/A' : unitPrice.toFixed(2)}`}</div>
+                                <div className="line-total">{isNaN(lineTotal) ? 'Total N/A' : `$${lineTotal.toFixed(2)}`}</div>
                               </div>
-                              <div className="line-total" style={{ fontWeight: 800 }}>{isNaN(lineTotal) ? 'Total N/A' : `$${lineTotal.toFixed(2)}`}</div>
-                            </div>
                             </div>
                           )}
                         </div>
@@ -329,62 +219,22 @@ export default function CartPage() {
               })}
             </div>
             {/* Cost breakdown */}
-            <div className="cart-summary" style={{ textAlign: 'right', marginTop: '2rem' }}>
-              <div style={{ fontWeight: 700, fontSize: '1.2rem', wordBreak: 'break-word' }}>Subtotal: ${subtotal.toFixed(2)}</div>
-              <div style={{ fontWeight: 500, fontSize: '1.05rem', color: '#555', marginTop: '0.5rem' }}>Total Weight: {totalWeight.toFixed(2)} lbs</div>
-              <div style={{ fontWeight: 500, fontSize: '1.05rem', color: '#555', marginTop: '0.5rem' }}>
-                Shipping: {isFreight ? 'Need to Quote (Freight)' : (selectedShipping ? `${selectedShipping.label} — $${shippingCost.toFixed(2)}` : 'TBD')}
+            <aside className="cart-summary">
+              <div className="summary-title">Order Summary</div>
+              <div className="summary-line summary-subtotal">Subtotal: ${subtotal.toFixed(2)}</div>
+              <div className="summary-line summary-weight">Total Weight: {totalWeight.toFixed(2)} lbs</div>
+              <div className="summary-line summary-shipping">Shipping: {isFreight ? 'Need to Quote (Freight)' : (selectedShipping ? `${selectedShipping.label} — $${shippingCost.toFixed(2)}` : 'TBD')}</div>
+              <div className="summary-line summary-tax">Tax: To be Calculated</div>
+              <div className="summary-line summary-total">Total: ${grandTotal.toFixed(2)}</div>
+              <div className="cart-actions-row" align="center">
+                <button className="btn cart-clear-btn" onClick={() => { dispatch({ type: 'CLEAR_CART' }); }}>Clear Cart</button>
+                { (shipping?.type === 'freight') ? (
+                  <button className="btn cart-freight-btn" onClick={() => navigate('/freight-inquiry', { state: { cart } })}>Get Freight Quote</button>
+                ) : (
+                  <button className="btn cart-checkout-btn" onClick={() => navigate('/checkout')}>Checkout</button>
+                )}
               </div>
-              <div style={{ fontWeight: 500, fontSize: '1.05rem', color: '#555', marginTop: '0.5rem' }}>Tax: ${tax.toFixed(2)}</div>
-              <div style={{ fontWeight: 800, fontSize: '1.25rem', color: '#222', marginTop: '0.75rem' }}>Total: ${grandTotal.toFixed(2)}</div>
-            </div>
-            <div style={{ textAlign: 'right', marginTop: '1rem', display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'flex-end' }}>
-              <button
-                className="btn danger"
-                style={{
-                  fontWeight: 700,
-                  fontSize: '1.1rem',
-                  borderRadius: 8,
-                  padding: '0.7rem 2rem',
-                  minWidth: 120,
-                  background: '#d32f2f',
-                  color: '#fff',
-                  border: 'none',
-                  boxShadow: '0 2px 8px rgba(211,47,47,0.10)',
-                }}
-                onClick={() => { dispatch({ type: 'CLEAR_CART' }); }}
-              >
-                Clear Cart
-              </button>
-              { (shipping?.type === 'freight') ? (
-                <button
-                  className="btn freight"
-                  style={{
-                    fontWeight: 700,
-                    fontSize: '1.1rem',
-                    borderRadius: 8,
-                    padding: '0.7rem 2rem',
-                    minWidth: 180,
-                    background: '#557a2cff',
-                    color: '#fff',
-                    border: 'none',
-                    boxShadow: '0 2px 8px rgba(139,195,74,0.10)',
-                    cursor: 'pointer',
-                  }}
-                  onClick={() => navigate('/freight-inquiry', { state: { cart } })}
-                >
-                  Get Freight Quote
-                </button>
-              ) : (
-                <button
-                  className="btn primary"
-                  style={{ fontWeight: 700, fontSize: '1.1rem', borderRadius: 8, padding: '0.7rem 2rem', marginLeft: '1rem' }}
-                  onClick={() => navigate('/checkout')}
-                >
-                  Checkout
-                </button>
-              )}
-            </div>
+            </aside>
           </div>
         )}
       </div>
