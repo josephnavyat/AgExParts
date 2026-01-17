@@ -18,6 +18,26 @@ export default function ProductDetail() {
   // Helper for available inventory
   const availableStock = product && Number(product.inventory ?? product.quantity ?? 0);
 
+  // Local inline styles for modern, card-like sections
+  const sectionCard = {
+    background: '#f7f8fa',
+    borderRadius: 10,
+    padding: '14px',
+    boxShadow: '0 6px 18px rgba(11,22,40,0.03)',
+    marginBottom: 12,
+  };
+  const sectionHeader = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 12,
+    margin: '0 0 10px 0'
+  };
+  const sectionTitle = { margin: 0, fontSize: '1.05rem' };
+  const smallMuted = { color: '#6b6b6b', fontSize: '0.95rem', fontStyle: 'italic' };
+  const compatTableStyle = { width: '100%', borderCollapse: 'collapse', background: '#fff', borderRadius: 8, overflow: 'hidden' };
+  const compatTh = { padding: '10px 8px', textAlign: 'left', background: '#fbfbfb', borderBottom: '1px solid #eee' };
+  const compatTd = { padding: '10px 8px', borderBottom: '1px solid #f4f4f4' };
+
   // Image carousel logic
   const [imgIndex, setImgIndex] = useState(0);
   const [images, setImages] = useState([]);
@@ -251,108 +271,80 @@ export default function ProductDetail() {
 
           {/* Stacked Details Sections */}
           <section className="pd-detailsStack" aria-label="Product details">
-            <div className="pd-sectionCard">
-              <div className="pd-sectionHeader">
-                <h2>Product Details</h2>
-                <div className="pd-sectionSub">Everything you need to confirm fit and specs.</div>
+            <div style={sectionCard}>
+              <div style={sectionHeader}>
+                <h3 style={sectionTitle}>Product Details</h3>
               </div>
-
               {product.description ? (
-                <div className="pd-richText">
-                  <p>{product.description}</p>
+                <div style={{ color: '#333' }}>
+                  <p style={{ margin: 0 }}>{product.description}</p>
                 </div>
               ) : (
-                <div className="pd-muted">No description available.</div>
+                <div style={{ color: '#888' }}>No description available.</div>
               )}
             </div>
 
-            <div className="pd-sectionCard">
-              <div className="pd-sectionHeader">
-                <h2>OEM Replacement</h2>
-                <div className="pd-sectionSub">Cross-reference common OEM numbers.</div>
+            <div style={sectionCard}>
+              <div style={sectionHeader}>
+                <h4 style={sectionTitle}>OEM Replacement</h4>
               </div>
-
-              <div className="pd-specGrid">
-                <div className="pd-spec">
-                  <div className="pd-specK">OEM Part Number</div>
-                  <div className="pd-specV">{product.oem_pn || product.oem_part_number || '—'}</div>
-                </div>
-
-                <div className="pd-spec">
-                  <div className="pd-specK">Replaces</div>
-                  <div className="pd-specV">{product.replaces || '—'}</div>
-                </div>
-
-                <div className="pd-spec">
-                  <div className="pd-specK">Brand / Manufacturer</div>
-                  <div className="pd-specV">{product.manufacturer || product.brand || '—'}</div>
-                </div>
-
-                <div className="pd-spec">
-                  <div className="pd-specK">SKU</div>
-                  <div className="pd-specV">{product.sku || product.part_number || product.id}</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <div>
+                  <div style={{ color: '#666', fontSize: '0.95rem' }}>OEM Part Number</div>
+                  <div style={{ fontWeight: 700 }}>{product.oem_pn || product.oem_part_number || '—'}</div>
                 </div>
               </div>
             </div>
 
-            <div className="pd-sectionCard">
-              <div className="pd-sectionHeader">
-                <h2>Machine Compatibility</h2>
-                <div className="pd-sectionSub">Confirm make/model before ordering.</div>
+            <div style={sectionCard}>
+              <div style={sectionHeader}>
+                <h4 style={sectionTitle}>Machine Compatibility</h4>
+                <small style={smallMuted}>- Confirm make/model before ordering</small>
               </div>
-
               {compatibility && compatibility.length > 0 ? (
-                <div className="pd-tableWrap">
-                  <table className="compat-table">
+                <div style={{ overflowX: 'auto' }}>
+                  <table className="compat-table" style={compatTableStyle}>
                     <thead>
                       <tr>
-                        <th>Manufacturer</th>
-                        <th>Machine Type</th>
-                        <th>Model</th>
+                        <th style={{ ...compatTh, width: '33%' }}>Manufacturer</th>
+                        <th style={{ ...compatTh, width: '33%' }}>Machine Type</th>
+                        <th style={{ ...compatTh, width: '34%' }}>Model</th>
                       </tr>
                     </thead>
                     <tbody>
                       {compatibility.map((row, i) => (
                         <tr key={i}>
-                          <td>{row.manufacturer || '-'}</td>
-                          <td>{row.machine_type || '-'}</td>
-                          <td>{row.model || '-'}</td>
+                          <td style={compatTd}>{row.manufacturer || '-'}</td>
+                          <td style={compatTd}>{row.machine_type || '-'}</td>
+                          <td style={compatTd}>{row.model || '-'}</td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
               ) : (
-                <div className="pd-muted">No compatibility data found.</div>
+                <div style={{ color: '#888' }}>No compatibility data found.</div>
               )}
             </div>
 
-            <div className="pd-sectionCard">
-              <div className="pd-sectionHeader">
-                <h2>Part Attributes</h2>
-                <div className="pd-sectionSub">Specs and features for this part.</div>
+            <div style={sectionCard}>
+              <div style={sectionHeader}>
+                <h4 style={sectionTitle}>Part Attributes</h4>
+                <small style={smallMuted}>- Specs and features for this part</small>
               </div>
-
               {attributes && attributes.length > 0 ? (
-                <div className="pd-attrs">
-                  {attributes.map((attr, idx) => (
-                    <div className="pd-attr" key={`${attr.attribute_name}-${idx}`}>
-                      <div className="pd-attrK">{attr.attribute_name}</div>
-                      <div className="pd-attrV">
-                        {attr.value_text ||
-                          attr.value_number ||
-                          (attr.value_bool === true
-                            ? 'Yes'
-                            : attr.value_bool === false
-                              ? 'No'
-                              : '—')}
-                        {attr.unit ? ` ${attr.unit}` : ''}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <tbody>
+                    {attributes.map((attr, idx) => (
+                      <tr key={`${attr.attribute_name}-${idx}`} style={{ borderBottom: idx < attributes.length - 1 ? '1px solid #f1f1f1' : 'none' }}>
+                        <td style={{ padding: '10px 12px', fontWeight: 700, width: '40%' }}>{attr.attribute_name}</td>
+                        <td style={{ padding: '10px 12px' }}>{attr.value_text || attr.value_number || (attr.value_bool === true ? 'Yes' : attr.value_bool === false ? 'No' : '—')}{attr.unit ? ` ${attr.unit}` : ''}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               ) : (
-                <div className="pd-muted">No attributes available.</div>
+                <div style={{ color: '#888' }}>No attributes available.</div>
               )}
             </div>
           </section>

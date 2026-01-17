@@ -59,7 +59,7 @@ function CategoryAccordion({ category, isOpen, onToggle, onNavigate }) {
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [navHidden, setNavHidden] = useState(false);
-  const [secondaryOpen, setSecondaryOpen] = useState(false);
+  // secondary navbar removed
   const [machinePanelOpen, setMachinePanelOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -71,7 +71,7 @@ export default function Navbar() {
 
   const { cart } = useCart();
   const cartCount = cart.items.reduce((sum, i) => sum + i.quantity, 0);
-  const secondaryRef = useRef(null);
+  // secondary navbar ref removed
   const machineWrapRef = useRef(null);
   const machineCloseTimerRef = useRef(null);
   const toggleRef = useRef(null);
@@ -278,15 +278,7 @@ export default function Navbar() {
     } catch (e) { setModelsList([]); }
   }, [selMachineType, selManufacturer, machineTypes]);
 
-  // Ensure the body knows a secondary nav exists so CSS can reserve space
-  useEffect(() => {
-    try {
-      document.body.classList.add('has-secondary-nav');
-      return () => document.body.classList.remove('has-secondary-nav');
-    } catch (e) {
-      // ignore
-    }
-  }, []);
+  // secondary navbar removed; no body class required
 
   // Scroll behavior: add shadow when scrolled and hide navbar when scrolling down
   useEffect(() => {
@@ -299,8 +291,8 @@ export default function Navbar() {
         const y = window.scrollY || 0;
         setScrolled(y > 10);
 
-        // Never hide while any overlay is open
-        if (suggestOpen || leftPanelOpen || secondaryOpen || showSearch) {
+  // Never hide while any overlay is open
+  if (suggestOpen || leftPanelOpen || showSearch) {
           setNavHidden(false);
           lastYRef.current = y;
           return;
@@ -327,7 +319,7 @@ export default function Navbar() {
       window.removeEventListener('scroll', onScroll);
       if (raf) window.cancelAnimationFrame(raf);
     };
-  }, [suggestOpen, leftPanelOpen, secondaryOpen, showSearch]);
+  }, [suggestOpen, leftPanelOpen, showSearch]);
 
 
   
@@ -396,23 +388,7 @@ export default function Navbar() {
       window.removeEventListener('scroll', compute);
     };
   }, [machinePanelOpen]);
-// Close secondary nav on route change
-  useEffect(() => {
-    setSecondaryOpen(false);
-  }, [location.pathname]);
-
-  // Close on Escape and restore focus to toggle
-  useEffect(() => {
-    if (!secondaryOpen) return;
-    const onKey = (e) => {
-      if (e.key === 'Escape') {
-        setSecondaryOpen(false);
-        try { toggleRef.current?.focus(); } catch (err) {}
-      }
-    };
-    document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
-  }, [secondaryOpen]);
+  // secondary navbar removed; no escape/key handlers
 
   // Left-panel Escape handling: close and restore focus to the main toggle
   useEffect(() => {
@@ -480,7 +456,6 @@ export default function Navbar() {
               onClick={async () => {
                 setLeftPanelOpen((s) => !s);
                 try { if (!catsLoaded) await loadCategories(); } catch (e) {}
-                setSecondaryOpen(false);
               }}
               ref={toggleRef}
             >
@@ -599,147 +574,7 @@ export default function Navbar() {
             </form>
           </div>
         )}
-  {/* Secondary nav row: browse links and mobile toggle */}
-        <div className={`nav-secondary ${secondaryOpen ? 'open' : ''}`} ref={secondaryRef}>
-          <div className="container">
-            <nav id="secondary-links" aria-label="Browse links">
-              {/* Browse by Category shows an expanded panel on hover or click */}
-              <div className="nav-categories-wrapper">
-                <Link
-                  to="/categories"
-                  className="nav-secondary-link nav-categories-toggle"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    try {
-                      try { setSecondaryOpen(false); } catch (err) {}
-                      try { setCategoriesOpen(false); } catch (err) {}
-                      navigate('/categories');
-                      requestAnimationFrame(() => setTimeout(() => {
-                        try {
-                          const heading = document.querySelector('.main-content > h2');
-                          if (heading && heading.scrollIntoView) {
-                            console.info('Navbar: scrolling to category heading via scrollIntoView');
-                            heading.scrollIntoView({ block: 'start' });
-                            return;
-                          }
-                          const navEl = document.querySelector('.nav');
-                          const navHeight = navEl ? Math.ceil(navEl.getBoundingClientRect().height) : 140;
-                          console.info('Navbar: falling back to scrollBy', navHeight);
-                          window.scrollBy(0, -navHeight + 6);
-                        } catch (e) {}
-                      }, 400));
-                    } catch (err) { window.location.href = '/categories'; }
-                  }}
-                >
-                  Browse by Category
-                </Link>
-              </div>
-
-              {/* Browse by Machine (integrated manufacturer / machine type / model) */}
-              <div
-                className="nav-manufacturers-wrapper"
-                ref={machineWrapRef}
-                style={{ position: 'relative' }}
-                onMouseEnter={() => {
-                  if (machineCloseTimerRef.current) clearTimeout(machineCloseTimerRef.current);
-                  setMachinePanelOpen(true);
-                }}
-                onMouseLeave={() => {
-                  if (machineCloseTimerRef.current) clearTimeout(machineCloseTimerRef.current);
-                  machineCloseTimerRef.current = setTimeout(() => setMachinePanelOpen(false), 140);
-                }}
-              >
-                <a
-                  href="/machines"
-                  className="nav-secondary-link nav-manufacturers-toggle"
-                  onClick={async (e) => {
-                    e.preventDefault();
-                    // Click opens the dropdown; it will close on mouse-leave or outside click.
-                    const willOpen = !machinePanelOpen;
-                    setSecondaryOpen(true);
-                    if (manufacturers.length === 0 || Object.keys(machineTypes || {}).length === 0) await loadManufacturers();
-                    setCategoriesOpen(false);
-                    setMachinePanelOpen(willOpen);
-                  }}
-                >
-                  Browse by Machine
-                </a>
-                <div
-                  ref={panelRef}
-                  className={`nav-manufacturer-inline${machinePanelOpen ? ' open' : ''}`}
-                  style={{
-                    position: 'absolute',
-                    left: panelLeft != null ? panelLeft : 0,
-                    top: '100%',
-                    zIndex: 45,
-                    minWidth: 360,
-                    display: machinePanelOpen ? 'block' : 'none',
-                    transform: 'none'
-                  }}
-                >
-                  <div className="simple-gallery-filter-header" style={{ padding: '10px 12px 6px' }}>Browse Machines</div>
-                  <div className="nav-manufacturer-row" style={{ padding: '12px' }}>
-                    <select className="filter-select" value={selManufacturer} onChange={(e) => { const v = e.target.value; setSelManufacturer(v); setSelMachineType(''); setSelModel(''); }}>
-                      <option value="">All Manufacturers</option>
-                      {manufacturers.map(m => <option key={m} value={m}>{m}</option>)}
-                    </select>
-                    <select className="filter-select" value={selMachineType} onChange={(e) => { const v = e.target.value; setSelMachineType(v); }}>
-                      <option value="">All Machine Types</option>
-                      {(() => {
-                        // If nothing selected, prefer flat compatibility list or aggregated nested
-                        if (!selManufacturer) {
-                          if (compatMachineTypes && compatMachineTypes.length) return compatMachineTypes;
-                          return Object.keys(machineTypes || {}).flatMap(m=>Object.keys(machineTypes[m]||{})).filter((v,i,a)=>a.indexOf(v)===i).sort((a,b)=>a.localeCompare(b));
-                        }
-                        // Try nested map first
-                        const nested = machineTypes[selManufacturer] || {};
-                        const nestedKeys = Object.keys(nested || {}).sort((a,b)=>a.localeCompare(b));
-                        if (nestedKeys.length) return nestedKeys;
-                        // Fallback: scan compatProducts for this manufacturer and collect machine_type values
-                        if (compatProducts && compatProducts.length) {
-                          const set = new Set();
-                          for (const p of compatProducts) {
-                            try {
-                              if (((p.manufacturer || '').trim()) === (selManufacturer || '').trim()) {
-                                const mt = (p.machine_type || p.machineType || '').toString().trim();
-                                if (mt) set.add(mt);
-                              }
-                            } catch (e) { /* ignore malformed product rows */ }
-                          }
-                          return Array.from(set).sort((a,b)=>a.localeCompare(b));
-                        }
-                        return [];
-                      })().map(mt => <option key={mt} value={mt}>{mt}</option>)}
-                    </select>
-                    <select className="filter-select" value={selModel} onChange={(e) => setSelModel(e.target.value)}>
-                      <option value="">All Models</option>
-                      {(modelsList || []).map(mo => <option key={mo} value={mo}>{mo}</option>)}
-                      {/* If modelsList empty and a manufacturer is selected, attempt to populate from compatProducts */}
-                      {(!(modelsList && modelsList.length) && selManufacturer && compatProducts && compatProducts.length) && (() => {
-                        const s = new Set();
-                        for (const p of compatProducts) {
-                          try {
-                            if (((p.manufacturer || '').trim()) === (selManufacturer || '').trim()) {
-                              const mo = (p.model || '').toString().trim(); if (mo) s.add(mo);
-                            }
-                          } catch (e) {}
-                        }
-                        return Array.from(s).sort((a,b)=>a.localeCompare(b)).map(mo => <option key={`fb-${mo}`} value={mo}>{mo}</option>);
-                      })()}
-                    </select>
-                    <a className="nav-secondary-link nav-manufacturer-search" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 14px', borderRadius: 8 }} onClick={() => {
-                      const params = new URLSearchParams(); if (selManufacturer) params.set('manufacturer', selManufacturer); if (selMachineType) params.set('machine_type', selMachineType); if (selModel) params.set('model', selModel); const url = `/search-results?${params.toString()}`; navigate(url);
-                    }}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 21l-4.35-4.35"/><path d="M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16z"/></svg>
-                      <span>Search</span>
-                    </a>
-                  </div>
-                </div>
-              </div>
-              <Link to="/about" className="nav-secondary-link">About Us</Link>
-            </nav>
-          </div>
-        </div>
+  {/* Secondary navbar removed */}
   </nav>
 
       {/* Left-side sliding panel and backdrop for mobile categories - rendered outside the nav

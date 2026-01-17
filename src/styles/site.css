@@ -111,7 +111,7 @@ body:not(.has-secondary-nav) { padding-top: var(--nav-main-height); }
 /* Ensure any normal <section> (non-hero) also begins below the fixed navbar.
    The homepage hero intentionally overlaps earlier, so we exclude .hero. */
 section:not(.hero):not(.hero-categories) {
-  padding-top: calc(var(--nav-total-height) + 6px);
+  padding-top: 3px; /*calc(var(--nav-total-height) + 6px);*/
 }
 
 /* On checkout we already show the form inside a white card; remove the extra
@@ -880,6 +880,29 @@ input[type=number]::-webkit-inner-spin-button {
   }
   .hero-search-overlay { bottom: 6%; }
   .hero-search-overlay .hs-action { display:flex; justify-content:center; }
+}
+
+/* enforce disabled look for hero selects (override earlier white backgrounds) */
+.hero .hero-content .hero-search-overlay .overlay-inner select[disabled],
+.hero .hero-content .hero-search-overlay .overlay-inner select.is-disabled,
+.hero-search-overlay select[disabled],
+.hero-search-overlay select.is-disabled {
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  background-color: #c4c7c9 !important;
+  background-image: none !important;
+  color: #6b6b6b !important;
+  -webkit-text-fill-color: #6b6b6b !important;
+  border-color: #7c7d7e !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+}
+
+.hero .hero-content .hero-search-overlay .overlay-inner select[disabled] option,
+.hero-search-overlay select[disabled] option,
+.hero-search-overlay select.is-disabled option {
+  color: #6b6b6b !important;
 }
 
 /* Slide animation for secondary nav on mobile */

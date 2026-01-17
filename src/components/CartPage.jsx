@@ -227,7 +227,6 @@ export default function CartPage() {
               <div className="summary-line summary-tax">Tax: To be Calculated</div>
               <div className="summary-line summary-total">Total: ${grandTotal.toFixed(2)}</div>
               <div className="cart-actions-row" align="center">
-                <button className="btn cart-clear-btn" onClick={() => { dispatch({ type: 'CLEAR_CART' }); }}>Clear Cart</button>
                 { (shipping?.type === 'freight') ? (
                   <button className="btn cart-freight-btn" onClick={() => navigate('/freight-inquiry', { state: { cart } })}>Get Freight Quote</button>
                 ) : (

@@ -19,6 +19,9 @@ export default function SearchResults() {
 
   const [products, setProducts] = useState([]);
   const [compatOptions, setCompatOptions] = useState({ manufacturers: [], machine_types: [], models: [] });
+  const [machineTypesMap, setMachineTypesMap] = useState({});
+  const [machineTypesList, setMachineTypesList] = useState([]);
+  const [modelsList, setModelsList] = useState([]);
   const [compatibleSkus, setCompatibleSkus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -58,6 +61,11 @@ export default function SearchResults() {
         if (!res.ok) return;
         const json = await res.json();
         if (json) setCompatOptions({ manufacturers: json.manufacturers || [], machine_types: json.machine_types || [], models: json.models || [] });
+        // also set flat lists if provided
+        if (json) {
+          setMachineTypesList(json.machine_types || []);
+          setModelsList(json.models || []);
+        }
       } catch (e) {}
     })();
     return () => controller.abort();
@@ -115,6 +123,60 @@ export default function SearchResults() {
 
     return () => controller.abort();
   }, [manufacturer, machineType, model]);
+
+  // When manufacturer changes, populate machine types and models for that manufacturer
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        if (!manufacturer) {
+          setMachineTypesList(compatOptions.machine_types && compatOptions.machine_types.length ? compatOptions.machine_types : machineTypesList);
+          setModelsList(compatOptions.models && compatOptions.models.length ? compatOptions.models : modelsList);
+          setMachineType(''); setModel('');
+          return;
+        }
+        // server-first
+        try {
+          const params = new URLSearchParams(); params.set('manufacturer', manufacturer);
+          const res = await fetch('/.netlify/functions/get-compatibility-by-manufacturer?' + params.toString());
+          if (res.ok) {
+            const json = await res.json();
+            if (json && !cancelled) {
+              const mts = Array.isArray(json.machine_types) ? json.machine_types : (json.machineTypes || []);
+              const modelsByMt = json.models_by_machine_type || json.modelsByMachineType || {};
+              setMachineTypesList(mts || []);
+              if (machineType && modelsByMt && Array.isArray(modelsByMt[machineType])) setModelsList(modelsByMt[machineType] || []);
+              else {
+                const all = new Set();
+                for (const arr of Object.values(modelsByMt || {})) for (const m of arr || []) all.add(m);
+                setModelsList(Array.from(all).sort((a,b)=>a.localeCompare(b)));
+              }
+              if (model && !Array.from(Object.values(modelsByMt || {})).some(arr => arr.includes(model))) setModel('');
+              return;
+            }
+          }
+        } catch (e) {}
+
+        // client-side tolerant lookup
+        const findKey = (mapObj, key) => {
+          if (!mapObj || !key) return undefined;
+          const norm = String(key).trim().toLowerCase();
+          const found = Object.keys(mapObj).find(k => String(k).trim().toLowerCase() === norm);
+          return found || undefined;
+        };
+        const nestedKey = findKey(machineTypesMap, manufacturer);
+        const nested = nestedKey ? machineTypesMap[nestedKey] : {};
+        const mts = Object.keys(nested).sort((a,b)=>a.localeCompare(b));
+        if (mts.length) setMachineTypesList(mts);
+        const allModels = new Set();
+        for (const arr of Object.values(nested)) for (const m of arr) allModels.add(m);
+        if (allModels.size) setModelsList(Array.from(allModels).sort((a,b)=>a.localeCompare(b)));
+        else setModelsList([]);
+        if (model && !Array.from(allModels).includes(model)) setModel('');
+        if (machineType && !mts.includes(machineType)) setMachineType('');
+      } catch (e) {}
+    })();
+  }, [manufacturer, machineTypesMap, compatOptions]);
 
   const getImageUrl = (img) => resolveImageUrl(img);
 
@@ -238,17 +300,17 @@ export default function SearchResults() {
 
             <div className="filter-section">
               <label className="filter-label">Machine Type</label>
-              <select value={machineType} onChange={e => setMachineType(e.target.value)} className="filter-select">
+              <select value={machineType} onChange={e => setMachineType(e.target.value)} className="filter-select" disabled={!manufacturer} aria-disabled={!manufacturer}>
                 <option value="">All Machine Types</option>
-                {(compatOptions.machine_types && compatOptions.machine_types.length > 0 ? compatOptions.machine_types : uniqueOptions('machine_type')).map(m => <option key={m} value={m}>{m}</option>)}
+                {(machineTypesList && machineTypesList.length ? machineTypesList : (compatOptions.machine_types && compatOptions.machine_types.length > 0 ? compatOptions.machine_types : uniqueOptions('machine_type'))).map(m => <option key={m} value={m}>{m}</option>)}
               </select>
             </div>
 
             <div className="filter-section">
               <label className="filter-label">Model</label>
-              <select value={model} onChange={e => setModel(e.target.value)} className="filter-select">
+              <select value={model} onChange={e => setModel(e.target.value)} className="filter-select" disabled={!machineType} aria-disabled={!machineType}>
                 <option value="">All Models</option>
-                {(compatOptions.models && compatOptions.models.length > 0 ? compatOptions.models : uniqueOptions('model')).map(m => <option key={m} value={m}>{m}</option>)}
+                {(modelsList && modelsList.length ? modelsList : (compatOptions.models && compatOptions.models.length > 0 ? compatOptions.models : uniqueOptions('model'))).map(m => <option key={m} value={m}>{m}</option>)}
               </select>
             </div>
 
