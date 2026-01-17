@@ -79,7 +79,7 @@ const CardRow = () => {
       }
     })();
     return () => { mounted = false; };
-  }, []);
+  }, []); 
 
   return (
     <div className="card-grid">
@@ -93,19 +93,33 @@ const CardRow = () => {
 
 export default function Hero() {
   return (
-    <header className="hero" role="banner" style={{ '--hero': 'url(/hero-16x9.png)' }}>
-      <div className="hero-content container">
-        <span className="kicker">Trusted farm parts</span>
-        <h2>Keeping your equipment in the field</h2>
-        <p>OEM & aftermarket parts, fast shipping, and expert support. From tillage to hydraulics — we’ve got the parts that keep you running.</p>
-        <div className="cta-row">
-          <Link className="btn primary" to="/catalog">Browse Catalog</Link>
-          <Link className="btn secondary" to="/contact-parts-specialist">Talk to Parts Expert</Link>
+    <>
+      <header className="hero" role="banner" style={{ '--hero': 'url(/hero-16x9.png)' }}>
+        <div className="hero-content container">
+          <span className="kicker">Trusted farm parts</span>
+          <h2>Keeping your equipment in the field</h2>
+          <p>OEM & aftermarket parts, fast shipping, and expert support. From tillage to hydraulics — we’ve got the parts that keep you running.</p>
+          <div className="cta-row">
+            <Link className="btn primary" to="/catalog">Browse Catalog</Link>
+            <Link className="btn secondary" to="/contact-parts-specialist">Talk to Parts Expert</Link>
+          </div>
+          <div className="hero-search-overlay">
+            <div className="overlay-inner">
+              <label className="hs-row"><select name="manufacturer"><option>Select Make</option></select></label>
+              <label className="hs-row"><select name="machinetype"><option>Select Machine Type</option></select></label>
+              <label className="hs-row"><select name="model"><option>Select Model</option></select></label>
+              <div className="hs-action"><button className="btn apply">Search</button></div>
+            </div>
+          </div>
+          <div className="container">
+          </div>
         </div>
+      </header>
+      <section className="hero-categories">
         <div className="container">
           <CardRow />
         </div>
-      </div>
-    </header>
+      </section>
+    </>
   );
 }

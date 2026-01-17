@@ -394,6 +394,22 @@ body.hero-active .hero .card .muted {
   box-shadow: 0 1px 4px rgba(0,0,0,0.10);
 }
 
+/* Hero CTA overrides: larger, more prominent */
+.hero .cta-row .btn {
+  padding: 14px 20px;
+  font-size: 1.05rem;
+  min-height: 50px;
+  border-radius: 10px;
+}
+.hero .cta-row .btn.primary {
+  background: var(--brand) !important; /* brand green */
+  color: #fff !important;
+}
+.hero .cta-row .btn.secondary {
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+}
+
 .nav-secondary {
   /* more translucent top-to-bottom grey gradient so underlying hero shows through */
   background: linear-gradient(180deg, rgba(250,250,250,0.46) 0%, rgba(245,246,248,0.40) 48%, rgba(240,242,245,0.34) 100%);
@@ -874,14 +890,98 @@ input[type=number]::-webkit-inner-spin-button {
 }
 
 @media (max-width: 720px) {
-  .hero-search-overlay .overlay-inner {
-    flex-direction: column;
-  gap: 12px;
-  align-items: stretch;
-  padding: 14px;
+  .hero-categories { margin-top: 12px; }
+}
+
+/* Force a spacer under the CTA buttons on narrow screens so the overlay can't overlap them */
+@media (max-width: 720px) {
+  .hero .cta-row::after {
+    content: "";
+    display: block;
+    height: 72px; /* space to push overlay below the buttons */
+    width: 100%;
   }
-  .hero-search-overlay { bottom: 6%; }
+}
+
+@media (max-width: 720px) {
+  .hero-search-overlay .overlay-inner {
+  flex-direction: column;
+  gap: 10px;
+  align-items: stretch;
+  /* reduce padding and tighten max width for mobile so the overlay doesn't feel oversized */
+  padding: 6px;
+    width: calc(100% - 20px);
+    max-width: 440px; /* narrower on mobile */
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+  }
+  /* start slightly below the action buttons so there's a clear visual gap */
+  /* don't use `bottom` with relative positioning (it shifts element up); use margin-top instead */
+  .hero-search-overlay { margin-top: 24px; }
   .hero-search-overlay .hs-action { display:flex; justify-content:center; }
+
+  /* make fields more compact on narrow devices */
+  .hero-search-overlay .hs-row { min-width: 80px; }
+  .hero-search-overlay select { height: 40px; padding: 6px 8px; font-size: 13px; }
+  .hero-search-overlay .btn.apply { height: 40px; font-size: 14px; padding: 0 10px; }
+}
+
+/* Even tighter on very small screens */
+@media (max-width: 420px) {
+  .hero-search-overlay .overlay-inner {
+  padding: 4px;
+    width: calc(100% - 12px);
+    gap: 6px;
+    max-width: 360px; /* tighter on very small screens */
+    border-radius: 6px;
+    box-shadow: 0 5px 14px rgba(0,0,0,0.16);
+  }
+  /* even more compact: shorter controls and smaller spacing */
+  .hero-search-overlay select { font-size: 12px; padding: 4px 6px; height: 32px; }
+  .hero-search-overlay .btn.apply { height: 32px; padding: 0 8px; font-size: 12px; }
+  .hero-search-overlay { margin-top: 18px; }
+  .hero-search-overlay .hs-row { min-width: 70px; }
+}
+
+/* Very narrow phones: ensure a clear gap and very compact controls */
+@media (max-width: 360px) {
+  /* ensure overlay starts well below the CTA buttons on very narrow phones */
+  .hero .cta-row { position: relative; z-index: 80 !important; }
+  .hero .hero-search-overlay { margin-top: 72px !important; }
+  .hero-search-overlay { margin-top: 72px !important; }
+  .hero-search-overlay .overlay-inner {
+    max-width: 300px !important;
+    width: calc(100% - 12px) !important;
+    padding: 4px !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.14) !important;
+  }
+  .hero-search-overlay select { height: 30px !important; padding: 3px 6px !important; font-size: 12px !important; }
+  .hero-search-overlay .btn.apply { height: 30px !important; padding: 0 6px !important; font-size: 12px !important; }
+  .hero-search-overlay .hs-row { min-width: 60px !important; }
+}
+
+/* Narrow viewport tweak: ensure the overlay falls visually under the CTA buttons */
+@media (max-width: 480px) {
+  /* make CTA row sit above the overlay */
+  .hero .cta-row { position: relative; z-index: 90 !important; }
+
+  /* push overlay further below the buttons and make it more compact */
+  /* increase space so the overlay visually sits below the CTA buttons */
+  .hero-search-overlay { margin-top: 72px !important; }
+  .hero-search-overlay .overlay-inner {
+    position: relative;
+    z-index: 20; /* below CTA row but above hero background */
+    max-width: 340px !important;
+    width: calc(100% - 20px) !important;
+    padding: 6px !important;
+    gap: 6px !important;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.14) !important;
+  }
+
+  /* make selects smaller so the overlay is shorter */
+  .hero-search-overlay select { height: 36px !important; padding: 6px 8px !important; font-size: 13px !important; }
+  .hero-search-overlay .btn.apply { height: 36px !important; padding: 0 10px !important; font-size: 14px !important; }
+  .hero-search-overlay .hs-row { min-width: 72px !important; }
 }
 
 /* Slide animation for secondary nav on mobile */
