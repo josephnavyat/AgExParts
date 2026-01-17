@@ -105,18 +105,29 @@ body:not(.has-secondary-nav) { padding-top: var(--nav-main-height); }
 /* Some pages use a wrapper/main element instead of relying on body padding.
    Apply a defensive padding to common main containers so content sits below the nav. */
 .main-content, main, .page, .simple-gallery-root, .product-page, .category-page {
-  padding-top: 2px;
+  padding-top: calc(var(--nav-total-height) - 4px);
+}
+
+/* If a page uses an empty <main> as a placeholder, collapse it so it doesn't add a large gray gap.
+   Use :empty so real content is unaffected. If scripts insert whitespace/text nodes this won't match;
+   in that case a JS-based removal would be needed, but :empty covers the common case. */
+main:empty {
+  display: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  min-height: 0 !important;
+  height: 0 !important;
 }
 
 /* Ensure any normal <section> (non-hero) also begins below the fixed navbar.
    The homepage hero intentionally overlaps earlier, so we exclude .hero. */
-section:not(.hero):not(.hero-categories) {
+section:not(.hero) {
   padding-top: calc(var(--nav-total-height) + 6px);
 }
 
 /* On checkout we already show the form inside a white card; remove the extra
    section padding so the dark section header aligns to the top of that card. */
-body.checkout-page section:not(.hero):not(.hero-categories) {
+body.checkout-page section:not(.hero) {
   padding-top: 0; /* remove large gap inside the light-gray card */
 }
 
@@ -136,7 +147,7 @@ body.checkout-page section:not(.hero):not(.hero-categories) {
 }
 
 @media (max-width: 680px) {
-  section:not(.hero):not(.hero-categories) {
+  section:not(.hero) {
     padding-top: calc(var(--nav-main-height) + var(--nav-secondary-height) + 6px);
   }
 }
@@ -183,6 +194,9 @@ a { color: inherit; text-decoration: none; }
 .nav.nav--hidden { transform: translateY(-110%); }
 
 /* Defensive: if search is open, never hide the navbar */
+.nav.nav--search-open { transform: translateY(0) !important; }
+
+/* Never hide while the search bar is open */
 .nav.nav--search-open { transform: translateY(0) !important; }
 .nav-inner { display: flex; align-items: center; justify-content: space-between; min-height: var(--nav-main-height); margin: 0; padding: 0; }
 .brand { display: flex; align-items: center; gap: 12px; }
@@ -356,7 +370,7 @@ body.hero-active .hero .card .muted {
 }
 
 .hero-content { position: relative; z-index: 1; text-align: center; padding: 14px; }
-.hero .kicker { display: inline-block; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; font-size: 11px; color: rgb(235, 233, 233); background: rgba(57, 57, 57, 0.36); padding: 6px 10px; border-radius: 999px; backdrop-filter: blur(2px); }
+.hero .kicker { display: inline-block; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; font-size: 11px; color: #fff; background: var(--brand); padding: 6px 10px; border-radius: 999px; box-shadow: 0 8px 20px rgba(11,132,87,0.12); border: 1px solid rgba(11,132,87,0.18); }
 
 /* Brighter hero text with stronger shadow */
 .hero h2 { color: var(--text); font-size: clamp(28px, 4.6vw, 48px); line-height: 1.05; margin: 10px 0 8px; }
@@ -367,7 +381,6 @@ body.hero-active .hero .card .muted {
 /* Space between hero call-to-action row and the container that holds the card-grid */
 .hero .cta-row + .container {
   margin-top: 10px; /* pull the categories up closer to hero */
-  margin-bottom: 20px;
 }
 
 /* Make text inside the hero's inner container plain black with no text-shadow.
@@ -390,6 +403,29 @@ body.hero-active .hero .card .muted {
   color: #fff;
   background: var(--brand); /* use brand color for primary buttons */
   box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+}
+
+/* Hero CTA overrides: larger, more prominent */
+.hero .cta-row .btn {
+  padding: 18px 28px;
+  font-size: 1.18rem;
+  min-height: 60px;
+  border-radius: 12px;
+  font-weight: 800;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+  transition: transform 140ms ease, box-shadow 160ms ease;
+}
+.hero .cta-row .btn:hover { transform: translateY(-3px); box-shadow: 0 14px 36px rgba(0,0,0,0.14); }
+.hero .cta-row .btn.primary {
+  background: var(--brand) !important; /* brand green for Browse Catalog */
+  color: #fff !important;
+  border-color: rgba(11,132,87,0.24) !important;
+  box-shadow: 0 14px 36px rgba(11,132,87,0.14) !important;
+}
+.hero .cta-row .btn.secondary {
+  background: rgba(0,0,0,0.65);
+  color: #fff;
+  border-color: rgba(0,0,0,0.12);
 }
 
 .nav-secondary {
@@ -872,14 +908,98 @@ input[type=number]::-webkit-inner-spin-button {
 }
 
 @media (max-width: 720px) {
-  .hero-search-overlay .overlay-inner {
-    flex-direction: column;
-  gap: 12px;
-  align-items: stretch;
-  padding: 14px;
+  .hero-categories { margin-top: 12px; }
+}
+
+/* Force a spacer under the CTA buttons on narrow screens so the overlay can't overlap them */
+@media (max-width: 720px) {
+  .hero .cta-row::after {
+    content: "";
+    display: block;
+    height: 72px; /* space to push overlay below the buttons */
+    width: 100%;
   }
-  .hero-search-overlay { bottom: 6%; }
+}
+
+@media (max-width: 720px) {
+  .hero-search-overlay .overlay-inner {
+  flex-direction: column;
+  gap: 10px;
+  align-items: stretch;
+  /* reduce padding and tighten max width for mobile so the overlay doesn't feel oversized */
+  padding: 6px;
+    width: calc(100% - 20px);
+    max-width: 440px; /* narrower on mobile */
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+  }
+  /* start slightly below the action buttons so there's a clear visual gap */
+  /* don't use `bottom` with relative positioning (it shifts element up); use margin-top instead */
+  .hero-search-overlay { margin-top: 24px; }
   .hero-search-overlay .hs-action { display:flex; justify-content:center; }
+
+  /* make fields more compact on narrow devices */
+  .hero-search-overlay .hs-row { min-width: 80px; }
+  .hero-search-overlay select { height: 40px; padding: 6px 8px; font-size: 13px; }
+  .hero-search-overlay .btn.apply { height: 40px; font-size: 14px; padding: 0 10px; }
+}
+
+/* Even tighter on very small screens */
+@media (max-width: 420px) {
+  .hero-search-overlay .overlay-inner {
+  padding: 4px;
+    width: calc(100% - 12px);
+    gap: 6px;
+    max-width: 360px; /* tighter on very small screens */
+    border-radius: 6px;
+    box-shadow: 0 5px 14px rgba(0,0,0,0.16);
+  }
+  /* even more compact: shorter controls and smaller spacing */
+  .hero-search-overlay select { font-size: 12px; padding: 4px 6px; height: 32px; }
+  .hero-search-overlay .btn.apply { height: 32px; padding: 0 8px; font-size: 12px; }
+  .hero-search-overlay { margin-top: 18px; }
+  .hero-search-overlay .hs-row { min-width: 70px; }
+}
+
+/* Very narrow phones: ensure a clear gap and very compact controls */
+@media (max-width: 360px) {
+  /* ensure overlay starts well below the CTA buttons on very narrow phones */
+  .hero .cta-row { position: relative; z-index: 80 !important; }
+  .hero .hero-search-overlay { margin-top: 72px !important; }
+  .hero-search-overlay { margin-top: 72px !important; }
+  .hero-search-overlay .overlay-inner {
+    max-width: 300px !important;
+    width: calc(100% - 12px) !important;
+    padding: 4px !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.14) !important;
+  }
+  .hero-search-overlay select { height: 30px !important; padding: 3px 6px !important; font-size: 12px !important; }
+  .hero-search-overlay .btn.apply { height: 30px !important; padding: 0 6px !important; font-size: 12px !important; }
+  .hero-search-overlay .hs-row { min-width: 60px !important; }
+}
+
+/* Narrow viewport tweak: ensure the overlay falls visually under the CTA buttons */
+@media (max-width: 480px) {
+  /* make CTA row sit above the overlay */
+  .hero .cta-row { position: relative; z-index: 90 !important; }
+
+  /* push overlay further below the buttons and make it more compact */
+  /* increase space so the overlay visually sits below the CTA buttons */
+  .hero-search-overlay { margin-top: 72px !important; }
+  .hero-search-overlay .overlay-inner {
+    position: relative;
+    z-index: 20; /* below CTA row but above hero background */
+    max-width: 340px !important;
+    width: calc(100% - 20px) !important;
+    padding: 6px !important;
+    gap: 6px !important;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.14) !important;
+  }
+
+  /* make selects smaller so the overlay is shorter */
+  .hero-search-overlay select { height: 36px !important; padding: 6px 8px !important; font-size: 13px !important; }
+  .hero-search-overlay .btn.apply { height: 36px !important; padding: 0 10px !important; font-size: 14px !important; }
+  .hero-search-overlay .hs-row { min-width: 72px !important; }
 }
 
 /* Slide animation for secondary nav on mobile */
@@ -1422,7 +1542,7 @@ footer {
   background: linear-gradient(180deg, rgba(250,250,250,0.92) 0%, rgba(245,246,248,0.90) 48%, rgba(240,242,245,0.88) 100%);
   border-top: 1px solid rgba(16,24,40,0.04);
   padding: 50px 0;
-  margin-top: 5px;
+  margin-top: 40px;
   color: var(--text); /* dark text like header */
   backdrop-filter: blur(6px) saturate(120%);
   -webkit-backdrop-filter: blur(6px) saturate(120%);
@@ -2394,111 +2514,3 @@ body.nav-lock { overflow: hidden; }
     grid-template-columns: 1fr;
   }
 }
-/* =============================
-   Mobile hero overlap fix
-   Prevent the hero search box from covering the CTA buttons on narrow screens.
-   ============================= */
-
-@media (max-width: 720px) {
-  /* Make hero content stack reliably and reserve vertical space */
-  .hero-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  /* Ensure the CTA row stays above and leaves space below */
-  .cta-row {
-    position: relative;
-    z-index: 3;
-    margin-bottom: 16px;
-  }
-
-  /* Keep the search overlay in normal document flow on mobile */
-  .hero-search-overlay {
-    position: static !important;
-    margin-top: 0 !important;
-    bottom: auto !important;
-    z-index: 2;
-  }
-
-  /* Keep the overlay card width responsive */
-  .hero-search-overlay .overlay-inner {
-    width: min(960px, 94vw);
-  }
-}
-
-/* Optional: let the hero grow with content on mobile instead of forcing 70vh */
-@media (max-width: 720px) {
-  .hero {
-    height: auto;
-    min-height: unset;
-    padding-bottom: 24px;
-  }
-}
-
-/* =========================================================
-   HOME: hero category cards (Tillage/Harvest/etc) spacing fix
-   Ensures the homepage category tiles fill the available space and
-   prevents the global .card-grid flex rules from creating big empty gaps.
-   ========================================================= */
-
-.hero-categories {
-  padding: 18px 0 26px;
-}
-
-.hero-categories .container {
-  max-width: 980px;
-}
-
-/* Override global .card-grid flex rules inside hero categories */
-.hero-categories .card-grid {
-  display: grid !important;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
-  align-items: stretch;
-  justify-items: stretch;
-  overflow: visible !important;
-}
-
-/* Let cards fill their grid cells (avoid fixed --card-w sizing here) */
-.hero-categories .card-grid .card {
-  width: 100% !important;
-  min-width: 0 !important;
-  height: auto !important;
-  min-height: 140px;
-  padding: 12px !important;
-}
-
-.hero-categories .card-grid .card-image {
-  height: 86px !important;
-  max-height: 86px !important;
-  object-fit: contain;
-}
-
-@media (max-width: 900px) {
-  .hero-categories .card-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-  }
-}
-
-@media (max-width: 520px) {
-  .hero-categories .container {
-    max-width: 100%;
-  }
-  .hero-categories .card-grid {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-  .hero-categories .card-grid .card {
-    min-height: 120px;
-  }
-}
-
-
-/* --- Homepage hero category spacing override (v3) --- */
-section.hero-categories{padding-top:12px !important; padding-bottom:16px !important;}
-.hero-categories{margin-top:-12px !important;}
-@media (max-width:900px){.hero-categories{margin-top:-8px !important;}}
-@media (max-width:420px){.hero-categories{margin-top:0 !important; padding-top:10px !important; padding-bottom:12px !important;}}
