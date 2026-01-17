@@ -317,6 +317,7 @@ export default function Hero() {
           </div>
           <div className="hero-search-overlay">
             <div className="overlay-inner">
+              <div style={{ marginBottom: 8, color: 'rgba(205, 205, 205, 0.9)', fontSize: '1rem', fontWeight: 700 }}>Search Parts by Machine</div>
               <label className="hs-row">
                 <select name="manufacturer" value={selManufacturer} onChange={(e)=>{
                   const v = String(e.target.value || '').trim();
@@ -347,7 +348,19 @@ export default function Hero() {
                   {modelsList && modelsList.map(mo => <option key={String(mo)} value={String(mo)}>{mo}</option>)}
                 </select>
               </label>
-              <div className="hs-action"><button type="button" onClick={onSearch} className="btn apply">Search</button></div>
+              <div className="hs-action">
+                <button
+                  type="button"
+                  onClick={onSearch}
+                  className="btn apply"
+                  disabled={!selManufacturer}
+                  aria-disabled={!selManufacturer}
+                  title={!selManufacturer ? 'Select Make to enable search' : 'Search'}
+                  style={{ opacity: selManufacturer ? 1 : 0.5, cursor: selManufacturer ? 'pointer' : 'not-allowed' }}
+                >
+                  Search
+                </button>
+              </div>
             </div>
           </div>
           
