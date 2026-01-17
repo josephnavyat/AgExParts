@@ -111,8 +111,6 @@ export default function Hero() {
               <div className="hs-action"><button className="btn apply">Search</button></div>
             </div>
           </div>
-          <div className="container">
-          </div>
         </div>
       </header>
       <section className="hero-categories">

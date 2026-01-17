@@ -396,18 +396,25 @@ body.hero-active .hero .card .muted {
 
 /* Hero CTA overrides: larger, more prominent */
 .hero .cta-row .btn {
-  padding: 14px 20px;
-  font-size: 1.05rem;
-  min-height: 50px;
-  border-radius: 10px;
+  padding: 18px 28px;
+  font-size: 1.18rem;
+  min-height: 60px;
+  border-radius: 12px;
+  font-weight: 800;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+  transition: transform 140ms ease, box-shadow 160ms ease;
 }
+.hero .cta-row .btn:hover { transform: translateY(-3px); box-shadow: 0 14px 36px rgba(0,0,0,0.14); }
 .hero .cta-row .btn.primary {
-  background: var(--brand) !important; /* brand green */
+  background: var(--brand) !important; /* brand green for Browse Catalog */
   color: #fff !important;
+  border-color: rgba(11,132,87,0.24) !important;
+  box-shadow: 0 14px 36px rgba(11,132,87,0.14) !important;
 }
 .hero .cta-row .btn.secondary {
-  background: rgba(0,0,0,0.6);
+  background: rgba(0,0,0,0.65);
   color: #fff;
+  border-color: rgba(0,0,0,0.12);
 }
 
 .nav-secondary {
