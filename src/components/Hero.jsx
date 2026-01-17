@@ -309,7 +309,7 @@ export default function Hero() {
         <div className="hero-content container">
           <span className="kicker">Trusted farm parts</span>
           <h2>Keeping your equipment in the field</h2>
-          <p>OEM & aftermarket parts, fast shipping, and expert support. From tillage to hydraulics    weve got the parts that keep you running.</p>
+          <p>OEM & aftermarket parts, fast shipping, and expert support. From tillage to hydraulics we have got the parts that keep you running.</p>
           <div className="cta-row">
             <Link className="btn primary" to="/catalog">Browse Catalog</Link>
             <Link className="btn secondary" to="/categories" style={{ marginLeft: 8 }}>Browse by Category</Link>
