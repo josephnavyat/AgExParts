@@ -1,41 +1,6 @@
-[build]
-	publish = "dist"
-	command = "npm run build"
-
 [functions]
 directory = "netlify/functions"
 node_bundler = "zisi"
 
-[[redirects]]
-	from = "/assets/*"
-	to = "/assets/:splat"
-	status = 200
-	force = false
-
-[[redirects]]
-	from = "/service-worker.js"
-	to = "/service-worker.js"
-	status = 200
-	force = false
-
-[[redirects]]
-	from = "/robots.txt"
-	to = "/robots.txt"
-	status = 200
-	force = false
-
-[[redirects]]
-	from = "/*"
-	to = "/index.html"
-	status = 200
-	force = false
-
-[[headers]]
-	for = "/*"
-	[headers.values]
-		Content-Security-Policy = "default-src 'self'; script-src 'self' https://static.cloudflareinsights.com 'unsafe-inline'; script-src-elem 'self' https://static.cloudflareinsights.com 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://api.easypost.com https://api.shippo.com ws: wss:; worker-src 'self' blob:; manifest-src 'self'"
-
-[[headers]]
-	for = "/assets/*"
-	[headers.values]
-		Cache-Control = "public, max-age=31536000, immutable"
+[[plugins]]
+package = "@netlify/plugin-functions-install-core"

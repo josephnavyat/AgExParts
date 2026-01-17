@@ -1,0 +1,506 @@
+{
+  "timestamp": "2026-01-01T22:20:46.126Z",
+  "request": {
+    "headers": {
+      "Authorization": "<REDACTED>",
+      "x-api-key": "SaTrn7vp5yU3Gqn8tI2eFg1l56oP1X4s",
+      "apiKey": "<REDACTED>",
+      "apikey": "<REDACTED>",
+      "Content-Type": "application/json"
+    },
+    "payload": {
+      "quoteRequest": {
+        "shipDate": "2026-01-01T00:00:00.000Z",
+        "serviceLevels": [
+          "ALL"
+        ],
+        "origin": {
+          "name": "AgEx Parts Warehouse",
+          "locationId": "AGEX-001",
+          "address": {
+            "address1": "1128 Dunkerton Road",
+            "address2": "",
+            "city": "Cedar Falls",
+            "stateProvince": "IA",
+            "postalCode": "50613",
+            "country": "US"
+          },
+          "contact": {
+            "name": "AgEx Parts",
+            "phone": "3190000000",
+            "phoneExt": "",
+            "email": "origin@agexparts.com"
+          }
+        },
+        "destination": {
+          "name": "",
+          "locationId": "",
+          "address": {
+            "address1": "4138 Wynnewood Drive",
+            "address2": "",
+            "city": "Cedar Falls",
+            "stateProvince": "IA",
+            "postalCode": "50613",
+            "country": "US"
+          },
+          "contact": {
+            "name": "Navya Joseph",
+            "phone": "",
+            "phoneExt": "",
+            "email": ""
+          }
+        },
+        "commodity": {
+          "handlingUnits": [
+            {
+              "count": 1,
+              "type": "PT",
+              "weight": 160,
+              "tareWeight": 10,
+              "weightUnit": "Pounds",
+              "length": 48,
+              "width": 40,
+              "height": 48,
+              "dimensionsUnit": "Inches",
+              "isStackable": false,
+              "isTurnable": true,
+              "lineItems": [
+                {
+                  "description": "package",
+                  "weight": 160,
+                  "pieces": 1,
+                  "packagingType": "BX",
+                  "classification": "92.5",
+                  "nmfc": "",
+                  "nmfcSub": "",
+                  "isHazardous": false
+                }
+              ]
+            }
+          ],
+          "totalShipmentWeight": 170,
+          "totalPieces": 1
+        },
+        "accessorials": []
+      },
+      "payment": {
+        "account": "B132703",
+        "payor": "Shipper",
+        "terms": "Prepaid"
+      },
+      "requestor": {
+        "name": "AgEx Parts",
+        "phone": "0000000000",
+        "email": "requestor@agexparts.com"
+      },
+      "origin": {
+        "name": "AgEx Parts Warehouse",
+        "locationId": "AGEX-001",
+        "address": {
+          "address1": "1128 Dunkerton Road",
+          "address2": "",
+          "city": "Cedar Falls",
+          "stateProvince": "IA",
+          "postalCode": "50613",
+          "country": "US"
+        },
+        "contact": {
+          "name": "AgEx Parts",
+          "phone": "3190000000",
+          "phoneExt": "",
+          "email": "origin@agexparts.com"
+        }
+      },
+      "destination": {
+        "name": "",
+        "locationId": "",
+        "address": {
+          "address1": "4138 Wynnewood Drive",
+          "address2": "",
+          "city": "Cedar Falls",
+          "stateProvince": "IA",
+          "postalCode": "50613",
+          "country": "US"
+        },
+        "contact": {
+          "name": "Navya Joseph",
+          "phone": "",
+          "phoneExt": "",
+          "email": ""
+        }
+      },
+      "commodity": {
+        "handlingUnits": [
+          {
+            "count": 1,
+            "type": "PT",
+            "weight": 160,
+            "tareWeight": 10,
+            "weightUnit": "Pounds",
+            "length": 48,
+            "width": 40,
+            "height": 48,
+            "dimensionsUnit": "Inches",
+            "isStackable": false,
+            "isTurnable": true,
+            "lineItems": [
+              {
+                "description": "package",
+                "weight": 160,
+                "pieces": 1,
+                "packagingType": "BX",
+                "classification": "92.5",
+                "nmfc": "",
+                "nmfcSub": "",
+                "isHazardous": false
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "response": {
+    "data": [
+      {
+        "serviceLevelId": "99",
+        "serviceLevelText": "LTL Standard Transit",
+        "quoteId": "LVSHQL2",
+        "rateFound": true,
+        "dates": {
+          "quoteExpiration": "2026-01-02-01.00.00.000000",
+          "transitDeliveryDate": "2026-01-05",
+          "transitDeliveryTime": "17:00"
+        },
+        "transitDetails": {
+          "transitDays": 1,
+          "laneType": "DIRECT",
+          "originTerminal": "144",
+          "originTerminalInfo": {
+            "name": "Waterloo",
+            "address1": "2125 Commercial Street",
+            "city": "Waterloo",
+            "stateProvince": "IA",
+            "postalCode": "50702",
+            "country": "US",
+            "contact": {
+              "name": "Brian Wunn",
+              "phone": "(319) 226-6414",
+              "fax": "13192266420"
+            }
+          },
+          "destinationTerminal": "144",
+          "destinationTerminalInfo": {
+            "name": "Waterloo",
+            "address1": "2125 Commercial Street",
+            "city": "Waterloo",
+            "stateProvince": "IA",
+            "postalCode": "50702",
+            "country": "US",
+            "contact": {
+              "name": "Brian Wunn",
+              "phone": "(319) 226-6414",
+              "fax": "13192266420"
+            }
+          },
+          "transitMessage": ""
+        },
+        "quoteRate": {
+          "totalCharges": "157.81",
+          "totalShipmentWeight": 170,
+          "rateType": "Customer Pricing",
+          "ratedCube": ".00",
+          "ratedLinearFeet": 2,
+          "ratedAccessorials": [
+            {
+              "code": "FSC",
+              "description": "Fuel Surcharge",
+              "charge": "34.81"
+            }
+          ]
+        },
+        "lineItemCharges": [
+          {
+            "description": "package",
+            "classification": "92.5",
+            "weight": 160,
+            "rate": ".00",
+            "charge": "123.00"
+          }
+        ],
+        "chargeItems": [
+          {
+            "description": "Commodity Total",
+            "charge": "123.00"
+          },
+          {
+            "description": "Tare Weight Charge - 10lbs",
+            "charge": "0.00"
+          },
+          {
+            "description": "Fuel Surcharge 28.30%",
+            "charge": "34.81"
+          }
+        ],
+        "disclaimersURL": "https://www.estes-express.com/myestes/rate-quote-estimate/terms",
+        "alerts": [
+          {
+            "messageId": "GSC0198",
+            "message": "Your selected Pickup Date falls on a weekend or a holiday. Your Pickup Date was set to the first available business day to generate your quote."
+          },
+          {
+            "messageId": "GSC0004",
+            "message": "Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time."
+          }
+        ]
+      },
+      {
+        "serviceLevelId": "94",
+        "serviceLevelText": "Volume and Truckload Basic",
+        "quoteId": "VVSHQL2",
+        "rateFound": true,
+        "dates": {
+          "quoteExpiration": "2026-02-01-01.00.00.000000",
+          "transitDeliveryDate": "2026-01-05",
+          "transitDeliveryTime": "17:00"
+        },
+        "transitDetails": {
+          "transitDays": 1,
+          "laneType": "DIRECT",
+          "originTerminal": "144",
+          "originTerminalInfo": {
+            "name": "Waterloo",
+            "address1": "2125 Commercial Street",
+            "city": "Waterloo",
+            "stateProvince": "IA",
+            "postalCode": "50702",
+            "country": "US",
+            "contact": {
+              "name": "Brian Wunn",
+              "phone": "(319) 226-6414",
+              "fax": "13192266420"
+            }
+          },
+          "destinationTerminal": "144",
+          "destinationTerminalInfo": {
+            "name": "Waterloo",
+            "address1": "2125 Commercial Street",
+            "city": "Waterloo",
+            "stateProvince": "IA",
+            "postalCode": "50702",
+            "country": "US",
+            "contact": {
+              "name": "Brian Wunn",
+              "phone": "(319) 226-6414",
+              "fax": "13192266420"
+            }
+          },
+          "transitMessage": ""
+        },
+        "quoteRate": {
+          "totalCharges": "325.00",
+          "totalShipmentWeight": 170,
+          "rateType": "Customer Pricing",
+          "ratedCube": ".00",
+          "ratedLinearFeet": 7
+        },
+        "chargeItems": [
+          {
+            "description": "Tare Weight Charge - 10lbs",
+            "charge": "0.00"
+          }
+        ],
+        "disclaimersURL": "https://www.estes-express.com/myestes/rate-quote-estimate/terms",
+        "alerts": [
+          {
+            "messageId": "GSC0198",
+            "message": "Your selected Pickup Date falls on a weekend or a holiday. Your Pickup Date was set to the first available business day to generate your quote."
+          },
+          {
+            "messageId": "GSC0004",
+            "message": "Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time."
+          }
+        ]
+      },
+      {
+        "serviceLevelId": "97",
+        "serviceLevelText": "Guaranteed Exclusive Use",
+        "quoteId": "XVSHQL2",
+        "rateFound": true,
+        "dates": {
+          "quoteExpiration": "2026-01-01-16.00.00.000000",
+          "transitDeliveryDate": "2026-01-05",
+          "transitDeliveryTime": "17:00"
+        },
+        "transitDetails": {
+          "transitDays": 1,
+          "laneType": "DIRECT",
+          "originTerminal": "144",
+          "originTerminalInfo": {
+            "name": "Waterloo",
+            "address1": "2125 Commercial Street",
+            "city": "Waterloo",
+            "stateProvince": "IA",
+            "postalCode": "50702",
+            "country": "US",
+            "contact": {
+              "name": "Brian Wunn",
+              "phone": "(319) 226-6414",
+              "fax": "13192266420"
+            }
+          },
+          "destinationTerminal": "144",
+          "destinationTerminalInfo": {
+            "name": "Waterloo",
+            "address1": "2125 Commercial Street",
+            "city": "Waterloo",
+            "stateProvince": "IA",
+            "postalCode": "50702",
+            "country": "US",
+            "contact": {
+              "name": "Brian Wunn",
+              "phone": "(319) 226-6414",
+              "fax": "13192266420"
+            }
+          },
+          "transitMessage": ""
+        },
+        "quoteRate": {
+          "totalCharges": "1195.00",
+          "totalShipmentWeight": 170,
+          "rateType": "Customer Pricing",
+          "ratedCube": ".00",
+          "ratedLinearFeet": 2
+        },
+        "chargeItems": [
+          {
+            "description": "Commodity Total",
+            "charge": "1195.00"
+          }
+        ],
+        "disclaimersURL": "https://www.estes-express.com/myestes/rate-quote-estimate/terms",
+        "alerts": [
+          {
+            "messageId": "GSC0004",
+            "message": "Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time."
+          }
+        ]
+      },
+      {
+        "serviceLevelId": "98",
+        "serviceLevelText": "Guaranteed LTL Standard Transit: 5PM",
+        "rateFound": false,
+        "reasons": [
+          {
+            "messageId": "GSC0004",
+            "message": "Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time."
+          },
+          {
+            "messageId": "GSC0198",
+            "message": "Your selected Pickup Date falls on a weekend or a holiday. Your Pickup Date was set to the first available business day to generate your quote."
+          },
+          {
+            "messageId": "GSC0197",
+            "message": "Your chosen Pickup Date falls on a weekend or a holiday. Please change your Pickup Date and try your request again. For assistance, please email timecritical@estes-express.com or call 1-800-645-3952 and PRESS 1."
+          }
+        ]
+      },
+      {
+        "serviceLevelId": "96",
+        "serviceLevelText": "Guaranteed LTL Standard Transit: 12PM",
+        "rateFound": false,
+        "reasons": [
+          {
+            "messageId": "GSC0004",
+            "message": "Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time."
+          },
+          {
+            "messageId": "GSC0198",
+            "message": "Your selected Pickup Date falls on a weekend or a holiday. Your Pickup Date was set to the first available business day to generate your quote."
+          },
+          {
+            "messageId": "GSC0197",
+            "message": "Your chosen Pickup Date falls on a weekend or a holiday. Please change your Pickup Date and try your request again. For assistance, please email timecritical@estes-express.com or call 1-800-645-3952 and PRESS 1."
+          }
+        ]
+      },
+      {
+        "serviceLevelId": "95",
+        "serviceLevelText": "Guaranteed LTL Standard Transit: 10AM",
+        "rateFound": false,
+        "reasons": [
+          {
+            "messageId": "GSC0004",
+            "message": "Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time."
+          },
+          {
+            "messageId": "GSC0198",
+            "message": "Your selected Pickup Date falls on a weekend or a holiday. Your Pickup Date was set to the first available business day to generate your quote."
+          },
+          {
+            "messageId": "GSC0197",
+            "message": "Your chosen Pickup Date falls on a weekend or a holiday. Please change your Pickup Date and try your request again. For assistance, please email timecritical@estes-express.com or call 1-800-645-3952 and PRESS 1."
+          }
+        ]
+      },
+      {
+        "serviceLevelId": "90",
+        "serviceLevelText": "Estes Retail Guarantee",
+        "rateFound": false,
+        "reasons": [
+          {
+            "messageId": "GSC0197",
+            "message": "Your chosen Pickup Date falls on a weekend or a holiday. Please change your Pickup Date and try your request again. For assistance, please email timecritical@estes-express.com or call 1-800-645-3952 and PRESS 1."
+          },
+          {
+            "messageId": "GSC0004",
+            "message": "Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time."
+          }
+        ]
+      },
+      {
+        "serviceLevelId": "92",
+        "serviceLevelText": "Guaranteed Volume and Truckload Standard",
+        "rateFound": false,
+        "reasons": [
+          {
+            "messageId": "GSC0198",
+            "message": "Your selected Pickup Date falls on a weekend or a holiday. Your Pickup Date was set to the first available business day to generate your quote."
+          },
+          {
+            "messageId": "GSC0197",
+            "message": "Your chosen Pickup Date falls on a weekend or a holiday. Please change your Pickup Date and try your request again. For assistance, please email timecritical@estes-express.com or call 1-800-645-3952 and PRESS 1."
+          },
+          {
+            "messageId": "GSC0004",
+            "message": "Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time."
+          }
+        ]
+      },
+      {
+        "serviceLevelId": "93",
+        "serviceLevelText": "Guaranteed Volume and Truckload Economy",
+        "rateFound": false,
+        "reasons": [
+          {
+            "messageId": "GSC0198",
+            "message": "Your selected Pickup Date falls on a weekend or a holiday. Your Pickup Date was set to the first available business day to generate your quote."
+          },
+          {
+            "messageId": "GSC0197",
+            "message": "Your chosen Pickup Date falls on a weekend or a holiday. Please change your Pickup Date and try your request again. For assistance, please email timecritical@estes-express.com or call 1-800-645-3952 and PRESS 1."
+          },
+          {
+            "messageId": "GSC0004",
+            "message": "Please contact the Estes Solution Center at 1-800-645-3952 to confirm driver availability for all pickups requested after 3 p.m. local time."
+          }
+        ]
+      }
+    ],
+    "error": {
+      "code": 0,
+      "message": "",
+      "details": ""
+    }
+  }
+}

@@ -110,43 +110,104 @@ export default function SimpleGallery() {
 
   // When manufacturer changes, populate machine types and models for that manufacturer
   useEffect(() => {
-    try {
-      if (!manufacturer) {
-        // reset to global lists
-        setMachineTypesList(compatOptions.machine_types && compatOptions.machine_types.length ? compatOptions.machine_types : machineTypesList);
-        setModelsList(compatOptions.models && compatOptions.models.length ? compatOptions.models : modelsList);
-        setMachineType(''); setModel('');
-        return;
+    let cancelled = false;
+    (async () => {
+      try {
+        if (!manufacturer) {
+          // reset to global lists
+          setMachineTypesList(compatOptions.machine_types && compatOptions.machine_types.length ? compatOptions.machine_types : machineTypesList);
+          setModelsList(compatOptions.models && compatOptions.models.length ? compatOptions.models : modelsList);
+          setMachineType('');
+          setModel('');
+          return;
+        }
+
+        // Try server-side manufacturer-specific endpoint first
+        try {
+          const params = new URLSearchParams();
+          params.set('manufacturer', manufacturer);
+          const res = await fetch('/.netlify/functions/get-compatibility-by-manufacturer?' + params.toString());
+          if (res.ok) {
+            const json = await res.json();
+            if (json) {
+              const mts = Array.isArray(json.machine_types) ? json.machine_types : (json.machineTypes || []);
+              const modelsByMt = json.models_by_machine_type || json.modelsByMachineType || {};
+              if (!cancelled) {
+                setMachineTypesList(mts || []);
+                if (machineType && modelsByMt && Array.isArray(modelsByMt[machineType])) {
+                  setModelsList(modelsByMt[machineType] || []);
+                } else {
+                  const all = new Set();
+                  for (const arr of Object.values(modelsByMt || {})) for (const m of arr || []) all.add(m);
+                  setModelsList(Array.from(all).sort((a,b)=>a.localeCompare(b)));
+                }
+                // preserve model selection if still present
+                if (model && !Array.from(Object.values(modelsByMt || {})).some(arr => arr.includes(model))) setModel('');
+              }
+              return;
+            }
+          }
+        } catch (e) {
+          // server call failed — fall back to client-side mapping
+        }
+
+        // Client-side tolerant lookup into machineTypesMap (case-insensitive/trim)
+        const findKey = (mapObj, key) => {
+          if (!mapObj || !key) return undefined;
+          const norm = String(key).trim().toLowerCase();
+          const found = Object.keys(mapObj).find(k => String(k).trim().toLowerCase() === norm);
+          return found || undefined;
+        };
+
+        const nestedKey = findKey(machineTypesMap, manufacturer);
+        const nested = nestedKey ? machineTypesMap[nestedKey] : {};
+        const mts = Object.keys(nested).sort((a,b)=>a.localeCompare(b));
+        if (mts.length) setMachineTypesList(mts);
+        // aggregate all models under this manufacturer
+        const allModels = new Set();
+        for (const arr of Object.values(nested)) for (const m of arr) allModels.add(m);
+        if (allModels.size) setModelsList(Array.from(allModels).sort((a,b)=>a.localeCompare(b)));
+        else setModelsList([]);
+
+        // preserve selections
+        if (model && !Array.from(allModels).includes(model)) setModel('');
+        if (machineType && !mts.includes(machineType)) setMachineType('');
+      } catch (e) {
+        // ignore
       }
-      const nested = machineTypesMap[manufacturer] || {};
-      const mts = Object.keys(nested).sort((a,b)=>a.localeCompare(b));
-      if (mts.length) setMachineTypesList(mts);
-      // aggregate all models under this manufacturer
-      const allModels = new Set();
-      for (const arr of Object.values(nested)) for (const m of arr) allModels.add(m);
-      if (allModels.size) setModelsList(Array.from(allModels).sort((a,b)=>a.localeCompare(b)));
-      else setModelsList([]);
-      setMachineType(''); setModel('');
-    } catch (e) {}
+    })();
   }, [manufacturer, machineTypesMap, compatOptions]);
 
   // When machineType changes, refine models list
   useEffect(() => {
     try {
       if (!machineType) { setModel(''); return; }
-      if (manufacturer) {
-        const modelsFor = (machineTypesMap[manufacturer] || {})[machineType] || [];
-        setModelsList(modelsFor);
-      } else {
-        // aggregate across manufacturers
-        const setModels = new Set();
-        for (const manu of Object.keys(machineTypesMap || {})) {
-          const arr = (machineTypesMap[manu] || {})[machineType] || [];
-          for (const m of arr) setModels.add(m);
+      // tolerant lookup helpers
+      const findKey = (mapObj, key) => {
+        if (!mapObj || !key) return undefined;
+        const norm = String(key).trim().toLowerCase();
+        const found = Object.keys(mapObj).find(k => String(k).trim().toLowerCase() === norm);
+        return found || undefined;
+      };
+      try {
+        if (manufacturer) {
+          const manuKey = findKey(machineTypesMap, manufacturer);
+          const modelsFor = (machineTypesMap[manuKey] || {})[machineType] || [];
+          setModelsList(modelsFor);
+          // preserve selected model if still present
+          if (model && !modelsFor.includes(model)) setModel('');
+        } else {
+          // aggregate across manufacturers
+          const setModels = new Set();
+          for (const manu of Object.keys(machineTypesMap || {})) {
+            const arr = (machineTypesMap[manu] || {})[machineType] || [];
+            for (const m of arr) setModels.add(m);
+          }
+          const list = Array.from(setModels).sort((a,b)=>a.localeCompare(b));
+          setModelsList(list);
+          if (model && !list.includes(model)) setModel('');
         }
-        setModelsList(Array.from(setModels).sort((a,b)=>a.localeCompare(b)));
-      }
-      setModel('');
+      } catch (e) { setModelsList([]); }
     } catch (e) { setModelsList([]); }
   }, [machineType, manufacturer, machineTypesMap]);
 
@@ -305,18 +366,18 @@ export default function SimpleGallery() {
             </div>
             <div className="filter-section">
               <label className="filter-label">Machine Type</label>
-              <select value={machineType} onChange={e => setMachineType(e.target.value)} className="filter-select">
+              <select value={machineType} onChange={e => setMachineType(e.target.value)} className="filter-select" disabled={!manufacturer} aria-disabled={!manufacturer}>
                 <option value="">All Machine Types</option>
-                {(compatOptions.machine_types && compatOptions.machine_types.length > 0 ? compatOptions.machine_types : uniqueOptions('machine_type')).map(m => (
+                {(machineTypesList && machineTypesList.length ? machineTypesList : (compatOptions.machine_types && compatOptions.machine_types.length ? compatOptions.machine_types : uniqueOptions('machine_type'))).map(m => (
                   <option key={m} value={m}>{m}</option>
                 ))}
               </select>
             </div>
             <div className="filter-section">
               <label className="filter-label">Model</label>
-              <select value={model} onChange={e => setModel(e.target.value)} className="filter-select">
+              <select value={model} onChange={e => setModel(e.target.value)} className="filter-select" disabled={!machineType} aria-disabled={!machineType}>
                 <option value="">All Models</option>
-                {(compatOptions.models && compatOptions.models.length > 0 ? compatOptions.models : uniqueOptions('model')).map(m => (
+                {(modelsList && modelsList.length ? modelsList : (compatOptions.models && compatOptions.models.length > 0 ? compatOptions.models : uniqueOptions('model'))).map(m => (
                   <option key={m} value={m}>{m}</option>
                 ))}
               </select>

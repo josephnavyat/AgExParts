@@ -19,7 +19,7 @@ export default function Footer() {
         </div>
         <div>
           <h4>Company</h4>
-          <p><Link to="/about">About</Link></p>
+          <p><Link to="/about">About Us</Link></p>
           <p><Link to="/terms">Terms &amp; Conditions</Link></p>
           <p><Link to="/dealer-program">Dealer Program</Link></p>
         </div>

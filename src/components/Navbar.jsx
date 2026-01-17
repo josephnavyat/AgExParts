@@ -3,41 +3,87 @@ import React, { useEffect, useState, useRef } from 'react';
 import { getImageUrl as resolveImageUrl } from '../utils/imageUrl.js';
 import { useCart } from './CartContext.jsx';
 
+// Small presentational accordion used only inside the mobile categories panel
+function CategoryAccordion({ category, isOpen, onToggle, onNavigate }) {
+  const { category: title, subcategories = [] } = category || {};
+  // onNavigate is expected to be a function that accepts a URL string and performs navigation + panel close
+  return (
+    <div className="cat-col-item" style={{ padding: 6 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        {/* Make the category title clickable to search by category */}
+        <a
+          href={`/search-results?category=${encodeURIComponent(title)}`}
+          onClick={(e) => { e.preventDefault(); try { onNavigate(`/search-results?category=${encodeURIComponent(title)}`); } catch (err) { try { window.location.href = `/search-results?category=${encodeURIComponent(title)}` } catch (e) {} } }}
+          style={{ fontWeight: 700, color: 'inherit', textDecoration: 'none' }}
+        >
+          {title}
+        </a>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          {/* expand/collapse buttons: up (collapse) and down (expand) */}
+          <button
+            aria-label={isOpen ? `Collapse ${title}` : `Expand ${title}`}
+            title={isOpen ? `Collapse ${title}` : `Expand ${title}`}
+            onClick={(e) => { e.stopPropagation(); onToggle(); }}
+            className="nav-icon"
+            style={{ width: 36, height: 36 }}
+          >
+            {isOpen ? (
+              <svg className="nav-svg" viewBox="0 0 24 24"><path d="M6 15l6-6 6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/></svg>
+            ) : (
+              <svg className="nav-svg" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/></svg>
+            )}
+          </button>
+        </div>
+      </div>
+      {isOpen && subcategories && subcategories.length > 0 && (
+        <div style={{ marginTop: 8 }}>
+          {subcategories.map(s => {
+            const url = `/search-results?category=${encodeURIComponent(title)}&subcategory=${encodeURIComponent(s)}`;
+            return (
+              <a
+                key={s}
+                href={url}
+                className="sub-item"
+                onClick={(e) => { e.preventDefault(); try { onNavigate(url); } catch (err) { try { window.location.href = url; } catch (e) {} } }}
+              >
+                {s}
+              </a>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [navHidden, setNavHidden] = useState(false);
+  // secondary navbar removed
+  const [machinePanelOpen, setMachinePanelOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [productsIndex, setProductsIndex] = useState(null);
   const [suggestions, setSuggestions] = useState([]);
   const [suggestOpen, setSuggestOpen] = useState(false);
   const searchDebounce = useRef(null);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 80);
-    document.addEventListener('scroll', onScroll);
-    onScroll();
-    return () => document.removeEventListener('scroll', onScroll);
-  }, []);
-
-  // Keep body class in sync with collapsed state so CSS can adjust layout
-  useEffect(() => {
-    try {
-      if (scrolled) document.body.classList.add('nav-collapsed');
-      else document.body.classList.remove('nav-collapsed');
-    } catch (e) {}
-  }, [scrolled]);
+  const lastYRef = useRef(0);
 
   const { cart } = useCart();
   const cartCount = cart.items.reduce((sum, i) => sum + i.quantity, 0);
-  const [secondaryOpen, setSecondaryOpen] = useState(false);
-  const secondaryRef = useRef(null);
+  // secondary navbar ref removed
+  const machineWrapRef = useRef(null);
+  const machineCloseTimerRef = useRef(null);
   const toggleRef = useRef(null);
+  const panelRef = useRef(null);
+  const [panelLeft, setPanelLeft] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [categoriesLoading, setCategoriesLoading] = useState(false);
   const [catsLoaded, setCatsLoaded] = useState(false);
+  const [leftPanelOpen, setLeftPanelOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState('');
   // Manufacturer -> machine_type -> model dropdown state
   // inline manufacturer/machine panel open is controlled via DOM class on `.nav-manufacturer-inline`
@@ -50,7 +96,6 @@ export default function Navbar() {
   const [selManufacturer, setSelManufacturer] = useState('');
   const [selMachineType, setSelMachineType] = useState('');
   const [selModel, setSelModel] = useState('');
-  const [machinePanelOpen, setMachinePanelOpen] = useState(false);
 
   const loadCategories = async () => {
     if (catsLoaded || categoriesLoading) return;
@@ -233,40 +278,137 @@ export default function Navbar() {
     } catch (e) { setModelsList([]); }
   }, [selMachineType, selManufacturer, machineTypes]);
 
-  // Ensure the body knows a secondary nav exists so CSS can reserve space
+  // secondary navbar removed; no body class required
+
+  // Scroll behavior: add shadow when scrolled and hide navbar when scrolling down
   useEffect(() => {
-    try {
-      document.body.classList.add('has-secondary-nav');
-      return () => document.body.classList.remove('has-secondary-nav');
-    } catch (e) {
-      // ignore
+    const lastYRef = { current: window.scrollY || 0 };
+    let raf = 0;
+    const onScroll = () => {
+      if (raf) return;
+      raf = window.requestAnimationFrame(() => {
+        raf = 0;
+        const y = window.scrollY || 0;
+        setScrolled(y > 10);
+
+  // Never hide while any overlay is open
+  if (suggestOpen || leftPanelOpen || showSearch) {
+          setNavHidden(false);
+          lastYRef.current = y;
+          return;
+        }
+
+        const last = lastYRef.current;
+        const delta = Math.abs(y - last);
+        const goingDown = y > last;
+
+        // Only react after a little movement to avoid jitter
+        if (delta > 6) {
+          if (goingDown && y > 120) setNavHidden(true);
+          if (!goingDown) setNavHidden(false);
+        }
+
+        if (y < 10) setNavHidden(false);
+        lastYRef.current = y;
+      });
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (raf) window.cancelAnimationFrame(raf);
+    };
+  }, [suggestOpen, leftPanelOpen, showSearch]);
+
+
+  
+  // Close machine dropdown on outside click / tap
+  useEffect(() => {
+    if (!machinePanelOpen) return;
+    const onDown = (e) => {
+      const el = machineWrapRef.current;
+      if (!el) return;
+      if (!el.contains(e.target)) setMachinePanelOpen(false);
+    };
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('touchstart', onDown, { passive: true });
+    return () => {
+      document.removeEventListener('mousedown', onDown);
+      document.removeEventListener('touchstart', onDown);
+    };
+  }, [machinePanelOpen]);
+
+  // Compute panel left position so it centers under the toggle and stays inside viewport
+  useEffect(() => {
+    if (!machinePanelOpen) {
+      // reset panelLeft when closed so CSS can fallback
+      setPanelLeft(null);
+      return;
     }
-  }, []);
 
-  // Close secondary nav on route change
-  useEffect(() => {
-    setSecondaryOpen(false);
-  }, [location.pathname]);
+    const compute = () => {
+      try {
+        const wrap = machineWrapRef.current;
+        const panel = panelRef.current;
+        if (!wrap || !panel) return;
+        // find the trigger element (the link) inside wrap
+        const trigger = wrap.querySelector('.nav-manufacturers-toggle');
+        const triggerRect = trigger ? trigger.getBoundingClientRect() : wrap.getBoundingClientRect();
+        const panelRect = panel.getBoundingClientRect();
+        const viewportW = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
 
-  // Close on Escape and restore focus to toggle
+        // desired left so the panel center aligns with trigger center
+        const desiredLeft = Math.round((triggerRect.left + triggerRect.width / 2) - (panelRect.width / 2));
+
+        // clamp so panel stays within viewport with small margin
+        const margin = 12;
+        const minLeft = margin;
+        const maxLeft = Math.max(margin, viewportW - panelRect.width - margin);
+        const clamped = Math.min(Math.max(desiredLeft, minLeft), maxLeft);
+
+        // compute left relative to the wrap element's left (since panel is absolute inside wrap)
+        const wrapRect = wrap.getBoundingClientRect();
+        const leftRelative = Math.round(clamped - wrapRect.left);
+        setPanelLeft(leftRelative);
+      } catch (e) {
+        // ignore
+      }
+    };
+
+    // compute initially and on a small timeout to allow layout to settle
+    compute();
+    const t = setTimeout(compute, 60);
+
+    window.addEventListener('resize', compute);
+    window.addEventListener('scroll', compute, { passive: true });
+    return () => {
+      clearTimeout(t);
+      window.removeEventListener('resize', compute);
+      window.removeEventListener('scroll', compute);
+    };
+  }, [machinePanelOpen]);
+  // secondary navbar removed; no escape/key handlers
+
+  // Left-panel Escape handling: close and restore focus to the main toggle
   useEffect(() => {
-    if (!secondaryOpen) return;
+    if (!leftPanelOpen) return;
     const onKey = (e) => {
       if (e.key === 'Escape') {
-        setSecondaryOpen(false);
+        setLeftPanelOpen(false);
         try { toggleRef.current?.focus(); } catch (err) {}
       }
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-  }, [secondaryOpen]);
+  }, [leftPanelOpen]);
 
   return (
     <>
-      <nav id="nav" className={`nav ${scrolled ? 'scrolled' : ''}${showSearch ? ' nav--search-open' : ''}`}> 
-        <div className="container nav-inner" style={{ flexWrap: 'wrap', alignItems: 'center' }}>
+      <nav id="nav" className={`nav ${scrolled ? 'scrolled' : ''}${showSearch ? ' nav--search-open' : ''}${navHidden ? ' nav--hidden' : ''}`}> 
+        <div className="container nav-inner" style={{ alignItems: 'center' }}>
           <div className="brand">
-            <img src="/logo.png" alt="AgEx Parts logo" style={{ height: '80px', width: 'auto' }} />
+            <img src="/logo.png" alt="AgEx Parts logo" style={{ height: '60px', width: 'auto' }} />
             <h1 className="distressed" style={{ color: 'dark grey' }}>For your ideal PART</h1>
           </div>
           <div className="nav-cta" style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
@@ -306,9 +448,22 @@ export default function Navbar() {
                 }}>{cartCount}</span>
               )}
             </Link>
+            {/* Mobile left-panel toggle placed to the right of the cart button */}
+            <button
+              className="nav-left-toggle"
+              aria-label="Browse categories"
+              title="Browse categories"
+              onClick={async () => {
+                setLeftPanelOpen((s) => !s);
+                try { if (!catsLoaded) await loadCategories(); } catch (e) {}
+              }}
+              ref={toggleRef}
+            >
+              <svg className="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M3 12h18M3 18h18" /></svg>
+            </button>
           </div>
         </div>
-        {showSearch && (
+  {showSearch && (
           <div
             className="search-bar-collapsible"
             style={{
@@ -419,123 +574,46 @@ export default function Navbar() {
             </form>
           </div>
         )}
-        {/* Secondary nav row: browse links and mobile toggle */}
-        <div className={`nav-secondary ${secondaryOpen ? 'open' : ''}`} ref={secondaryRef}>
-          <div className="container">
-            <nav id="secondary-links" aria-label="Browse links">
-              {/* Browse by Category shows an expanded panel on hover or click */}
-              <div className="nav-categories-wrapper">
-                <Link
-                  to="/categories"
-                  className="nav-secondary-link nav-categories-toggle"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    try {
-                      try { setSecondaryOpen(false); } catch (err) {}
-                      try { setCategoriesOpen(false); } catch (err) {}
-                      navigate('/categories');
-                      requestAnimationFrame(() => setTimeout(() => {
-                        try {
-                          const heading = document.querySelector('.main-content > h2');
-                          if (heading && heading.scrollIntoView) {
-                            console.info('Navbar: scrolling to category heading via scrollIntoView');
-                            heading.scrollIntoView({ block: 'start' });
-                            return;
-                          }
-                          const navEl = document.querySelector('.nav');
-                          const navHeight = navEl ? Math.ceil(navEl.getBoundingClientRect().height) : 140;
-                          console.info('Navbar: falling back to scrollBy', navHeight);
-                          window.scrollBy(0, -navHeight + 6);
-                        } catch (e) {}
-                      }, 400));
-                    } catch (err) { window.location.href = '/categories'; }
-                  }}
-                >
-                  Browse by Category
-                </Link>
-              </div>
+  {/* Secondary navbar removed */}
+  </nav>
 
-              {/* Browse by Machine (integrated manufacturer / machine type / model) */}
-              <div className="nav-manufacturers-wrapper" style={{ position: 'relative' }}>
-                <a
-                  href="/machines"
-                  className="nav-secondary-link nav-manufacturers-toggle"
-                  onClick={async (e) => {
-                    e.preventDefault();
-                    setSecondaryOpen(true);
-                    // ensure nested mapping exists; reload if only flat lists present
-                    if (manufacturers.length === 0 || Object.keys(machineTypes || {}).length === 0) await loadManufacturers();
-                    setCategoriesOpen(false);
-                    setMachinePanelOpen((s) => !s);
+      {/* Left-side sliding panel and backdrop for mobile categories - rendered outside the nav
+          so fixed positioning and z-index don't get affected by nav stacking contexts */}
+  <div className={`nav-categories-panel right${leftPanelOpen ? ' open' : ''}`} role="dialog" aria-modal="true" aria-label="Categories panel">
+        <div className="categories-panel-inner">
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 8 }}>
+            <button className="nav-icon" onClick={() => setLeftPanelOpen(false)} aria-label="Close categories" title="Close">
+              <svg className="nav-svg" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </button>
+          </div>
+          <div style={{ display: 'grid', gap: 6 }}>
+            {categories && categories.length ? (
+              categories.map(cat => (
+                <CategoryAccordion
+                  key={cat.category}
+                  category={cat}
+                  isOpen={activeCategory === cat.category}
+                  onToggle={() => {
+                    // toggle active category when user taps the chevron
+                    setActiveCategory(prev => (prev === cat.category ? '' : cat.category));
                   }}
-                >
-                  Browse by Machine
-                </a>
-                <div className={`nav-manufacturer-inline${machinePanelOpen ? ' open' : ''}`} style={{ position: 'absolute', left: 0, top: '100%', zIndex: 45, minWidth: 360, display: machinePanelOpen ? 'block' : 'none' }}>
-                  <div className="simple-gallery-filter-header" style={{ padding: '10px 12px 6px' }}>Browse Machines</div>
-                  <div className="nav-manufacturer-row" style={{ padding: '12px' }}>
-                    <select className="filter-select" value={selManufacturer} onChange={(e) => { const v = e.target.value; setSelManufacturer(v); setSelMachineType(''); setSelModel(''); }}>
-                      <option value="">All Manufacturers</option>
-                      {manufacturers.map(m => <option key={m} value={m}>{m}</option>)}
-                    </select>
-                    <select className="filter-select" value={selMachineType} onChange={(e) => { const v = e.target.value; setSelMachineType(v); }}>
-                      <option value="">All Machine Types</option>
-                      {(() => {
-                        // If nothing selected, prefer flat compatibility list or aggregated nested
-                        if (!selManufacturer) {
-                          if (compatMachineTypes && compatMachineTypes.length) return compatMachineTypes;
-                          return Object.keys(machineTypes || {}).flatMap(m=>Object.keys(machineTypes[m]||{})).filter((v,i,a)=>a.indexOf(v)===i).sort((a,b)=>a.localeCompare(b));
-                        }
-                        // Try nested map first
-                        const nested = machineTypes[selManufacturer] || {};
-                        const nestedKeys = Object.keys(nested || {}).sort((a,b)=>a.localeCompare(b));
-                        if (nestedKeys.length) return nestedKeys;
-                        // Fallback: scan compatProducts for this manufacturer and collect machine_type values
-                        if (compatProducts && compatProducts.length) {
-                          const set = new Set();
-                          for (const p of compatProducts) {
-                            try {
-                              if (((p.manufacturer || '').trim()) === (selManufacturer || '').trim()) {
-                                const mt = (p.machine_type || p.machineType || '').toString().trim();
-                                if (mt) set.add(mt);
-                              }
-                            } catch (e) { /* ignore malformed product rows */ }
-                          }
-                          return Array.from(set).sort((a,b)=>a.localeCompare(b));
-                        }
-                        return [];
-                      })().map(mt => <option key={mt} value={mt}>{mt}</option>)}
-                    </select>
-                    <select className="filter-select" value={selModel} onChange={(e) => setSelModel(e.target.value)}>
-                      <option value="">All Models</option>
-                      {(modelsList || []).map(mo => <option key={mo} value={mo}>{mo}</option>)}
-                      {/* If modelsList empty and a manufacturer is selected, attempt to populate from compatProducts */}
-                      {(!(modelsList && modelsList.length) && selManufacturer && compatProducts && compatProducts.length) && (() => {
-                        const s = new Set();
-                        for (const p of compatProducts) {
-                          try {
-                            if (((p.manufacturer || '').trim()) === (selManufacturer || '').trim()) {
-                              const mo = (p.model || '').toString().trim(); if (mo) s.add(mo);
-                            }
-                          } catch (e) {}
-                        }
-                        return Array.from(s).sort((a,b)=>a.localeCompare(b)).map(mo => <option key={`fb-${mo}`} value={mo}>{mo}</option>);
-                      })()}
-                    </select>
-                    <a className="nav-secondary-link nav-manufacturer-search" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 14px', borderRadius: 8 }} onClick={() => {
-                      const params = new URLSearchParams(); if (selManufacturer) params.set('manufacturer', selManufacturer); if (selMachineType) params.set('machine_type', selMachineType); if (selModel) params.set('model', selModel); const url = `/search-results?${params.toString()}`; navigate(url);
-                    }}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 21l-4.35-4.35"/><path d="M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16z"/></svg>
-                      <span>Search</span>
-                    </a>
-                  </div>
-                </div>
-              </div>
-              <Link to="/about" className="nav-secondary-link">About Us</Link>
-            </nav>
+                  onNavigate={(url) => {
+                    try {
+                      navigate(url);
+                    } catch (e) {
+                      try { window.location.href = url; } catch (err) {}
+                    }
+                    try { setLeftPanelOpen(false); } catch (err) {}
+                  }}
+                />
+              ))
+            ) : (
+              <div style={{ padding: 8, color: '#666' }}>{categoriesLoading ? 'Loading...' : 'No categories'}</div>
+            )}
           </div>
         </div>
-      </nav>
+      </div>
+  <div className={`right-panel-backdrop${leftPanelOpen ? ' open' : ''}`} onClick={() => setLeftPanelOpen(false)} aria-hidden={!leftPanelOpen}></div>
     </>
   );
 }
